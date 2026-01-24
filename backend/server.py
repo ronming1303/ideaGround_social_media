@@ -864,6 +864,107 @@ async def sell_shares(req: SellShareRequest, user: User = Depends(get_current_us
         "bonus_multiplier": bonus_multiplier if is_early else 1.0
     }
 
+PLATFORM_FEE_PERCENT = 5.0  # 5% platform fee on redemptions
+
+@api_router.post("/shares/redeem")
+async def redeem_shares(req: RedeemRequest, user: User = Depends(get_current_user)):
+    """
+    Redeem (cash out) all shares of a video to wallet.
+    Applies 5% platform fee on the total redemption amount.
+    """
+    video = await db.videos.find_one({"video_id": req.video_id}, {"_id": 0})
+    if not video:
+        raise HTTPException(status_code=404, detail="Video not found")
+    
+    ownership = await db.share_ownerships.find_one(
+        {"user_id": user.user_id, "video_id": req.video_id}, {"_id": 0}
+    )
+    
+    if not ownership or ownership["shares_owned"] <= 0:
+        raise HTTPException(status_code=400, detail="No shares to redeem")
+    
+    shares_to_redeem = ownership["shares_owned"]
+    
+    # Calculate base value
+    base_value = shares_to_redeem * video["share_price"]
+    
+    # Apply early investor bonus if applicable
+    bonus_multiplier = ownership.get("early_bonus_multiplier", 1.0)
+    is_early = ownership.get("is_early_investor", False)
+    
+    # Bonus only applies to profit
+    purchase_value = shares_to_redeem * ownership["purchase_price"]
+    profit = base_value - purchase_value
+    
+    if is_early and profit > 0:
+        bonus_profit = profit * bonus_multiplier
+        gross_value = purchase_value + bonus_profit
+        bonus_earned = bonus_profit - profit
+    else:
+        gross_value = base_value
+        bonus_earned = 0
+    
+    # Calculate platform fee (5% of gross value)
+    platform_fee = gross_value * (PLATFORM_FEE_PERCENT / 100)
+    net_value = gross_value - platform_fee
+    
+    # Credit net amount to user wallet
+    await db.users.update_one(
+        {"user_id": user.user_id},
+        {"$inc": {"wallet_balance": net_value}}
+    )
+    
+    # Return shares to pool
+    await db.videos.update_one(
+        {"video_id": req.video_id},
+        {"$inc": {"available_shares": shares_to_redeem}}
+    )
+    
+    # Delete ownership record
+    await db.share_ownerships.delete_one(
+        {"user_id": user.user_id, "video_id": req.video_id}
+    )
+    
+    # Record user transaction
+    transaction_doc = {
+        "transaction_id": f"txn_{uuid.uuid4().hex[:12]}",
+        "user_id": user.user_id,
+        "transaction_type": "redemption",
+        "amount": net_value,
+        "gross_amount": gross_value,
+        "platform_fee": platform_fee,
+        "video_id": req.video_id,
+        "shares": shares_to_redeem,
+        "early_bonus_applied": is_early and bonus_earned > 0,
+        "bonus_earned": bonus_earned,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.transactions.insert_one(transaction_doc)
+    
+    # Record platform earning
+    platform_earning_doc = {
+        "earning_id": f"earn_{uuid.uuid4().hex[:12]}",
+        "user_id": user.user_id,
+        "video_id": req.video_id,
+        "transaction_type": "redemption_fee",
+        "gross_amount": gross_value,
+        "fee_percent": PLATFORM_FEE_PERCENT,
+        "fee_amount": platform_fee,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.platform_earnings.insert_one(platform_earning_doc)
+    
+    return {
+        "success": True,
+        "shares_redeemed": shares_to_redeem,
+        "gross_value": gross_value,
+        "platform_fee": platform_fee,
+        "platform_fee_percent": PLATFORM_FEE_PERCENT,
+        "net_value": net_value,
+        "early_bonus_applied": is_early and bonus_earned > 0,
+        "bonus_earned": bonus_earned
+    }
+
 # ==================== PORTFOLIO ENDPOINTS ====================
 
 @api_router.get("/portfolio")
