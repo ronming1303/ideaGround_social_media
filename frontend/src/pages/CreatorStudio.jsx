@@ -88,7 +88,11 @@ export default function CreatorStudio() {
       );
       toast.success(`Welcome, ${response.data.creator.name}! Your stock symbol is ${response.data.creator.stock_symbol}`);
       setBecomeCreatorOpen(false);
-      fetchCreatorData();
+      // Directly set the creator data to immediately show creator interface
+      setCreatorData({
+        is_creator: true,
+        creator: { ...response.data.creator, videos: [] }
+      });
     } catch (error) {
       toast.error(error.response?.data?.detail || "Failed to become creator");
     } finally {
