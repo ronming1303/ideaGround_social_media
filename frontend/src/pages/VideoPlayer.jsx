@@ -387,6 +387,98 @@ export default function VideoPlayer() {
             </CardContent>
           </Card>
 
+          {/* Early Discovery Bonus Card */}
+          {video.early_investor_tier && (
+            <Card className="border-border/50 bg-gradient-to-br from-amber-500/10 to-orange-500/5 border-amber-500/20">
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center flex-shrink-0">
+                    <Award className="w-5 h-5 text-amber-600" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h4 className="font-medium">Early Discovery Bonus</h4>
+                      <Badge variant="outline" className="text-xs bg-amber-500/10 text-amber-700 border-amber-500/30">
+                        {video.early_investor_tier.toUpperCase()}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      Only {video.shares_sold_percent.toFixed(0)}% shares sold. Invest now for a <span className="font-semibold text-amber-600">{video.early_bonus_available}x bonus</span> on profits!
+                    </p>
+                    <div className="w-full bg-muted rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-amber-500 to-orange-500 h-2 rounded-full transition-all"
+                        style={{ width: `${Math.min(video.shares_sold_percent, 30)}%` }}
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">Early bonus ends at 30% sold</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* User Early Investor Status */}
+          {video.user_is_early_investor && video.user_shares > 0 && (
+            <Card className="border-border/50 bg-gradient-to-br from-emerald-500/10 to-teal-500/5 border-emerald-500/20">
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                    <Sparkles className="w-5 h-5 text-emerald-600" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium text-emerald-700 mb-1">You're an Early Investor!</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Your {video.user_shares} shares qualify for a <span className="font-semibold text-emerald-600">{video.user_early_bonus}x bonus</span> on any profits when you sell.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Revenue Split Card - Transparent Distribution */}
+          <Card className="border-border/50">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 mb-4">
+                <PieChart className="w-5 h-5 text-primary" />
+                <h4 className="font-medium">Revenue Distribution</h4>
+              </div>
+              <p className="text-xs text-muted-foreground mb-3">
+                How earnings from this video are shared
+              </p>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-primary" />
+                    <span className="text-sm">Creator</span>
+                  </div>
+                  <span className="font-mono text-sm font-medium">50%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-secondary" />
+                    <span className="text-sm">Shareholders</span>
+                  </div>
+                  <span className="font-mono text-sm font-medium">40%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-muted-foreground" />
+                    <span className="text-sm">Platform</span>
+                  </div>
+                  <span className="font-mono text-sm font-medium">10%</span>
+                </div>
+              </div>
+              {/* Visual bar */}
+              <div className="flex h-2 rounded-full overflow-hidden mt-3">
+                <div className="bg-primary" style={{ width: '50%' }} />
+                <div className="bg-secondary" style={{ width: '40%' }} />
+                <div className="bg-muted-foreground" style={{ width: '10%' }} />
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Investment tip */}
           <Card className="border-border/50 bg-gradient-to-br from-secondary/5 to-transparent">
             <CardContent className="p-4">
