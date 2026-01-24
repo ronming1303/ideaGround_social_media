@@ -365,6 +365,19 @@ async def get_creators():
     creators = await db.creators.find({}, {"_id": 0}).to_list(100)
     return creators
 
+@api_router.get("/creators/me")
+async def get_my_creator_profile(user: User = Depends(get_current_user)):
+    """Get the current user's creator profile if they are a creator"""
+    creator = await db.creators.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not creator:
+        return {"is_creator": False, "creator": None}
+    
+    # Get creator's videos
+    videos = await db.videos.find({"creator_id": creator["creator_id"]}, {"_id": 0}).to_list(50)
+    creator["videos"] = videos
+    
+    return {"is_creator": True, "creator": creator}
+
 @api_router.get("/creators/{creator_id}")
 async def get_creator(creator_id: str, request: Request):
     """Get creator profile with videos"""
