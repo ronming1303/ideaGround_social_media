@@ -11,6 +11,7 @@ import Portfolio from "./pages/Portfolio";
 import Wallet from "./pages/Wallet";
 import CreatorProfile from "./pages/CreatorProfile";
 import Explore from "./pages/Explore";
+import CreatorStudio from "./pages/CreatorStudio";
 
 // Components
 import Sidebar from "./components/Sidebar";
