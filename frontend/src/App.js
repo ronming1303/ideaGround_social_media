@@ -69,17 +69,38 @@ const AuthCallback = () => {
 };
 
 const ProtectedRoute = ({ children }) => {
-  const { user, isLoading } = useAuth();
+  const { user, setUser, isLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
-    if (!isLoading && !user && !location.state?.user) {
-      navigate("/");
+    // If user came from AuthCallback with user data in state, use it
+    if (location.state?.user && !user) {
+      setUser(location.state.user);
+      // Clear the state to avoid stale data
+      window.history.replaceState({}, document.title);
+      setIsChecking(false);
+      return;
     }
-  }, [user, isLoading, navigate, location]);
 
-  if (isLoading) {
+    // If we already have a user, we're good
+    if (user) {
+      setIsChecking(false);
+      return;
+    }
+
+    // If auth context is still loading, wait
+    if (isLoading) {
+      return;
+    }
+
+    // Auth finished loading and no user - redirect to login
+    setIsChecking(false);
+    navigate("/");
+  }, [user, isLoading, location.state, navigate, setUser]);
+
+  if (isLoading || isChecking) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-pulse text-muted-foreground">Loading...</div>
@@ -87,7 +108,7 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
-  return user || location.state?.user ? children : null;
+  return user ? children : null;
 };
 
 const AppLayout = ({ children }) => {
