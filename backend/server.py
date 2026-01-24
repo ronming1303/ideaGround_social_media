@@ -289,6 +289,16 @@ async def get_videos(video_type: Optional[str] = None, limit: int = 20):
     
     return videos
 
+@api_router.get("/videos/my")
+async def get_my_videos(user: User = Depends(get_current_user)):
+    """Get all videos uploaded by the current user (if creator)"""
+    creator = await db.creators.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not creator:
+        return {"is_creator": False, "videos": []}
+    
+    videos = await db.videos.find({"creator_id": creator["creator_id"]}, {"_id": 0}).to_list(100)
+    return {"is_creator": True, "creator": creator, "videos": videos}
+
 @api_router.get("/videos/{video_id}")
 async def get_video(video_id: str, request: Request):
     """Get single video with details"""
