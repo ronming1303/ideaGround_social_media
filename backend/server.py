@@ -110,6 +110,14 @@ class VideoLike(BaseModel):
     video_id: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class WatchlistItem(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    watchlist_id: str
+    user_id: str
+    video_id: str
+    price_when_added: float  # Track price at time of adding to watchlist
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 # ==================== REQUEST/RESPONSE MODELS ====================
 
 class BuyShareRequest(BaseModel):
@@ -119,6 +127,9 @@ class BuyShareRequest(BaseModel):
 class SellShareRequest(BaseModel):
     video_id: str
     shares: float
+
+class WatchlistRequest(BaseModel):
+    video_id: str
 
 class DepositRequest(BaseModel):
     amount: float
