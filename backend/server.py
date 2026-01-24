@@ -422,20 +422,56 @@ async def get_video(video_id: str, request: Request):
     creator = await db.creators.find_one({"creator_id": video["creator_id"]}, {"_id": 0})
     video["creator"] = creator
     
+    # Calculate shares sold percentage for early investor display
+    shares_sold = video["total_shares"] - video["available_shares"]
+    shares_sold_percent = (shares_sold / video["total_shares"]) * 100
+    video["shares_sold_percent"] = shares_sold_percent
+    
+    # Determine current early investor tier
+    if shares_sold_percent < 10:
+        video["early_investor_tier"] = "platinum"
+        video["early_bonus_available"] = 2.5
+    elif shares_sold_percent < 20:
+        video["early_investor_tier"] = "gold"
+        video["early_bonus_available"] = 2.0
+    elif shares_sold_percent < 30:
+        video["early_investor_tier"] = "silver"
+        video["early_bonus_available"] = 1.5
+    else:
+        video["early_investor_tier"] = None
+        video["early_bonus_available"] = 1.0
+    
+    # Revenue split info (transparent breakdown)
+    video["revenue_split"] = {
+        "creator_percent": 50,
+        "shareholders_percent": 40,
+        "platform_percent": 10,
+        "description": "Revenue from this video is distributed fairly among all contributors"
+    }
+    
     # Check if user liked this video
     user = await get_optional_user(request)
     if user:
         like = await db.video_likes.find_one({"user_id": user.user_id, "video_id": video_id})
         video["user_liked"] = like is not None
         
-        # Check if user owns shares
+        # Check if user owns shares with early investor status
         ownership = await db.share_ownerships.find_one(
             {"user_id": user.user_id, "video_id": video_id}, {"_id": 0}
         )
-        video["user_shares"] = ownership["shares_owned"] if ownership else 0
+        if ownership:
+            video["user_shares"] = ownership["shares_owned"]
+            video["user_is_early_investor"] = ownership.get("is_early_investor", False)
+            video["user_early_bonus"] = ownership.get("early_bonus_multiplier", 1.0)
+        else:
+            video["user_shares"] = 0
+            video["user_is_early_investor"] = False
+            video["user_early_bonus"] = 1.0
     else:
         video["user_liked"] = False
         video["user_shares"] = 0
+        video["user_is_early_investor"] = False
+        video["user_early_bonus"] = 1.0
     
     return video
 
