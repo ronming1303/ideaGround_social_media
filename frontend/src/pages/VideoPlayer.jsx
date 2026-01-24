@@ -86,7 +86,17 @@ export default function VideoPlayer() {
         { video_id: videoId, shares: sharesToBuy },
         { withCredentials: true }
       );
-      toast.success(`Successfully bought ${sharesToBuy} shares for $${response.data.total_cost.toFixed(2)}`);
+      
+      // Show different message based on early investor status
+      if (response.data.is_early_investor) {
+        toast.success(
+          `Early Investor Bonus! Bought ${sharesToBuy} shares with ${response.data.early_bonus_multiplier}x bonus multiplier!`,
+          { duration: 5000 }
+        );
+      } else {
+        toast.success(`Successfully bought ${sharesToBuy} shares for $${response.data.total_cost.toFixed(2)}`);
+      }
+      
       setBuyDialogOpen(false);
       fetchVideo(); // Refresh video data
     } catch (error) {
