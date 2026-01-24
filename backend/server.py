@@ -125,6 +125,20 @@ class SubscribeRequest(BaseModel):
 class LikeRequest(BaseModel):
     video_id: str
 
+class CreateVideoRequest(BaseModel):
+    title: str
+    description: str
+    thumbnail: str
+    video_url: str = "https://www.youtube.com/embed/dQw4w9WgXcQ"  # Default placeholder
+    duration_minutes: int
+    video_type: str  # "short" or "full"
+    category: str
+
+class BecomeCreatorRequest(BaseModel):
+    name: str
+    category: str
+    image: str
+
 # ==================== AUTH HELPERS ====================
 
 async def get_current_user(request: Request) -> User:
