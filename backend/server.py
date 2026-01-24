@@ -1289,6 +1289,8 @@ async def seed_database():
                 {"date": "2024-02-01", "price": 23.00},
                 {"date": "2024-02-15", "price": 28.50}
             ],
+            "last_price_change": 0,
+            "last_price_change_percent": 0,
             "created_at": datetime.now(timezone.utc).isoformat()
         }
     ]
