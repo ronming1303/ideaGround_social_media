@@ -13,11 +13,12 @@ import {
   TrendingUp, TrendingDown, DollarSign, Briefcase, 
   ArrowUpRight, ArrowDownRight, ChevronUp, ChevronDown, Minus, Award, Sparkles
 } from "lucide-react";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell } from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell, CartesianGrid, Legend } from "recharts";
 
 export default function Portfolio() {
   const { user } = useAuth();
   const [portfolio, setPortfolio] = useState(null);
+  const [portfolioHistory, setPortfolioHistory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [sellDialogOpen, setSellDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -26,6 +27,7 @@ export default function Portfolio() {
 
   useEffect(() => {
     fetchPortfolio();
+    fetchPortfolioHistory();
   }, []);
 
   const fetchPortfolio = async () => {
@@ -37,6 +39,15 @@ export default function Portfolio() {
       toast.error("Failed to load portfolio");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchPortfolioHistory = async () => {
+    try {
+      const response = await axios.get(`${API}/portfolio/history`, { withCredentials: true });
+      setPortfolioHistory(response.data);
+    } catch (error) {
+      console.log("Portfolio history not available");
     }
   };
 
