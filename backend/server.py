@@ -330,6 +330,51 @@ async def logout(request: Request, response: Response):
     response.delete_cookie(key="session_token", path="/")
     return {"message": "Logged out successfully"}
 
+@api_router.post("/auth/demo-login")
+async def demo_login(response: Response):
+    """Create a demo session for testing purposes"""
+    demo_user_id = "demo_user_123"
+    demo_session_token = f"demo_session_{uuid.uuid4().hex[:8]}"
+    
+    # Create or update demo user
+    existing_user = await db.users.find_one({"user_id": demo_user_id}, {"_id": 0})
+    if not existing_user:
+        demo_user = {
+            "user_id": demo_user_id,
+            "email": "demo@ideaground.com",
+            "name": "Demo Investor",
+            "picture": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
+            "wallet_balance": 500.00,
+            "subscriptions": [],
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.users.insert_one(demo_user)
+        existing_user = demo_user
+    
+    # Create session
+    expires_at = datetime.now(timezone.utc) + timedelta(days=7)
+    session_doc = {
+        "session_id": str(uuid.uuid4()),
+        "user_id": demo_user_id,
+        "session_token": demo_session_token,
+        "expires_at": expires_at.isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.user_sessions.insert_one(session_doc)
+    
+    # Set cookie
+    response.set_cookie(
+        key="session_token",
+        value=demo_session_token,
+        httponly=True,
+        secure=True,
+        samesite="none",
+        path="/",
+        max_age=7 * 24 * 60 * 60
+    )
+    
+    return {**existing_user, "session_token": demo_session_token}
+
 # ==================== VIDEO ENDPOINTS ====================
 
 @api_router.get("/videos")
