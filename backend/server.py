@@ -884,7 +884,6 @@ async def get_market_ticker():
             "is_positive": change_percent >= 0,
             "creator_symbol": creator.get("stock_symbol") if creator else None
         })
-        })
     
     return ticker_items
 
