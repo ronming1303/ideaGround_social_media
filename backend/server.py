@@ -1064,6 +1064,8 @@ async def seed_database():
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 20,
             "video_type": "full",
+            "category": "Dance",
+            "ticker_symbol": "EMMA_0126D1",
             "views": 2500000,
             "likes": 185000,
             "share_price": 15.50,
@@ -1075,6 +1077,8 @@ async def seed_database():
                 {"date": "2024-02-01", "price": 14.50},
                 {"date": "2024-02-15", "price": 15.50}
             ],
+            "last_price_change": 0,
+            "last_price_change_percent": 0,
             "created_at": datetime.now(timezone.utc).isoformat()
         },
         {
@@ -1086,6 +1090,8 @@ async def seed_database():
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 1,
             "video_type": "short",
+            "category": "Dance",
+            "ticker_symbol": "EMMA_0126S2",
             "views": 8500000,
             "likes": 920000,
             "share_price": 22.00,
@@ -1097,6 +1103,8 @@ async def seed_database():
                 {"date": "2024-02-01", "price": 19.00},
                 {"date": "2024-02-15", "price": 22.00}
             ],
+            "last_price_change": 0,
+            "last_price_change_percent": 0,
             "created_at": datetime.now(timezone.utc).isoformat()
         },
         # Joe's content
@@ -1109,6 +1117,8 @@ async def seed_database():
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 30,
             "video_type": "full",
+            "category": "Podcast",
+            "ticker_symbol": "JOE_0126P1",
             "views": 15000000,
             "likes": 1200000,
             "share_price": 45.00,
@@ -1120,6 +1130,8 @@ async def seed_database():
                 {"date": "2024-02-01", "price": 35.00},
                 {"date": "2024-02-15", "price": 45.00}
             ],
+            "last_price_change": 0,
+            "last_price_change_percent": 0,
             "created_at": datetime.now(timezone.utc).isoformat()
         },
         # Alex's content
@@ -1132,6 +1144,8 @@ async def seed_database():
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 15,
             "video_type": "full",
+            "category": "Travel",
+            "ticker_symbol": "ALEX_0126T1",
             "views": 3200000,
             "likes": 245000,
             "share_price": 18.75,
@@ -1143,6 +1157,8 @@ async def seed_database():
                 {"date": "2024-02-01", "price": 16.00},
                 {"date": "2024-02-15", "price": 18.75}
             ],
+            "last_price_change": 0,
+            "last_price_change_percent": 0,
             "created_at": datetime.now(timezone.utc).isoformat()
         },
         {
@@ -1154,6 +1170,8 @@ async def seed_database():
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 2,
             "video_type": "short",
+            "category": "Travel",
+            "ticker_symbol": "ALEX_0126V2",
             "views": 5600000,
             "likes": 480000,
             "share_price": 25.00,
@@ -1165,6 +1183,8 @@ async def seed_database():
                 {"date": "2024-02-01", "price": 21.00},
                 {"date": "2024-02-15", "price": 25.00}
             ],
+            "last_price_change": 0,
+            "last_price_change_percent": 0,
             "created_at": datetime.now(timezone.utc).isoformat()
         },
         # Sarah's content
@@ -1177,6 +1197,8 @@ async def seed_database():
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 25,
             "video_type": "full",
+            "category": "Tech",
+            "ticker_symbol": "TECH_0126R1",
             "views": 8900000,
             "likes": 670000,
             "share_price": 32.50,
