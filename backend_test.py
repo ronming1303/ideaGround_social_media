@@ -8,8 +8,8 @@ from datetime import datetime
 class IdeaGroundAPITester:
     def __init__(self, base_url="https://viewstock.preview.emergentagent.com"):
         self.base_url = base_url
-        self.session_token = "demo_session_1769220477656"  # Updated session token from review request
-        self.user_id = "test-user-1769220477656"
+        self.session_token = "creator_session_1769222259796"  # Creator session for analytics testing
+        self.user_id = "test-creator-1769222259796"
         self.tests_run = 0
         self.tests_passed = 0
         self.test_results = []
