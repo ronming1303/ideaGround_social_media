@@ -141,7 +141,65 @@ class BecomeCreatorRequest(BaseModel):
     category: str
     image: str
 
+# ==================== TICKER SYMBOL GENERATOR ====================
+
+# Category type codes for video ticker symbols
+CATEGORY_CODES = {
+    "dance": "D",
+    "podcast": "P", 
+    "travel": "T",
+    "tech": "R",      # R for Review/Tech
+    "food": "F",
+    "gaming": "G",
+    "music": "M",
+    "education": "E",
+    "fitness": "X",   # X for eXercise
+    "comedy": "C",
+    "lifestyle": "L",
+    "vlog": "V",
+    "other": "O",
+    "short": "S",     # For shorts without category
+}
+
+def generate_video_ticker(creator_symbol: str, video_type: str, category: str, created_at: datetime, sequence: int) -> str:
+    """
+    Generate unique video ticker symbol
+    Format: {CREATOR}_{MMYY}{TYPE}{SEQ}
+    Example: EMMA_0126D1 = Emma's 1st Dance video from Jan 2026
+    
+    Type codes:
+    - D=Dance, P=Podcast, T=Travel, R=Tech, F=Food, G=Gaming
+    - M=Music, E=Education, X=Fitness, C=Comedy, L=Lifestyle, V=Vlog
+    - S=Short (for unspecified category shorts), O=Other
+    """
+    # Extract creator code (remove $ and take first 4 chars)
+    creator_code = creator_symbol.replace("$", "")[:4].upper()
+    
+    # Get month/year
+    mmyy = created_at.strftime("%m%y")
+    
+    # Get category code - use 'S' for shorts if no specific category
+    cat_lower = (category or "").lower()
+    if video_type == "short" and not cat_lower:
+        type_code = "S"
+    else:
+        type_code = CATEGORY_CODES.get(cat_lower, "O")
+    
+    # Sequence number (1-99)
+    seq = min(sequence, 99)
+    
+    return f"{creator_code}_{mmyy}{type_code}{seq}"
+
+async def get_next_video_sequence(creator_id: str, category: str) -> int:
+    """Get the next sequence number for a creator's videos in a category"""
+    count = await db.videos.count_documents({
+        "creator_id": creator_id,
+        "category": {"$regex": f"^{category}$", "$options": "i"} if category else {"$exists": True}
+    })
+    return count + 1
+
 # ==================== AUTH HELPERS ====================
+
 
 async def get_current_user(request: Request) -> User:
     """Get current user from session token (cookie or header)"""
