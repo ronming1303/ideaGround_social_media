@@ -1,0 +1,153 @@
+{
+  "identity": {
+    "name": "ideaGround",
+    "archetype": "Organic Fintech",
+    "vibe": "Trustworthy, Energetic, Creator-Centric",
+    "mission": "Democratize video ownership through a seamless social-investing platform."
+  },
+  "typography": {
+    "primary_font": "DM Sans",
+    "secondary_font": "Space Grotesk",
+    "mono_font": "JetBrains Mono",
+    "scale": {
+      "h1": "text-5xl md:text-6xl font-bold tracking-tight",
+      "h2": "text-4xl md:text-5xl font-bold tracking-tight",
+      "h3": "text-3xl font-semibold tracking-tight",
+      "body": "text-base leading-relaxed",
+      "caption": "text-sm text-muted-foreground"
+    },
+    "imports": [
+      "@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;700&family=Space+Grotesk:wght@300;500;700&family=JetBrains+Mono:wght@400;500&display=swap');"
+    ]
+  },
+  "colors": {
+    "palette": {
+      "primary": "hsl(24 95% 53%)",
+      "primary_foreground": "hsl(0 0% 100%)",
+      "secondary": "hsl(173 58% 39%)",
+      "secondary_foreground": "hsl(0 0% 100%)",
+      "background": "hsl(30 20% 98%)",
+      "foreground": "hsl(20 14% 4%)",
+      "card": "hsl(0 0% 100%)",
+      "card_foreground": "hsl(20 14% 4%)",
+      "muted": "hsl(30 10% 94%)",
+      "muted_foreground": "hsl(20 5% 45%)",
+      "accent": "hsl(24 95% 96%)",
+      "accent_foreground": "hsl(24 95% 40%)",
+      "border": "hsl(30 10% 90%)",
+      "input": "hsl(30 10% 90%)",
+      "ring": "hsl(24 95% 53%)",
+      "chart_1": "hsl(24 95% 53%)",
+      "chart_2": "hsl(173 58% 39%)",
+      "chart_3": "hsl(197 37% 24%)",
+      "chart_4": "hsl(43 74% 66%)",
+      "chart_5": "hsl(27 87% 67%)"
+    },
+    "usage": {
+      "primary": "Main CTAs, Brand Highlights, 'Buy' Buttons",
+      "secondary": "Positive Trends, Success States, 'Stock Up' Indicators",
+      "background": "Main app background (Warm Off-White)",
+      "card": "Content containers, Video cards"
+    }
+  },
+  "visual_enhancers": {
+    "radius": "0.75rem",
+    "shadows": {
+      "soft": "0 4px 20px -2px rgba(24, 24, 27, 0.05)",
+      "hover": "0 10px 40px -10px rgba(24, 24, 27, 0.1)"
+    },
+    "glassmorphism": {
+      "nav": "bg-white/80 backdrop-blur-md border-b border-black/5",
+      "overlay": "bg-black/20 backdrop-blur-sm"
+    },
+    "gradients": {
+      "hero": "bg-gradient-to-br from-orange-100 via-white to-teal-50",
+      "card_hover": "hover:bg-gradient-to-br hover:from-white hover:to-orange-50/50"
+    }
+  },
+  "layout_strategies": {
+    "container": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+    "spacing": {
+      "section": "py-16 md:py-24",
+      "component": "p-6 md:p-8"
+    },
+    "grids": {
+      "bento_feed": "grid grid-cols-1 md:grid-cols-12 gap-6",
+      "dashboard": "grid grid-cols-1 lg:grid-cols-4 gap-6"
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-primary text-primary-foreground hover:bg-primary/90 rounded-full px-8 py-6 font-medium transition-all hover:scale-105 active:scale-95 shadow-lg shadow-orange-500/20",
+      "secondary": "bg-secondary text-secondary-foreground hover:bg-secondary/90 rounded-full px-6 py-4 font-medium",
+      "outline": "border-2 border-input bg-transparent hover:bg-accent hover:text-accent-foreground rounded-full px-6 py-4 font-medium"
+    },
+    "cards": {
+      "video": "group relative overflow-hidden rounded-2xl bg-card border border-border/50 shadow-sm hover:shadow-hover transition-all duration-300",
+      "stock": "bg-card rounded-xl border border-border p-6 flex flex-col justify-between hover:border-primary/20 transition-colors"
+    },
+    "inputs": {
+      "default": "h-12 rounded-xl border-input bg-white/50 px-4 focus:ring-2 focus:ring-primary/20 transition-all"
+    }
+  },
+  "assets": {
+    "creators": [
+      {
+        "name": "Emma Dance",
+        "category": "Dance",
+        "image": "https://images.unsplash.com/photo-1614710024426-2acfa6a54163",
+        "content_type": "Shorts & Tutorials",
+        "stock_symbol": "$EMMA"
+      },
+      {
+        "name": "Joe Talks",
+        "category": "Podcast",
+        "image": "https://images.unsplash.com/photo-1761198629717-42de7b04f9bb",
+        "content_type": "Long-form Interviews",
+        "stock_symbol": "$JOE"
+      },
+      {
+        "name": "Alex Roams",
+        "category": "Travel",
+        "image": "https://images.unsplash.com/photo-1762375212854-3d516e202b9d",
+        "content_type": "Vlogs",
+        "stock_symbol": "$ALEX"
+      },
+      {
+        "name": "Sarah Tech",
+        "category": "Tech",
+        "image": "https://images.unsplash.com/photo-1732789953074-383034041056",
+        "content_type": "Reviews",
+        "stock_symbol": "$TECH"
+      },
+      {
+        "name": "Chef Mike",
+        "category": "Food",
+        "image": "https://images.unsplash.com/photo-1761484118042-765eaaabc7e1",
+        "content_type": "Cooking",
+        "stock_symbol": "$CHEF"
+      }
+    ],
+    "icons_library": "lucide-react"
+  },
+  "instructions_to_main_agent": [
+    "1. THEME SETUP: Update 'tailwind.config.js' with the colors defined in 'colors.palette'. Use HSL values for Shadcn compatibility.",
+    "2. FONT SETUP: Add the Google Fonts import to 'index.css' and update 'fontFamily' in tailwind config.",
+    "3. LAYOUT: Implement the 'Bento Grid' for the Home Feed. Mix vertical shorts (aspect-[9/16]) with horizontal videos (aspect-video).",
+    "4. STOCK UI: Create a 'StockTicker' component that sits next to the video player. It should show a simulated graph (green for up, red for down) and a 'Buy Share' button.",
+    "5. PORTFOLIO: The Portfolio page must look like a trading dashboard (Robinhood style). Big total balance, line chart, list of owned video shares.",
+    "6. DATA: Use the provided 5 creators to seed the database/state. Do not use placeholders.",
+    "7. NAVIGATION: Use a Sidebar for Desktop and Bottom Nav for Mobile.",
+    "8. AUTH: Mock the Google Login flow. Just a button that sets a 'user' state.",
+    "9. WALLET: Create a simulated wallet with a fake currency balance (e.g., $500.00 start).",
+    "10. TESTING: Add 'data-testid' to all interactive elements (buttons, inputs, video cards)."
+  ],
+  "universal_guidelines": [
+    "Avoid generic 'AI slop' designs. Use generous spacing (p-8+).",
+    "No full-screen gradients. Use subtle noise or grain if possible.",
+    "Micro-interactions are mandatory (hover states, active states).",
+    "Use 'sonner' for toast notifications.",
+    "Ensure high contrast for text (WCAG AA).",
+    "Do not use 'Inter' for headings. Use 'Space Grotesk'."
+  ]
+}
