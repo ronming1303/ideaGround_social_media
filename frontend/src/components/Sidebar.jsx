@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger 
 } from "../components/ui/dropdown-menu";
 import { 
-  Home, Compass, Briefcase, Wallet, Sparkles, LogOut, 
+  Home, Compass, Briefcase, Wallet, LogOut, 
   Settings, User, ChevronDown, Video
 } from "lucide-react";
 import { cn } from "../lib/utils";
