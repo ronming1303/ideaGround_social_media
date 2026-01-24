@@ -99,26 +99,24 @@ export default function Portfolio() {
     }).format(value);
   };
 
-  // Generate portfolio history (mock data for chart)
-  const generatePortfolioHistory = () => {
-    const days = 30;
-    const history = [];
-    let baseValue = portfolio?.total_value || 0;
-    
-    for (let i = days; i >= 0; i--) {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
-      const variance = (Math.random() - 0.3) * baseValue * 0.05;
-      baseValue = Math.max(0, baseValue + variance);
-      history.push({
-        date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        value: baseValue
-      });
-    }
-    return history;
-  };
-
   const COLORS = ['hsl(24, 95%, 53%)', 'hsl(173, 58%, 39%)', 'hsl(197, 37%, 24%)', 'hsl(43, 74%, 66%)', 'hsl(27, 87%, 67%)'];
+
+  // Custom tooltip for the chart
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="bg-background border border-border rounded-lg shadow-lg p-3">
+          <p className="text-sm font-medium mb-1">{label}</p>
+          {payload.map((entry, index) => (
+            <p key={index} className="text-sm" style={{ color: entry.color }}>
+              {entry.name}: {formatCurrency(entry.value)}
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
 
   if (loading) {
     return (
@@ -128,7 +126,6 @@ export default function Portfolio() {
     );
   }
 
-  const portfolioHistory = generatePortfolioHistory();
   const totalPortfolioValue = (portfolio?.total_value || 0) + (portfolio?.wallet_balance || 0);
   const totalGainPercent = portfolio?.total_value > 0 
     ? (portfolio.total_gain / (portfolio.total_value - portfolio.total_gain) * 100) 
