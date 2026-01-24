@@ -27,9 +27,11 @@ export default function VideoPlayer() {
   const [buyDialogOpen, setBuyDialogOpen] = useState(false);
   const [sharesToBuy, setSharesToBuy] = useState(1);
   const [buying, setBuying] = useState(false);
+  const [topEarners, setTopEarners] = useState(null);
 
   useEffect(() => {
     fetchVideo();
+    fetchTopEarners();
   }, [videoId]);
 
   const fetchVideo = async () => {
@@ -44,6 +46,15 @@ export default function VideoPlayer() {
       toast.error("Failed to load video");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchTopEarners = async () => {
+    try {
+      const response = await axios.get(`${API}/videos/${videoId}/top-earners`, { withCredentials: true });
+      setTopEarners(response.data);
+    } catch (error) {
+      console.log("Top earners not available");
     }
   };
 
