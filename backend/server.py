@@ -987,7 +987,6 @@ async def upload_video(req: CreateVideoRequest, user: User = Depends(get_current
     video_doc.pop("_id", None)
     return {"success": True, "video": video_doc}
 
-@api_router.get("/videos/my")
 # ==================== SEED DATA ENDPOINT ====================
 
 @api_router.post("/seed")
