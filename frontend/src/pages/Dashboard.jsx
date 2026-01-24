@@ -155,7 +155,11 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
+    <div>
+      {/* Trending Ticker */}
+      <TrendingTicker />
+      
+      <div className="p-6 lg:p-8 max-w-7xl mx-auto">
       {/* Welcome header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
