@@ -24,6 +24,7 @@ export default function VideoPlayer() {
   const [liked, setLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
   const [subscribed, setSubscribed] = useState(false);
+  const [watching, setWatching] = useState(false);
   const [buyDialogOpen, setBuyDialogOpen] = useState(false);
   const [sharesToBuy, setSharesToBuy] = useState(1);
   const [buying, setBuying] = useState(false);
@@ -41,6 +42,7 @@ export default function VideoPlayer() {
       setLiked(response.data.user_liked || false);
       setLikesCount(response.data.likes);
       setSubscribed(response.data.creator?.is_subscribed || false);
+      setWatching(response.data.user_watching || false);
     } catch (error) {
       console.error("Error fetching video:", error);
       toast.error("Failed to load video");
