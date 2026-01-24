@@ -17,10 +17,11 @@ export default function Dashboard() {
   const [creators, setCreators] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("all");
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [refreshKey]);
 
   const fetchData = async () => {
     try {
@@ -37,6 +38,10 @@ export default function Dashboard() {
       setLoading(false);
     }
   };
+
+  const handlePriceRefresh = useCallback(() => {
+    setRefreshKey(k => k + 1);
+  }, []);
 
   const formatViews = (views) => {
     if (views >= 1000000) return `${(views / 1000000).toFixed(1)}M`;
