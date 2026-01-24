@@ -11,7 +11,7 @@ import {
 } from "../components/ui/dropdown-menu";
 import { 
   Home, Compass, Briefcase, Wallet, Sparkles, LogOut, 
-  Settings, User, ChevronDown
+  Settings, User, ChevronDown, Video
 } from "lucide-react";
 import { cn } from "../lib/utils";
 
@@ -20,6 +20,7 @@ const navItems = [
   { path: "/explore", label: "Explore", icon: Compass },
   { path: "/portfolio", label: "Portfolio", icon: Briefcase },
   { path: "/wallet", label: "Wallet", icon: Wallet },
+  { path: "/studio", label: "Creator Studio", icon: Video },
 ];
 
 export default function Sidebar({ className }) {
