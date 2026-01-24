@@ -73,9 +73,15 @@ export default function Dashboard() {
           {video.duration_minutes}m
         </Badge>
 
-        {/* Stock price badge */}
-        <div className="absolute top-3 left-3 bg-secondary text-white px-2 py-1 rounded-lg text-sm font-mono font-medium flex items-center gap-1">
-          <TrendingUp className="w-3 h-3" />
+        {/* Stock price badge with change indicator */}
+        <div className={`absolute top-3 left-3 px-2 py-1 rounded-lg text-sm font-mono font-medium flex items-center gap-1 ${
+          (video.last_price_change_percent || 0) >= 0 ? 'bg-secondary text-white' : 'bg-destructive text-white'
+        }`}>
+          {(video.last_price_change_percent || 0) >= 0 ? (
+            <TrendingUp className="w-3 h-3" />
+          ) : (
+            <TrendingDown className="w-3 h-3" />
+          )}
           ${video.share_price.toFixed(2)}
         </div>
 
