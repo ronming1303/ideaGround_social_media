@@ -89,6 +89,8 @@ class ShareOwnership(BaseModel):
     video_id: str
     shares_owned: float
     purchase_price: float
+    is_early_investor: bool = False  # True if bought when <30% shares sold
+    early_bonus_multiplier: float = 1.0  # Bonus for early investors (1.0-2.5x)
     purchased_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class Transaction(BaseModel):
