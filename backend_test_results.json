@@ -1,0 +1,2042 @@
+{
+  "timestamp": "2026-01-24T01:41:55.627332",
+  "total_tests": 21,
+  "passed_tests": 21,
+  "failed_tests": 0,
+  "success_rate": 100.0,
+  "test_details": [
+    {
+      "test": "API Root",
+      "success": true,
+      "details": "Status: 200",
+      "response_data": {
+        "message": "ideaGround API",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "test": "Get All Videos",
+      "success": true,
+      "details": "Status: 200",
+      "response_data": [
+        {
+          "video_id": "vid_mike_2",
+          "creator_id": "creator_mike",
+          "title": "60-Second Guacamole",
+          "description": "The fastest and best guac you'll ever make!",
+          "thumbnail": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 1,
+          "video_type": "short",
+          "views": 7200000,
+          "likes": 620000,
+          "share_price": 28.5,
+          "available_shares": 50.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 17.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 23.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 28.5
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623792+00:00",
+          "creator": {
+            "creator_id": "creator_mike",
+            "name": "Chef Mike",
+            "category": "Food",
+            "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
+            "stock_symbol": "$CHEF",
+            "subscriber_count": 432000,
+            "total_views": 18000000,
+            "created_at": "2026-01-24T01:39:42.613659+00:00"
+          }
+        },
+        {
+          "video_id": "vid_mike_1",
+          "creator_id": "creator_mike",
+          "title": "Perfect Pasta Carbonara - Restaurant Quality at Home",
+          "description": "Master the authentic Italian carbonara with this detailed tutorial",
+          "thumbnail": "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 18,
+          "video_type": "full",
+          "views": 4500000,
+          "likes": 380000,
+          "share_price": 21.25,
+          "available_shares": 60.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 14.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 18.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 21.25
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623790+00:00",
+          "creator": {
+            "creator_id": "creator_mike",
+            "name": "Chef Mike",
+            "category": "Food",
+            "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
+            "stock_symbol": "$CHEF",
+            "subscriber_count": 432000,
+            "total_views": 18000000,
+            "created_at": "2026-01-24T01:39:42.613659+00:00"
+          }
+        },
+        {
+          "video_id": "vid_sarah_2",
+          "creator_id": "creator_sarah",
+          "title": "This AI Tool Changed Everything",
+          "description": "Quick look at the AI tool everyone's talking about",
+          "thumbnail": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 3,
+          "video_type": "short",
+          "views": 12000000,
+          "likes": 890000,
+          "share_price": 38.0,
+          "available_shares": 25.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 20.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 30.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 38.0
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623785+00:00",
+          "creator": {
+            "creator_id": "creator_sarah",
+            "name": "Sarah Tech",
+            "category": "Tech",
+            "image": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400",
+            "stock_symbol": "$TECH",
+            "subscriber_count": 1200000,
+            "total_views": 67000000,
+            "created_at": "2026-01-24T01:39:42.613658+00:00"
+          }
+        },
+        {
+          "video_id": "vid_sarah_1",
+          "creator_id": "creator_sarah",
+          "title": "iPhone 16 Pro Max - Honest Review After 30 Days",
+          "description": "The truth about Apple's latest flagship. Is it worth the upgrade?",
+          "thumbnail": "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 25,
+          "video_type": "full",
+          "views": 8900000,
+          "likes": 670000,
+          "share_price": 32.5,
+          "available_shares": 40.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 18.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 26.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 32.5
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623783+00:00",
+          "creator": {
+            "creator_id": "creator_sarah",
+            "name": "Sarah Tech",
+            "category": "Tech",
+            "image": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400",
+            "stock_symbol": "$TECH",
+            "subscriber_count": 1200000,
+            "total_views": 67000000,
+            "created_at": "2026-01-24T01:39:42.613658+00:00"
+          }
+        },
+        {
+          "video_id": "vid_alex_2",
+          "creator_id": "creator_alex",
+          "title": "Sunrise at Machu Picchu",
+          "description": "Breathtaking 2-minute glimpse of dawn at the ancient wonder",
+          "thumbnail": "https://images.unsplash.com/photo-1526392060635-9d6019884377?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 2,
+          "video_type": "short",
+          "views": 5600000,
+          "likes": 480000,
+          "share_price": 25.0,
+          "available_shares": 55.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 16.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 21.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 25.0
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623781+00:00",
+          "creator": {
+            "creator_id": "creator_alex",
+            "name": "Alex Roams",
+            "category": "Travel",
+            "image": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400",
+            "stock_symbol": "$ALEX",
+            "subscriber_count": 567000,
+            "total_views": 23000000,
+            "created_at": "2026-01-24T01:39:42.613656+00:00"
+          }
+        },
+        {
+          "video_id": "vid_alex_1",
+          "creator_id": "creator_alex",
+          "title": "Hidden Gems of Bali - 15 Min Travel Guide",
+          "description": "Discover secret spots in Bali that most tourists never see!",
+          "thumbnail": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 15,
+          "video_type": "full",
+          "views": 3200000,
+          "likes": 245000,
+          "share_price": 18.75,
+          "available_shares": 70.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 13.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 16.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 18.75
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623772+00:00",
+          "creator": {
+            "creator_id": "creator_alex",
+            "name": "Alex Roams",
+            "category": "Travel",
+            "image": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400",
+            "stock_symbol": "$ALEX",
+            "subscriber_count": 567000,
+            "total_views": 23000000,
+            "created_at": "2026-01-24T01:39:42.613656+00:00"
+          }
+        },
+        {
+          "video_id": "vid_joe_1",
+          "creator_id": "creator_joe",
+          "title": "Deep Talk with Sadhguru - Life, Consciousness & Beyond",
+          "description": "An incredible 30-minute conversation with Sadhguru about the nature of existence.",
+          "thumbnail": "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 30,
+          "video_type": "full",
+          "views": 15000000,
+          "likes": 1200000,
+          "share_price": 45.0,
+          "available_shares": 30.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 20.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 35.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 45.0
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623770+00:00",
+          "creator": {
+            "creator_id": "creator_joe",
+            "name": "Joe Talks",
+            "category": "Podcast",
+            "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
+            "stock_symbol": "$JOE",
+            "subscriber_count": 890000,
+            "total_views": 45000000,
+            "created_at": "2026-01-24T01:39:42.613654+00:00"
+          }
+        },
+        {
+          "video_id": "vid_emma_2",
+          "creator_id": "creator_emma",
+          "title": "Quick Dance Challenge #viral",
+          "description": "Can you keep up? 60 seconds of pure energy!",
+          "thumbnail": "https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 1,
+          "video_type": "short",
+          "views": 8500000,
+          "likes": 920000,
+          "share_price": 22.0,
+          "available_shares": 45.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 15.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 19.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 22.0
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623767+00:00",
+          "creator": {
+            "creator_id": "creator_emma",
+            "name": "Emma Dance",
+            "category": "Dance",
+            "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
+            "stock_symbol": "$EMMA",
+            "subscriber_count": 245000,
+            "total_views": 12500000,
+            "created_at": "2026-01-24T01:39:42.613643+00:00"
+          }
+        },
+        {
+          "video_id": "vid_emma_1",
+          "creator_id": "creator_emma",
+          "title": "20-Min Dance Workout for Beginners",
+          "description": "Learn the hottest dance moves with this easy-to-follow tutorial. Perfect for beginners!",
+          "thumbnail": "https://images.unsplash.com/photo-1524594152303-9fd13543fe6e?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 20,
+          "video_type": "full",
+          "views": 2500000,
+          "likes": 185000,
+          "share_price": 15.5,
+          "available_shares": 65.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 12.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 14.5
+            },
+            {
+              "date": "2024-02-15",
+              "price": 15.5
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623758+00:00",
+          "creator": {
+            "creator_id": "creator_emma",
+            "name": "Emma Dance",
+            "category": "Dance",
+            "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
+            "stock_symbol": "$EMMA",
+            "subscriber_count": 245000,
+            "total_views": 12500000,
+            "created_at": "2026-01-24T01:39:42.613643+00:00"
+          }
+        }
+      ]
+    },
+    {
+      "test": "Video Count Validation",
+      "success": true,
+      "details": "Found 9 videos as expected",
+      "response_data": null
+    },
+    {
+      "test": "Get All Creators",
+      "success": true,
+      "details": "Status: 200",
+      "response_data": [
+        {
+          "creator_id": "creator_emma",
+          "name": "Emma Dance",
+          "category": "Dance",
+          "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
+          "stock_symbol": "$EMMA",
+          "subscriber_count": 245000,
+          "total_views": 12500000,
+          "created_at": "2026-01-24T01:39:42.613643+00:00"
+        },
+        {
+          "creator_id": "creator_joe",
+          "name": "Joe Talks",
+          "category": "Podcast",
+          "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
+          "stock_symbol": "$JOE",
+          "subscriber_count": 890000,
+          "total_views": 45000000,
+          "created_at": "2026-01-24T01:39:42.613654+00:00"
+        },
+        {
+          "creator_id": "creator_alex",
+          "name": "Alex Roams",
+          "category": "Travel",
+          "image": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400",
+          "stock_symbol": "$ALEX",
+          "subscriber_count": 567000,
+          "total_views": 23000000,
+          "created_at": "2026-01-24T01:39:42.613656+00:00"
+        },
+        {
+          "creator_id": "creator_sarah",
+          "name": "Sarah Tech",
+          "category": "Tech",
+          "image": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400",
+          "stock_symbol": "$TECH",
+          "subscriber_count": 1200000,
+          "total_views": 67000000,
+          "created_at": "2026-01-24T01:39:42.613658+00:00"
+        },
+        {
+          "creator_id": "creator_mike",
+          "name": "Chef Mike",
+          "category": "Food",
+          "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
+          "stock_symbol": "$CHEF",
+          "subscriber_count": 432000,
+          "total_views": 18000000,
+          "created_at": "2026-01-24T01:39:42.613659+00:00"
+        }
+      ]
+    },
+    {
+      "test": "Creator Count Validation",
+      "success": true,
+      "details": "Found 5 creators as expected",
+      "response_data": null
+    },
+    {
+      "test": "Get Specific Video",
+      "success": true,
+      "details": "Status: 200",
+      "response_data": {
+        "video_id": "vid_mike_2",
+        "creator_id": "creator_mike",
+        "title": "60-Second Guacamole",
+        "description": "The fastest and best guac you'll ever make!",
+        "thumbnail": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=800",
+        "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+        "duration_minutes": 1,
+        "video_type": "short",
+        "views": 7200001,
+        "likes": 620000,
+        "share_price": 28.5,
+        "available_shares": 50.0,
+        "total_shares": 100.0,
+        "price_history": [
+          {
+            "date": "2024-01-01",
+            "price": 10.0
+          },
+          {
+            "date": "2024-01-15",
+            "price": 17.0
+          },
+          {
+            "date": "2024-02-01",
+            "price": 23.0
+          },
+          {
+            "date": "2024-02-15",
+            "price": 28.5
+          }
+        ],
+        "created_at": "2026-01-24T01:39:42.623792+00:00",
+        "creator": {
+          "creator_id": "creator_mike",
+          "name": "Chef Mike",
+          "category": "Food",
+          "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
+          "stock_symbol": "$CHEF",
+          "subscriber_count": 432000,
+          "total_views": 18000000,
+          "created_at": "2026-01-24T01:39:42.613659+00:00"
+        },
+        "user_liked": false,
+        "user_shares": 0
+      }
+    },
+    {
+      "test": "Get Specific Creator",
+      "success": true,
+      "details": "Status: 200",
+      "response_data": {
+        "creator_id": "creator_emma",
+        "name": "Emma Dance",
+        "category": "Dance",
+        "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
+        "stock_symbol": "$EMMA",
+        "subscriber_count": 245000,
+        "total_views": 12500000,
+        "created_at": "2026-01-24T01:39:42.613643+00:00",
+        "videos": [
+          {
+            "video_id": "vid_emma_1",
+            "creator_id": "creator_emma",
+            "title": "20-Min Dance Workout for Beginners",
+            "description": "Learn the hottest dance moves with this easy-to-follow tutorial. Perfect for beginners!",
+            "thumbnail": "https://images.unsplash.com/photo-1524594152303-9fd13543fe6e?w=800",
+            "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+            "duration_minutes": 20,
+            "video_type": "full",
+            "views": 2500000,
+            "likes": 185000,
+            "share_price": 15.5,
+            "available_shares": 65.0,
+            "total_shares": 100.0,
+            "price_history": [
+              {
+                "date": "2024-01-01",
+                "price": 10.0
+              },
+              {
+                "date": "2024-01-15",
+                "price": 12.0
+              },
+              {
+                "date": "2024-02-01",
+                "price": 14.5
+              },
+              {
+                "date": "2024-02-15",
+                "price": 15.5
+              }
+            ],
+            "created_at": "2026-01-24T01:39:42.623758+00:00"
+          },
+          {
+            "video_id": "vid_emma_2",
+            "creator_id": "creator_emma",
+            "title": "Quick Dance Challenge #viral",
+            "description": "Can you keep up? 60 seconds of pure energy!",
+            "thumbnail": "https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800",
+            "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+            "duration_minutes": 1,
+            "video_type": "short",
+            "views": 8500000,
+            "likes": 920000,
+            "share_price": 22.0,
+            "available_shares": 45.0,
+            "total_shares": 100.0,
+            "price_history": [
+              {
+                "date": "2024-01-01",
+                "price": 10.0
+              },
+              {
+                "date": "2024-01-15",
+                "price": 15.0
+              },
+              {
+                "date": "2024-02-01",
+                "price": 19.0
+              },
+              {
+                "date": "2024-02-15",
+                "price": 22.0
+              }
+            ],
+            "created_at": "2026-01-24T01:39:42.623767+00:00"
+          }
+        ],
+        "is_subscribed": false
+      }
+    },
+    {
+      "test": "Get Current User",
+      "success": true,
+      "details": "Status: 200",
+      "response_data": {
+        "user_id": "test-user-1769218880850",
+        "email": "test.user.1769218880852@example.com",
+        "name": "Test User",
+        "picture": "https://via.placeholder.com/150",
+        "wallet_balance": 500.0,
+        "subscriptions": [],
+        "created_at": "2026-01-24T01:41:20.852000"
+      }
+    },
+    {
+      "test": "Get Videos for Like Test",
+      "success": true,
+      "details": "Status: 200",
+      "response_data": [
+        {
+          "video_id": "vid_mike_2",
+          "creator_id": "creator_mike",
+          "title": "60-Second Guacamole",
+          "description": "The fastest and best guac you'll ever make!",
+          "thumbnail": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 1,
+          "video_type": "short",
+          "views": 7200001,
+          "likes": 620000,
+          "share_price": 28.5,
+          "available_shares": 50.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 17.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 23.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 28.5
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623792+00:00",
+          "creator": {
+            "creator_id": "creator_mike",
+            "name": "Chef Mike",
+            "category": "Food",
+            "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
+            "stock_symbol": "$CHEF",
+            "subscriber_count": 432000,
+            "total_views": 18000000,
+            "created_at": "2026-01-24T01:39:42.613659+00:00"
+          }
+        },
+        {
+          "video_id": "vid_mike_1",
+          "creator_id": "creator_mike",
+          "title": "Perfect Pasta Carbonara - Restaurant Quality at Home",
+          "description": "Master the authentic Italian carbonara with this detailed tutorial",
+          "thumbnail": "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 18,
+          "video_type": "full",
+          "views": 4500000,
+          "likes": 380000,
+          "share_price": 21.25,
+          "available_shares": 60.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 14.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 18.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 21.25
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623790+00:00",
+          "creator": {
+            "creator_id": "creator_mike",
+            "name": "Chef Mike",
+            "category": "Food",
+            "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
+            "stock_symbol": "$CHEF",
+            "subscriber_count": 432000,
+            "total_views": 18000000,
+            "created_at": "2026-01-24T01:39:42.613659+00:00"
+          }
+        },
+        {
+          "video_id": "vid_sarah_2",
+          "creator_id": "creator_sarah",
+          "title": "This AI Tool Changed Everything",
+          "description": "Quick look at the AI tool everyone's talking about",
+          "thumbnail": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 3,
+          "video_type": "short",
+          "views": 12000000,
+          "likes": 890000,
+          "share_price": 38.0,
+          "available_shares": 25.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 20.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 30.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 38.0
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623785+00:00",
+          "creator": {
+            "creator_id": "creator_sarah",
+            "name": "Sarah Tech",
+            "category": "Tech",
+            "image": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400",
+            "stock_symbol": "$TECH",
+            "subscriber_count": 1200000,
+            "total_views": 67000000,
+            "created_at": "2026-01-24T01:39:42.613658+00:00"
+          }
+        },
+        {
+          "video_id": "vid_sarah_1",
+          "creator_id": "creator_sarah",
+          "title": "iPhone 16 Pro Max - Honest Review After 30 Days",
+          "description": "The truth about Apple's latest flagship. Is it worth the upgrade?",
+          "thumbnail": "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 25,
+          "video_type": "full",
+          "views": 8900000,
+          "likes": 670000,
+          "share_price": 32.5,
+          "available_shares": 40.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 18.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 26.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 32.5
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623783+00:00",
+          "creator": {
+            "creator_id": "creator_sarah",
+            "name": "Sarah Tech",
+            "category": "Tech",
+            "image": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400",
+            "stock_symbol": "$TECH",
+            "subscriber_count": 1200000,
+            "total_views": 67000000,
+            "created_at": "2026-01-24T01:39:42.613658+00:00"
+          }
+        },
+        {
+          "video_id": "vid_alex_2",
+          "creator_id": "creator_alex",
+          "title": "Sunrise at Machu Picchu",
+          "description": "Breathtaking 2-minute glimpse of dawn at the ancient wonder",
+          "thumbnail": "https://images.unsplash.com/photo-1526392060635-9d6019884377?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 2,
+          "video_type": "short",
+          "views": 5600000,
+          "likes": 480000,
+          "share_price": 25.0,
+          "available_shares": 55.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 16.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 21.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 25.0
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623781+00:00",
+          "creator": {
+            "creator_id": "creator_alex",
+            "name": "Alex Roams",
+            "category": "Travel",
+            "image": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400",
+            "stock_symbol": "$ALEX",
+            "subscriber_count": 567000,
+            "total_views": 23000000,
+            "created_at": "2026-01-24T01:39:42.613656+00:00"
+          }
+        },
+        {
+          "video_id": "vid_alex_1",
+          "creator_id": "creator_alex",
+          "title": "Hidden Gems of Bali - 15 Min Travel Guide",
+          "description": "Discover secret spots in Bali that most tourists never see!",
+          "thumbnail": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 15,
+          "video_type": "full",
+          "views": 3200000,
+          "likes": 245000,
+          "share_price": 18.75,
+          "available_shares": 70.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 13.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 16.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 18.75
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623772+00:00",
+          "creator": {
+            "creator_id": "creator_alex",
+            "name": "Alex Roams",
+            "category": "Travel",
+            "image": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400",
+            "stock_symbol": "$ALEX",
+            "subscriber_count": 567000,
+            "total_views": 23000000,
+            "created_at": "2026-01-24T01:39:42.613656+00:00"
+          }
+        },
+        {
+          "video_id": "vid_joe_1",
+          "creator_id": "creator_joe",
+          "title": "Deep Talk with Sadhguru - Life, Consciousness & Beyond",
+          "description": "An incredible 30-minute conversation with Sadhguru about the nature of existence.",
+          "thumbnail": "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 30,
+          "video_type": "full",
+          "views": 15000000,
+          "likes": 1200000,
+          "share_price": 45.0,
+          "available_shares": 30.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 20.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 35.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 45.0
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623770+00:00",
+          "creator": {
+            "creator_id": "creator_joe",
+            "name": "Joe Talks",
+            "category": "Podcast",
+            "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
+            "stock_symbol": "$JOE",
+            "subscriber_count": 890000,
+            "total_views": 45000000,
+            "created_at": "2026-01-24T01:39:42.613654+00:00"
+          }
+        },
+        {
+          "video_id": "vid_emma_2",
+          "creator_id": "creator_emma",
+          "title": "Quick Dance Challenge #viral",
+          "description": "Can you keep up? 60 seconds of pure energy!",
+          "thumbnail": "https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 1,
+          "video_type": "short",
+          "views": 8500000,
+          "likes": 920000,
+          "share_price": 22.0,
+          "available_shares": 45.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 15.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 19.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 22.0
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623767+00:00",
+          "creator": {
+            "creator_id": "creator_emma",
+            "name": "Emma Dance",
+            "category": "Dance",
+            "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
+            "stock_symbol": "$EMMA",
+            "subscriber_count": 245000,
+            "total_views": 12500000,
+            "created_at": "2026-01-24T01:39:42.613643+00:00"
+          }
+        },
+        {
+          "video_id": "vid_emma_1",
+          "creator_id": "creator_emma",
+          "title": "20-Min Dance Workout for Beginners",
+          "description": "Learn the hottest dance moves with this easy-to-follow tutorial. Perfect for beginners!",
+          "thumbnail": "https://images.unsplash.com/photo-1524594152303-9fd13543fe6e?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 20,
+          "video_type": "full",
+          "views": 2500000,
+          "likes": 185000,
+          "share_price": 15.5,
+          "available_shares": 65.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 12.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 14.5
+            },
+            {
+              "date": "2024-02-15",
+              "price": 15.5
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623758+00:00",
+          "creator": {
+            "creator_id": "creator_emma",
+            "name": "Emma Dance",
+            "category": "Dance",
+            "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
+            "stock_symbol": "$EMMA",
+            "subscriber_count": 245000,
+            "total_views": 12500000,
+            "created_at": "2026-01-24T01:39:42.613643+00:00"
+          }
+        }
+      ]
+    },
+    {
+      "test": "Like Video",
+      "success": true,
+      "details": "Status: 200",
+      "response_data": {
+        "liked": true,
+        "likes": 620001
+      }
+    },
+    {
+      "test": "Unlike Video",
+      "success": true,
+      "details": "Status: 200",
+      "response_data": {
+        "liked": false,
+        "likes": 620000
+      }
+    },
+    {
+      "test": "Get Creators for Subscribe Test",
+      "success": true,
+      "details": "Status: 200",
+      "response_data": [
+        {
+          "creator_id": "creator_emma",
+          "name": "Emma Dance",
+          "category": "Dance",
+          "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
+          "stock_symbol": "$EMMA",
+          "subscriber_count": 245000,
+          "total_views": 12500000,
+          "created_at": "2026-01-24T01:39:42.613643+00:00"
+        },
+        {
+          "creator_id": "creator_joe",
+          "name": "Joe Talks",
+          "category": "Podcast",
+          "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
+          "stock_symbol": "$JOE",
+          "subscriber_count": 890000,
+          "total_views": 45000000,
+          "created_at": "2026-01-24T01:39:42.613654+00:00"
+        },
+        {
+          "creator_id": "creator_alex",
+          "name": "Alex Roams",
+          "category": "Travel",
+          "image": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400",
+          "stock_symbol": "$ALEX",
+          "subscriber_count": 567000,
+          "total_views": 23000000,
+          "created_at": "2026-01-24T01:39:42.613656+00:00"
+        },
+        {
+          "creator_id": "creator_sarah",
+          "name": "Sarah Tech",
+          "category": "Tech",
+          "image": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400",
+          "stock_symbol": "$TECH",
+          "subscriber_count": 1200000,
+          "total_views": 67000000,
+          "created_at": "2026-01-24T01:39:42.613658+00:00"
+        },
+        {
+          "creator_id": "creator_mike",
+          "name": "Chef Mike",
+          "category": "Food",
+          "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
+          "stock_symbol": "$CHEF",
+          "subscriber_count": 432000,
+          "total_views": 18000000,
+          "created_at": "2026-01-24T01:39:42.613659+00:00"
+        }
+      ]
+    },
+    {
+      "test": "Subscribe to Creator",
+      "success": true,
+      "details": "Status: 200",
+      "response_data": {
+        "subscribed": true
+      }
+    },
+    {
+      "test": "Unsubscribe from Creator",
+      "success": true,
+      "details": "Status: 200",
+      "response_data": {
+        "subscribed": false
+      }
+    },
+    {
+      "test": "Get Videos for Trading",
+      "success": true,
+      "details": "Status: 200",
+      "response_data": [
+        {
+          "video_id": "vid_mike_2",
+          "creator_id": "creator_mike",
+          "title": "60-Second Guacamole",
+          "description": "The fastest and best guac you'll ever make!",
+          "thumbnail": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 1,
+          "video_type": "short",
+          "views": 7200001,
+          "likes": 620000,
+          "share_price": 28.5,
+          "available_shares": 50.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 17.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 23.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 28.5
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623792+00:00",
+          "creator": {
+            "creator_id": "creator_mike",
+            "name": "Chef Mike",
+            "category": "Food",
+            "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
+            "stock_symbol": "$CHEF",
+            "subscriber_count": 432000,
+            "total_views": 18000000,
+            "created_at": "2026-01-24T01:39:42.613659+00:00"
+          }
+        },
+        {
+          "video_id": "vid_mike_1",
+          "creator_id": "creator_mike",
+          "title": "Perfect Pasta Carbonara - Restaurant Quality at Home",
+          "description": "Master the authentic Italian carbonara with this detailed tutorial",
+          "thumbnail": "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 18,
+          "video_type": "full",
+          "views": 4500000,
+          "likes": 380000,
+          "share_price": 21.25,
+          "available_shares": 60.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 14.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 18.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 21.25
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623790+00:00",
+          "creator": {
+            "creator_id": "creator_mike",
+            "name": "Chef Mike",
+            "category": "Food",
+            "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
+            "stock_symbol": "$CHEF",
+            "subscriber_count": 432000,
+            "total_views": 18000000,
+            "created_at": "2026-01-24T01:39:42.613659+00:00"
+          }
+        },
+        {
+          "video_id": "vid_sarah_2",
+          "creator_id": "creator_sarah",
+          "title": "This AI Tool Changed Everything",
+          "description": "Quick look at the AI tool everyone's talking about",
+          "thumbnail": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 3,
+          "video_type": "short",
+          "views": 12000000,
+          "likes": 890000,
+          "share_price": 38.0,
+          "available_shares": 25.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 20.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 30.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 38.0
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623785+00:00",
+          "creator": {
+            "creator_id": "creator_sarah",
+            "name": "Sarah Tech",
+            "category": "Tech",
+            "image": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400",
+            "stock_symbol": "$TECH",
+            "subscriber_count": 1200000,
+            "total_views": 67000000,
+            "created_at": "2026-01-24T01:39:42.613658+00:00"
+          }
+        },
+        {
+          "video_id": "vid_sarah_1",
+          "creator_id": "creator_sarah",
+          "title": "iPhone 16 Pro Max - Honest Review After 30 Days",
+          "description": "The truth about Apple's latest flagship. Is it worth the upgrade?",
+          "thumbnail": "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 25,
+          "video_type": "full",
+          "views": 8900000,
+          "likes": 670000,
+          "share_price": 32.5,
+          "available_shares": 40.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 18.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 26.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 32.5
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623783+00:00",
+          "creator": {
+            "creator_id": "creator_sarah",
+            "name": "Sarah Tech",
+            "category": "Tech",
+            "image": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400",
+            "stock_symbol": "$TECH",
+            "subscriber_count": 1200000,
+            "total_views": 67000000,
+            "created_at": "2026-01-24T01:39:42.613658+00:00"
+          }
+        },
+        {
+          "video_id": "vid_alex_2",
+          "creator_id": "creator_alex",
+          "title": "Sunrise at Machu Picchu",
+          "description": "Breathtaking 2-minute glimpse of dawn at the ancient wonder",
+          "thumbnail": "https://images.unsplash.com/photo-1526392060635-9d6019884377?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 2,
+          "video_type": "short",
+          "views": 5600000,
+          "likes": 480000,
+          "share_price": 25.0,
+          "available_shares": 55.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 16.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 21.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 25.0
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623781+00:00",
+          "creator": {
+            "creator_id": "creator_alex",
+            "name": "Alex Roams",
+            "category": "Travel",
+            "image": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400",
+            "stock_symbol": "$ALEX",
+            "subscriber_count": 567000,
+            "total_views": 23000000,
+            "created_at": "2026-01-24T01:39:42.613656+00:00"
+          }
+        },
+        {
+          "video_id": "vid_alex_1",
+          "creator_id": "creator_alex",
+          "title": "Hidden Gems of Bali - 15 Min Travel Guide",
+          "description": "Discover secret spots in Bali that most tourists never see!",
+          "thumbnail": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 15,
+          "video_type": "full",
+          "views": 3200000,
+          "likes": 245000,
+          "share_price": 18.75,
+          "available_shares": 70.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 13.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 16.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 18.75
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623772+00:00",
+          "creator": {
+            "creator_id": "creator_alex",
+            "name": "Alex Roams",
+            "category": "Travel",
+            "image": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400",
+            "stock_symbol": "$ALEX",
+            "subscriber_count": 567000,
+            "total_views": 23000000,
+            "created_at": "2026-01-24T01:39:42.613656+00:00"
+          }
+        },
+        {
+          "video_id": "vid_joe_1",
+          "creator_id": "creator_joe",
+          "title": "Deep Talk with Sadhguru - Life, Consciousness & Beyond",
+          "description": "An incredible 30-minute conversation with Sadhguru about the nature of existence.",
+          "thumbnail": "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 30,
+          "video_type": "full",
+          "views": 15000000,
+          "likes": 1200000,
+          "share_price": 45.0,
+          "available_shares": 30.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 20.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 35.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 45.0
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623770+00:00",
+          "creator": {
+            "creator_id": "creator_joe",
+            "name": "Joe Talks",
+            "category": "Podcast",
+            "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
+            "stock_symbol": "$JOE",
+            "subscriber_count": 890000,
+            "total_views": 45000000,
+            "created_at": "2026-01-24T01:39:42.613654+00:00"
+          }
+        },
+        {
+          "video_id": "vid_emma_2",
+          "creator_id": "creator_emma",
+          "title": "Quick Dance Challenge #viral",
+          "description": "Can you keep up? 60 seconds of pure energy!",
+          "thumbnail": "https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 1,
+          "video_type": "short",
+          "views": 8500000,
+          "likes": 920000,
+          "share_price": 22.0,
+          "available_shares": 45.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 15.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 19.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 22.0
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623767+00:00",
+          "creator": {
+            "creator_id": "creator_emma",
+            "name": "Emma Dance",
+            "category": "Dance",
+            "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
+            "stock_symbol": "$EMMA",
+            "subscriber_count": 245000,
+            "total_views": 12500000,
+            "created_at": "2026-01-24T01:39:42.613643+00:00"
+          }
+        },
+        {
+          "video_id": "vid_emma_1",
+          "creator_id": "creator_emma",
+          "title": "20-Min Dance Workout for Beginners",
+          "description": "Learn the hottest dance moves with this easy-to-follow tutorial. Perfect for beginners!",
+          "thumbnail": "https://images.unsplash.com/photo-1524594152303-9fd13543fe6e?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 20,
+          "video_type": "full",
+          "views": 2500000,
+          "likes": 185000,
+          "share_price": 15.5,
+          "available_shares": 65.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 12.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 14.5
+            },
+            {
+              "date": "2024-02-15",
+              "price": 15.5
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623758+00:00",
+          "creator": {
+            "creator_id": "creator_emma",
+            "name": "Emma Dance",
+            "category": "Dance",
+            "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
+            "stock_symbol": "$EMMA",
+            "subscriber_count": 245000,
+            "total_views": 12500000,
+            "created_at": "2026-01-24T01:39:42.613643+00:00"
+          }
+        }
+      ]
+    },
+    {
+      "test": "Buy Shares",
+      "success": true,
+      "details": "Status: 200",
+      "response_data": {
+        "success": true,
+        "shares_bought": 2.0,
+        "total_cost": 57.0
+      }
+    },
+    {
+      "test": "Sell Shares",
+      "success": true,
+      "details": "Status: 200",
+      "response_data": {
+        "success": true,
+        "shares_sold": 1.0,
+        "total_value": 28.5
+      }
+    },
+    {
+      "test": "Get Portfolio",
+      "success": true,
+      "details": "Status: 200",
+      "response_data": {
+        "items": [
+          {
+            "video": {
+              "video_id": "vid_mike_2",
+              "creator_id": "creator_mike",
+              "title": "60-Second Guacamole",
+              "description": "The fastest and best guac you'll ever make!",
+              "thumbnail": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=800",
+              "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+              "duration_minutes": 1,
+              "video_type": "short",
+              "views": 7200001,
+              "likes": 620000,
+              "share_price": 28.5,
+              "available_shares": 49.0,
+              "total_shares": 100.0,
+              "price_history": [
+                {
+                  "date": "2024-01-01",
+                  "price": 10.0
+                },
+                {
+                  "date": "2024-01-15",
+                  "price": 17.0
+                },
+                {
+                  "date": "2024-02-01",
+                  "price": 23.0
+                },
+                {
+                  "date": "2024-02-15",
+                  "price": 28.5
+                }
+              ],
+              "created_at": "2026-01-24T01:39:42.623792+00:00"
+            },
+            "creator": {
+              "creator_id": "creator_mike",
+              "name": "Chef Mike",
+              "category": "Food",
+              "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
+              "stock_symbol": "$CHEF",
+              "subscriber_count": 432000,
+              "total_views": 18000000,
+              "created_at": "2026-01-24T01:39:42.613659+00:00"
+            },
+            "shares_owned": 1.0,
+            "purchase_price": 28.5,
+            "current_price": 28.5,
+            "current_value": 28.5,
+            "gain": 0.0,
+            "gain_percent": 0.0
+          }
+        ],
+        "total_value": 28.5,
+        "total_gain": 0.0,
+        "wallet_balance": 471.5
+      }
+    },
+    {
+      "test": "Get Wallet",
+      "success": true,
+      "details": "Status: 200",
+      "response_data": {
+        "balance": 471.5,
+        "transactions": [
+          {
+            "transaction_id": "txn_6ac73817b7b8",
+            "user_id": "test-user-1769218880850",
+            "transaction_type": "sell_share",
+            "amount": 28.5,
+            "video_id": "vid_mike_2",
+            "shares": 1.0,
+            "created_at": "2026-01-24T01:41:55.469603+00:00",
+            "video": {
+              "video_id": "vid_mike_2",
+              "creator_id": "creator_mike",
+              "title": "60-Second Guacamole",
+              "description": "The fastest and best guac you'll ever make!",
+              "thumbnail": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=800",
+              "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+              "duration_minutes": 1,
+              "video_type": "short",
+              "views": 7200001,
+              "likes": 620000,
+              "share_price": 28.5,
+              "available_shares": 49.0,
+              "total_shares": 100.0,
+              "price_history": [
+                {
+                  "date": "2024-01-01",
+                  "price": 10.0
+                },
+                {
+                  "date": "2024-01-15",
+                  "price": 17.0
+                },
+                {
+                  "date": "2024-02-01",
+                  "price": 23.0
+                },
+                {
+                  "date": "2024-02-15",
+                  "price": 28.5
+                }
+              ],
+              "created_at": "2026-01-24T01:39:42.623792+00:00"
+            }
+          },
+          {
+            "transaction_id": "txn_c89d402048cd",
+            "user_id": "test-user-1769218880850",
+            "transaction_type": "buy_share",
+            "amount": -57.0,
+            "video_id": "vid_mike_2",
+            "shares": 2.0,
+            "created_at": "2026-01-24T01:41:55.420151+00:00",
+            "video": {
+              "video_id": "vid_mike_2",
+              "creator_id": "creator_mike",
+              "title": "60-Second Guacamole",
+              "description": "The fastest and best guac you'll ever make!",
+              "thumbnail": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=800",
+              "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+              "duration_minutes": 1,
+              "video_type": "short",
+              "views": 7200001,
+              "likes": 620000,
+              "share_price": 28.5,
+              "available_shares": 49.0,
+              "total_shares": 100.0,
+              "price_history": [
+                {
+                  "date": "2024-01-01",
+                  "price": 10.0
+                },
+                {
+                  "date": "2024-01-15",
+                  "price": 17.0
+                },
+                {
+                  "date": "2024-02-01",
+                  "price": 23.0
+                },
+                {
+                  "date": "2024-02-15",
+                  "price": 28.5
+                }
+              ],
+              "created_at": "2026-01-24T01:39:42.623792+00:00"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "test": "Deposit Funds",
+      "success": true,
+      "details": "Status: 200",
+      "response_data": {
+        "success": true,
+        "new_balance": 571.5
+      }
+    },
+    {
+      "test": "Get Recommendations",
+      "success": true,
+      "details": "Status: 200",
+      "response_data": [
+        {
+          "video_id": "vid_joe_1",
+          "creator_id": "creator_joe",
+          "title": "Deep Talk with Sadhguru - Life, Consciousness & Beyond",
+          "description": "An incredible 30-minute conversation with Sadhguru about the nature of existence.",
+          "thumbnail": "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 30,
+          "video_type": "full",
+          "views": 15000000,
+          "likes": 1200000,
+          "share_price": 45.0,
+          "available_shares": 30.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 20.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 35.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 45.0
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623770+00:00",
+          "creator": {
+            "creator_id": "creator_joe",
+            "name": "Joe Talks",
+            "category": "Podcast",
+            "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
+            "stock_symbol": "$JOE",
+            "subscriber_count": 890000,
+            "total_views": 45000000,
+            "created_at": "2026-01-24T01:39:42.613654+00:00"
+          }
+        },
+        {
+          "video_id": "vid_sarah_2",
+          "creator_id": "creator_sarah",
+          "title": "This AI Tool Changed Everything",
+          "description": "Quick look at the AI tool everyone's talking about",
+          "thumbnail": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 3,
+          "video_type": "short",
+          "views": 12000000,
+          "likes": 890000,
+          "share_price": 38.0,
+          "available_shares": 25.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 20.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 30.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 38.0
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623785+00:00",
+          "creator": {
+            "creator_id": "creator_sarah",
+            "name": "Sarah Tech",
+            "category": "Tech",
+            "image": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400",
+            "stock_symbol": "$TECH",
+            "subscriber_count": 1200000,
+            "total_views": 67000000,
+            "created_at": "2026-01-24T01:39:42.613658+00:00"
+          }
+        },
+        {
+          "video_id": "vid_emma_2",
+          "creator_id": "creator_emma",
+          "title": "Quick Dance Challenge #viral",
+          "description": "Can you keep up? 60 seconds of pure energy!",
+          "thumbnail": "https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 1,
+          "video_type": "short",
+          "views": 8500000,
+          "likes": 920000,
+          "share_price": 22.0,
+          "available_shares": 45.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 15.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 19.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 22.0
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623767+00:00",
+          "creator": {
+            "creator_id": "creator_emma",
+            "name": "Emma Dance",
+            "category": "Dance",
+            "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
+            "stock_symbol": "$EMMA",
+            "subscriber_count": 245000,
+            "total_views": 12500000,
+            "created_at": "2026-01-24T01:39:42.613643+00:00"
+          }
+        },
+        {
+          "video_id": "vid_sarah_1",
+          "creator_id": "creator_sarah",
+          "title": "iPhone 16 Pro Max - Honest Review After 30 Days",
+          "description": "The truth about Apple's latest flagship. Is it worth the upgrade?",
+          "thumbnail": "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 25,
+          "video_type": "full",
+          "views": 8900000,
+          "likes": 670000,
+          "share_price": 32.5,
+          "available_shares": 40.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 18.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 26.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 32.5
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623783+00:00",
+          "creator": {
+            "creator_id": "creator_sarah",
+            "name": "Sarah Tech",
+            "category": "Tech",
+            "image": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400",
+            "stock_symbol": "$TECH",
+            "subscriber_count": 1200000,
+            "total_views": 67000000,
+            "created_at": "2026-01-24T01:39:42.613658+00:00"
+          }
+        },
+        {
+          "video_id": "vid_mike_2",
+          "creator_id": "creator_mike",
+          "title": "60-Second Guacamole",
+          "description": "The fastest and best guac you'll ever make!",
+          "thumbnail": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 1,
+          "video_type": "short",
+          "views": 7200001,
+          "likes": 620000,
+          "share_price": 28.5,
+          "available_shares": 49.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 17.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 23.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 28.5
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623792+00:00",
+          "creator": {
+            "creator_id": "creator_mike",
+            "name": "Chef Mike",
+            "category": "Food",
+            "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
+            "stock_symbol": "$CHEF",
+            "subscriber_count": 432000,
+            "total_views": 18000000,
+            "created_at": "2026-01-24T01:39:42.613659+00:00"
+          }
+        },
+        {
+          "video_id": "vid_alex_1",
+          "creator_id": "creator_alex",
+          "title": "Hidden Gems of Bali - 15 Min Travel Guide",
+          "description": "Discover secret spots in Bali that most tourists never see!",
+          "thumbnail": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 15,
+          "video_type": "full",
+          "views": 3200000,
+          "likes": 245000,
+          "share_price": 18.75,
+          "available_shares": 70.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 13.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 16.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 18.75
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623772+00:00",
+          "creator": {
+            "creator_id": "creator_alex",
+            "name": "Alex Roams",
+            "category": "Travel",
+            "image": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400",
+            "stock_symbol": "$ALEX",
+            "subscriber_count": 567000,
+            "total_views": 23000000,
+            "created_at": "2026-01-24T01:39:42.613656+00:00"
+          }
+        },
+        {
+          "video_id": "vid_alex_2",
+          "creator_id": "creator_alex",
+          "title": "Sunrise at Machu Picchu",
+          "description": "Breathtaking 2-minute glimpse of dawn at the ancient wonder",
+          "thumbnail": "https://images.unsplash.com/photo-1526392060635-9d6019884377?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 2,
+          "video_type": "short",
+          "views": 5600000,
+          "likes": 480000,
+          "share_price": 25.0,
+          "available_shares": 55.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 16.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 21.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 25.0
+            }
+          ],
+          "created_at": "2026-01-24T01:39:42.623781+00:00",
+          "creator": {
+            "creator_id": "creator_alex",
+            "name": "Alex Roams",
+            "category": "Travel",
+            "image": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400",
+            "stock_symbol": "$ALEX",
+            "subscriber_count": 567000,
+            "total_views": 23000000,
+            "created_at": "2026-01-24T01:39:42.613656+00:00"
+          }
+        }
+      ]
+    }
+  ]
+}
