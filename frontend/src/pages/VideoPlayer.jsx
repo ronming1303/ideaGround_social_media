@@ -110,6 +110,7 @@ export default function VideoPlayer() {
       
       setBuyDialogOpen(false);
       fetchVideo(); // Refresh video data
+      fetchTopEarners(); // Refresh leaderboard
     } catch (error) {
       toast.error(error.response?.data?.detail || "Failed to buy shares");
     } finally {
