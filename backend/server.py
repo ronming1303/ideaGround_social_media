@@ -1299,6 +1299,153 @@ async def seed_database():
     
     return {"message": "Database seeded successfully", "creators": len(creators_data), "videos": len(videos_data)}
 
+# ==================== VIDEO ANALYTICS FOR CREATORS ====================
+
+@api_router.get("/analytics/overview")
+async def get_creator_analytics_overview(user: User = Depends(get_current_user)):
+    """Get analytics overview for a creator"""
+    creator = await db.creators.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not creator:
+        return {"is_creator": False, "analytics": None}
+    
+    videos = await db.videos.find({"creator_id": creator["creator_id"]}, {"_id": 0}).to_list(100)
+    
+    # Calculate totals
+    total_views = sum(v.get("views", 0) for v in videos)
+    total_likes = sum(v.get("likes", 0) for v in videos)
+    total_shares_sold = sum(v.get("total_shares", 100) - v.get("available_shares", 100) for v in videos)
+    total_market_cap = sum(v.get("share_price", 10) * v.get("total_shares", 100) for v in videos)
+    avg_share_price = sum(v.get("share_price", 10) for v in videos) / len(videos) if videos else 0
+    
+    # Calculate engagement rate
+    engagement_rate = (total_likes / total_views * 100) if total_views > 0 else 0
+    
+    # Top performing video
+    top_video = max(videos, key=lambda v: v.get("views", 0)) if videos else None
+    
+    # Best price performer
+    best_performer = max(videos, key=lambda v: v.get("share_price", 0)) if videos else None
+    
+    return {
+        "is_creator": True,
+        "creator": creator,
+        "analytics": {
+            "total_videos": len(videos),
+            "total_views": total_views,
+            "total_likes": total_likes,
+            "total_shares_sold": total_shares_sold,
+            "total_market_cap": round(total_market_cap, 2),
+            "avg_share_price": round(avg_share_price, 2),
+            "engagement_rate": round(engagement_rate, 2),
+            "subscriber_count": creator.get("subscriber_count", 0),
+            "top_video": {
+                "video_id": top_video["video_id"],
+                "title": top_video["title"],
+                "views": top_video.get("views", 0),
+                "ticker_symbol": top_video.get("ticker_symbol")
+            } if top_video else None,
+            "best_performer": {
+                "video_id": best_performer["video_id"],
+                "title": best_performer["title"],
+                "share_price": best_performer.get("share_price", 10),
+                "ticker_symbol": best_performer.get("ticker_symbol")
+            } if best_performer else None
+        }
+    }
+
+@api_router.get("/analytics/videos")
+async def get_video_analytics(user: User = Depends(get_current_user)):
+    """Get detailed analytics for all creator's videos"""
+    creator = await db.creators.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not creator:
+        return {"is_creator": False, "videos": []}
+    
+    videos = await db.videos.find({"creator_id": creator["creator_id"]}, {"_id": 0}).to_list(100)
+    
+    video_analytics = []
+    for video in videos:
+        shares_sold = video.get("total_shares", 100) - video.get("available_shares", 100)
+        market_cap = video.get("share_price", 10) * video.get("total_shares", 100)
+        revenue_from_shares = shares_sold * video.get("share_price", 10)
+        engagement_rate = (video.get("likes", 0) / video.get("views", 1) * 100) if video.get("views", 0) > 0 else 0
+        
+        # Calculate price change from history
+        price_history = video.get("price_history", [])
+        initial_price = price_history[0]["price"] if price_history else 10.0
+        current_price = video.get("share_price", 10.0)
+        price_growth = ((current_price - initial_price) / initial_price * 100) if initial_price > 0 else 0
+        
+        video_analytics.append({
+            "video_id": video["video_id"],
+            "title": video["title"],
+            "ticker_symbol": video.get("ticker_symbol"),
+            "thumbnail": video["thumbnail"],
+            "video_type": video["video_type"],
+            "category": video.get("category"),
+            "duration_minutes": video["duration_minutes"],
+            "views": video.get("views", 0),
+            "likes": video.get("likes", 0),
+            "engagement_rate": round(engagement_rate, 2),
+            "share_price": video.get("share_price", 10.0),
+            "price_change_percent": video.get("last_price_change_percent", 0),
+            "price_growth_all_time": round(price_growth, 1),
+            "shares_sold": shares_sold,
+            "available_shares": video.get("available_shares", 100),
+            "total_shares": video.get("total_shares", 100),
+            "market_cap": round(market_cap, 2),
+            "revenue_from_shares": round(revenue_from_shares, 2),
+            "created_at": video.get("created_at")
+        })
+    
+    # Sort by views (most popular first)
+    video_analytics.sort(key=lambda x: x["views"], reverse=True)
+    
+    return {
+        "is_creator": True,
+        "creator": creator,
+        "videos": video_analytics
+    }
+
+@api_router.get("/analytics/video/{video_id}")
+async def get_single_video_analytics(video_id: str, user: User = Depends(get_current_user)):
+    """Get detailed analytics for a single video"""
+    creator = await db.creators.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not creator:
+        raise HTTPException(status_code=403, detail="Not a creator")
+    
+    video = await db.videos.find_one({"video_id": video_id, "creator_id": creator["creator_id"]}, {"_id": 0})
+    if not video:
+        raise HTTPException(status_code=404, detail="Video not found or not owned by you")
+    
+    # Get share ownership data
+    ownerships = await db.share_ownerships.find({"video_id": video_id}, {"_id": 0}).to_list(100)
+    unique_investors = len(ownerships)
+    total_invested = sum(o.get("shares_owned", 0) * o.get("purchase_price", 10) for o in ownerships)
+    
+    shares_sold = video.get("total_shares", 100) - video.get("available_shares", 100)
+    market_cap = video.get("share_price", 10) * video.get("total_shares", 100)
+    engagement_rate = (video.get("likes", 0) / video.get("views", 1) * 100) if video.get("views", 0) > 0 else 0
+    
+    # Price history for chart
+    price_history = video.get("price_history", [])
+    
+    return {
+        "video": video,
+        "analytics": {
+            "views": video.get("views", 0),
+            "likes": video.get("likes", 0),
+            "engagement_rate": round(engagement_rate, 2),
+            "share_price": video.get("share_price", 10.0),
+            "price_change_percent": video.get("last_price_change_percent", 0),
+            "shares_sold": shares_sold,
+            "available_shares": video.get("available_shares", 100),
+            "market_cap": round(market_cap, 2),
+            "unique_investors": unique_investors,
+            "total_invested": round(total_invested, 2),
+            "price_history": price_history
+        }
+    }
+
 # ==================== ROOT ENDPOINT ====================
 
 @api_router.get("/")
