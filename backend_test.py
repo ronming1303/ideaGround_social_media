@@ -255,6 +255,7 @@ class IdeaGroundAPITester:
             self.test_share_trading()
             self.test_portfolio_wallet()
             self.test_recommendations()
+            self.test_new_features()  # Add new features test
             
         except Exception as e:
             print(f"\n❌ Test suite failed with error: {str(e)}")
