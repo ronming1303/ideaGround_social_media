@@ -475,6 +475,78 @@ async def get_video(video_id: str, request: Request):
     
     return video
 
+@api_router.get("/videos/{video_id}/top-earners")
+async def get_video_top_earners(video_id: str, limit: int = 5):
+    """
+    Get top earners (investors with highest profits) for a specific video.
+    Used for the leaderboard display on video pages.
+    """
+    video = await db.videos.find_one({"video_id": video_id}, {"_id": 0})
+    if not video:
+        raise HTTPException(status_code=404, detail="Video not found")
+    
+    # Get all share ownerships for this video
+    ownerships = await db.share_ownerships.find(
+        {"video_id": video_id}, {"_id": 0}
+    ).to_list(100)
+    
+    if not ownerships:
+        return {
+            "video_id": video_id,
+            "total_investors": 0,
+            "top_earners": []
+        }
+    
+    # Calculate profit for each investor
+    earners = []
+    for ownership in ownerships:
+        # Get user info
+        user_doc = await db.users.find_one({"user_id": ownership["user_id"]}, {"_id": 0})
+        if not user_doc:
+            continue
+        
+        current_value = ownership["shares_owned"] * video["share_price"]
+        purchase_value = ownership["shares_owned"] * ownership["purchase_price"]
+        profit = current_value - purchase_value
+        profit_percent = (profit / purchase_value * 100) if purchase_value > 0 else 0
+        
+        # Calculate potential bonus
+        is_early = ownership.get("is_early_investor", False)
+        bonus_multiplier = ownership.get("early_bonus_multiplier", 1.0)
+        potential_bonus = 0
+        if is_early and profit > 0:
+            potential_bonus = profit * (bonus_multiplier - 1)
+        
+        total_potential_return = profit + potential_bonus
+        
+        earners.append({
+            "user_id": ownership["user_id"],
+            "name": user_doc.get("name", "Anonymous"),
+            "picture": user_doc.get("picture", ""),
+            "shares_owned": ownership["shares_owned"],
+            "purchase_price": ownership["purchase_price"],
+            "current_value": current_value,
+            "profit": profit,
+            "profit_percent": profit_percent,
+            "is_early_investor": is_early,
+            "bonus_multiplier": bonus_multiplier,
+            "potential_bonus": potential_bonus,
+            "total_potential_return": total_potential_return
+        })
+    
+    # Sort by total potential return (profit + early bonus)
+    earners.sort(key=lambda x: x["total_potential_return"], reverse=True)
+    
+    # Assign ranks
+    for i, earner in enumerate(earners):
+        earner["rank"] = i + 1
+    
+    return {
+        "video_id": video_id,
+        "total_investors": len(earners),
+        "top_earners": earners[:limit]
+    }
+
 @api_router.post("/videos/{video_id}/like")
 async def like_video(video_id: str, user: User = Depends(get_current_user)):
     """Like or unlike a video"""
