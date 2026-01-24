@@ -892,15 +892,6 @@ async def upload_video(req: CreateVideoRequest, user: User = Depends(get_current
     return {"success": True, "video": video_doc}
 
 @api_router.get("/videos/my")
-async def get_my_videos(user: User = Depends(get_current_user)):
-    """Get all videos uploaded by the current user (if creator)"""
-    creator = await db.creators.find_one({"user_id": user.user_id}, {"_id": 0})
-    if not creator:
-        return {"is_creator": False, "videos": []}
-    
-    videos = await db.videos.find({"creator_id": creator["creator_id"]}, {"_id": 0}).to_list(100)
-    return {"is_creator": True, "creator": creator, "videos": videos}
-
 # ==================== SEED DATA ENDPOINT ====================
 
 @api_router.post("/seed")
