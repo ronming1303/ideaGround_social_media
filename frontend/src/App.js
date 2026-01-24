@@ -167,6 +167,11 @@ function AppRouter() {
           <AppLayout><Explore /></AppLayout>
         </ProtectedRoute>
       } />
+      <Route path="/studio" element={
+        <ProtectedRoute>
+          <AppLayout><CreatorStudio /></AppLayout>
+        </ProtectedRoute>
+      } />
     </Routes>
   );
 }
