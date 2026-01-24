@@ -601,6 +601,82 @@ export default function Portfolio() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Redeem Dialog */}
+      <Dialog open={redeemDialogOpen} onOpenChange={setRedeemDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-heading flex items-center gap-2">
+              <Wallet className="w-5 h-5 text-secondary" />
+              Redeem All Shares
+            </DialogTitle>
+          </DialogHeader>
+          {selectedItem && (
+            <div className="space-y-6 py-4">
+              <div className="flex items-center gap-4 p-4 rounded-xl bg-muted/50">
+                <img 
+                  src={selectedItem.video.thumbnail} 
+                  alt={selectedItem.video.title}
+                  className="w-20 h-14 rounded-lg object-cover"
+                />
+                <div>
+                  <p className="font-medium line-clamp-1">{selectedItem.video.title}</p>
+                  <p className="text-sm text-muted-foreground">{selectedItem.shares_owned} shares @ ${selectedItem.current_price.toFixed(2)}</p>
+                </div>
+              </div>
+
+              <div className="p-4 rounded-xl bg-accent">
+                <div className="flex justify-between mb-2">
+                  <span className="text-muted-foreground">Total shares</span>
+                  <span className="font-mono">{selectedItem.shares_owned}</span>
+                </div>
+                <div className="flex justify-between mb-2">
+                  <span className="text-muted-foreground">Current value</span>
+                  <span className="font-mono">{formatCurrency(selectedItem.current_value)}</span>
+                </div>
+                {selectedItem.is_early_investor && selectedItem.gain > 0 && (
+                  <div className="flex justify-between mb-2 text-amber-600">
+                    <span className="flex items-center gap-1">
+                      <Award className="w-3 h-3" />
+                      Early bonus ({selectedItem.early_bonus_multiplier}x on profit)
+                    </span>
+                    <span className="font-mono">+{formatCurrency(selectedItem.potential_bonus)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between mb-2 text-destructive">
+                  <span>Platform fee (5%)</span>
+                  <span className="font-mono">
+                    -{formatCurrency((selectedItem.current_value + (selectedItem.potential_bonus || 0)) * 0.05)}
+                  </span>
+                </div>
+                <div className="flex justify-between pt-2 border-t border-border">
+                  <span className="font-medium">Net to wallet</span>
+                  <span className="font-heading font-bold text-lg text-secondary">
+                    +{formatCurrency((selectedItem.current_value + (selectedItem.potential_bonus || 0)) * 0.95)}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                <DollarSign className="w-4 h-4 text-amber-600 mt-0.5" />
+                <div className="text-sm text-amber-700">
+                  <p className="font-medium">Redeem vs Sell</p>
+                  <p className="text-xs mt-1">Redeeming cashes out ALL shares at once with a 5% platform fee. Use "Sell" to sell partial shares without fees.</p>
+                </div>
+              </div>
+
+              <Button 
+                data-testid="confirm-redeem-btn"
+                onClick={handleRedeemShares}
+                disabled={redeeming}
+                className="w-full bg-secondary text-white hover:bg-secondary/90 rounded-full py-6"
+              >
+                {redeeming ? "Processing..." : `Redeem ${selectedItem.shares_owned} Shares to Wallet`}
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
