@@ -813,7 +813,6 @@ async def become_creator(req: BecomeCreatorRequest, user: User = Depends(get_cur
     await db.creators.insert_one(creator_doc)
     
     # Return without _id
-    del creator_doc["_id"] if "_id" in creator_doc else None
     creator_doc.pop("_id", None)
     
     return {"success": True, "creator": creator_doc}
