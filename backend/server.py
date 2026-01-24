@@ -72,6 +72,8 @@ class Video(BaseModel):
     video_url: str
     duration_minutes: int
     video_type: str  # "short" or "full"
+    category: Optional[str] = None
+    ticker_symbol: Optional[str] = None  # Unique video ticker like EMMA_0126D1
     views: int = 0
     likes: int = 0
     share_price: float = 10.00
