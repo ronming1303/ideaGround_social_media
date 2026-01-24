@@ -422,7 +422,7 @@ export default function Portfolio() {
                   </div>
                 )}
                 <div className="flex justify-between pt-2 border-t border-border">
-                  <span className="font-medium">You'll receive</span>
+                  <span className="font-medium">You&apos;ll receive</span>
                   <span className="font-heading font-bold text-lg text-secondary">
                     +{formatCurrency(
                       selectedItem.current_price * sharesToSell + 
@@ -438,7 +438,7 @@ export default function Portfolio() {
                 <div className="flex items-center gap-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
                   <Sparkles className="w-4 h-4 text-amber-600" />
                   <p className="text-sm text-amber-700">
-                    You're an early investor! Profit bonus will be applied on sale.
+                    You&apos;re an early investor! Profit bonus will be applied on sale.
                   </p>
                 </div>
               )}
