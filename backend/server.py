@@ -954,6 +954,123 @@ async def get_portfolio_performance(user: User = Depends(get_current_user)):
         "holdings_count": len(ownerships)
     }
 
+# ==================== WATCHLIST ENDPOINTS ====================
+
+@api_router.get("/watchlist")
+async def get_watchlist(user: User = Depends(get_current_user)):
+    """
+    Get user's watchlist with current prices and price changes since added.
+    """
+    watchlist_items = await db.watchlist.find(
+        {"user_id": user.user_id}, {"_id": 0}
+    ).to_list(50)
+    
+    enriched_items = []
+    for item in watchlist_items:
+        video = await db.videos.find_one({"video_id": item["video_id"]}, {"_id": 0})
+        if video:
+            creator = await db.creators.find_one({"creator_id": video["creator_id"]}, {"_id": 0})
+            
+            price_when_added = item.get("price_when_added", video["share_price"])
+            current_price = video["share_price"]
+            price_change = current_price - price_when_added
+            price_change_percent = (price_change / price_when_added * 100) if price_when_added > 0 else 0
+            
+            # Check if user owns shares
+            ownership = await db.share_ownerships.find_one(
+                {"user_id": user.user_id, "video_id": item["video_id"]}, {"_id": 0}
+            )
+            
+            # Check early investor tier available
+            shares_sold_percent = ((video["total_shares"] - video["available_shares"]) / video["total_shares"]) * 100
+            if shares_sold_percent < 10:
+                early_tier = "platinum"
+                early_bonus = 2.5
+            elif shares_sold_percent < 20:
+                early_tier = "gold"
+                early_bonus = 2.0
+            elif shares_sold_percent < 30:
+                early_tier = "silver"
+                early_bonus = 1.5
+            else:
+                early_tier = None
+                early_bonus = 1.0
+            
+            enriched_items.append({
+                "watchlist_id": item["watchlist_id"],
+                "video": video,
+                "creator": creator,
+                "price_when_added": price_when_added,
+                "current_price": current_price,
+                "price_change": price_change,
+                "price_change_percent": price_change_percent,
+                "added_at": item.get("created_at"),
+                "user_owns_shares": ownership is not None,
+                "shares_owned": ownership["shares_owned"] if ownership else 0,
+                "early_tier_available": early_tier,
+                "early_bonus_available": early_bonus
+            })
+    
+    # Sort by price change percent (best opportunities first)
+    enriched_items.sort(key=lambda x: x["price_change_percent"])
+    
+    return {
+        "count": len(enriched_items),
+        "items": enriched_items
+    }
+
+@api_router.post("/watchlist/add")
+async def add_to_watchlist(req: WatchlistRequest, user: User = Depends(get_current_user)):
+    """Add a video to user's watchlist."""
+    video = await db.videos.find_one({"video_id": req.video_id}, {"_id": 0})
+    if not video:
+        raise HTTPException(status_code=404, detail="Video not found")
+    
+    # Check if already in watchlist
+    existing = await db.watchlist.find_one(
+        {"user_id": user.user_id, "video_id": req.video_id}
+    )
+    if existing:
+        raise HTTPException(status_code=400, detail="Video already in watchlist")
+    
+    watchlist_item = {
+        "watchlist_id": f"watch_{uuid.uuid4().hex[:12]}",
+        "user_id": user.user_id,
+        "video_id": req.video_id,
+        "price_when_added": video["share_price"],
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.watchlist.insert_one(watchlist_item)
+    
+    return {
+        "success": True,
+        "message": "Added to watchlist",
+        "price_when_added": video["share_price"]
+    }
+
+@api_router.post("/watchlist/remove")
+async def remove_from_watchlist(req: WatchlistRequest, user: User = Depends(get_current_user)):
+    """Remove a video from user's watchlist."""
+    result = await db.watchlist.delete_one(
+        {"user_id": user.user_id, "video_id": req.video_id}
+    )
+    
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Video not in watchlist")
+    
+    return {"success": True, "message": "Removed from watchlist"}
+
+@api_router.get("/watchlist/check/{video_id}")
+async def check_watchlist(video_id: str, user: User = Depends(get_current_user)):
+    """Check if a video is in user's watchlist."""
+    item = await db.watchlist.find_one(
+        {"user_id": user.user_id, "video_id": video_id}, {"_id": 0}
+    )
+    return {
+        "in_watchlist": item is not None,
+        "price_when_added": item.get("price_when_added") if item else None
+    }
+
 # ==================== WALLET ENDPOINTS ====================
 
 @api_router.get("/wallet")
