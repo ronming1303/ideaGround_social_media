@@ -211,6 +211,98 @@ export default function Portfolio() {
         </Card>
       </div>
 
+      {/* Revenue vs Investment Chart */}
+      {portfolioHistory?.history?.length > 1 && (
+        <Card className="border-border/50 mb-8" data-testid="portfolio-chart">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="font-heading flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-primary" />
+                  Investment History
+                </CardTitle>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Track your investment growth over time
+                </p>
+              </div>
+              {portfolioHistory?.summary && (
+                <div className="flex gap-6 text-right">
+                  <div>
+                    <p className="text-xs text-muted-foreground">Total Invested</p>
+                    <p className="font-heading font-bold text-primary">
+                      {formatCurrency(portfolioHistory.summary.total_invested)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Current Value</p>
+                    <p className="font-heading font-bold text-secondary">
+                      {formatCurrency(portfolioHistory.summary.current_value)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-muted-foreground">Unrealized Gains</p>
+                    <p className={`font-heading font-bold ${portfolioHistory.summary.unrealized_gains >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+                      {portfolioHistory.summary.unrealized_gains >= 0 ? '+' : ''}{formatCurrency(portfolioHistory.summary.unrealized_gains)}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="h-72">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={portfolioHistory.history}>
+                  <defs>
+                    <linearGradient id="investedGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(24, 95%, 53%)" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="hsl(24, 95%, 53%)" stopOpacity={0.05}/>
+                    </linearGradient>
+                    <linearGradient id="valueGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(173, 58%, 39%)" stopOpacity={0.3}/>
+                      <stop offset="95%" stopColor="hsl(173, 58%, 39%)" stopOpacity={0.05}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
+                  <XAxis 
+                    dataKey="date" 
+                    stroke="hsl(var(--muted-foreground))" 
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={false}
+                  />
+                  <YAxis 
+                    stroke="hsl(var(--muted-foreground))" 
+                    fontSize={12}
+                    tickLine={false}
+                    axisLine={false}
+                    tickFormatter={(value) => `$${value}`}
+                  />
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend />
+                  <Area 
+                    type="monotone" 
+                    dataKey="invested" 
+                    name="Invested"
+                    stroke="hsl(24, 95%, 53%)" 
+                    strokeWidth={2}
+                    fill="url(#investedGradient)"
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="value" 
+                    name="Current Value"
+                    stroke="hsl(173, 58%, 39%)" 
+                    strokeWidth={2}
+                    fill="url(#valueGradient)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Holdings */}
       <div className="grid lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2">
