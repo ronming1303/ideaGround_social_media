@@ -12,6 +12,7 @@ import Wallet from "./pages/Wallet";
 import CreatorProfile from "./pages/CreatorProfile";
 import Explore from "./pages/Explore";
 import CreatorStudio from "./pages/CreatorStudio";
+import CreatorAnalytics from "./pages/CreatorAnalytics";
 
 // Components
 import Sidebar from "./components/Sidebar";
