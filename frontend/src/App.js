@@ -14,6 +14,7 @@ import Explore from "./pages/Explore";
 import CreatorStudio from "./pages/CreatorStudio";
 import CreatorAnalytics from "./pages/CreatorAnalytics";
 import Watchlist from "./pages/Watchlist";
+import Admin from "./pages/Admin";
 
 // Components
 import Sidebar from "./components/Sidebar";
@@ -184,6 +185,7 @@ function AppRouter() {
           <AppLayout><CreatorAnalytics /></AppLayout>
         </ProtectedRoute>
       } />
+      <Route path="/admin" element={<Admin />} />
     </Routes>
   );
 }
