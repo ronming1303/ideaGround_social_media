@@ -404,6 +404,16 @@ export default function Portfolio() {
                       >
                         Sell
                       </Button>
+                      <Button 
+                        data-testid={`redeem-btn-${item.video.video_id}`}
+                        variant="default" 
+                        size="sm"
+                        onClick={() => openRedeemDialog(item)}
+                        className="rounded-full bg-secondary hover:bg-secondary/90 text-white"
+                      >
+                        <Wallet className="w-3 h-3 mr-1" />
+                        Redeem
+                      </Button>
                     </div>
                   ))}
                 </div>
