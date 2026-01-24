@@ -118,7 +118,7 @@ const AppLayout = ({ children }) => {
     <div className="min-h-screen bg-background">
       <div className="flex">
         <Sidebar className="hidden lg:flex" />
-        <main className="flex-1 lg:ml-64 pb-20 lg:pb-0">
+        <main className="flex-1 min-w-0 lg:ml-64 pb-20 lg:pb-0 overflow-x-hidden">
           {children}
         </main>
       </div>
