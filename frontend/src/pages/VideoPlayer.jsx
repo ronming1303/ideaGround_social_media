@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { 
   Play, Heart, Share2, Bell, TrendingUp, TrendingDown, 
   Eye, Clock, DollarSign, ArrowLeft, ShoppingCart, ChevronUp, ChevronDown,
-  Award, Users, Sparkles, PieChart
+  Award, Users, Sparkles, PieChart, EyeOff
 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts";
 
