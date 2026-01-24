@@ -840,19 +840,6 @@ async def become_creator(req: BecomeCreatorRequest, user: User = Depends(get_cur
     
     return {"success": True, "creator": creator_doc}
 
-@api_router.get("/creators/me")
-async def get_my_creator_profile(user: User = Depends(get_current_user)):
-    """Get the current user's creator profile if they are a creator"""
-    creator = await db.creators.find_one({"user_id": user.user_id}, {"_id": 0})
-    if not creator:
-        return {"is_creator": False, "creator": None}
-    
-    # Get creator's videos
-    videos = await db.videos.find({"creator_id": creator["creator_id"]}, {"_id": 0}).to_list(50)
-    creator["videos"] = videos
-    
-    return {"is_creator": True, "creator": creator}
-
 @api_router.post("/videos/upload")
 async def upload_video(req: CreateVideoRequest, user: User = Depends(get_current_user)):
     """Upload a new video (creator only)"""
