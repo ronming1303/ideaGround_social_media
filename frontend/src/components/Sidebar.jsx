@@ -11,7 +11,7 @@ import {
 } from "../components/ui/dropdown-menu";
 import { 
   Home, Compass, Briefcase, Wallet, LogOut, 
-  Settings, User, ChevronDown, Video
+  Settings, User, ChevronDown, Video, Eye
 } from "lucide-react";
 import { cn } from "../lib/utils";
 
@@ -19,6 +19,7 @@ const navItems = [
   { path: "/dashboard", label: "Home", icon: Home },
   { path: "/explore", label: "Explore", icon: Compass },
   { path: "/portfolio", label: "Portfolio", icon: Briefcase },
+  { path: "/watchlist", label: "Watchlist", icon: Eye },
   { path: "/wallet", label: "Wallet", icon: Wallet },
   { path: "/studio", label: "Creator Studio", icon: Video },
 ];
