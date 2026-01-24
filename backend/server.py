@@ -118,6 +118,17 @@ class WatchlistItem(BaseModel):
     price_when_added: float  # Track price at time of adding to watchlist
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
+class PlatformEarning(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+    earning_id: str
+    user_id: str
+    video_id: str
+    transaction_type: str  # "redemption_fee", "platform_fee"
+    gross_amount: float  # Total transaction amount
+    fee_percent: float  # Fee percentage (e.g., 5.0)
+    fee_amount: float  # Actual fee collected
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+
 # ==================== REQUEST/RESPONSE MODELS ====================
 
 class BuyShareRequest(BaseModel):
@@ -127,6 +138,9 @@ class BuyShareRequest(BaseModel):
 class SellShareRequest(BaseModel):
     video_id: str
     shares: float
+
+class RedeemRequest(BaseModel):
+    video_id: str
 
 class WatchlistRequest(BaseModel):
     video_id: str
