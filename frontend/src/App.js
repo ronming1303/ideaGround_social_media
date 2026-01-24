@@ -13,6 +13,7 @@ import CreatorProfile from "./pages/CreatorProfile";
 import Explore from "./pages/Explore";
 import CreatorStudio from "./pages/CreatorStudio";
 import CreatorAnalytics from "./pages/CreatorAnalytics";
+import Watchlist from "./pages/Watchlist";
 
 // Components
 import Sidebar from "./components/Sidebar";
