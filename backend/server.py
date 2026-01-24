@@ -638,6 +638,260 @@ async def get_recommendations(request: Request):
     
     return recommended[:10]
 
+# ==================== REAL-TIME PRICE SIMULATION ====================
+
+@api_router.post("/simulate-prices")
+async def simulate_price_changes():
+    """Simulate real-time price changes for all videos based on activity"""
+    videos = await db.videos.find({}, {"_id": 0}).to_list(100)
+    updated_videos = []
+    
+    for video in videos:
+        # Calculate price change based on various factors
+        base_change = random.uniform(-0.05, 0.08)  # -5% to +8% base volatility
+        
+        # Boost for high engagement
+        engagement_factor = min(video.get("views", 0) / 10000000, 0.5)  # Max 50% boost
+        like_factor = min(video.get("likes", 0) / 1000000, 0.3)  # Max 30% boost
+        
+        # Scarcity premium (fewer available shares = higher price pressure)
+        scarcity = 1 - (video.get("available_shares", 100) / video.get("total_shares", 100))
+        scarcity_factor = scarcity * 0.1  # Up to 10% boost
+        
+        # Calculate total change
+        total_change = base_change + engagement_factor * 0.02 + like_factor * 0.02 + scarcity_factor
+        
+        # Apply change to current price
+        current_price = video.get("share_price", 10.0)
+        new_price = max(1.0, current_price * (1 + total_change))  # Minimum $1
+        new_price = round(new_price, 2)
+        
+        price_change = new_price - current_price
+        price_change_percent = (price_change / current_price) * 100 if current_price > 0 else 0
+        
+        # Update price history
+        price_history = video.get("price_history", [])
+        today = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")
+        price_history.append({"date": today, "price": new_price})
+        
+        # Keep only last 50 price points
+        if len(price_history) > 50:
+            price_history = price_history[-50:]
+        
+        # Update in database
+        await db.videos.update_one(
+            {"video_id": video["video_id"]},
+            {"$set": {
+                "share_price": new_price,
+                "price_history": price_history,
+                "last_price_change": price_change,
+                "last_price_change_percent": round(price_change_percent, 2)
+            }}
+        )
+        
+        updated_videos.append({
+            "video_id": video["video_id"],
+            "title": video["title"],
+            "old_price": current_price,
+            "new_price": new_price,
+            "change": round(price_change, 2),
+            "change_percent": round(price_change_percent, 2)
+        })
+    
+    return {"updated": len(updated_videos), "videos": updated_videos}
+
+@api_router.get("/prices/live")
+async def get_live_prices():
+    """Get current prices for all videos with change indicators"""
+    videos = await db.videos.find({}, {"_id": 0}).to_list(100)
+    
+    prices = []
+    for video in videos:
+        creator = await db.creators.find_one({"creator_id": video["creator_id"]}, {"_id": 0})
+        prices.append({
+            "video_id": video["video_id"],
+            "title": video["title"],
+            "thumbnail": video["thumbnail"],
+            "share_price": video.get("share_price", 10.0),
+            "last_price_change": video.get("last_price_change", 0),
+            "last_price_change_percent": video.get("last_price_change_percent", 0),
+            "available_shares": video.get("available_shares", 100),
+            "total_shares": video.get("total_shares", 100),
+            "creator": creator,
+            "stock_symbol": creator.get("stock_symbol") if creator else None
+        })
+    
+    return prices
+
+# ==================== TRENDING STOCKS ====================
+
+@api_router.get("/trending")
+async def get_trending_stocks():
+    """Get trending video stocks - top gainers, losers, and most active"""
+    videos = await db.videos.find({}, {"_id": 0}).to_list(100)
+    
+    # Enrich with creator data
+    for video in videos:
+        creator = await db.creators.find_one({"creator_id": video["creator_id"]}, {"_id": 0})
+        video["creator"] = creator
+    
+    # Sort by different metrics
+    by_price_change = sorted(videos, key=lambda v: v.get("last_price_change_percent", 0), reverse=True)
+    by_views = sorted(videos, key=lambda v: v.get("views", 0), reverse=True)
+    by_scarcity = sorted(videos, key=lambda v: 1 - (v.get("available_shares", 100) / v.get("total_shares", 100)), reverse=True)
+    
+    # Top gainers (positive change)
+    top_gainers = [v for v in by_price_change if v.get("last_price_change_percent", 0) > 0][:5]
+    
+    # Top losers (negative change)
+    top_losers = [v for v in reversed(by_price_change) if v.get("last_price_change_percent", 0) < 0][:5]
+    
+    # Most active (highest views recently)
+    most_active = by_views[:5]
+    
+    # Hot stocks (high scarcity + positive momentum)
+    hot_stocks = by_scarcity[:5]
+    
+    return {
+        "top_gainers": top_gainers,
+        "top_losers": top_losers,
+        "most_active": most_active,
+        "hot_stocks": hot_stocks,
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+
+@api_router.get("/market-ticker")
+async def get_market_ticker():
+    """Get scrolling ticker data for market overview"""
+    videos = await db.videos.find({}, {"_id": 0}).to_list(100)
+    
+    ticker_items = []
+    for video in videos:
+        creator = await db.creators.find_one({"creator_id": video["creator_id"]}, {"_id": 0})
+        change_percent = video.get("last_price_change_percent", 0)
+        ticker_items.append({
+            "symbol": creator.get("stock_symbol") if creator else f"${video['video_id'][:4].upper()}",
+            "title": video["title"][:30] + "..." if len(video["title"]) > 30 else video["title"],
+            "price": video.get("share_price", 10.0),
+            "change_percent": change_percent,
+            "is_positive": change_percent >= 0
+        })
+    
+    return ticker_items
+
+# ==================== CREATOR & VIDEO UPLOAD ====================
+
+@api_router.post("/creators/become")
+async def become_creator(req: BecomeCreatorRequest, user: User = Depends(get_current_user)):
+    """Allow a user to become a creator"""
+    # Check if user is already a creator
+    existing = await db.creators.find_one({"user_id": user.user_id}, {"_id": 0})
+    if existing:
+        return {"success": True, "creator": existing, "message": "Already a creator"}
+    
+    # Generate stock symbol from name
+    name_parts = req.name.upper().split()
+    stock_symbol = f"${name_parts[0][:4]}" if name_parts else f"$USER"
+    
+    # Check for symbol collision
+    existing_symbol = await db.creators.find_one({"stock_symbol": stock_symbol})
+    if existing_symbol:
+        stock_symbol = f"${name_parts[0][:3]}{random.randint(1, 99)}"
+    
+    creator_doc = {
+        "creator_id": f"creator_{uuid.uuid4().hex[:12]}",
+        "user_id": user.user_id,
+        "name": req.name,
+        "category": req.category,
+        "image": req.image or user.picture or "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400",
+        "stock_symbol": stock_symbol,
+        "subscriber_count": 0,
+        "total_views": 0,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.creators.insert_one(creator_doc)
+    
+    # Return without _id
+    del creator_doc["_id"] if "_id" in creator_doc else None
+    creator_doc.pop("_id", None)
+    
+    return {"success": True, "creator": creator_doc}
+
+@api_router.get("/creators/me")
+async def get_my_creator_profile(user: User = Depends(get_current_user)):
+    """Get the current user's creator profile if they are a creator"""
+    creator = await db.creators.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not creator:
+        return {"is_creator": False, "creator": None}
+    
+    # Get creator's videos
+    videos = await db.videos.find({"creator_id": creator["creator_id"]}, {"_id": 0}).to_list(50)
+    creator["videos"] = videos
+    
+    return {"is_creator": True, "creator": creator}
+
+@api_router.post("/videos/upload")
+async def upload_video(req: CreateVideoRequest, user: User = Depends(get_current_user)):
+    """Upload a new video (creator only)"""
+    # Check if user is a creator
+    creator = await db.creators.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not creator:
+        raise HTTPException(status_code=403, detail="You must be a creator to upload videos. Please register as a creator first.")
+    
+    # Validate video type
+    if req.video_type not in ["short", "full"]:
+        raise HTTPException(status_code=400, detail="video_type must be 'short' or 'full'")
+    
+    # Validate duration based on type
+    if req.video_type == "short" and req.duration_minutes > 3:
+        raise HTTPException(status_code=400, detail="Shorts must be 3 minutes or less")
+    if req.video_type == "full" and (req.duration_minutes < 10 or req.duration_minutes > 30):
+        raise HTTPException(status_code=400, detail="Full videos must be between 10 and 30 minutes")
+    
+    video_id = f"vid_{uuid.uuid4().hex[:12]}"
+    
+    # Initial price based on creator's popularity
+    base_price = 10.0 + (creator.get("subscriber_count", 0) / 100000)  # +$1 per 100k subs
+    
+    video_doc = {
+        "video_id": video_id,
+        "creator_id": creator["creator_id"],
+        "title": req.title,
+        "description": req.description,
+        "thumbnail": req.thumbnail,
+        "video_url": req.video_url,
+        "duration_minutes": req.duration_minutes,
+        "video_type": req.video_type,
+        "category": req.category,
+        "views": 0,
+        "likes": 0,
+        "share_price": round(base_price, 2),
+        "available_shares": 100.0,
+        "total_shares": 100.0,
+        "price_history": [{"date": datetime.now(timezone.utc).strftime("%Y-%m-%d"), "price": round(base_price, 2)}],
+        "last_price_change": 0,
+        "last_price_change_percent": 0,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    
+    await db.videos.insert_one(video_doc)
+    
+    # Update creator's total videos count would go here if we had that field
+    
+    video_doc.pop("_id", None)
+    return {"success": True, "video": video_doc}
+
+@api_router.get("/videos/my")
+async def get_my_videos(user: User = Depends(get_current_user)):
+    """Get all videos uploaded by the current user (if creator)"""
+    creator = await db.creators.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not creator:
+        return {"is_creator": False, "videos": []}
+    
+    videos = await db.videos.find({"creator_id": creator["creator_id"]}, {"_id": 0}).to_list(100)
+    return {"is_creator": True, "creator": creator, "videos": videos}
+
 # ==================== SEED DATA ENDPOINT ====================
 
 @api_router.post("/seed")
