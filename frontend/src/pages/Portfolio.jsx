@@ -406,13 +406,42 @@ export default function Portfolio() {
                   <span className="text-muted-foreground">Shares</span>
                   <span className="font-mono">x{sharesToSell}</span>
                 </div>
+                <div className="flex justify-between mb-2">
+                  <span className="text-muted-foreground">Base value</span>
+                  <span className="font-mono">{formatCurrency(selectedItem.current_price * sharesToSell)}</span>
+                </div>
+                {selectedItem.is_early_investor && selectedItem.gain > 0 && (
+                  <div className="flex justify-between mb-2 text-amber-600">
+                    <span className="flex items-center gap-1">
+                      <Award className="w-3 h-3" />
+                      Early bonus ({selectedItem.early_bonus_multiplier}x on profit)
+                    </span>
+                    <span className="font-mono">
+                      +{formatCurrency((sharesToSell / selectedItem.shares_owned) * selectedItem.potential_bonus)}
+                    </span>
+                  </div>
+                )}
                 <div className="flex justify-between pt-2 border-t border-border">
                   <span className="font-medium">You'll receive</span>
                   <span className="font-heading font-bold text-lg text-secondary">
-                    +{formatCurrency(selectedItem.current_price * sharesToSell)}
+                    +{formatCurrency(
+                      selectedItem.current_price * sharesToSell + 
+                      (selectedItem.is_early_investor && selectedItem.gain > 0 
+                        ? (sharesToSell / selectedItem.shares_owned) * selectedItem.potential_bonus 
+                        : 0)
+                    )}
                   </span>
                 </div>
               </div>
+
+              {selectedItem.is_early_investor && (
+                <div className="flex items-center gap-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                  <Sparkles className="w-4 h-4 text-amber-600" />
+                  <p className="text-sm text-amber-700">
+                    You're an early investor! Profit bonus will be applied on sale.
+                  </p>
+                </div>
+              )}
 
               <Button 
                 data-testid="confirm-sell-btn"
