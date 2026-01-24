@@ -963,6 +963,120 @@ async def get_portfolio_performance(user: User = Depends(get_current_user)):
         "holdings_count": len(ownerships)
     }
 
+@api_router.get("/portfolio/history")
+async def get_portfolio_history(user: User = Depends(get_current_user)):
+    """
+    Get portfolio value history for chart display.
+    Calculates cumulative portfolio value over time based on transactions.
+    """
+    # Get all transactions sorted by date
+    transactions = await db.transactions.find(
+        {"user_id": user.user_id}, {"_id": 0}
+    ).sort("created_at", 1).to_list(100)
+    
+    if not transactions:
+        return {"history": [], "summary": {"total_invested": 0, "current_value": 0, "total_earnings": 0}}
+    
+    # Calculate cumulative values over time
+    history = []
+    cumulative_invested = 0
+    cumulative_earnings = 0
+    
+    for txn in transactions:
+        date_str = txn.get("created_at", "")
+        if isinstance(date_str, str):
+            # Parse date and format for display
+            try:
+                from datetime import datetime as dt
+                if "T" in date_str:
+                    parsed_date = dt.fromisoformat(date_str.replace("Z", "+00:00"))
+                else:
+                    parsed_date = dt.strptime(date_str, "%Y-%m-%d %H:%M:%S")
+                display_date = parsed_date.strftime("%b %d")
+            except:
+                display_date = date_str[:10] if len(date_str) >= 10 else date_str
+        else:
+            display_date = "Unknown"
+        
+        txn_type = txn.get("transaction_type", "")
+        amount = txn.get("amount", 0)
+        
+        if txn_type == "buy_share":
+            cumulative_invested += abs(amount)
+        elif txn_type == "sell_share":
+            # Earnings from selling
+            bonus = txn.get("bonus_earned", 0)
+            cumulative_earnings += bonus
+        elif txn_type == "deposit":
+            pass  # Don't count deposits in investment
+        
+        history.append({
+            "date": display_date,
+            "invested": round(cumulative_invested, 2),
+            "earnings": round(cumulative_earnings, 2),
+            "type": txn_type
+        })
+    
+    # Get current portfolio value
+    ownerships = await db.share_ownerships.find(
+        {"user_id": user.user_id}, {"_id": 0}
+    ).to_list(100)
+    
+    current_value = 0
+    unrealized_gains = 0
+    for ownership in ownerships:
+        video = await db.videos.find_one({"video_id": ownership["video_id"]}, {"_id": 0})
+        if video:
+            value = ownership["shares_owned"] * video["share_price"]
+            cost = ownership["shares_owned"] * ownership["purchase_price"]
+            current_value += value
+            unrealized_gains += (value - cost)
+    
+    # Add current state as last point
+    if history:
+        last_date = history[-1]["date"]
+    else:
+        last_date = "Today"
+    
+    # Generate chart data points (combine by date)
+    chart_data = []
+    seen_dates = {}
+    for point in history:
+        date = point["date"]
+        if date not in seen_dates:
+            seen_dates[date] = {
+                "date": date,
+                "invested": point["invested"],
+                "earnings": point["earnings"],
+                "value": point["invested"] + current_value - cumulative_invested + point["earnings"]
+            }
+        else:
+            seen_dates[date]["invested"] = point["invested"]
+            seen_dates[date]["earnings"] = point["earnings"]
+            seen_dates[date]["value"] = point["invested"] + current_value - cumulative_invested + point["earnings"]
+    
+    chart_data = list(seen_dates.values())
+    
+    # Add current point
+    chart_data.append({
+        "date": "Now",
+        "invested": round(cumulative_invested, 2),
+        "earnings": round(cumulative_earnings, 2),
+        "value": round(current_value + cumulative_earnings, 2),
+        "unrealized": round(unrealized_gains, 2)
+    })
+    
+    return {
+        "history": chart_data,
+        "summary": {
+            "total_invested": round(cumulative_invested, 2),
+            "current_value": round(current_value, 2),
+            "unrealized_gains": round(unrealized_gains, 2),
+            "realized_earnings": round(cumulative_earnings, 2),
+            "total_value": round(current_value + cumulative_earnings, 2)
+        }
+    }
+
 # ==================== WATCHLIST ENDPOINTS ====================
 
 @api_router.get("/watchlist")
