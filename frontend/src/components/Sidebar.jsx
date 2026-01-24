@@ -36,7 +36,7 @@ export default function Sidebar({ className }) {
       <div className="p-6 border-b border-border">
         <Link to="/dashboard" className="flex items-center gap-3">
           <img 
-            src="https://customer-assets.emergentagent.com/job_ideaground/artifacts/lxdvr0pk_IG%20logo.png" 
+            src="https://customer-assets.emergentagent.com/job_ideaground/artifacts/iyc80xh6_image.png" 
             alt="ideaGround Logo" 
             className="w-10 h-10 object-contain"
           />

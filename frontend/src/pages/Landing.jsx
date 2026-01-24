@@ -44,7 +44,7 @@ export default function Landing() {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-2">
               <img 
-                src="https://customer-assets.emergentagent.com/job_ideaground/artifacts/lxdvr0pk_IG%20logo.png" 
+                src="https://customer-assets.emergentagent.com/job_ideaground/artifacts/iyc80xh6_image.png" 
                 alt="ideaGround Logo" 
                 className="w-8 h-8 object-contain"
               />
@@ -215,7 +215,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
             <img 
-              src="https://customer-assets.emergentagent.com/job_ideaground/artifacts/lxdvr0pk_IG%20logo.png" 
+              src="https://customer-assets.emergentagent.com/job_ideaground/artifacts/iyc80xh6_image.png" 
               alt="ideaGround Logo" 
               className="w-8 h-8 object-contain"
             />
