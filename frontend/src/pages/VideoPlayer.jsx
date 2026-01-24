@@ -86,6 +86,30 @@ export default function VideoPlayer() {
     }
   };
 
+  const handleWatchlist = async () => {
+    try {
+      if (watching) {
+        await axios.post(
+          `${API}/watchlist/remove`,
+          { video_id: videoId },
+          { withCredentials: true }
+        );
+        setWatching(false);
+        toast.success("Removed from watchlist");
+      } else {
+        const response = await axios.post(
+          `${API}/watchlist/add`,
+          { video_id: videoId },
+          { withCredentials: true }
+        );
+        setWatching(true);
+        toast.success(`Added to watchlist at $${response.data.price_when_added.toFixed(2)}`);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Failed to update watchlist");
+    }
+  };
+
   const handleBuyShares = async () => {
     if (sharesToBuy <= 0 || sharesToBuy > video.available_shares) {
       toast.error("Invalid share amount");
