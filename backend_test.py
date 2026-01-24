@@ -197,6 +197,48 @@ class IdeaGroundAPITester:
         
         self.run_test("Get Recommendations", "GET", "recommendations", 200, auth_required=True)
 
+    def test_new_features(self):
+        """Test new features: price simulation, trending, creator studio"""
+        print("\n" + "="*50)
+        print("TESTING NEW FEATURES")
+        print("="*50)
+        
+        # Test price simulation
+        self.run_test("Simulate Price Changes", "POST", "simulate-prices", 200)
+        
+        # Test trending stocks
+        self.run_test("Get Trending Stocks", "GET", "trending", 200)
+        
+        # Test market ticker
+        self.run_test("Get Market Ticker", "GET", "market-ticker", 200)
+        
+        # Test creator profile check
+        self.run_test("Get My Creator Profile", "GET", "creators/me", 200, auth_required=True)
+        
+        # Test become creator
+        creator_data = {
+            "name": "Test Creator",
+            "category": "Tech",
+            "image": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400"
+        }
+        success, creator_response = self.run_test("Become Creator", "POST", "creators/become", 200, data=creator_data, auth_required=True)
+        
+        # If became creator successfully, test video upload
+        if success and creator_response.get('success'):
+            video_data = {
+                "title": "Test Video Upload",
+                "description": "This is a test video for API testing",
+                "thumbnail": "https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800",
+                "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                "duration_minutes": 15,
+                "video_type": "full",
+                "category": "Tech"
+            }
+            self.run_test("Upload Video", "POST", "videos/upload", 200, data=video_data, auth_required=True)
+            
+            # Test get my videos
+            self.run_test("Get My Videos", "GET", "videos/my", 200, auth_required=True)
+
     def run_all_tests(self):
         """Run all test suites"""
         print("🚀 Starting ideaGround API Testing")
