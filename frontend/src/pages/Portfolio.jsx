@@ -11,7 +11,7 @@ import { Input } from "../components/ui/input";
 import { Slider } from "../components/ui/slider";
 import { 
   TrendingUp, TrendingDown, DollarSign, Briefcase, 
-  ArrowUpRight, ArrowDownRight, ChevronUp, ChevronDown, Minus, Award, Sparkles
+  ArrowUpRight, ArrowDownRight, ChevronUp, ChevronDown, Minus, Award, Sparkles, Wallet
 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell, CartesianGrid, Legend } from "recharts";
 
@@ -21,9 +21,11 @@ export default function Portfolio() {
   const [portfolioHistory, setPortfolioHistory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [sellDialogOpen, setSellDialogOpen] = useState(false);
+  const [redeemDialogOpen, setRedeemDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [sharesToSell, setSharesToSell] = useState(1);
   const [selling, setSelling] = useState(false);
+  const [redeeming, setRedeeming] = useState(false);
 
   useEffect(() => {
     fetchPortfolio();
@@ -89,6 +91,40 @@ export default function Portfolio() {
     setSelectedItem(item);
     setSharesToSell(1);
     setSellDialogOpen(true);
+  };
+
+  const openRedeemDialog = (item) => {
+    setSelectedItem(item);
+    setRedeemDialogOpen(true);
+  };
+
+  const handleRedeemShares = async () => {
+    if (!selectedItem) return;
+
+    setRedeeming(true);
+    try {
+      const response = await axios.post(
+        `${API}/shares/redeem`,
+        { video_id: selectedItem.video.video_id },
+        { withCredentials: true }
+      );
+      
+      const { shares_redeemed, gross_value, platform_fee, net_value, early_bonus_applied, bonus_earned } = response.data;
+      
+      let message = `Redeemed ${shares_redeemed} shares! Net received: ${formatCurrency(net_value)} (5% fee: ${formatCurrency(platform_fee)})`;
+      if (early_bonus_applied && bonus_earned > 0) {
+        message = `Redeemed ${shares_redeemed} shares with ${formatCurrency(bonus_earned)} early bonus! Net: ${formatCurrency(net_value)} (5% fee: ${formatCurrency(platform_fee)})`;
+      }
+      
+      toast.success(message, { duration: 6000 });
+      setRedeemDialogOpen(false);
+      setSelectedItem(null);
+      fetchPortfolio(); // Refresh
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Failed to redeem shares");
+    } finally {
+      setRedeeming(false);
+    }
   };
 
   const formatCurrency = (value) => {
