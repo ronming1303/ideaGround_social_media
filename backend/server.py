@@ -1210,6 +1210,8 @@ async def seed_database():
                 {"date": "2024-02-01", "price": 26.00},
                 {"date": "2024-02-15", "price": 32.50}
             ],
+            "last_price_change": 0,
+            "last_price_change_percent": 0,
             "created_at": datetime.now(timezone.utc).isoformat()
         },
         {
@@ -1221,6 +1223,8 @@ async def seed_database():
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 3,
             "video_type": "short",
+            "category": "Tech",
+            "ticker_symbol": "TECH_0126S2",
             "views": 12000000,
             "likes": 890000,
             "share_price": 38.00,
@@ -1232,6 +1236,8 @@ async def seed_database():
                 {"date": "2024-02-01", "price": 30.00},
                 {"date": "2024-02-15", "price": 38.00}
             ],
+            "last_price_change": 0,
+            "last_price_change_percent": 0,
             "created_at": datetime.now(timezone.utc).isoformat()
         },
         # Chef Mike's content
@@ -1244,6 +1250,8 @@ async def seed_database():
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 18,
             "video_type": "full",
+            "category": "Food",
+            "ticker_symbol": "CHEF_0126F1",
             "views": 4500000,
             "likes": 380000,
             "share_price": 21.25,
@@ -1255,6 +1263,8 @@ async def seed_database():
                 {"date": "2024-02-01", "price": 18.00},
                 {"date": "2024-02-15", "price": 21.25}
             ],
+            "last_price_change": 0,
+            "last_price_change_percent": 0,
             "created_at": datetime.now(timezone.utc).isoformat()
         },
         {
@@ -1266,6 +1276,8 @@ async def seed_database():
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 1,
             "video_type": "short",
+            "category": "Food",
+            "ticker_symbol": "CHEF_0126S2",
             "views": 7200000,
             "likes": 620000,
             "share_price": 28.50,
