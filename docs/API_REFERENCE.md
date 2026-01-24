@@ -2,7 +2,7 @@
 
 ## Base URL
 ```
-Production: https://ideaground.preview.emergentagent.com/api
+Production: https://ideaground-1.preview.emergentagent.com/api
 Local: http://localhost:8001/api
 ```
 
