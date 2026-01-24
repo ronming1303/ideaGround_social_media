@@ -154,6 +154,11 @@ function AppRouter() {
           <AppLayout><Portfolio /></AppLayout>
         </ProtectedRoute>
       } />
+      <Route path="/watchlist" element={
+        <ProtectedRoute>
+          <AppLayout><Watchlist /></AppLayout>
+        </ProtectedRoute>
+      } />
       <Route path="/wallet" element={
         <ProtectedRoute>
           <AppLayout><Wallet /></AppLayout>
