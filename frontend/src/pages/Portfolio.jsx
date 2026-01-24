@@ -157,7 +157,7 @@ export default function Portfolio() {
             {/* Mini chart */}
             <div className="h-24">
               <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={portfolioHistory}>
+                <AreaChart data={portfolioHistory?.history || []}>
                   <defs>
                     <linearGradient id="portfolioGradient" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="hsl(24, 95%, 53%)" stopOpacity={0.3}/>
@@ -166,7 +166,7 @@ export default function Portfolio() {
                   </defs>
                   <Area 
                     type="monotone" 
-                    dataKey="value" 
+                    dataKey="invested" 
                     stroke="hsl(24, 95%, 53%)" 
                     strokeWidth={2}
                     fill="url(#portfolioGradient)" 
