@@ -14,7 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { 
   Video, Upload, Plus, Eye, Heart, TrendingUp, DollarSign, 
-  Users, Play, Settings, Sparkles, Image
+  Users, Play, Settings, Sparkles, Image, BarChart3
 } from "lucide-react";
 
 export default function CreatorStudio() {
