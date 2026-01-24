@@ -225,6 +225,24 @@ export default function VideoPlayer() {
                 <Heart className={`w-4 h-4 mr-2 ${liked ? 'fill-current' : ''}`} />
                 {formatViews(likesCount)}
               </Button>
+              <Button 
+                data-testid="watch-btn"
+                variant={watching ? "default" : "outline"}
+                onClick={handleWatchlist}
+                className={`rounded-full ${watching ? 'bg-amber-500 hover:bg-amber-600 text-white' : ''}`}
+              >
+                {watching ? (
+                  <>
+                    <EyeOff className="w-4 h-4 mr-2" />
+                    Watching
+                  </>
+                ) : (
+                  <>
+                    <Eye className="w-4 h-4 mr-2" />
+                    Watch
+                  </>
+                )}
+              </Button>
               <Button data-testid="share-btn" variant="outline" className="rounded-full">
                 <Share2 className="w-4 h-4 mr-2" />
                 Share
