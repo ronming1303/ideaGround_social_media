@@ -11,7 +11,7 @@ import { Input } from "../components/ui/input";
 import { Slider } from "../components/ui/slider";
 import { 
   TrendingUp, TrendingDown, DollarSign, Briefcase, 
-  ArrowUpRight, ArrowDownRight, ChevronUp, ChevronDown, Minus
+  ArrowUpRight, ArrowDownRight, ChevronUp, ChevronDown, Minus, Award, Sparkles
 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell } from "recharts";
 
