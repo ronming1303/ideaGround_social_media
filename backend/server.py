@@ -531,6 +531,22 @@ async def subscribe_creator(creator_id: str, user: User = Depends(get_current_us
 
 # ==================== SHARE/STOCK ENDPOINTS ====================
 
+def calculate_early_bonus(shares_sold_percent: float) -> tuple[bool, float]:
+    """
+    Calculate early investor bonus based on when investment was made.
+    - First 10% of shares sold: 2.5x bonus
+    - 10-20% sold: 2.0x bonus
+    - 20-30% sold: 1.5x bonus
+    - After 30%: no bonus (1.0x)
+    """
+    if shares_sold_percent < 10:
+        return True, 2.5
+    elif shares_sold_percent < 20:
+        return True, 2.0
+    elif shares_sold_percent < 30:
+        return True, 1.5
+    return False, 1.0
+
 @api_router.post("/shares/buy")
 async def buy_shares(req: BuyShareRequest, user: User = Depends(get_current_user)):
     """Buy shares of a video"""
@@ -551,6 +567,10 @@ async def buy_shares(req: BuyShareRequest, user: User = Depends(get_current_user
     if user_doc["wallet_balance"] < total_cost:
         raise HTTPException(status_code=400, detail="Insufficient balance")
     
+    # Calculate early investor status BEFORE updating shares
+    shares_sold_percent = ((video["total_shares"] - video["available_shares"]) / video["total_shares"]) * 100
+    is_early, bonus_multiplier = calculate_early_bonus(shares_sold_percent)
+    
     # Update user balance
     await db.users.update_one(
         {"user_id": user.user_id},
@@ -569,26 +589,36 @@ async def buy_shares(req: BuyShareRequest, user: User = Depends(get_current_user
     )
     
     if existing:
-        # Update existing ownership
+        # Update existing ownership - keep original early status if already early
         new_shares = existing["shares_owned"] + req.shares
         avg_price = (existing["shares_owned"] * existing["purchase_price"] + req.shares * video["share_price"]) / new_shares
+        # Keep the better bonus if already an early investor
+        final_bonus = max(existing.get("early_bonus_multiplier", 1.0), bonus_multiplier)
+        final_is_early = existing.get("is_early_investor", False) or is_early
         await db.share_ownerships.update_one(
             {"user_id": user.user_id, "video_id": req.video_id},
-            {"$set": {"shares_owned": new_shares, "purchase_price": avg_price}}
+            {"$set": {
+                "shares_owned": new_shares, 
+                "purchase_price": avg_price,
+                "is_early_investor": final_is_early,
+                "early_bonus_multiplier": final_bonus
+            }}
         )
     else:
-        # Create new ownership
+        # Create new ownership with early investor status
         ownership_doc = {
             "ownership_id": f"own_{uuid.uuid4().hex[:12]}",
             "user_id": user.user_id,
             "video_id": req.video_id,
             "shares_owned": req.shares,
             "purchase_price": video["share_price"],
+            "is_early_investor": is_early,
+            "early_bonus_multiplier": bonus_multiplier,
             "purchased_at": datetime.now(timezone.utc).isoformat()
         }
         await db.share_ownerships.insert_one(ownership_doc)
     
-    # Record transaction
+    # Record transaction with early investor info
     transaction_doc = {
         "transaction_id": f"txn_{uuid.uuid4().hex[:12]}",
         "user_id": user.user_id,
@@ -596,11 +626,21 @@ async def buy_shares(req: BuyShareRequest, user: User = Depends(get_current_user
         "amount": -total_cost,
         "video_id": req.video_id,
         "shares": req.shares,
+        "is_early_investment": is_early,
+        "early_bonus_multiplier": bonus_multiplier,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     await db.transactions.insert_one(transaction_doc)
     
-    return {"success": True, "shares_bought": req.shares, "total_cost": total_cost}
+    response = {
+        "success": True, 
+        "shares_bought": req.shares, 
+        "total_cost": total_cost,
+        "is_early_investor": is_early,
+        "early_bonus_multiplier": bonus_multiplier
+    }
+    
+    return response
 
 @api_router.post("/shares/sell")
 async def sell_shares(req: SellShareRequest, user: User = Depends(get_current_user)):
