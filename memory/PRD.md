@@ -291,13 +291,59 @@ Fixed route conflicts by ensuring specific routes (`/videos/my`, `/creators/me`)
 - Bug Fix Verified: Dashboard overflow issue resolved
 - Logo: Displaying correctly in all locations
 
-### Current Status
+---
+
+## Version 1.0 Features (Jan 24, 2026 - Session 4)
+
+### Feature 1: Early Discovery Bonus System
+**Purpose**: Reward users who discover and invest in content early, before it becomes popular.
+
+**Implementation**:
+- **Backend**: `calculate_early_bonus()` function in `/app/backend/server.py`
+- **Tier System**:
+  - Platinum: <10% shares sold → 2.5x bonus on profits
+  - Gold: 10-20% shares sold → 2.0x bonus on profits
+  - Silver: 20-30% shares sold → 1.5x bonus on profits
+  - None: >30% shares sold → standard returns
+
+**Technical Details**:
+- Buy endpoint tracks `is_early_investor` and `early_bonus_multiplier` in share ownership
+- Sell endpoint applies bonus to PROFIT portion only (not full value)
+- Portfolio displays potential bonus amount for each holding
+
+**UI Components**:
+- Video Player: "Early Discovery Bonus" card with tier badge (PLATINUM/GOLD/SILVER)
+- Video Player: "You're an Early Investor!" card when user owns qualifying shares
+- Portfolio: Award icon badge on early investor holdings
+- Portfolio: Potential bonus display in sell dialog
+
+### Feature 2: Transparent Revenue Distribution
+**Purpose**: Show users exactly how revenue from videos is distributed fairly.
+
+**Implementation**:
+- **Backend**: `revenue_split` object returned in video detail endpoint
+- **Distribution**: Creator 50% | Shareholders 40% | Platform 10%
+
+**UI Components**:
+- Video Player: "Revenue Distribution" card with visual breakdown
+- Color-coded labels and visual progress bar
+
+### Test Results (Iteration 6)
+- Backend: 100% (12/12 tests passed)
+- Frontend: 100% (all UI features verified)
+- New test file: `/app/backend/tests/test_early_investor_features.py`
+
+### Current Status - Version 1.0 Complete
 - All P0 features working correctly
 - Dashboard fully functional with all sections visible
 - Price simulation and trending data working
 - Custom logo integrated throughout the app
+- Early Discovery Bonus system fully implemented
+- Transparent Revenue Distribution fully implemented
 
 ### Upcoming Tasks
 1. (P1) Complete Video Analytics frontend integration
 2. (P2) Portfolio Viewing History with Gemini 3 Flash
 3. (P2) Price Alerts notification system
+4. (P2) Commenter Rewards System
+5. (P2) Curator Earnings (referral shares)
