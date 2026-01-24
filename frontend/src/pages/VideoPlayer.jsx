@@ -11,7 +11,8 @@ import { Slider } from "../components/ui/slider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
 import { 
   Play, Heart, Share2, Bell, TrendingUp, TrendingDown, 
-  Eye, Clock, DollarSign, ArrowLeft, ShoppingCart, ChevronUp, ChevronDown
+  Eye, Clock, DollarSign, ArrowLeft, ShoppingCart, ChevronUp, ChevronDown,
+  Award, Users, Sparkles, PieChart
 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts";
 
