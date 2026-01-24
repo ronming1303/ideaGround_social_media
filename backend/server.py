@@ -349,7 +349,8 @@ async def demo_login(response: Response):
             "created_at": datetime.now(timezone.utc).isoformat()
         }
         await db.users.insert_one(demo_user)
-        existing_user = demo_user
+        # Fetch without _id
+        existing_user = await db.users.find_one({"user_id": demo_user_id}, {"_id": 0})
     
     # Create session
     expires_at = datetime.now(timezone.utc) + timedelta(days=7)
