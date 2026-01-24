@@ -53,7 +53,17 @@ export default function Portfolio() {
         { video_id: selectedItem.video.video_id, shares: sharesToSell },
         { withCredentials: true }
       );
-      toast.success(`Successfully sold ${sharesToSell} shares for $${response.data.total_value.toFixed(2)}`);
+      
+      // Show bonus info if applicable
+      if (response.data.early_bonus_applied && response.data.bonus_earned > 0) {
+        toast.success(
+          `Sold ${sharesToSell} shares for ${formatCurrency(response.data.total_value)} (includes ${formatCurrency(response.data.bonus_earned)} early investor bonus!)`,
+          { duration: 5000 }
+        );
+      } else {
+        toast.success(`Successfully sold ${sharesToSell} shares for ${formatCurrency(response.data.total_value)}`);
+      }
+      
       setSellDialogOpen(false);
       setSelectedItem(null);
       fetchPortfolio(); // Refresh
