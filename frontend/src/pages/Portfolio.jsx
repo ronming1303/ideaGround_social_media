@@ -219,17 +219,29 @@ export default function Portfolio() {
                       data-testid={`holding-${item.video.video_id}`}
                       className="flex items-center gap-4 p-4 rounded-xl bg-muted/50 hover:bg-muted transition-colors"
                     >
-                      <Link to={`/video/${item.video.video_id}`} className="flex-shrink-0">
+                      <Link to={`/video/${item.video.video_id}`} className="flex-shrink-0 relative">
                         <img 
                           src={item.video.thumbnail} 
                           alt={item.video.title}
                           className="w-20 h-14 rounded-lg object-cover"
                         />
+                        {item.is_early_investor && (
+                          <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-amber-500 flex items-center justify-center" title={`${item.early_bonus_multiplier}x Early Investor Bonus`}>
+                            <Award className="w-3 h-3 text-white" />
+                          </div>
+                        )}
                       </Link>
                       <div className="flex-1 min-w-0">
-                        <Link to={`/video/${item.video.video_id}`}>
-                          <h4 className="font-medium truncate hover:text-primary transition-colors">{item.video.title}</h4>
-                        </Link>
+                        <div className="flex items-center gap-2">
+                          <Link to={`/video/${item.video.video_id}`}>
+                            <h4 className="font-medium truncate hover:text-primary transition-colors">{item.video.title}</h4>
+                          </Link>
+                          {item.is_early_investor && (
+                            <Badge variant="outline" className="text-xs bg-amber-500/10 text-amber-700 border-amber-500/30 flex-shrink-0">
+                              {item.early_bonus_multiplier}x Bonus
+                            </Badge>
+                          )}
+                        </div>
                         <p className="text-sm text-muted-foreground">
                           {item.shares_owned} shares @ ${item.purchase_price.toFixed(2)} avg
                         </p>
@@ -240,6 +252,12 @@ export default function Portfolio() {
                           {item.gain >= 0 ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                           {item.gain >= 0 ? '+' : ''}{item.gain_percent.toFixed(1)}%
                         </p>
+                        {item.potential_bonus > 0 && (
+                          <p className="text-xs text-amber-600 flex items-center justify-end gap-1">
+                            <Sparkles className="w-3 h-3" />
+                            +{formatCurrency(item.potential_bonus)} bonus
+                          </p>
+                        )}
                       </div>
                       <Button 
                         data-testid={`sell-btn-${item.video.video_id}`}
