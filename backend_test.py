@@ -335,12 +335,14 @@ class IdeaGroundAPITester:
             # Run test suites
             self.test_public_endpoints()
             self.test_auth_endpoints()
+            self.test_ticker_symbols()  # New ticker symbol tests
+            self.test_analytics_endpoints()  # New analytics tests
             self.test_video_interactions()
             self.test_creator_interactions()
             self.test_share_trading()
             self.test_portfolio_wallet()
             self.test_recommendations()
-            self.test_new_features()  # Add new features test
+            self.test_new_features()  # Updated features test
             
         except Exception as e:
             print(f"\n❌ Test suite failed with error: {str(e)}")
