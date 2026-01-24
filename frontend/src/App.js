@@ -173,6 +173,11 @@ function AppRouter() {
           <AppLayout><CreatorStudio /></AppLayout>
         </ProtectedRoute>
       } />
+      <Route path="/analytics" element={
+        <ProtectedRoute>
+          <AppLayout><CreatorAnalytics /></AppLayout>
+        </ProtectedRoute>
+      } />
     </Routes>
   );
 }
