@@ -427,7 +427,7 @@ export default function VideoPlayer() {
                     <Sparkles className="w-5 h-5 text-emerald-600" />
                   </div>
                   <div>
-                    <h4 className="font-medium text-emerald-700 mb-1">You're an Early Investor!</h4>
+                    <h4 className="font-medium text-emerald-700 mb-1">You&apos;re an Early Investor!</h4>
                     <p className="text-sm text-muted-foreground">
                       Your {video.user_shares} shares qualify for a <span className="font-semibold text-emerald-600">{video.user_early_bonus}x bonus</span> on any profits when you sell.
                     </p>
