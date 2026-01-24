@@ -490,6 +490,110 @@ export default function VideoPlayer() {
             </CardContent>
           </Card>
 
+          {/* Top Earners Leaderboard */}
+          {topEarners && topEarners.total_investors > 0 && (
+            <Card className="border-border/50" data-testid="top-earners-card">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
+                      <Award className="w-4 h-4 text-white" />
+                    </div>
+                    <div>
+                      <h4 className="font-medium">Top Earners</h4>
+                      <p className="text-xs text-muted-foreground">{topEarners.total_investors} investor{topEarners.total_investors !== 1 ? 's' : ''}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="space-y-3">
+                  {topEarners.top_earners.map((earner, index) => (
+                    <div 
+                      key={earner.user_id}
+                      data-testid={`earner-${earner.rank}`}
+                      className={`flex items-center gap-3 p-2 rounded-lg transition-colors ${
+                        earner.user_id === user?.user_id 
+                          ? 'bg-primary/10 border border-primary/20' 
+                          : 'hover:bg-muted/50'
+                      }`}
+                    >
+                      {/* Rank Badge */}
+                      <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
+                        earner.rank === 1 
+                          ? 'bg-gradient-to-br from-amber-400 to-amber-600 text-white' 
+                          : earner.rank === 2 
+                            ? 'bg-gradient-to-br from-gray-300 to-gray-400 text-gray-700'
+                            : earner.rank === 3 
+                              ? 'bg-gradient-to-br from-amber-600 to-amber-800 text-white'
+                              : 'bg-muted text-muted-foreground'
+                      }`}>
+                        {earner.rank}
+                      </div>
+                      
+                      {/* Avatar */}
+                      <div className="relative">
+                        {earner.picture ? (
+                          <img 
+                            src={earner.picture} 
+                            alt={earner.name}
+                            className="w-8 h-8 rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center">
+                            <Users className="w-4 h-4 text-muted-foreground" />
+                          </div>
+                        )}
+                        {earner.is_early_investor && (
+                          <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-amber-500 flex items-center justify-center" title="Early Investor">
+                            <Sparkles className="w-2.5 h-2.5 text-white" />
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Name & Shares */}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium truncate">
+                          {earner.user_id === user?.user_id ? 'You' : earner.name}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {earner.shares_owned} share{earner.shares_owned !== 1 ? 's' : ''}
+                          {earner.is_early_investor && (
+                            <span className="text-amber-600 ml-1">• {earner.bonus_multiplier}x</span>
+                          )}
+                        </p>
+                      </div>
+                      
+                      {/* Profit */}
+                      <div className="text-right">
+                        <p className={`text-sm font-mono font-medium ${
+                          earner.profit >= 0 ? 'text-emerald-600' : 'text-red-500'
+                        }`}>
+                          {earner.profit >= 0 ? '+' : ''}${earner.profit.toFixed(2)}
+                        </p>
+                        <p className={`text-xs ${
+                          earner.profit_percent >= 0 ? 'text-emerald-600/70' : 'text-red-500/70'
+                        }`}>
+                          {earner.profit_percent >= 0 ? '+' : ''}{earner.profit_percent.toFixed(1)}%
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
+                {/* User's Position (if not in top 5) */}
+                {user && topEarners.top_earners.length > 0 && 
+                 !topEarners.top_earners.find(e => e.user_id === user.user_id) && 
+                 video.user_shares > 0 && (
+                  <div className="mt-3 pt-3 border-t border-border">
+                    <p className="text-xs text-muted-foreground text-center">
+                      You own {video.user_shares} shares of this video
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+
           {/* Investment tip */}
           <Card className="border-border/50 bg-gradient-to-br from-secondary/5 to-transparent">
             <CardContent className="p-4">
