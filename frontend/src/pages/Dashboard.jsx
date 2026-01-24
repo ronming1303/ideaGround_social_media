@@ -7,7 +7,7 @@ import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { Play, TrendingUp, TrendingDown, Clock, Eye, Heart, Sparkles, ArrowUpRight } from "lucide-react";
+import { Play, TrendingUp, TrendingDown, Clock, Eye, Heart, Sparkles, ArrowUpRight, Briefcase } from "lucide-react";
 import TrendingTicker from "../components/TrendingTicker";
 import TrendingStocks from "../components/TrendingStocks";
 
@@ -18,9 +18,11 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("all");
   const [refreshKey, setRefreshKey] = useState(0);
+  const [portfolioPerformance, setPortfolioPerformance] = useState(null);
 
   useEffect(() => {
     fetchData();
+    fetchPortfolioPerformance();
   }, [refreshKey]);
 
   const fetchData = async () => {
@@ -36,6 +38,16 @@ export default function Dashboard() {
       toast.error("Failed to load content");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchPortfolioPerformance = async () => {
+    try {
+      const response = await axios.get(`${API}/portfolio/performance`, { withCredentials: true });
+      setPortfolioPerformance(response.data);
+    } catch (error) {
+      // User might not be authenticated, that's okay
+      console.log("Portfolio performance not available");
     }
   };
 
