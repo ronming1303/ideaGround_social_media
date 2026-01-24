@@ -1,9 +1,9 @@
 {
-  "timestamp": "2026-01-24T02:11:03.289090",
-  "total_tests": 28,
-  "passed_tests": 24,
-  "failed_tests": 4,
-  "success_rate": 85.71428571428571,
+  "timestamp": "2026-01-24T02:39:27.540248",
+  "total_tests": 37,
+  "passed_tests": 37,
+  "failed_tests": 0,
+  "success_rate": 100.0,
   "test_details": [
     {
       "test": "API Root",
@@ -20,42 +20,6 @@
       "details": "Status: 200",
       "response_data": [
         {
-          "video_id": "vid_71c0928c2f2c",
-          "creator_id": "creator_7c5d011901ca",
-          "title": "My First Gaming Stream Highlights",
-          "description": "Best moments from my gaming sessions!",
-          "thumbnail": "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800",
-          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-          "duration_minutes": 15,
-          "video_type": "full",
-          "category": "Gaming",
-          "views": 0,
-          "likes": 0,
-          "share_price": 10.0,
-          "available_shares": 100.0,
-          "total_shares": 100.0,
-          "price_history": [
-            {
-              "date": "2026-01-24",
-              "price": 10.0
-            }
-          ],
-          "last_price_change": 0,
-          "last_price_change_percent": 0,
-          "created_at": "2026-01-24T02:01:25.280558+00:00",
-          "creator": {
-            "creator_id": "creator_7c5d011901ca",
-            "user_id": "test-user-1769219111882",
-            "name": "Test Creator",
-            "category": "Gaming",
-            "image": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400",
-            "stock_symbol": "$TEST",
-            "subscriber_count": 0,
-            "total_views": 0,
-            "created_at": "2026-01-24T02:01:15.082070+00:00"
-          }
-        },
-        {
           "video_id": "vid_mike_2",
           "creator_id": "creator_mike",
           "title": "60-Second Guacamole",
@@ -64,10 +28,12 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 1,
           "video_type": "short",
-          "views": 7200011,
-          "likes": 620001,
-          "share_price": 29.88,
-          "available_shares": 47.0,
+          "category": "Food",
+          "ticker_symbol": "CHEF_0126S2",
+          "views": 7200000,
+          "likes": 620000,
+          "share_price": 28.5,
+          "available_shares": 50.0,
           "total_shares": 100.0,
           "price_history": [
             {
@@ -85,24 +51,20 @@
             {
               "date": "2024-02-15",
               "price": 28.5
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 29.88
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623792+00:00",
-          "last_price_change": 1.379999999999999,
-          "last_price_change_percent": 4.84,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428516+00:00",
           "creator": {
             "creator_id": "creator_mike",
             "name": "Chef Mike",
             "category": "Food",
             "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
             "stock_symbol": "$CHEF",
-            "subscriber_count": 432001,
+            "subscriber_count": 432000,
             "total_views": 18000000,
-            "created_at": "2026-01-24T01:39:42.613659+00:00"
+            "created_at": "2026-01-24T02:37:07.427884+00:00"
           }
         },
         {
@@ -114,9 +76,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 18,
           "video_type": "full",
+          "category": "Food",
+          "ticker_symbol": "CHEF_0126F1",
           "views": 4500000,
           "likes": 380000,
-          "share_price": 22.23,
+          "share_price": 21.25,
           "available_shares": 60.0,
           "total_shares": 100.0,
           "price_history": [
@@ -135,24 +99,20 @@
             {
               "date": "2024-02-15",
               "price": 21.25
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 22.23
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623790+00:00",
-          "last_price_change": 0.9800000000000004,
-          "last_price_change_percent": 4.61,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428514+00:00",
           "creator": {
             "creator_id": "creator_mike",
             "name": "Chef Mike",
             "category": "Food",
             "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
             "stock_symbol": "$CHEF",
-            "subscriber_count": 432001,
+            "subscriber_count": 432000,
             "total_views": 18000000,
-            "created_at": "2026-01-24T01:39:42.613659+00:00"
+            "created_at": "2026-01-24T02:37:07.427884+00:00"
           }
         },
         {
@@ -164,9 +124,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 3,
           "video_type": "short",
+          "category": "Tech",
+          "ticker_symbol": "TECH_0126S2",
           "views": 12000000,
           "likes": 890000,
-          "share_price": 39.62,
+          "share_price": 38.0,
           "available_shares": 25.0,
           "total_shares": 100.0,
           "price_history": [
@@ -185,15 +147,11 @@
             {
               "date": "2024-02-15",
               "price": 38.0
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 39.62
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623785+00:00",
-          "last_price_change": 1.6199999999999974,
-          "last_price_change_percent": 4.26,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428511+00:00",
           "creator": {
             "creator_id": "creator_sarah",
             "name": "Sarah Tech",
@@ -202,7 +160,7 @@
             "stock_symbol": "$TECH",
             "subscriber_count": 1200000,
             "total_views": 67000000,
-            "created_at": "2026-01-24T01:39:42.613658+00:00"
+            "created_at": "2026-01-24T02:37:07.427883+00:00"
           }
         },
         {
@@ -214,9 +172,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 25,
           "video_type": "full",
+          "category": "Tech",
+          "ticker_symbol": "TECH_0126R1",
           "views": 8900000,
           "likes": 670000,
-          "share_price": 36.58,
+          "share_price": 32.5,
           "available_shares": 40.0,
           "total_shares": 100.0,
           "price_history": [
@@ -235,15 +195,11 @@
             {
               "date": "2024-02-15",
               "price": 32.5
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 36.58
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623783+00:00",
-          "last_price_change": 4.079999999999998,
-          "last_price_change_percent": 12.55,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428505+00:00",
           "creator": {
             "creator_id": "creator_sarah",
             "name": "Sarah Tech",
@@ -252,7 +208,7 @@
             "stock_symbol": "$TECH",
             "subscriber_count": 1200000,
             "total_views": 67000000,
-            "created_at": "2026-01-24T01:39:42.613658+00:00"
+            "created_at": "2026-01-24T02:37:07.427883+00:00"
           }
         },
         {
@@ -264,9 +220,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 2,
           "video_type": "short",
+          "category": "Travel",
+          "ticker_symbol": "ALEX_0126V2",
           "views": 5600000,
           "likes": 480000,
-          "share_price": 27.41,
+          "share_price": 25.0,
           "available_shares": 55.0,
           "total_shares": 100.0,
           "price_history": [
@@ -285,15 +243,11 @@
             {
               "date": "2024-02-15",
               "price": 25.0
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 27.41
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623781+00:00",
-          "last_price_change": 2.41,
-          "last_price_change_percent": 9.64,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428503+00:00",
           "creator": {
             "creator_id": "creator_alex",
             "name": "Alex Roams",
@@ -302,7 +256,7 @@
             "stock_symbol": "$ALEX",
             "subscriber_count": 567000,
             "total_views": 23000000,
-            "created_at": "2026-01-24T01:39:42.613656+00:00"
+            "created_at": "2026-01-24T02:37:07.427881+00:00"
           }
         },
         {
@@ -314,9 +268,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 15,
           "video_type": "full",
+          "category": "Travel",
+          "ticker_symbol": "ALEX_0126T1",
           "views": 3200000,
           "likes": 245000,
-          "share_price": 19.15,
+          "share_price": 18.75,
           "available_shares": 70.0,
           "total_shares": 100.0,
           "price_history": [
@@ -335,15 +291,11 @@
             {
               "date": "2024-02-15",
               "price": 18.75
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 19.15
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623772+00:00",
-          "last_price_change": 0.3999999999999986,
-          "last_price_change_percent": 2.13,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428500+00:00",
           "creator": {
             "creator_id": "creator_alex",
             "name": "Alex Roams",
@@ -352,7 +304,7 @@
             "stock_symbol": "$ALEX",
             "subscriber_count": 567000,
             "total_views": 23000000,
-            "created_at": "2026-01-24T01:39:42.613656+00:00"
+            "created_at": "2026-01-24T02:37:07.427881+00:00"
           }
         },
         {
@@ -364,10 +316,12 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 30,
           "video_type": "full",
-          "views": 15000005,
+          "category": "Podcast",
+          "ticker_symbol": "JOE_0126P1",
+          "views": 15000000,
           "likes": 1200000,
-          "share_price": 47.19,
-          "available_shares": 23.0,
+          "share_price": 45.0,
+          "available_shares": 30.0,
           "total_shares": 100.0,
           "price_history": [
             {
@@ -385,15 +339,11 @@
             {
               "date": "2024-02-15",
               "price": 45.0
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 47.19
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623770+00:00",
-          "last_price_change": 2.1899999999999977,
-          "last_price_change_percent": 4.87,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428497+00:00",
           "creator": {
             "creator_id": "creator_joe",
             "name": "Joe Talks",
@@ -402,7 +352,7 @@
             "stock_symbol": "$JOE",
             "subscriber_count": 890000,
             "total_views": 45000000,
-            "created_at": "2026-01-24T01:39:42.613654+00:00"
+            "created_at": "2026-01-24T02:37:07.427878+00:00"
           }
         },
         {
@@ -414,9 +364,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 1,
           "video_type": "short",
+          "category": "Dance",
+          "ticker_symbol": "EMMA_0126S2",
           "views": 8500000,
           "likes": 920000,
-          "share_price": 23.03,
+          "share_price": 22.0,
           "available_shares": 45.0,
           "total_shares": 100.0,
           "price_history": [
@@ -435,15 +387,11 @@
             {
               "date": "2024-02-15",
               "price": 22.0
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 23.03
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623767+00:00",
-          "last_price_change": 1.0300000000000011,
-          "last_price_change_percent": 4.68,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428494+00:00",
           "creator": {
             "creator_id": "creator_emma",
             "name": "Emma Dance",
@@ -452,7 +400,8 @@
             "stock_symbol": "$EMMA",
             "subscriber_count": 245000,
             "total_views": 12500000,
-            "created_at": "2026-01-24T01:39:42.613643+00:00"
+            "created_at": "2026-01-24T02:37:07.427867+00:00",
+            "user_id": "creator-test-user"
           }
         },
         {
@@ -464,9 +413,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 20,
           "video_type": "full",
-          "views": 2500002,
+          "category": "Dance",
+          "ticker_symbol": "EMMA_0126D1",
+          "views": 2500000,
           "likes": 185000,
-          "share_price": 16.05,
+          "share_price": 15.5,
           "available_shares": 65.0,
           "total_shares": 100.0,
           "price_history": [
@@ -485,15 +436,11 @@
             {
               "date": "2024-02-15",
               "price": 15.5
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 16.05
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623758+00:00",
-          "last_price_change": 0.5500000000000007,
-          "last_price_change_percent": 3.55,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428486+00:00",
           "creator": {
             "creator_id": "creator_emma",
             "name": "Emma Dance",
@@ -502,15 +449,16 @@
             "stock_symbol": "$EMMA",
             "subscriber_count": 245000,
             "total_views": 12500000,
-            "created_at": "2026-01-24T01:39:42.613643+00:00"
+            "created_at": "2026-01-24T02:37:07.427867+00:00",
+            "user_id": "creator-test-user"
           }
         }
       ]
     },
     {
       "test": "Video Count Validation",
-      "success": false,
-      "details": "Expected 9 videos, got 10",
+      "success": true,
+      "details": "Found 9 videos as expected",
       "response_data": null
     },
     {
@@ -526,7 +474,8 @@
           "stock_symbol": "$EMMA",
           "subscriber_count": 245000,
           "total_views": 12500000,
-          "created_at": "2026-01-24T01:39:42.613643+00:00"
+          "created_at": "2026-01-24T02:37:07.427867+00:00",
+          "user_id": "creator-test-user"
         },
         {
           "creator_id": "creator_joe",
@@ -536,7 +485,7 @@
           "stock_symbol": "$JOE",
           "subscriber_count": 890000,
           "total_views": 45000000,
-          "created_at": "2026-01-24T01:39:42.613654+00:00"
+          "created_at": "2026-01-24T02:37:07.427878+00:00"
         },
         {
           "creator_id": "creator_alex",
@@ -546,7 +495,7 @@
           "stock_symbol": "$ALEX",
           "subscriber_count": 567000,
           "total_views": 23000000,
-          "created_at": "2026-01-24T01:39:42.613656+00:00"
+          "created_at": "2026-01-24T02:37:07.427881+00:00"
         },
         {
           "creator_id": "creator_sarah",
@@ -556,7 +505,7 @@
           "stock_symbol": "$TECH",
           "subscriber_count": 1200000,
           "total_views": 67000000,
-          "created_at": "2026-01-24T01:39:42.613658+00:00"
+          "created_at": "2026-01-24T02:37:07.427883+00:00"
         },
         {
           "creator_id": "creator_mike",
@@ -564,27 +513,16 @@
           "category": "Food",
           "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
           "stock_symbol": "$CHEF",
-          "subscriber_count": 432001,
+          "subscriber_count": 432000,
           "total_views": 18000000,
-          "created_at": "2026-01-24T01:39:42.613659+00:00"
-        },
-        {
-          "creator_id": "creator_7c5d011901ca",
-          "user_id": "test-user-1769219111882",
-          "name": "Test Creator",
-          "category": "Gaming",
-          "image": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400",
-          "stock_symbol": "$TEST",
-          "subscriber_count": 0,
-          "total_views": 0,
-          "created_at": "2026-01-24T02:01:15.082070+00:00"
+          "created_at": "2026-01-24T02:37:07.427884+00:00"
         }
       ]
     },
     {
       "test": "Creator Count Validation",
-      "success": false,
-      "details": "Expected 5 creators, got 6",
+      "success": true,
+      "details": "Found 5 creators as expected",
       "response_data": null
     },
     {
@@ -592,39 +530,51 @@
       "success": true,
       "details": "Status: 200",
       "response_data": {
-        "video_id": "vid_71c0928c2f2c",
-        "creator_id": "creator_7c5d011901ca",
-        "title": "My First Gaming Stream Highlights",
-        "description": "Best moments from my gaming sessions!",
-        "thumbnail": "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800",
+        "video_id": "vid_mike_2",
+        "creator_id": "creator_mike",
+        "title": "60-Second Guacamole",
+        "description": "The fastest and best guac you'll ever make!",
+        "thumbnail": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=800",
         "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-        "duration_minutes": 15,
-        "video_type": "full",
-        "category": "Gaming",
-        "views": 1,
-        "likes": 0,
-        "share_price": 10.0,
-        "available_shares": 100.0,
+        "duration_minutes": 1,
+        "video_type": "short",
+        "category": "Food",
+        "ticker_symbol": "CHEF_0126S2",
+        "views": 7200001,
+        "likes": 620000,
+        "share_price": 28.5,
+        "available_shares": 50.0,
         "total_shares": 100.0,
         "price_history": [
           {
-            "date": "2026-01-24",
+            "date": "2024-01-01",
             "price": 10.0
+          },
+          {
+            "date": "2024-01-15",
+            "price": 17.0
+          },
+          {
+            "date": "2024-02-01",
+            "price": 23.0
+          },
+          {
+            "date": "2024-02-15",
+            "price": 28.5
           }
         ],
         "last_price_change": 0,
         "last_price_change_percent": 0,
-        "created_at": "2026-01-24T02:01:25.280558+00:00",
+        "created_at": "2026-01-24T02:37:07.428516+00:00",
         "creator": {
-          "creator_id": "creator_7c5d011901ca",
-          "user_id": "test-user-1769219111882",
-          "name": "Test Creator",
-          "category": "Gaming",
-          "image": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400",
-          "stock_symbol": "$TEST",
-          "subscriber_count": 0,
-          "total_views": 0,
-          "created_at": "2026-01-24T02:01:15.082070+00:00"
+          "creator_id": "creator_mike",
+          "name": "Chef Mike",
+          "category": "Food",
+          "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
+          "stock_symbol": "$CHEF",
+          "subscriber_count": 432000,
+          "total_views": 18000000,
+          "created_at": "2026-01-24T02:37:07.427884+00:00"
         },
         "user_liked": false,
         "user_shares": 0
@@ -642,7 +592,8 @@
         "stock_symbol": "$EMMA",
         "subscriber_count": 245000,
         "total_views": 12500000,
-        "created_at": "2026-01-24T01:39:42.613643+00:00",
+        "created_at": "2026-01-24T02:37:07.427867+00:00",
+        "user_id": "creator-test-user",
         "videos": [
           {
             "video_id": "vid_emma_1",
@@ -653,9 +604,11 @@
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 20,
             "video_type": "full",
-            "views": 2500002,
+            "category": "Dance",
+            "ticker_symbol": "EMMA_0126D1",
+            "views": 2500000,
             "likes": 185000,
-            "share_price": 16.05,
+            "share_price": 15.5,
             "available_shares": 65.0,
             "total_shares": 100.0,
             "price_history": [
@@ -674,15 +627,11 @@
               {
                 "date": "2024-02-15",
                 "price": 15.5
-              },
-              {
-                "date": "2026-01-24 02:00",
-                "price": 16.05
               }
             ],
-            "created_at": "2026-01-24T01:39:42.623758+00:00",
-            "last_price_change": 0.5500000000000007,
-            "last_price_change_percent": 3.55
+            "last_price_change": 0,
+            "last_price_change_percent": 0,
+            "created_at": "2026-01-24T02:37:07.428486+00:00"
           },
           {
             "video_id": "vid_emma_2",
@@ -693,9 +642,11 @@
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 1,
             "video_type": "short",
+            "category": "Dance",
+            "ticker_symbol": "EMMA_0126S2",
             "views": 8500000,
             "likes": 920000,
-            "share_price": 23.03,
+            "share_price": 22.0,
             "available_shares": 45.0,
             "total_shares": 100.0,
             "price_history": [
@@ -714,15 +665,11 @@
               {
                 "date": "2024-02-15",
                 "price": 22.0
-              },
-              {
-                "date": "2026-01-24 02:00",
-                "price": 23.03
               }
             ],
-            "created_at": "2026-01-24T01:39:42.623767+00:00",
-            "last_price_change": 1.0300000000000011,
-            "last_price_change_percent": 4.68
+            "last_price_change": 0,
+            "last_price_change_percent": 0,
+            "created_at": "2026-01-24T02:37:07.428494+00:00"
           }
         ],
         "is_subscribed": false
@@ -733,56 +680,114 @@
       "success": true,
       "details": "Status: 200",
       "response_data": {
-        "user_id": "test-user-demo",
-        "email": "demo@ideaground.com",
-        "name": "Demo User",
+        "user_id": "creator-test-user",
+        "email": "creator@ideaground.com",
+        "name": "Test Creator User",
         "picture": null,
         "wallet_balance": 500.0,
         "subscriptions": [],
-        "created_at": "2026-01-24T02:11:02.504664+00:00"
+        "created_at": "2026-01-24T02:39:26.562584+00:00"
       }
     },
     {
-      "test": "Get Videos for Like Test",
+      "test": "Get Market Ticker",
       "success": true,
       "details": "Status: 200",
       "response_data": [
         {
-          "video_id": "vid_71c0928c2f2c",
-          "creator_id": "creator_7c5d011901ca",
-          "title": "My First Gaming Stream Highlights",
-          "description": "Best moments from my gaming sessions!",
-          "thumbnail": "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800",
-          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-          "duration_minutes": 15,
-          "video_type": "full",
-          "category": "Gaming",
-          "views": 1,
-          "likes": 0,
-          "share_price": 10.0,
-          "available_shares": 100.0,
-          "total_shares": 100.0,
-          "price_history": [
-            {
-              "date": "2026-01-24",
-              "price": 10.0
-            }
-          ],
-          "last_price_change": 0,
-          "last_price_change_percent": 0,
-          "created_at": "2026-01-24T02:01:25.280558+00:00",
-          "creator": {
-            "creator_id": "creator_7c5d011901ca",
-            "user_id": "test-user-1769219111882",
-            "name": "Test Creator",
-            "category": "Gaming",
-            "image": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400",
-            "stock_symbol": "$TEST",
-            "subscriber_count": 0,
-            "total_views": 0,
-            "created_at": "2026-01-24T02:01:15.082070+00:00"
-          }
+          "symbol": "EMMA_0126D1",
+          "video_id": "vid_emma_1",
+          "title": "20-Min Dance Workout for Begin...",
+          "price": 15.5,
+          "change_percent": 0,
+          "is_positive": true,
+          "creator_symbol": "$EMMA"
         },
+        {
+          "symbol": "EMMA_0126S2",
+          "video_id": "vid_emma_2",
+          "title": "Quick Dance Challenge #viral",
+          "price": 22.0,
+          "change_percent": 0,
+          "is_positive": true,
+          "creator_symbol": "$EMMA"
+        },
+        {
+          "symbol": "JOE_0126P1",
+          "video_id": "vid_joe_1",
+          "title": "Deep Talk with Sadhguru - Life...",
+          "price": 45.0,
+          "change_percent": 0,
+          "is_positive": true,
+          "creator_symbol": "$JOE"
+        },
+        {
+          "symbol": "ALEX_0126T1",
+          "video_id": "vid_alex_1",
+          "title": "Hidden Gems of Bali - 15 Min T...",
+          "price": 18.75,
+          "change_percent": 0,
+          "is_positive": true,
+          "creator_symbol": "$ALEX"
+        },
+        {
+          "symbol": "ALEX_0126V2",
+          "video_id": "vid_alex_2",
+          "title": "Sunrise at Machu Picchu",
+          "price": 25.0,
+          "change_percent": 0,
+          "is_positive": true,
+          "creator_symbol": "$ALEX"
+        },
+        {
+          "symbol": "TECH_0126R1",
+          "video_id": "vid_sarah_1",
+          "title": "iPhone 16 Pro Max - Honest Rev...",
+          "price": 32.5,
+          "change_percent": 0,
+          "is_positive": true,
+          "creator_symbol": "$TECH"
+        },
+        {
+          "symbol": "TECH_0126S2",
+          "video_id": "vid_sarah_2",
+          "title": "This AI Tool Changed Everythin...",
+          "price": 38.0,
+          "change_percent": 0,
+          "is_positive": true,
+          "creator_symbol": "$TECH"
+        },
+        {
+          "symbol": "CHEF_0126F1",
+          "video_id": "vid_mike_1",
+          "title": "Perfect Pasta Carbonara - Rest...",
+          "price": 21.25,
+          "change_percent": 0,
+          "is_positive": true,
+          "creator_symbol": "$CHEF"
+        },
+        {
+          "symbol": "CHEF_0126S2",
+          "video_id": "vid_mike_2",
+          "title": "60-Second Guacamole",
+          "price": 28.5,
+          "change_percent": 0,
+          "is_positive": true,
+          "creator_symbol": "$CHEF"
+        }
+      ]
+    },
+    {
+      "test": "Ticker Symbol Format Validation",
+      "success": true,
+      "details": "Found 9 valid ticker symbols",
+      "response_data": null
+    },
+    {
+      "test": "Get Videos with Ticker Symbols",
+      "success": true,
+      "details": "Status: 200",
+      "response_data": [
         {
           "video_id": "vid_mike_2",
           "creator_id": "creator_mike",
@@ -792,10 +797,12 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 1,
           "video_type": "short",
-          "views": 7200011,
-          "likes": 620001,
-          "share_price": 29.88,
-          "available_shares": 47.0,
+          "category": "Food",
+          "ticker_symbol": "CHEF_0126S2",
+          "views": 7200001,
+          "likes": 620000,
+          "share_price": 28.5,
+          "available_shares": 50.0,
           "total_shares": 100.0,
           "price_history": [
             {
@@ -813,24 +820,20 @@
             {
               "date": "2024-02-15",
               "price": 28.5
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 29.88
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623792+00:00",
-          "last_price_change": 1.379999999999999,
-          "last_price_change_percent": 4.84,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428516+00:00",
           "creator": {
             "creator_id": "creator_mike",
             "name": "Chef Mike",
             "category": "Food",
             "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
             "stock_symbol": "$CHEF",
-            "subscriber_count": 432001,
+            "subscriber_count": 432000,
             "total_views": 18000000,
-            "created_at": "2026-01-24T01:39:42.613659+00:00"
+            "created_at": "2026-01-24T02:37:07.427884+00:00"
           }
         },
         {
@@ -842,9 +845,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 18,
           "video_type": "full",
+          "category": "Food",
+          "ticker_symbol": "CHEF_0126F1",
           "views": 4500000,
           "likes": 380000,
-          "share_price": 22.23,
+          "share_price": 21.25,
           "available_shares": 60.0,
           "total_shares": 100.0,
           "price_history": [
@@ -863,24 +868,20 @@
             {
               "date": "2024-02-15",
               "price": 21.25
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 22.23
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623790+00:00",
-          "last_price_change": 0.9800000000000004,
-          "last_price_change_percent": 4.61,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428514+00:00",
           "creator": {
             "creator_id": "creator_mike",
             "name": "Chef Mike",
             "category": "Food",
             "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
             "stock_symbol": "$CHEF",
-            "subscriber_count": 432001,
+            "subscriber_count": 432000,
             "total_views": 18000000,
-            "created_at": "2026-01-24T01:39:42.613659+00:00"
+            "created_at": "2026-01-24T02:37:07.427884+00:00"
           }
         },
         {
@@ -892,9 +893,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 3,
           "video_type": "short",
+          "category": "Tech",
+          "ticker_symbol": "TECH_0126S2",
           "views": 12000000,
           "likes": 890000,
-          "share_price": 39.62,
+          "share_price": 38.0,
           "available_shares": 25.0,
           "total_shares": 100.0,
           "price_history": [
@@ -913,15 +916,11 @@
             {
               "date": "2024-02-15",
               "price": 38.0
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 39.62
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623785+00:00",
-          "last_price_change": 1.6199999999999974,
-          "last_price_change_percent": 4.26,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428511+00:00",
           "creator": {
             "creator_id": "creator_sarah",
             "name": "Sarah Tech",
@@ -930,7 +929,7 @@
             "stock_symbol": "$TECH",
             "subscriber_count": 1200000,
             "total_views": 67000000,
-            "created_at": "2026-01-24T01:39:42.613658+00:00"
+            "created_at": "2026-01-24T02:37:07.427883+00:00"
           }
         },
         {
@@ -942,9 +941,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 25,
           "video_type": "full",
+          "category": "Tech",
+          "ticker_symbol": "TECH_0126R1",
           "views": 8900000,
           "likes": 670000,
-          "share_price": 36.58,
+          "share_price": 32.5,
           "available_shares": 40.0,
           "total_shares": 100.0,
           "price_history": [
@@ -963,15 +964,11 @@
             {
               "date": "2024-02-15",
               "price": 32.5
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 36.58
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623783+00:00",
-          "last_price_change": 4.079999999999998,
-          "last_price_change_percent": 12.55,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428505+00:00",
           "creator": {
             "creator_id": "creator_sarah",
             "name": "Sarah Tech",
@@ -980,7 +977,7 @@
             "stock_symbol": "$TECH",
             "subscriber_count": 1200000,
             "total_views": 67000000,
-            "created_at": "2026-01-24T01:39:42.613658+00:00"
+            "created_at": "2026-01-24T02:37:07.427883+00:00"
           }
         },
         {
@@ -992,9 +989,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 2,
           "video_type": "short",
+          "category": "Travel",
+          "ticker_symbol": "ALEX_0126V2",
           "views": 5600000,
           "likes": 480000,
-          "share_price": 27.41,
+          "share_price": 25.0,
           "available_shares": 55.0,
           "total_shares": 100.0,
           "price_history": [
@@ -1013,15 +1012,11 @@
             {
               "date": "2024-02-15",
               "price": 25.0
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 27.41
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623781+00:00",
-          "last_price_change": 2.41,
-          "last_price_change_percent": 9.64,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428503+00:00",
           "creator": {
             "creator_id": "creator_alex",
             "name": "Alex Roams",
@@ -1030,7 +1025,7 @@
             "stock_symbol": "$ALEX",
             "subscriber_count": 567000,
             "total_views": 23000000,
-            "created_at": "2026-01-24T01:39:42.613656+00:00"
+            "created_at": "2026-01-24T02:37:07.427881+00:00"
           }
         },
         {
@@ -1042,9 +1037,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 15,
           "video_type": "full",
+          "category": "Travel",
+          "ticker_symbol": "ALEX_0126T1",
           "views": 3200000,
           "likes": 245000,
-          "share_price": 19.15,
+          "share_price": 18.75,
           "available_shares": 70.0,
           "total_shares": 100.0,
           "price_history": [
@@ -1063,15 +1060,11 @@
             {
               "date": "2024-02-15",
               "price": 18.75
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 19.15
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623772+00:00",
-          "last_price_change": 0.3999999999999986,
-          "last_price_change_percent": 2.13,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428500+00:00",
           "creator": {
             "creator_id": "creator_alex",
             "name": "Alex Roams",
@@ -1080,7 +1073,7 @@
             "stock_symbol": "$ALEX",
             "subscriber_count": 567000,
             "total_views": 23000000,
-            "created_at": "2026-01-24T01:39:42.613656+00:00"
+            "created_at": "2026-01-24T02:37:07.427881+00:00"
           }
         },
         {
@@ -1092,10 +1085,12 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 30,
           "video_type": "full",
-          "views": 15000005,
+          "category": "Podcast",
+          "ticker_symbol": "JOE_0126P1",
+          "views": 15000000,
           "likes": 1200000,
-          "share_price": 47.19,
-          "available_shares": 23.0,
+          "share_price": 45.0,
+          "available_shares": 30.0,
           "total_shares": 100.0,
           "price_history": [
             {
@@ -1113,15 +1108,11 @@
             {
               "date": "2024-02-15",
               "price": 45.0
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 47.19
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623770+00:00",
-          "last_price_change": 2.1899999999999977,
-          "last_price_change_percent": 4.87,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428497+00:00",
           "creator": {
             "creator_id": "creator_joe",
             "name": "Joe Talks",
@@ -1130,7 +1121,7 @@
             "stock_symbol": "$JOE",
             "subscriber_count": 890000,
             "total_views": 45000000,
-            "created_at": "2026-01-24T01:39:42.613654+00:00"
+            "created_at": "2026-01-24T02:37:07.427878+00:00"
           }
         },
         {
@@ -1142,9 +1133,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 1,
           "video_type": "short",
+          "category": "Dance",
+          "ticker_symbol": "EMMA_0126S2",
           "views": 8500000,
           "likes": 920000,
-          "share_price": 23.03,
+          "share_price": 22.0,
           "available_shares": 45.0,
           "total_shares": 100.0,
           "price_history": [
@@ -1163,15 +1156,11 @@
             {
               "date": "2024-02-15",
               "price": 22.0
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 23.03
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623767+00:00",
-          "last_price_change": 1.0300000000000011,
-          "last_price_change_percent": 4.68,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428494+00:00",
           "creator": {
             "creator_id": "creator_emma",
             "name": "Emma Dance",
@@ -1180,7 +1169,8 @@
             "stock_symbol": "$EMMA",
             "subscriber_count": 245000,
             "total_views": 12500000,
-            "created_at": "2026-01-24T01:39:42.613643+00:00"
+            "created_at": "2026-01-24T02:37:07.427867+00:00",
+            "user_id": "creator-test-user"
           }
         },
         {
@@ -1192,9 +1182,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 20,
           "video_type": "full",
-          "views": 2500002,
+          "category": "Dance",
+          "ticker_symbol": "EMMA_0126D1",
+          "views": 2500000,
           "likes": 185000,
-          "share_price": 16.05,
+          "share_price": 15.5,
           "available_shares": 65.0,
           "total_shares": 100.0,
           "price_history": [
@@ -1213,15 +1205,11 @@
             {
               "date": "2024-02-15",
               "price": 15.5
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 16.05
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623758+00:00",
-          "last_price_change": 0.5500000000000007,
-          "last_price_change_percent": 3.55,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428486+00:00",
           "creator": {
             "creator_id": "creator_emma",
             "name": "Emma Dance",
@@ -1230,7 +1218,646 @@
             "stock_symbol": "$EMMA",
             "subscriber_count": 245000,
             "total_views": 12500000,
-            "created_at": "2026-01-24T01:39:42.613643+00:00"
+            "created_at": "2026-01-24T02:37:07.427867+00:00",
+            "user_id": "creator-test-user"
+          }
+        }
+      ]
+    },
+    {
+      "test": "Videos Ticker Symbol Field",
+      "success": true,
+      "details": "Found 9 videos with ticker symbols",
+      "response_data": null
+    },
+    {
+      "test": "Get Analytics Overview",
+      "success": true,
+      "details": "Status: 200",
+      "response_data": {
+        "is_creator": true,
+        "creator": {
+          "creator_id": "creator_emma",
+          "name": "Emma Dance",
+          "category": "Dance",
+          "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
+          "stock_symbol": "$EMMA",
+          "subscriber_count": 245000,
+          "total_views": 12500000,
+          "created_at": "2026-01-24T02:37:07.427867+00:00",
+          "user_id": "creator-test-user"
+        },
+        "analytics": {
+          "total_videos": 2,
+          "total_views": 11000000,
+          "total_likes": 1105000,
+          "total_shares_sold": 90.0,
+          "total_market_cap": 3750.0,
+          "avg_share_price": 18.75,
+          "engagement_rate": 10.05,
+          "subscriber_count": 245000,
+          "top_video": {
+            "video_id": "vid_emma_2",
+            "title": "Quick Dance Challenge #viral",
+            "views": 8500000,
+            "ticker_symbol": "EMMA_0126S2"
+          },
+          "best_performer": {
+            "video_id": "vid_emma_2",
+            "title": "Quick Dance Challenge #viral",
+            "share_price": 22.0,
+            "ticker_symbol": "EMMA_0126S2"
+          }
+        }
+      }
+    },
+    {
+      "test": "Analytics Overview Fields",
+      "success": true,
+      "details": "All required analytics fields present",
+      "response_data": null
+    },
+    {
+      "test": "Get Video Analytics",
+      "success": true,
+      "details": "Status: 200",
+      "response_data": {
+        "is_creator": true,
+        "creator": {
+          "creator_id": "creator_emma",
+          "name": "Emma Dance",
+          "category": "Dance",
+          "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
+          "stock_symbol": "$EMMA",
+          "subscriber_count": 245000,
+          "total_views": 12500000,
+          "created_at": "2026-01-24T02:37:07.427867+00:00",
+          "user_id": "creator-test-user"
+        },
+        "videos": [
+          {
+            "video_id": "vid_emma_2",
+            "title": "Quick Dance Challenge #viral",
+            "ticker_symbol": "EMMA_0126S2",
+            "thumbnail": "https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800",
+            "video_type": "short",
+            "category": "Dance",
+            "duration_minutes": 1,
+            "views": 8500000,
+            "likes": 920000,
+            "engagement_rate": 10.82,
+            "share_price": 22.0,
+            "price_change_percent": 0,
+            "price_growth_all_time": 120.0,
+            "shares_sold": 55.0,
+            "available_shares": 45.0,
+            "total_shares": 100.0,
+            "market_cap": 2200.0,
+            "revenue_from_shares": 1210.0,
+            "created_at": "2026-01-24T02:37:07.428494+00:00"
+          },
+          {
+            "video_id": "vid_emma_1",
+            "title": "20-Min Dance Workout for Beginners",
+            "ticker_symbol": "EMMA_0126D1",
+            "thumbnail": "https://images.unsplash.com/photo-1524594152303-9fd13543fe6e?w=800",
+            "video_type": "full",
+            "category": "Dance",
+            "duration_minutes": 20,
+            "views": 2500000,
+            "likes": 185000,
+            "engagement_rate": 7.4,
+            "share_price": 15.5,
+            "price_change_percent": 0,
+            "price_growth_all_time": 55.0,
+            "shares_sold": 35.0,
+            "available_shares": 65.0,
+            "total_shares": 100.0,
+            "market_cap": 1550.0,
+            "revenue_from_shares": 542.5,
+            "created_at": "2026-01-24T02:37:07.428486+00:00"
+          }
+        ]
+      }
+    },
+    {
+      "test": "Video Analytics Fields",
+      "success": true,
+      "details": "All required video analytics fields present",
+      "response_data": null
+    },
+    {
+      "test": "Get Single Video Analytics",
+      "success": true,
+      "details": "Status: 200",
+      "response_data": {
+        "video": {
+          "video_id": "vid_emma_2",
+          "creator_id": "creator_emma",
+          "title": "Quick Dance Challenge #viral",
+          "description": "Can you keep up? 60 seconds of pure energy!",
+          "thumbnail": "https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 1,
+          "video_type": "short",
+          "category": "Dance",
+          "ticker_symbol": "EMMA_0126S2",
+          "views": 8500000,
+          "likes": 920000,
+          "share_price": 22.0,
+          "available_shares": 45.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 15.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 19.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 22.0
+            }
+          ],
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428494+00:00"
+        },
+        "analytics": {
+          "views": 8500000,
+          "likes": 920000,
+          "engagement_rate": 10.82,
+          "share_price": 22.0,
+          "price_change_percent": 0,
+          "shares_sold": 55.0,
+          "available_shares": 45.0,
+          "market_cap": 2200.0,
+          "unique_investors": 0,
+          "total_invested": 0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 15.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 19.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 22.0
+            }
+          ]
+        }
+      }
+    },
+    {
+      "test": "Get Videos for Like Test",
+      "success": true,
+      "details": "Status: 200",
+      "response_data": [
+        {
+          "video_id": "vid_mike_2",
+          "creator_id": "creator_mike",
+          "title": "60-Second Guacamole",
+          "description": "The fastest and best guac you'll ever make!",
+          "thumbnail": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 1,
+          "video_type": "short",
+          "category": "Food",
+          "ticker_symbol": "CHEF_0126S2",
+          "views": 7200001,
+          "likes": 620000,
+          "share_price": 28.5,
+          "available_shares": 50.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 17.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 23.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 28.5
+            }
+          ],
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428516+00:00",
+          "creator": {
+            "creator_id": "creator_mike",
+            "name": "Chef Mike",
+            "category": "Food",
+            "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
+            "stock_symbol": "$CHEF",
+            "subscriber_count": 432000,
+            "total_views": 18000000,
+            "created_at": "2026-01-24T02:37:07.427884+00:00"
+          }
+        },
+        {
+          "video_id": "vid_mike_1",
+          "creator_id": "creator_mike",
+          "title": "Perfect Pasta Carbonara - Restaurant Quality at Home",
+          "description": "Master the authentic Italian carbonara with this detailed tutorial",
+          "thumbnail": "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 18,
+          "video_type": "full",
+          "category": "Food",
+          "ticker_symbol": "CHEF_0126F1",
+          "views": 4500000,
+          "likes": 380000,
+          "share_price": 21.25,
+          "available_shares": 60.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 14.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 18.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 21.25
+            }
+          ],
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428514+00:00",
+          "creator": {
+            "creator_id": "creator_mike",
+            "name": "Chef Mike",
+            "category": "Food",
+            "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
+            "stock_symbol": "$CHEF",
+            "subscriber_count": 432000,
+            "total_views": 18000000,
+            "created_at": "2026-01-24T02:37:07.427884+00:00"
+          }
+        },
+        {
+          "video_id": "vid_sarah_2",
+          "creator_id": "creator_sarah",
+          "title": "This AI Tool Changed Everything",
+          "description": "Quick look at the AI tool everyone's talking about",
+          "thumbnail": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 3,
+          "video_type": "short",
+          "category": "Tech",
+          "ticker_symbol": "TECH_0126S2",
+          "views": 12000000,
+          "likes": 890000,
+          "share_price": 38.0,
+          "available_shares": 25.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 20.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 30.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 38.0
+            }
+          ],
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428511+00:00",
+          "creator": {
+            "creator_id": "creator_sarah",
+            "name": "Sarah Tech",
+            "category": "Tech",
+            "image": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400",
+            "stock_symbol": "$TECH",
+            "subscriber_count": 1200000,
+            "total_views": 67000000,
+            "created_at": "2026-01-24T02:37:07.427883+00:00"
+          }
+        },
+        {
+          "video_id": "vid_sarah_1",
+          "creator_id": "creator_sarah",
+          "title": "iPhone 16 Pro Max - Honest Review After 30 Days",
+          "description": "The truth about Apple's latest flagship. Is it worth the upgrade?",
+          "thumbnail": "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 25,
+          "video_type": "full",
+          "category": "Tech",
+          "ticker_symbol": "TECH_0126R1",
+          "views": 8900000,
+          "likes": 670000,
+          "share_price": 32.5,
+          "available_shares": 40.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 18.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 26.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 32.5
+            }
+          ],
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428505+00:00",
+          "creator": {
+            "creator_id": "creator_sarah",
+            "name": "Sarah Tech",
+            "category": "Tech",
+            "image": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400",
+            "stock_symbol": "$TECH",
+            "subscriber_count": 1200000,
+            "total_views": 67000000,
+            "created_at": "2026-01-24T02:37:07.427883+00:00"
+          }
+        },
+        {
+          "video_id": "vid_alex_2",
+          "creator_id": "creator_alex",
+          "title": "Sunrise at Machu Picchu",
+          "description": "Breathtaking 2-minute glimpse of dawn at the ancient wonder",
+          "thumbnail": "https://images.unsplash.com/photo-1526392060635-9d6019884377?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 2,
+          "video_type": "short",
+          "category": "Travel",
+          "ticker_symbol": "ALEX_0126V2",
+          "views": 5600000,
+          "likes": 480000,
+          "share_price": 25.0,
+          "available_shares": 55.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 16.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 21.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 25.0
+            }
+          ],
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428503+00:00",
+          "creator": {
+            "creator_id": "creator_alex",
+            "name": "Alex Roams",
+            "category": "Travel",
+            "image": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400",
+            "stock_symbol": "$ALEX",
+            "subscriber_count": 567000,
+            "total_views": 23000000,
+            "created_at": "2026-01-24T02:37:07.427881+00:00"
+          }
+        },
+        {
+          "video_id": "vid_alex_1",
+          "creator_id": "creator_alex",
+          "title": "Hidden Gems of Bali - 15 Min Travel Guide",
+          "description": "Discover secret spots in Bali that most tourists never see!",
+          "thumbnail": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 15,
+          "video_type": "full",
+          "category": "Travel",
+          "ticker_symbol": "ALEX_0126T1",
+          "views": 3200000,
+          "likes": 245000,
+          "share_price": 18.75,
+          "available_shares": 70.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 13.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 16.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 18.75
+            }
+          ],
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428500+00:00",
+          "creator": {
+            "creator_id": "creator_alex",
+            "name": "Alex Roams",
+            "category": "Travel",
+            "image": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400",
+            "stock_symbol": "$ALEX",
+            "subscriber_count": 567000,
+            "total_views": 23000000,
+            "created_at": "2026-01-24T02:37:07.427881+00:00"
+          }
+        },
+        {
+          "video_id": "vid_joe_1",
+          "creator_id": "creator_joe",
+          "title": "Deep Talk with Sadhguru - Life, Consciousness & Beyond",
+          "description": "An incredible 30-minute conversation with Sadhguru about the nature of existence.",
+          "thumbnail": "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 30,
+          "video_type": "full",
+          "category": "Podcast",
+          "ticker_symbol": "JOE_0126P1",
+          "views": 15000000,
+          "likes": 1200000,
+          "share_price": 45.0,
+          "available_shares": 30.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 20.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 35.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 45.0
+            }
+          ],
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428497+00:00",
+          "creator": {
+            "creator_id": "creator_joe",
+            "name": "Joe Talks",
+            "category": "Podcast",
+            "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
+            "stock_symbol": "$JOE",
+            "subscriber_count": 890000,
+            "total_views": 45000000,
+            "created_at": "2026-01-24T02:37:07.427878+00:00"
+          }
+        },
+        {
+          "video_id": "vid_emma_2",
+          "creator_id": "creator_emma",
+          "title": "Quick Dance Challenge #viral",
+          "description": "Can you keep up? 60 seconds of pure energy!",
+          "thumbnail": "https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 1,
+          "video_type": "short",
+          "category": "Dance",
+          "ticker_symbol": "EMMA_0126S2",
+          "views": 8500000,
+          "likes": 920000,
+          "share_price": 22.0,
+          "available_shares": 45.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 15.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 19.0
+            },
+            {
+              "date": "2024-02-15",
+              "price": 22.0
+            }
+          ],
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428494+00:00",
+          "creator": {
+            "creator_id": "creator_emma",
+            "name": "Emma Dance",
+            "category": "Dance",
+            "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
+            "stock_symbol": "$EMMA",
+            "subscriber_count": 245000,
+            "total_views": 12500000,
+            "created_at": "2026-01-24T02:37:07.427867+00:00",
+            "user_id": "creator-test-user"
+          }
+        },
+        {
+          "video_id": "vid_emma_1",
+          "creator_id": "creator_emma",
+          "title": "20-Min Dance Workout for Beginners",
+          "description": "Learn the hottest dance moves with this easy-to-follow tutorial. Perfect for beginners!",
+          "thumbnail": "https://images.unsplash.com/photo-1524594152303-9fd13543fe6e?w=800",
+          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+          "duration_minutes": 20,
+          "video_type": "full",
+          "category": "Dance",
+          "ticker_symbol": "EMMA_0126D1",
+          "views": 2500000,
+          "likes": 185000,
+          "share_price": 15.5,
+          "available_shares": 65.0,
+          "total_shares": 100.0,
+          "price_history": [
+            {
+              "date": "2024-01-01",
+              "price": 10.0
+            },
+            {
+              "date": "2024-01-15",
+              "price": 12.0
+            },
+            {
+              "date": "2024-02-01",
+              "price": 14.5
+            },
+            {
+              "date": "2024-02-15",
+              "price": 15.5
+            }
+          ],
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428486+00:00",
+          "creator": {
+            "creator_id": "creator_emma",
+            "name": "Emma Dance",
+            "category": "Dance",
+            "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
+            "stock_symbol": "$EMMA",
+            "subscriber_count": 245000,
+            "total_views": 12500000,
+            "created_at": "2026-01-24T02:37:07.427867+00:00",
+            "user_id": "creator-test-user"
           }
         }
       ]
@@ -1241,7 +1868,7 @@
       "details": "Status: 200",
       "response_data": {
         "liked": true,
-        "likes": 1
+        "likes": 620001
       }
     },
     {
@@ -1250,7 +1877,7 @@
       "details": "Status: 200",
       "response_data": {
         "liked": false,
-        "likes": 0
+        "likes": 620000
       }
     },
     {
@@ -1266,7 +1893,8 @@
           "stock_symbol": "$EMMA",
           "subscriber_count": 245000,
           "total_views": 12500000,
-          "created_at": "2026-01-24T01:39:42.613643+00:00"
+          "created_at": "2026-01-24T02:37:07.427867+00:00",
+          "user_id": "creator-test-user"
         },
         {
           "creator_id": "creator_joe",
@@ -1276,7 +1904,7 @@
           "stock_symbol": "$JOE",
           "subscriber_count": 890000,
           "total_views": 45000000,
-          "created_at": "2026-01-24T01:39:42.613654+00:00"
+          "created_at": "2026-01-24T02:37:07.427878+00:00"
         },
         {
           "creator_id": "creator_alex",
@@ -1286,7 +1914,7 @@
           "stock_symbol": "$ALEX",
           "subscriber_count": 567000,
           "total_views": 23000000,
-          "created_at": "2026-01-24T01:39:42.613656+00:00"
+          "created_at": "2026-01-24T02:37:07.427881+00:00"
         },
         {
           "creator_id": "creator_sarah",
@@ -1296,7 +1924,7 @@
           "stock_symbol": "$TECH",
           "subscriber_count": 1200000,
           "total_views": 67000000,
-          "created_at": "2026-01-24T01:39:42.613658+00:00"
+          "created_at": "2026-01-24T02:37:07.427883+00:00"
         },
         {
           "creator_id": "creator_mike",
@@ -1304,20 +1932,9 @@
           "category": "Food",
           "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
           "stock_symbol": "$CHEF",
-          "subscriber_count": 432001,
+          "subscriber_count": 432000,
           "total_views": 18000000,
-          "created_at": "2026-01-24T01:39:42.613659+00:00"
-        },
-        {
-          "creator_id": "creator_7c5d011901ca",
-          "user_id": "test-user-1769219111882",
-          "name": "Test Creator",
-          "category": "Gaming",
-          "image": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400",
-          "stock_symbol": "$TEST",
-          "subscriber_count": 0,
-          "total_views": 0,
-          "created_at": "2026-01-24T02:01:15.082070+00:00"
+          "created_at": "2026-01-24T02:37:07.427884+00:00"
         }
       ]
     },
@@ -1343,42 +1960,6 @@
       "details": "Status: 200",
       "response_data": [
         {
-          "video_id": "vid_71c0928c2f2c",
-          "creator_id": "creator_7c5d011901ca",
-          "title": "My First Gaming Stream Highlights",
-          "description": "Best moments from my gaming sessions!",
-          "thumbnail": "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800",
-          "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-          "duration_minutes": 15,
-          "video_type": "full",
-          "category": "Gaming",
-          "views": 1,
-          "likes": 0,
-          "share_price": 10.0,
-          "available_shares": 100.0,
-          "total_shares": 100.0,
-          "price_history": [
-            {
-              "date": "2026-01-24",
-              "price": 10.0
-            }
-          ],
-          "last_price_change": 0,
-          "last_price_change_percent": 0,
-          "created_at": "2026-01-24T02:01:25.280558+00:00",
-          "creator": {
-            "creator_id": "creator_7c5d011901ca",
-            "user_id": "test-user-1769219111882",
-            "name": "Test Creator",
-            "category": "Gaming",
-            "image": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400",
-            "stock_symbol": "$TEST",
-            "subscriber_count": 0,
-            "total_views": 0,
-            "created_at": "2026-01-24T02:01:15.082070+00:00"
-          }
-        },
-        {
           "video_id": "vid_mike_2",
           "creator_id": "creator_mike",
           "title": "60-Second Guacamole",
@@ -1387,10 +1968,12 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 1,
           "video_type": "short",
-          "views": 7200011,
-          "likes": 620001,
-          "share_price": 29.88,
-          "available_shares": 47.0,
+          "category": "Food",
+          "ticker_symbol": "CHEF_0126S2",
+          "views": 7200001,
+          "likes": 620000,
+          "share_price": 28.5,
+          "available_shares": 50.0,
           "total_shares": 100.0,
           "price_history": [
             {
@@ -1408,24 +1991,20 @@
             {
               "date": "2024-02-15",
               "price": 28.5
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 29.88
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623792+00:00",
-          "last_price_change": 1.379999999999999,
-          "last_price_change_percent": 4.84,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428516+00:00",
           "creator": {
             "creator_id": "creator_mike",
             "name": "Chef Mike",
             "category": "Food",
             "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
             "stock_symbol": "$CHEF",
-            "subscriber_count": 432001,
+            "subscriber_count": 432000,
             "total_views": 18000000,
-            "created_at": "2026-01-24T01:39:42.613659+00:00"
+            "created_at": "2026-01-24T02:37:07.427884+00:00"
           }
         },
         {
@@ -1437,9 +2016,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 18,
           "video_type": "full",
+          "category": "Food",
+          "ticker_symbol": "CHEF_0126F1",
           "views": 4500000,
           "likes": 380000,
-          "share_price": 22.23,
+          "share_price": 21.25,
           "available_shares": 60.0,
           "total_shares": 100.0,
           "price_history": [
@@ -1458,24 +2039,20 @@
             {
               "date": "2024-02-15",
               "price": 21.25
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 22.23
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623790+00:00",
-          "last_price_change": 0.9800000000000004,
-          "last_price_change_percent": 4.61,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428514+00:00",
           "creator": {
             "creator_id": "creator_mike",
             "name": "Chef Mike",
             "category": "Food",
             "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
             "stock_symbol": "$CHEF",
-            "subscriber_count": 432001,
+            "subscriber_count": 432000,
             "total_views": 18000000,
-            "created_at": "2026-01-24T01:39:42.613659+00:00"
+            "created_at": "2026-01-24T02:37:07.427884+00:00"
           }
         },
         {
@@ -1487,9 +2064,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 3,
           "video_type": "short",
+          "category": "Tech",
+          "ticker_symbol": "TECH_0126S2",
           "views": 12000000,
           "likes": 890000,
-          "share_price": 39.62,
+          "share_price": 38.0,
           "available_shares": 25.0,
           "total_shares": 100.0,
           "price_history": [
@@ -1508,15 +2087,11 @@
             {
               "date": "2024-02-15",
               "price": 38.0
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 39.62
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623785+00:00",
-          "last_price_change": 1.6199999999999974,
-          "last_price_change_percent": 4.26,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428511+00:00",
           "creator": {
             "creator_id": "creator_sarah",
             "name": "Sarah Tech",
@@ -1525,7 +2100,7 @@
             "stock_symbol": "$TECH",
             "subscriber_count": 1200000,
             "total_views": 67000000,
-            "created_at": "2026-01-24T01:39:42.613658+00:00"
+            "created_at": "2026-01-24T02:37:07.427883+00:00"
           }
         },
         {
@@ -1537,9 +2112,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 25,
           "video_type": "full",
+          "category": "Tech",
+          "ticker_symbol": "TECH_0126R1",
           "views": 8900000,
           "likes": 670000,
-          "share_price": 36.58,
+          "share_price": 32.5,
           "available_shares": 40.0,
           "total_shares": 100.0,
           "price_history": [
@@ -1558,15 +2135,11 @@
             {
               "date": "2024-02-15",
               "price": 32.5
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 36.58
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623783+00:00",
-          "last_price_change": 4.079999999999998,
-          "last_price_change_percent": 12.55,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428505+00:00",
           "creator": {
             "creator_id": "creator_sarah",
             "name": "Sarah Tech",
@@ -1575,7 +2148,7 @@
             "stock_symbol": "$TECH",
             "subscriber_count": 1200000,
             "total_views": 67000000,
-            "created_at": "2026-01-24T01:39:42.613658+00:00"
+            "created_at": "2026-01-24T02:37:07.427883+00:00"
           }
         },
         {
@@ -1587,9 +2160,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 2,
           "video_type": "short",
+          "category": "Travel",
+          "ticker_symbol": "ALEX_0126V2",
           "views": 5600000,
           "likes": 480000,
-          "share_price": 27.41,
+          "share_price": 25.0,
           "available_shares": 55.0,
           "total_shares": 100.0,
           "price_history": [
@@ -1608,15 +2183,11 @@
             {
               "date": "2024-02-15",
               "price": 25.0
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 27.41
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623781+00:00",
-          "last_price_change": 2.41,
-          "last_price_change_percent": 9.64,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428503+00:00",
           "creator": {
             "creator_id": "creator_alex",
             "name": "Alex Roams",
@@ -1625,7 +2196,7 @@
             "stock_symbol": "$ALEX",
             "subscriber_count": 567000,
             "total_views": 23000000,
-            "created_at": "2026-01-24T01:39:42.613656+00:00"
+            "created_at": "2026-01-24T02:37:07.427881+00:00"
           }
         },
         {
@@ -1637,9 +2208,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 15,
           "video_type": "full",
+          "category": "Travel",
+          "ticker_symbol": "ALEX_0126T1",
           "views": 3200000,
           "likes": 245000,
-          "share_price": 19.15,
+          "share_price": 18.75,
           "available_shares": 70.0,
           "total_shares": 100.0,
           "price_history": [
@@ -1658,15 +2231,11 @@
             {
               "date": "2024-02-15",
               "price": 18.75
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 19.15
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623772+00:00",
-          "last_price_change": 0.3999999999999986,
-          "last_price_change_percent": 2.13,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428500+00:00",
           "creator": {
             "creator_id": "creator_alex",
             "name": "Alex Roams",
@@ -1675,7 +2244,7 @@
             "stock_symbol": "$ALEX",
             "subscriber_count": 567000,
             "total_views": 23000000,
-            "created_at": "2026-01-24T01:39:42.613656+00:00"
+            "created_at": "2026-01-24T02:37:07.427881+00:00"
           }
         },
         {
@@ -1687,10 +2256,12 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 30,
           "video_type": "full",
-          "views": 15000005,
+          "category": "Podcast",
+          "ticker_symbol": "JOE_0126P1",
+          "views": 15000000,
           "likes": 1200000,
-          "share_price": 47.19,
-          "available_shares": 23.0,
+          "share_price": 45.0,
+          "available_shares": 30.0,
           "total_shares": 100.0,
           "price_history": [
             {
@@ -1708,15 +2279,11 @@
             {
               "date": "2024-02-15",
               "price": 45.0
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 47.19
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623770+00:00",
-          "last_price_change": 2.1899999999999977,
-          "last_price_change_percent": 4.87,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428497+00:00",
           "creator": {
             "creator_id": "creator_joe",
             "name": "Joe Talks",
@@ -1725,7 +2292,7 @@
             "stock_symbol": "$JOE",
             "subscriber_count": 890000,
             "total_views": 45000000,
-            "created_at": "2026-01-24T01:39:42.613654+00:00"
+            "created_at": "2026-01-24T02:37:07.427878+00:00"
           }
         },
         {
@@ -1737,9 +2304,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 1,
           "video_type": "short",
+          "category": "Dance",
+          "ticker_symbol": "EMMA_0126S2",
           "views": 8500000,
           "likes": 920000,
-          "share_price": 23.03,
+          "share_price": 22.0,
           "available_shares": 45.0,
           "total_shares": 100.0,
           "price_history": [
@@ -1758,15 +2327,11 @@
             {
               "date": "2024-02-15",
               "price": 22.0
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 23.03
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623767+00:00",
-          "last_price_change": 1.0300000000000011,
-          "last_price_change_percent": 4.68,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428494+00:00",
           "creator": {
             "creator_id": "creator_emma",
             "name": "Emma Dance",
@@ -1775,7 +2340,8 @@
             "stock_symbol": "$EMMA",
             "subscriber_count": 245000,
             "total_views": 12500000,
-            "created_at": "2026-01-24T01:39:42.613643+00:00"
+            "created_at": "2026-01-24T02:37:07.427867+00:00",
+            "user_id": "creator-test-user"
           }
         },
         {
@@ -1787,9 +2353,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 20,
           "video_type": "full",
-          "views": 2500002,
+          "category": "Dance",
+          "ticker_symbol": "EMMA_0126D1",
+          "views": 2500000,
           "likes": 185000,
-          "share_price": 16.05,
+          "share_price": 15.5,
           "available_shares": 65.0,
           "total_shares": 100.0,
           "price_history": [
@@ -1808,15 +2376,11 @@
             {
               "date": "2024-02-15",
               "price": 15.5
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 16.05
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623758+00:00",
-          "last_price_change": 0.5500000000000007,
-          "last_price_change_percent": 3.55,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428486+00:00",
           "creator": {
             "creator_id": "creator_emma",
             "name": "Emma Dance",
@@ -1825,7 +2389,8 @@
             "stock_symbol": "$EMMA",
             "subscriber_count": 245000,
             "total_views": 12500000,
-            "created_at": "2026-01-24T01:39:42.613643+00:00"
+            "created_at": "2026-01-24T02:37:07.427867+00:00",
+            "user_id": "creator-test-user"
           }
         }
       ]
@@ -1837,7 +2402,7 @@
       "response_data": {
         "success": true,
         "shares_bought": 2.0,
-        "total_cost": 20.0
+        "total_cost": 57.0
       }
     },
     {
@@ -1847,7 +2412,7 @@
       "response_data": {
         "success": true,
         "shares_sold": 1.0,
-        "total_value": 10.0
+        "total_value": 28.5
       }
     },
     {
@@ -1858,52 +2423,64 @@
         "items": [
           {
             "video": {
-              "video_id": "vid_71c0928c2f2c",
-              "creator_id": "creator_7c5d011901ca",
-              "title": "My First Gaming Stream Highlights",
-              "description": "Best moments from my gaming sessions!",
-              "thumbnail": "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800",
+              "video_id": "vid_mike_2",
+              "creator_id": "creator_mike",
+              "title": "60-Second Guacamole",
+              "description": "The fastest and best guac you'll ever make!",
+              "thumbnail": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=800",
               "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-              "duration_minutes": 15,
-              "video_type": "full",
-              "category": "Gaming",
-              "views": 1,
-              "likes": 0,
-              "share_price": 10.0,
-              "available_shares": 99.0,
+              "duration_minutes": 1,
+              "video_type": "short",
+              "category": "Food",
+              "ticker_symbol": "CHEF_0126S2",
+              "views": 7200001,
+              "likes": 620000,
+              "share_price": 28.5,
+              "available_shares": 49.0,
               "total_shares": 100.0,
               "price_history": [
                 {
-                  "date": "2026-01-24",
+                  "date": "2024-01-01",
                   "price": 10.0
+                },
+                {
+                  "date": "2024-01-15",
+                  "price": 17.0
+                },
+                {
+                  "date": "2024-02-01",
+                  "price": 23.0
+                },
+                {
+                  "date": "2024-02-15",
+                  "price": 28.5
                 }
               ],
               "last_price_change": 0,
               "last_price_change_percent": 0,
-              "created_at": "2026-01-24T02:01:25.280558+00:00"
+              "created_at": "2026-01-24T02:37:07.428516+00:00"
             },
             "creator": {
-              "creator_id": "creator_7c5d011901ca",
-              "user_id": "test-user-1769219111882",
-              "name": "Test Creator",
-              "category": "Gaming",
-              "image": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400",
-              "stock_symbol": "$TEST",
-              "subscriber_count": 0,
-              "total_views": 0,
-              "created_at": "2026-01-24T02:01:15.082070+00:00"
+              "creator_id": "creator_mike",
+              "name": "Chef Mike",
+              "category": "Food",
+              "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
+              "stock_symbol": "$CHEF",
+              "subscriber_count": 432000,
+              "total_views": 18000000,
+              "created_at": "2026-01-24T02:37:07.427884+00:00"
             },
             "shares_owned": 1.0,
-            "purchase_price": 10.0,
-            "current_price": 10.0,
-            "current_value": 10.0,
+            "purchase_price": 28.5,
+            "current_price": 28.5,
+            "current_value": 28.5,
             "gain": 0.0,
             "gain_percent": 0.0
           }
         ],
-        "total_value": 10.0,
+        "total_value": 28.5,
         "total_gain": 0.0,
-        "wallet_balance": 490.0
+        "wallet_balance": 471.5
       }
     },
     {
@@ -1911,74 +2488,100 @@
       "success": true,
       "details": "Status: 200",
       "response_data": {
-        "balance": 490.0,
+        "balance": 471.5,
         "transactions": [
           {
-            "transaction_id": "txn_6e90a9965c4a",
-            "user_id": "test-user-demo",
+            "transaction_id": "txn_dbf33d14214c",
+            "user_id": "creator-test-user",
             "transaction_type": "sell_share",
-            "amount": 10.0,
-            "video_id": "vid_71c0928c2f2c",
+            "amount": 28.5,
+            "video_id": "vid_mike_2",
             "shares": 1.0,
-            "created_at": "2026-01-24T02:11:02.865813+00:00",
+            "created_at": "2026-01-24T02:39:27.139465+00:00",
             "video": {
-              "video_id": "vid_71c0928c2f2c",
-              "creator_id": "creator_7c5d011901ca",
-              "title": "My First Gaming Stream Highlights",
-              "description": "Best moments from my gaming sessions!",
-              "thumbnail": "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800",
+              "video_id": "vid_mike_2",
+              "creator_id": "creator_mike",
+              "title": "60-Second Guacamole",
+              "description": "The fastest and best guac you'll ever make!",
+              "thumbnail": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=800",
               "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-              "duration_minutes": 15,
-              "video_type": "full",
-              "category": "Gaming",
-              "views": 1,
-              "likes": 0,
-              "share_price": 10.0,
-              "available_shares": 99.0,
+              "duration_minutes": 1,
+              "video_type": "short",
+              "category": "Food",
+              "ticker_symbol": "CHEF_0126S2",
+              "views": 7200001,
+              "likes": 620000,
+              "share_price": 28.5,
+              "available_shares": 49.0,
               "total_shares": 100.0,
               "price_history": [
                 {
-                  "date": "2026-01-24",
+                  "date": "2024-01-01",
                   "price": 10.0
+                },
+                {
+                  "date": "2024-01-15",
+                  "price": 17.0
+                },
+                {
+                  "date": "2024-02-01",
+                  "price": 23.0
+                },
+                {
+                  "date": "2024-02-15",
+                  "price": 28.5
                 }
               ],
               "last_price_change": 0,
               "last_price_change_percent": 0,
-              "created_at": "2026-01-24T02:01:25.280558+00:00"
+              "created_at": "2026-01-24T02:37:07.428516+00:00"
             }
           },
           {
-            "transaction_id": "txn_cac117d32abf",
-            "user_id": "test-user-demo",
+            "transaction_id": "txn_b5e819333157",
+            "user_id": "creator-test-user",
             "transaction_type": "buy_share",
-            "amount": -20.0,
-            "video_id": "vid_71c0928c2f2c",
+            "amount": -57.0,
+            "video_id": "vid_mike_2",
             "shares": 2.0,
-            "created_at": "2026-01-24T02:11:02.825419+00:00",
+            "created_at": "2026-01-24T02:39:27.098039+00:00",
             "video": {
-              "video_id": "vid_71c0928c2f2c",
-              "creator_id": "creator_7c5d011901ca",
-              "title": "My First Gaming Stream Highlights",
-              "description": "Best moments from my gaming sessions!",
-              "thumbnail": "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=800",
+              "video_id": "vid_mike_2",
+              "creator_id": "creator_mike",
+              "title": "60-Second Guacamole",
+              "description": "The fastest and best guac you'll ever make!",
+              "thumbnail": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=800",
               "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-              "duration_minutes": 15,
-              "video_type": "full",
-              "category": "Gaming",
-              "views": 1,
-              "likes": 0,
-              "share_price": 10.0,
-              "available_shares": 99.0,
+              "duration_minutes": 1,
+              "video_type": "short",
+              "category": "Food",
+              "ticker_symbol": "CHEF_0126S2",
+              "views": 7200001,
+              "likes": 620000,
+              "share_price": 28.5,
+              "available_shares": 49.0,
               "total_shares": 100.0,
               "price_history": [
                 {
-                  "date": "2026-01-24",
+                  "date": "2024-01-01",
                   "price": 10.0
+                },
+                {
+                  "date": "2024-01-15",
+                  "price": 17.0
+                },
+                {
+                  "date": "2024-02-01",
+                  "price": 23.0
+                },
+                {
+                  "date": "2024-02-15",
+                  "price": 28.5
                 }
               ],
               "last_price_change": 0,
               "last_price_change_percent": 0,
-              "created_at": "2026-01-24T02:01:25.280558+00:00"
+              "created_at": "2026-01-24T02:37:07.428516+00:00"
             }
           }
         ]
@@ -1990,7 +2593,7 @@
       "details": "Status: 200",
       "response_data": {
         "success": true,
-        "new_balance": 590.0
+        "new_balance": 571.5
       }
     },
     {
@@ -2007,10 +2610,12 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 30,
           "video_type": "full",
-          "views": 15000005,
+          "category": "Podcast",
+          "ticker_symbol": "JOE_0126P1",
+          "views": 15000000,
           "likes": 1200000,
-          "share_price": 47.19,
-          "available_shares": 23.0,
+          "share_price": 45.0,
+          "available_shares": 30.0,
           "total_shares": 100.0,
           "price_history": [
             {
@@ -2028,15 +2633,11 @@
             {
               "date": "2024-02-15",
               "price": 45.0
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 47.19
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623770+00:00",
-          "last_price_change": 2.1899999999999977,
-          "last_price_change_percent": 4.87,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428497+00:00",
           "creator": {
             "creator_id": "creator_joe",
             "name": "Joe Talks",
@@ -2045,7 +2646,7 @@
             "stock_symbol": "$JOE",
             "subscriber_count": 890000,
             "total_views": 45000000,
-            "created_at": "2026-01-24T01:39:42.613654+00:00"
+            "created_at": "2026-01-24T02:37:07.427878+00:00"
           }
         },
         {
@@ -2057,9 +2658,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 3,
           "video_type": "short",
+          "category": "Tech",
+          "ticker_symbol": "TECH_0126S2",
           "views": 12000000,
           "likes": 890000,
-          "share_price": 39.62,
+          "share_price": 38.0,
           "available_shares": 25.0,
           "total_shares": 100.0,
           "price_history": [
@@ -2078,15 +2681,11 @@
             {
               "date": "2024-02-15",
               "price": 38.0
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 39.62
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623785+00:00",
-          "last_price_change": 1.6199999999999974,
-          "last_price_change_percent": 4.26,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428511+00:00",
           "creator": {
             "creator_id": "creator_sarah",
             "name": "Sarah Tech",
@@ -2095,7 +2694,7 @@
             "stock_symbol": "$TECH",
             "subscriber_count": 1200000,
             "total_views": 67000000,
-            "created_at": "2026-01-24T01:39:42.613658+00:00"
+            "created_at": "2026-01-24T02:37:07.427883+00:00"
           }
         },
         {
@@ -2107,9 +2706,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 1,
           "video_type": "short",
+          "category": "Dance",
+          "ticker_symbol": "EMMA_0126S2",
           "views": 8500000,
           "likes": 920000,
-          "share_price": 23.03,
+          "share_price": 22.0,
           "available_shares": 45.0,
           "total_shares": 100.0,
           "price_history": [
@@ -2128,15 +2729,11 @@
             {
               "date": "2024-02-15",
               "price": 22.0
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 23.03
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623767+00:00",
-          "last_price_change": 1.0300000000000011,
-          "last_price_change_percent": 4.68,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428494+00:00",
           "creator": {
             "creator_id": "creator_emma",
             "name": "Emma Dance",
@@ -2145,7 +2742,8 @@
             "stock_symbol": "$EMMA",
             "subscriber_count": 245000,
             "total_views": 12500000,
-            "created_at": "2026-01-24T01:39:42.613643+00:00"
+            "created_at": "2026-01-24T02:37:07.427867+00:00",
+            "user_id": "creator-test-user"
           }
         },
         {
@@ -2157,9 +2755,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 25,
           "video_type": "full",
+          "category": "Tech",
+          "ticker_symbol": "TECH_0126R1",
           "views": 8900000,
           "likes": 670000,
-          "share_price": 36.58,
+          "share_price": 32.5,
           "available_shares": 40.0,
           "total_shares": 100.0,
           "price_history": [
@@ -2178,15 +2778,11 @@
             {
               "date": "2024-02-15",
               "price": 32.5
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 36.58
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623783+00:00",
-          "last_price_change": 4.079999999999998,
-          "last_price_change_percent": 12.55,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428505+00:00",
           "creator": {
             "creator_id": "creator_sarah",
             "name": "Sarah Tech",
@@ -2195,7 +2791,7 @@
             "stock_symbol": "$TECH",
             "subscriber_count": 1200000,
             "total_views": 67000000,
-            "created_at": "2026-01-24T01:39:42.613658+00:00"
+            "created_at": "2026-01-24T02:37:07.427883+00:00"
           }
         },
         {
@@ -2207,10 +2803,12 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 1,
           "video_type": "short",
-          "views": 7200011,
-          "likes": 620001,
-          "share_price": 29.88,
-          "available_shares": 47.0,
+          "category": "Food",
+          "ticker_symbol": "CHEF_0126S2",
+          "views": 7200001,
+          "likes": 620000,
+          "share_price": 28.5,
+          "available_shares": 49.0,
           "total_shares": 100.0,
           "price_history": [
             {
@@ -2228,24 +2826,20 @@
             {
               "date": "2024-02-15",
               "price": 28.5
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 29.88
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623792+00:00",
-          "last_price_change": 1.379999999999999,
-          "last_price_change_percent": 4.84,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428516+00:00",
           "creator": {
             "creator_id": "creator_mike",
             "name": "Chef Mike",
             "category": "Food",
             "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
             "stock_symbol": "$CHEF",
-            "subscriber_count": 432001,
+            "subscriber_count": 432000,
             "total_views": 18000000,
-            "created_at": "2026-01-24T01:39:42.613659+00:00"
+            "created_at": "2026-01-24T02:37:07.427884+00:00"
           }
         },
         {
@@ -2257,9 +2851,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 15,
           "video_type": "full",
+          "category": "Travel",
+          "ticker_symbol": "ALEX_0126T1",
           "views": 3200000,
           "likes": 245000,
-          "share_price": 19.15,
+          "share_price": 18.75,
           "available_shares": 70.0,
           "total_shares": 100.0,
           "price_history": [
@@ -2278,15 +2874,11 @@
             {
               "date": "2024-02-15",
               "price": 18.75
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 19.15
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623772+00:00",
-          "last_price_change": 0.3999999999999986,
-          "last_price_change_percent": 2.13,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428500+00:00",
           "creator": {
             "creator_id": "creator_alex",
             "name": "Alex Roams",
@@ -2295,7 +2887,7 @@
             "stock_symbol": "$ALEX",
             "subscriber_count": 567000,
             "total_views": 23000000,
-            "created_at": "2026-01-24T01:39:42.613656+00:00"
+            "created_at": "2026-01-24T02:37:07.427881+00:00"
           }
         },
         {
@@ -2307,9 +2899,11 @@
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 2,
           "video_type": "short",
+          "category": "Travel",
+          "ticker_symbol": "ALEX_0126V2",
           "views": 5600000,
           "likes": 480000,
-          "share_price": 27.41,
+          "share_price": 25.0,
           "available_shares": 55.0,
           "total_shares": 100.0,
           "price_history": [
@@ -2328,15 +2922,11 @@
             {
               "date": "2024-02-15",
               "price": 25.0
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 27.41
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623781+00:00",
-          "last_price_change": 2.41,
-          "last_price_change_percent": 9.64,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428503+00:00",
           "creator": {
             "creator_id": "creator_alex",
             "name": "Alex Roams",
@@ -2345,22 +2935,24 @@
             "stock_symbol": "$ALEX",
             "subscriber_count": 567000,
             "total_views": 23000000,
-            "created_at": "2026-01-24T01:39:42.613656+00:00"
+            "created_at": "2026-01-24T02:37:07.427881+00:00"
           }
         },
         {
-          "video_id": "vid_mike_1",
-          "creator_id": "creator_mike",
-          "title": "Perfect Pasta Carbonara - Restaurant Quality at Home",
-          "description": "Master the authentic Italian carbonara with this detailed tutorial",
-          "thumbnail": "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=800",
+          "video_id": "vid_emma_1",
+          "creator_id": "creator_emma",
+          "title": "20-Min Dance Workout for Beginners",
+          "description": "Learn the hottest dance moves with this easy-to-follow tutorial. Perfect for beginners!",
+          "thumbnail": "https://images.unsplash.com/photo-1524594152303-9fd13543fe6e?w=800",
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-          "duration_minutes": 18,
+          "duration_minutes": 20,
           "video_type": "full",
-          "views": 4500000,
-          "likes": 380000,
-          "share_price": 22.23,
-          "available_shares": 60.0,
+          "category": "Dance",
+          "ticker_symbol": "EMMA_0126D1",
+          "views": 2500000,
+          "likes": 185000,
+          "share_price": 15.5,
+          "available_shares": 65.0,
           "total_shares": 100.0,
           "price_history": [
             {
@@ -2369,33 +2961,30 @@
             },
             {
               "date": "2024-01-15",
-              "price": 14.0
+              "price": 12.0
             },
             {
               "date": "2024-02-01",
-              "price": 18.0
+              "price": 14.5
             },
             {
               "date": "2024-02-15",
-              "price": 21.25
-            },
-            {
-              "date": "2026-01-24 02:00",
-              "price": 22.23
+              "price": 15.5
             }
           ],
-          "created_at": "2026-01-24T01:39:42.623790+00:00",
-          "last_price_change": 0.9800000000000004,
-          "last_price_change_percent": 4.61,
+          "last_price_change": 0,
+          "last_price_change_percent": 0,
+          "created_at": "2026-01-24T02:37:07.428486+00:00",
           "creator": {
-            "creator_id": "creator_mike",
-            "name": "Chef Mike",
-            "category": "Food",
-            "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
-            "stock_symbol": "$CHEF",
-            "subscriber_count": 432001,
-            "total_views": 18000000,
-            "created_at": "2026-01-24T01:39:42.613659+00:00"
+            "creator_id": "creator_emma",
+            "name": "Emma Dance",
+            "category": "Dance",
+            "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
+            "stock_symbol": "$EMMA",
+            "subscriber_count": 245000,
+            "total_views": 12500000,
+            "created_at": "2026-01-24T02:37:07.427867+00:00",
+            "user_id": "creator-test-user"
           }
         }
       ]
@@ -2405,87 +2994,79 @@
       "success": true,
       "details": "Status: 200",
       "response_data": {
-        "updated": 10,
+        "updated": 9,
         "videos": [
           {
             "video_id": "vid_emma_1",
             "title": "20-Min Dance Workout for Beginners",
-            "old_price": 16.05,
-            "new_price": 17.81,
-            "change": 1.76,
-            "change_percent": 10.97
+            "old_price": 15.5,
+            "new_price": 15.87,
+            "change": 0.37,
+            "change_percent": 2.39
           },
           {
             "video_id": "vid_emma_2",
             "title": "Quick Dance Challenge #viral",
-            "old_price": 23.03,
-            "new_price": 26.27,
-            "change": 3.24,
-            "change_percent": 14.07
+            "old_price": 22.0,
+            "new_price": 24.09,
+            "change": 2.09,
+            "change_percent": 9.5
           },
           {
             "video_id": "vid_joe_1",
             "title": "Deep Talk with Sadhguru - Life, Consciousness & Beyond",
-            "old_price": 47.19,
-            "new_price": 55.35,
-            "change": 8.16,
-            "change_percent": 17.29
+            "old_price": 45.0,
+            "new_price": 51.61,
+            "change": 6.61,
+            "change_percent": 14.69
           },
           {
             "video_id": "vid_alex_1",
             "title": "Hidden Gems of Bali - 15 Min Travel Guide",
-            "old_price": 19.15,
-            "new_price": 19.33,
-            "change": 0.18,
-            "change_percent": 0.94
+            "old_price": 18.75,
+            "new_price": 20.89,
+            "change": 2.14,
+            "change_percent": 11.41
           },
           {
             "video_id": "vid_alex_2",
             "title": "Sunrise at Machu Picchu",
-            "old_price": 27.41,
-            "new_price": 29.28,
-            "change": 1.87,
-            "change_percent": 6.82
+            "old_price": 25.0,
+            "new_price": 27.79,
+            "change": 2.79,
+            "change_percent": 11.16
           },
           {
             "video_id": "vid_sarah_1",
             "title": "iPhone 16 Pro Max - Honest Review After 30 Days",
-            "old_price": 36.58,
-            "new_price": 38.79,
-            "change": 2.21,
-            "change_percent": 6.04
+            "old_price": 32.5,
+            "new_price": 35.34,
+            "change": 2.84,
+            "change_percent": 8.74
           },
           {
             "video_id": "vid_sarah_2",
             "title": "This AI Tool Changed Everything",
-            "old_price": 39.62,
-            "new_price": 42.43,
-            "change": 2.81,
-            "change_percent": 7.09
+            "old_price": 38.0,
+            "new_price": 39.68,
+            "change": 1.68,
+            "change_percent": 4.42
           },
           {
             "video_id": "vid_mike_1",
             "title": "Perfect Pasta Carbonara - Restaurant Quality at Home",
-            "old_price": 22.23,
-            "new_price": 23.4,
-            "change": 1.17,
-            "change_percent": 5.26
+            "old_price": 21.25,
+            "new_price": 23.45,
+            "change": 2.2,
+            "change_percent": 10.35
           },
           {
             "video_id": "vid_mike_2",
             "title": "60-Second Guacamole",
-            "old_price": 29.88,
-            "new_price": 31.48,
-            "change": 1.6,
-            "change_percent": 5.35
-          },
-          {
-            "video_id": "vid_71c0928c2f2c",
-            "title": "My First Gaming Stream Highlights",
-            "old_price": 10.0,
-            "new_price": 10.23,
-            "change": 0.23,
-            "change_percent": 2.3
+            "old_price": 28.5,
+            "new_price": 32.52,
+            "change": 4.02,
+            "change_percent": 14.11
           }
         ]
       }
@@ -2505,10 +3086,12 @@
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 30,
             "video_type": "full",
-            "views": 15000005,
+            "category": "Podcast",
+            "ticker_symbol": "JOE_0126P1",
+            "views": 15000000,
             "likes": 1200000,
-            "share_price": 55.35,
-            "available_shares": 23.0,
+            "share_price": 51.61,
+            "available_shares": 30.0,
             "total_shares": 100.0,
             "price_history": [
               {
@@ -2528,17 +3111,13 @@
                 "price": 45.0
               },
               {
-                "date": "2026-01-24 02:00",
-                "price": 47.19
-              },
-              {
-                "date": "2026-01-24 02:11",
-                "price": 55.35
+                "date": "2026-01-24 02:39",
+                "price": 51.61
               }
             ],
-            "created_at": "2026-01-24T01:39:42.623770+00:00",
-            "last_price_change": 8.160000000000004,
-            "last_price_change_percent": 17.29,
+            "last_price_change": 6.609999999999999,
+            "last_price_change_percent": 14.69,
+            "created_at": "2026-01-24T02:37:07.428497+00:00",
             "creator": {
               "creator_id": "creator_joe",
               "name": "Joe Talks",
@@ -2547,22 +3126,24 @@
               "stock_symbol": "$JOE",
               "subscriber_count": 890000,
               "total_views": 45000000,
-              "created_at": "2026-01-24T01:39:42.613654+00:00"
+              "created_at": "2026-01-24T02:37:07.427878+00:00"
             }
           },
           {
-            "video_id": "vid_emma_2",
-            "creator_id": "creator_emma",
-            "title": "Quick Dance Challenge #viral",
-            "description": "Can you keep up? 60 seconds of pure energy!",
-            "thumbnail": "https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800",
+            "video_id": "vid_mike_2",
+            "creator_id": "creator_mike",
+            "title": "60-Second Guacamole",
+            "description": "The fastest and best guac you'll ever make!",
+            "thumbnail": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=800",
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 1,
             "video_type": "short",
-            "views": 8500000,
-            "likes": 920000,
-            "share_price": 26.27,
-            "available_shares": 45.0,
+            "category": "Food",
+            "ticker_symbol": "CHEF_0126S2",
+            "views": 7200001,
+            "likes": 620000,
+            "share_price": 32.52,
+            "available_shares": 49.0,
             "total_shares": 100.0,
             "price_history": [
               {
@@ -2571,52 +3152,50 @@
               },
               {
                 "date": "2024-01-15",
-                "price": 15.0
+                "price": 17.0
               },
               {
                 "date": "2024-02-01",
-                "price": 19.0
+                "price": 23.0
               },
               {
                 "date": "2024-02-15",
-                "price": 22.0
+                "price": 28.5
               },
               {
-                "date": "2026-01-24 02:00",
-                "price": 23.03
-              },
-              {
-                "date": "2026-01-24 02:11",
-                "price": 26.27
+                "date": "2026-01-24 02:39",
+                "price": 32.52
               }
             ],
-            "created_at": "2026-01-24T01:39:42.623767+00:00",
-            "last_price_change": 3.2399999999999984,
-            "last_price_change_percent": 14.07,
+            "last_price_change": 4.020000000000003,
+            "last_price_change_percent": 14.11,
+            "created_at": "2026-01-24T02:37:07.428516+00:00",
             "creator": {
-              "creator_id": "creator_emma",
-              "name": "Emma Dance",
-              "category": "Dance",
-              "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
-              "stock_symbol": "$EMMA",
-              "subscriber_count": 245000,
-              "total_views": 12500000,
-              "created_at": "2026-01-24T01:39:42.613643+00:00"
+              "creator_id": "creator_mike",
+              "name": "Chef Mike",
+              "category": "Food",
+              "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
+              "stock_symbol": "$CHEF",
+              "subscriber_count": 432000,
+              "total_views": 18000000,
+              "created_at": "2026-01-24T02:37:07.427884+00:00"
             }
           },
           {
-            "video_id": "vid_emma_1",
-            "creator_id": "creator_emma",
-            "title": "20-Min Dance Workout for Beginners",
-            "description": "Learn the hottest dance moves with this easy-to-follow tutorial. Perfect for beginners!",
-            "thumbnail": "https://images.unsplash.com/photo-1524594152303-9fd13543fe6e?w=800",
+            "video_id": "vid_alex_1",
+            "creator_id": "creator_alex",
+            "title": "Hidden Gems of Bali - 15 Min Travel Guide",
+            "description": "Discover secret spots in Bali that most tourists never see!",
+            "thumbnail": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800",
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-            "duration_minutes": 20,
+            "duration_minutes": 15,
             "video_type": "full",
-            "views": 2500002,
-            "likes": 185000,
-            "share_price": 17.81,
-            "available_shares": 65.0,
+            "category": "Travel",
+            "ticker_symbol": "ALEX_0126T1",
+            "views": 3200000,
+            "likes": 245000,
+            "share_price": 20.89,
+            "available_shares": 70.0,
             "total_shares": 100.0,
             "price_history": [
               {
@@ -2625,91 +3204,33 @@
               },
               {
                 "date": "2024-01-15",
-                "price": 12.0
+                "price": 13.0
               },
               {
                 "date": "2024-02-01",
-                "price": 14.5
+                "price": 16.0
               },
               {
                 "date": "2024-02-15",
-                "price": 15.5
+                "price": 18.75
               },
               {
-                "date": "2026-01-24 02:00",
-                "price": 16.05
-              },
-              {
-                "date": "2026-01-24 02:11",
-                "price": 17.81
+                "date": "2026-01-24 02:39",
+                "price": 20.89
               }
             ],
-            "created_at": "2026-01-24T01:39:42.623758+00:00",
-            "last_price_change": 1.759999999999998,
-            "last_price_change_percent": 10.97,
+            "last_price_change": 2.1400000000000006,
+            "last_price_change_percent": 11.41,
+            "created_at": "2026-01-24T02:37:07.428500+00:00",
             "creator": {
-              "creator_id": "creator_emma",
-              "name": "Emma Dance",
-              "category": "Dance",
-              "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
-              "stock_symbol": "$EMMA",
-              "subscriber_count": 245000,
-              "total_views": 12500000,
-              "created_at": "2026-01-24T01:39:42.613643+00:00"
-            }
-          },
-          {
-            "video_id": "vid_sarah_2",
-            "creator_id": "creator_sarah",
-            "title": "This AI Tool Changed Everything",
-            "description": "Quick look at the AI tool everyone's talking about",
-            "thumbnail": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800",
-            "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-            "duration_minutes": 3,
-            "video_type": "short",
-            "views": 12000000,
-            "likes": 890000,
-            "share_price": 42.43,
-            "available_shares": 25.0,
-            "total_shares": 100.0,
-            "price_history": [
-              {
-                "date": "2024-01-01",
-                "price": 10.0
-              },
-              {
-                "date": "2024-01-15",
-                "price": 20.0
-              },
-              {
-                "date": "2024-02-01",
-                "price": 30.0
-              },
-              {
-                "date": "2024-02-15",
-                "price": 38.0
-              },
-              {
-                "date": "2026-01-24 02:00",
-                "price": 39.62
-              },
-              {
-                "date": "2026-01-24 02:11",
-                "price": 42.43
-              }
-            ],
-            "created_at": "2026-01-24T01:39:42.623785+00:00",
-            "last_price_change": 2.8100000000000023,
-            "last_price_change_percent": 7.09,
-            "creator": {
-              "creator_id": "creator_sarah",
-              "name": "Sarah Tech",
-              "category": "Tech",
-              "image": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400",
-              "stock_symbol": "$TECH",
-              "subscriber_count": 1200000,
-              "total_views": 67000000,
-              "created_at": "2026-01-24T01:39:42.613658+00:00"
+              "creator_id": "creator_alex",
+              "name": "Alex Roams",
+              "category": "Travel",
+              "image": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400",
+              "stock_symbol": "$ALEX",
+              "subscriber_count": 567000,
+              "total_views": 23000000,
+              "created_at": "2026-01-24T02:37:07.427881+00:00"
             }
           },
           {
@@ -2721,9 +3242,11 @@
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 2,
             "video_type": "short",
+            "category": "Travel",
+            "ticker_symbol": "ALEX_0126V2",
             "views": 5600000,
             "likes": 480000,
-            "share_price": 29.28,
+            "share_price": 27.79,
             "available_shares": 55.0,
             "total_shares": 100.0,
             "price_history": [
@@ -2744,17 +3267,13 @@
                 "price": 25.0
               },
               {
-                "date": "2026-01-24 02:00",
-                "price": 27.41
-              },
-              {
-                "date": "2026-01-24 02:11",
-                "price": 29.28
+                "date": "2026-01-24 02:39",
+                "price": 27.79
               }
             ],
-            "created_at": "2026-01-24T01:39:42.623781+00:00",
-            "last_price_change": 1.870000000000001,
-            "last_price_change_percent": 6.82,
+            "last_price_change": 2.789999999999999,
+            "last_price_change_percent": 11.16,
+            "created_at": "2026-01-24T02:37:07.428503+00:00",
             "creator": {
               "creator_id": "creator_alex",
               "name": "Alex Roams",
@@ -2763,7 +3282,59 @@
               "stock_symbol": "$ALEX",
               "subscriber_count": 567000,
               "total_views": 23000000,
-              "created_at": "2026-01-24T01:39:42.613656+00:00"
+              "created_at": "2026-01-24T02:37:07.427881+00:00"
+            }
+          },
+          {
+            "video_id": "vid_mike_1",
+            "creator_id": "creator_mike",
+            "title": "Perfect Pasta Carbonara - Restaurant Quality at Home",
+            "description": "Master the authentic Italian carbonara with this detailed tutorial",
+            "thumbnail": "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=800",
+            "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+            "duration_minutes": 18,
+            "video_type": "full",
+            "category": "Food",
+            "ticker_symbol": "CHEF_0126F1",
+            "views": 4500000,
+            "likes": 380000,
+            "share_price": 23.45,
+            "available_shares": 60.0,
+            "total_shares": 100.0,
+            "price_history": [
+              {
+                "date": "2024-01-01",
+                "price": 10.0
+              },
+              {
+                "date": "2024-01-15",
+                "price": 14.0
+              },
+              {
+                "date": "2024-02-01",
+                "price": 18.0
+              },
+              {
+                "date": "2024-02-15",
+                "price": 21.25
+              },
+              {
+                "date": "2026-01-24 02:39",
+                "price": 23.45
+              }
+            ],
+            "last_price_change": 2.1999999999999993,
+            "last_price_change_percent": 10.35,
+            "created_at": "2026-01-24T02:37:07.428514+00:00",
+            "creator": {
+              "creator_id": "creator_mike",
+              "name": "Chef Mike",
+              "category": "Food",
+              "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
+              "stock_symbol": "$CHEF",
+              "subscriber_count": 432000,
+              "total_views": 18000000,
+              "created_at": "2026-01-24T02:37:07.427884+00:00"
             }
           }
         ],
@@ -2778,10 +3349,12 @@
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 30,
             "video_type": "full",
-            "views": 15000005,
+            "category": "Podcast",
+            "ticker_symbol": "JOE_0126P1",
+            "views": 15000000,
             "likes": 1200000,
-            "share_price": 55.35,
-            "available_shares": 23.0,
+            "share_price": 51.61,
+            "available_shares": 30.0,
             "total_shares": 100.0,
             "price_history": [
               {
@@ -2801,17 +3374,13 @@
                 "price": 45.0
               },
               {
-                "date": "2026-01-24 02:00",
-                "price": 47.19
-              },
-              {
-                "date": "2026-01-24 02:11",
-                "price": 55.35
+                "date": "2026-01-24 02:39",
+                "price": 51.61
               }
             ],
-            "created_at": "2026-01-24T01:39:42.623770+00:00",
-            "last_price_change": 8.160000000000004,
-            "last_price_change_percent": 17.29,
+            "last_price_change": 6.609999999999999,
+            "last_price_change_percent": 14.69,
+            "created_at": "2026-01-24T02:37:07.428497+00:00",
             "creator": {
               "creator_id": "creator_joe",
               "name": "Joe Talks",
@@ -2820,7 +3389,7 @@
               "stock_symbol": "$JOE",
               "subscriber_count": 890000,
               "total_views": 45000000,
-              "created_at": "2026-01-24T01:39:42.613654+00:00"
+              "created_at": "2026-01-24T02:37:07.427878+00:00"
             }
           },
           {
@@ -2832,9 +3401,11 @@
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 3,
             "video_type": "short",
+            "category": "Tech",
+            "ticker_symbol": "TECH_0126S2",
             "views": 12000000,
             "likes": 890000,
-            "share_price": 42.43,
+            "share_price": 39.68,
             "available_shares": 25.0,
             "total_shares": 100.0,
             "price_history": [
@@ -2855,17 +3426,13 @@
                 "price": 38.0
               },
               {
-                "date": "2026-01-24 02:00",
-                "price": 39.62
-              },
-              {
-                "date": "2026-01-24 02:11",
-                "price": 42.43
+                "date": "2026-01-24 02:39",
+                "price": 39.68
               }
             ],
-            "created_at": "2026-01-24T01:39:42.623785+00:00",
-            "last_price_change": 2.8100000000000023,
-            "last_price_change_percent": 7.09,
+            "last_price_change": 1.6799999999999997,
+            "last_price_change_percent": 4.42,
+            "created_at": "2026-01-24T02:37:07.428511+00:00",
             "creator": {
               "creator_id": "creator_sarah",
               "name": "Sarah Tech",
@@ -2874,7 +3441,7 @@
               "stock_symbol": "$TECH",
               "subscriber_count": 1200000,
               "total_views": 67000000,
-              "created_at": "2026-01-24T01:39:42.613658+00:00"
+              "created_at": "2026-01-24T02:37:07.427883+00:00"
             }
           },
           {
@@ -2886,9 +3453,11 @@
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 25,
             "video_type": "full",
+            "category": "Tech",
+            "ticker_symbol": "TECH_0126R1",
             "views": 8900000,
             "likes": 670000,
-            "share_price": 38.79,
+            "share_price": 35.34,
             "available_shares": 40.0,
             "total_shares": 100.0,
             "price_history": [
@@ -2909,17 +3478,13 @@
                 "price": 32.5
               },
               {
-                "date": "2026-01-24 02:00",
-                "price": 36.58
-              },
-              {
-                "date": "2026-01-24 02:11",
-                "price": 38.79
+                "date": "2026-01-24 02:39",
+                "price": 35.34
               }
             ],
-            "created_at": "2026-01-24T01:39:42.623783+00:00",
-            "last_price_change": 2.210000000000001,
-            "last_price_change_percent": 6.04,
+            "last_price_change": 2.8400000000000034,
+            "last_price_change_percent": 8.74,
+            "created_at": "2026-01-24T02:37:07.428505+00:00",
             "creator": {
               "creator_id": "creator_sarah",
               "name": "Sarah Tech",
@@ -2928,7 +3493,7 @@
               "stock_symbol": "$TECH",
               "subscriber_count": 1200000,
               "total_views": 67000000,
-              "created_at": "2026-01-24T01:39:42.613658+00:00"
+              "created_at": "2026-01-24T02:37:07.427883+00:00"
             }
           },
           {
@@ -2940,9 +3505,11 @@
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 1,
             "video_type": "short",
+            "category": "Dance",
+            "ticker_symbol": "EMMA_0126S2",
             "views": 8500000,
             "likes": 920000,
-            "share_price": 26.27,
+            "share_price": 24.09,
             "available_shares": 45.0,
             "total_shares": 100.0,
             "price_history": [
@@ -2963,17 +3530,13 @@
                 "price": 22.0
               },
               {
-                "date": "2026-01-24 02:00",
-                "price": 23.03
-              },
-              {
-                "date": "2026-01-24 02:11",
-                "price": 26.27
+                "date": "2026-01-24 02:39",
+                "price": 24.09
               }
             ],
-            "created_at": "2026-01-24T01:39:42.623767+00:00",
-            "last_price_change": 3.2399999999999984,
-            "last_price_change_percent": 14.07,
+            "last_price_change": 2.09,
+            "last_price_change_percent": 9.5,
+            "created_at": "2026-01-24T02:37:07.428494+00:00",
             "creator": {
               "creator_id": "creator_emma",
               "name": "Emma Dance",
@@ -2982,7 +3545,8 @@
               "stock_symbol": "$EMMA",
               "subscriber_count": 245000,
               "total_views": 12500000,
-              "created_at": "2026-01-24T01:39:42.613643+00:00"
+              "created_at": "2026-01-24T02:37:07.427867+00:00",
+              "user_id": "creator-test-user"
             }
           },
           {
@@ -2994,10 +3558,12 @@
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 1,
             "video_type": "short",
-            "views": 7200011,
-            "likes": 620001,
-            "share_price": 31.48,
-            "available_shares": 47.0,
+            "category": "Food",
+            "ticker_symbol": "CHEF_0126S2",
+            "views": 7200001,
+            "likes": 620000,
+            "share_price": 32.52,
+            "available_shares": 49.0,
             "total_shares": 100.0,
             "price_history": [
               {
@@ -3017,30 +3583,78 @@
                 "price": 28.5
               },
               {
-                "date": "2026-01-24 02:00",
-                "price": 29.88
-              },
-              {
-                "date": "2026-01-24 02:11",
-                "price": 31.48
+                "date": "2026-01-24 02:39",
+                "price": 32.52
               }
             ],
-            "created_at": "2026-01-24T01:39:42.623792+00:00",
-            "last_price_change": 1.6000000000000014,
-            "last_price_change_percent": 5.35,
+            "last_price_change": 4.020000000000003,
+            "last_price_change_percent": 14.11,
+            "created_at": "2026-01-24T02:37:07.428516+00:00",
             "creator": {
               "creator_id": "creator_mike",
               "name": "Chef Mike",
               "category": "Food",
               "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
               "stock_symbol": "$CHEF",
-              "subscriber_count": 432001,
+              "subscriber_count": 432000,
               "total_views": 18000000,
-              "created_at": "2026-01-24T01:39:42.613659+00:00"
+              "created_at": "2026-01-24T02:37:07.427884+00:00"
             }
           }
         ],
         "hot_stocks": [
+          {
+            "video_id": "vid_sarah_2",
+            "creator_id": "creator_sarah",
+            "title": "This AI Tool Changed Everything",
+            "description": "Quick look at the AI tool everyone's talking about",
+            "thumbnail": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800",
+            "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+            "duration_minutes": 3,
+            "video_type": "short",
+            "category": "Tech",
+            "ticker_symbol": "TECH_0126S2",
+            "views": 12000000,
+            "likes": 890000,
+            "share_price": 39.68,
+            "available_shares": 25.0,
+            "total_shares": 100.0,
+            "price_history": [
+              {
+                "date": "2024-01-01",
+                "price": 10.0
+              },
+              {
+                "date": "2024-01-15",
+                "price": 20.0
+              },
+              {
+                "date": "2024-02-01",
+                "price": 30.0
+              },
+              {
+                "date": "2024-02-15",
+                "price": 38.0
+              },
+              {
+                "date": "2026-01-24 02:39",
+                "price": 39.68
+              }
+            ],
+            "last_price_change": 1.6799999999999997,
+            "last_price_change_percent": 4.42,
+            "created_at": "2026-01-24T02:37:07.428511+00:00",
+            "creator": {
+              "creator_id": "creator_sarah",
+              "name": "Sarah Tech",
+              "category": "Tech",
+              "image": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400",
+              "stock_symbol": "$TECH",
+              "subscriber_count": 1200000,
+              "total_views": 67000000,
+              "created_at": "2026-01-24T02:37:07.427883+00:00"
+            }
+          },
           {
             "video_id": "vid_joe_1",
             "creator_id": "creator_joe",
@@ -3050,10 +3664,12 @@
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 30,
             "video_type": "full",
-            "views": 15000005,
+            "category": "Podcast",
+            "ticker_symbol": "JOE_0126P1",
+            "views": 15000000,
             "likes": 1200000,
-            "share_price": 55.35,
-            "available_shares": 23.0,
+            "share_price": 51.61,
+            "available_shares": 30.0,
             "total_shares": 100.0,
             "price_history": [
               {
@@ -3073,17 +3689,13 @@
                 "price": 45.0
               },
               {
-                "date": "2026-01-24 02:00",
-                "price": 47.19
-              },
-              {
-                "date": "2026-01-24 02:11",
-                "price": 55.35
+                "date": "2026-01-24 02:39",
+                "price": 51.61
               }
             ],
-            "created_at": "2026-01-24T01:39:42.623770+00:00",
-            "last_price_change": 8.160000000000004,
-            "last_price_change_percent": 17.29,
+            "last_price_change": 6.609999999999999,
+            "last_price_change_percent": 14.69,
+            "created_at": "2026-01-24T02:37:07.428497+00:00",
             "creator": {
               "creator_id": "creator_joe",
               "name": "Joe Talks",
@@ -3092,61 +3704,7 @@
               "stock_symbol": "$JOE",
               "subscriber_count": 890000,
               "total_views": 45000000,
-              "created_at": "2026-01-24T01:39:42.613654+00:00"
-            }
-          },
-          {
-            "video_id": "vid_sarah_2",
-            "creator_id": "creator_sarah",
-            "title": "This AI Tool Changed Everything",
-            "description": "Quick look at the AI tool everyone's talking about",
-            "thumbnail": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800",
-            "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-            "duration_minutes": 3,
-            "video_type": "short",
-            "views": 12000000,
-            "likes": 890000,
-            "share_price": 42.43,
-            "available_shares": 25.0,
-            "total_shares": 100.0,
-            "price_history": [
-              {
-                "date": "2024-01-01",
-                "price": 10.0
-              },
-              {
-                "date": "2024-01-15",
-                "price": 20.0
-              },
-              {
-                "date": "2024-02-01",
-                "price": 30.0
-              },
-              {
-                "date": "2024-02-15",
-                "price": 38.0
-              },
-              {
-                "date": "2026-01-24 02:00",
-                "price": 39.62
-              },
-              {
-                "date": "2026-01-24 02:11",
-                "price": 42.43
-              }
-            ],
-            "created_at": "2026-01-24T01:39:42.623785+00:00",
-            "last_price_change": 2.8100000000000023,
-            "last_price_change_percent": 7.09,
-            "creator": {
-              "creator_id": "creator_sarah",
-              "name": "Sarah Tech",
-              "category": "Tech",
-              "image": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400",
-              "stock_symbol": "$TECH",
-              "subscriber_count": 1200000,
-              "total_views": 67000000,
-              "created_at": "2026-01-24T01:39:42.613658+00:00"
+              "created_at": "2026-01-24T02:37:07.427878+00:00"
             }
           },
           {
@@ -3158,9 +3716,11 @@
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 25,
             "video_type": "full",
+            "category": "Tech",
+            "ticker_symbol": "TECH_0126R1",
             "views": 8900000,
             "likes": 670000,
-            "share_price": 38.79,
+            "share_price": 35.34,
             "available_shares": 40.0,
             "total_shares": 100.0,
             "price_history": [
@@ -3181,17 +3741,13 @@
                 "price": 32.5
               },
               {
-                "date": "2026-01-24 02:00",
-                "price": 36.58
-              },
-              {
-                "date": "2026-01-24 02:11",
-                "price": 38.79
+                "date": "2026-01-24 02:39",
+                "price": 35.34
               }
             ],
-            "created_at": "2026-01-24T01:39:42.623783+00:00",
-            "last_price_change": 2.210000000000001,
-            "last_price_change_percent": 6.04,
+            "last_price_change": 2.8400000000000034,
+            "last_price_change_percent": 8.74,
+            "created_at": "2026-01-24T02:37:07.428505+00:00",
             "creator": {
               "creator_id": "creator_sarah",
               "name": "Sarah Tech",
@@ -3200,7 +3756,7 @@
               "stock_symbol": "$TECH",
               "subscriber_count": 1200000,
               "total_views": 67000000,
-              "created_at": "2026-01-24T01:39:42.613658+00:00"
+              "created_at": "2026-01-24T02:37:07.427883+00:00"
             }
           },
           {
@@ -3212,9 +3768,11 @@
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 1,
             "video_type": "short",
+            "category": "Dance",
+            "ticker_symbol": "EMMA_0126S2",
             "views": 8500000,
             "likes": 920000,
-            "share_price": 26.27,
+            "share_price": 24.09,
             "available_shares": 45.0,
             "total_shares": 100.0,
             "price_history": [
@@ -3235,17 +3793,13 @@
                 "price": 22.0
               },
               {
-                "date": "2026-01-24 02:00",
-                "price": 23.03
-              },
-              {
-                "date": "2026-01-24 02:11",
-                "price": 26.27
+                "date": "2026-01-24 02:39",
+                "price": 24.09
               }
             ],
-            "created_at": "2026-01-24T01:39:42.623767+00:00",
-            "last_price_change": 3.2399999999999984,
-            "last_price_change_percent": 14.07,
+            "last_price_change": 2.09,
+            "last_price_change_percent": 9.5,
+            "created_at": "2026-01-24T02:37:07.428494+00:00",
             "creator": {
               "creator_id": "creator_emma",
               "name": "Emma Dance",
@@ -3254,7 +3808,8 @@
               "stock_symbol": "$EMMA",
               "subscriber_count": 245000,
               "total_views": 12500000,
-              "created_at": "2026-01-24T01:39:42.613643+00:00"
+              "created_at": "2026-01-24T02:37:07.427867+00:00",
+              "user_id": "creator-test-user"
             }
           },
           {
@@ -3266,10 +3821,12 @@
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 1,
             "video_type": "short",
-            "views": 7200011,
-            "likes": 620001,
-            "share_price": 31.48,
-            "available_shares": 47.0,
+            "category": "Food",
+            "ticker_symbol": "CHEF_0126S2",
+            "views": 7200001,
+            "likes": 620000,
+            "share_price": 32.52,
+            "available_shares": 49.0,
             "total_shares": 100.0,
             "price_history": [
               {
@@ -3289,114 +3846,132 @@
                 "price": 28.5
               },
               {
-                "date": "2026-01-24 02:00",
-                "price": 29.88
-              },
-              {
-                "date": "2026-01-24 02:11",
-                "price": 31.48
+                "date": "2026-01-24 02:39",
+                "price": 32.52
               }
             ],
-            "created_at": "2026-01-24T01:39:42.623792+00:00",
-            "last_price_change": 1.6000000000000014,
-            "last_price_change_percent": 5.35,
+            "last_price_change": 4.020000000000003,
+            "last_price_change_percent": 14.11,
+            "created_at": "2026-01-24T02:37:07.428516+00:00",
             "creator": {
               "creator_id": "creator_mike",
               "name": "Chef Mike",
               "category": "Food",
               "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
               "stock_symbol": "$CHEF",
-              "subscriber_count": 432001,
+              "subscriber_count": 432000,
               "total_views": 18000000,
-              "created_at": "2026-01-24T01:39:42.613659+00:00"
+              "created_at": "2026-01-24T02:37:07.427884+00:00"
             }
           }
         ],
-        "timestamp": "2026-01-24T02:11:03.096542+00:00"
+        "timestamp": "2026-01-24T02:39:27.382366+00:00"
       }
     },
     {
-      "test": "Get Market Ticker",
+      "test": "Get My Creator Profile",
       "success": true,
       "details": "Status: 200",
-      "response_data": [
-        {
-          "symbol": "$EMMA",
-          "title": "20-Min Dance Workout for Begin...",
-          "price": 17.81,
-          "change_percent": 10.97,
-          "is_positive": true
-        },
-        {
-          "symbol": "$EMMA",
-          "title": "Quick Dance Challenge #viral",
-          "price": 26.27,
-          "change_percent": 14.07,
-          "is_positive": true
-        },
-        {
-          "symbol": "$JOE",
-          "title": "Deep Talk with Sadhguru - Life...",
-          "price": 55.35,
-          "change_percent": 17.29,
-          "is_positive": true
-        },
-        {
-          "symbol": "$ALEX",
-          "title": "Hidden Gems of Bali - 15 Min T...",
-          "price": 19.33,
-          "change_percent": 0.94,
-          "is_positive": true
-        },
-        {
-          "symbol": "$ALEX",
-          "title": "Sunrise at Machu Picchu",
-          "price": 29.28,
-          "change_percent": 6.82,
-          "is_positive": true
-        },
-        {
-          "symbol": "$TECH",
-          "title": "iPhone 16 Pro Max - Honest Rev...",
-          "price": 38.79,
-          "change_percent": 6.04,
-          "is_positive": true
-        },
-        {
-          "symbol": "$TECH",
-          "title": "This AI Tool Changed Everythin...",
-          "price": 42.43,
-          "change_percent": 7.09,
-          "is_positive": true
-        },
-        {
-          "symbol": "$CHEF",
-          "title": "Perfect Pasta Carbonara - Rest...",
-          "price": 23.4,
-          "change_percent": 5.26,
-          "is_positive": true
-        },
-        {
-          "symbol": "$CHEF",
-          "title": "60-Second Guacamole",
-          "price": 31.48,
-          "change_percent": 5.35,
-          "is_positive": true
-        },
-        {
-          "symbol": "$TEST",
-          "title": "My First Gaming Stream Highlig...",
-          "price": 10.23,
-          "change_percent": 2.3,
-          "is_positive": true
+      "response_data": {
+        "is_creator": true,
+        "creator": {
+          "creator_id": "creator_emma",
+          "name": "Emma Dance",
+          "category": "Dance",
+          "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
+          "stock_symbol": "$EMMA",
+          "subscriber_count": 245000,
+          "total_views": 12500000,
+          "created_at": "2026-01-24T02:37:07.427867+00:00",
+          "user_id": "creator-test-user",
+          "videos": [
+            {
+              "video_id": "vid_emma_1",
+              "creator_id": "creator_emma",
+              "title": "20-Min Dance Workout for Beginners",
+              "description": "Learn the hottest dance moves with this easy-to-follow tutorial. Perfect for beginners!",
+              "thumbnail": "https://images.unsplash.com/photo-1524594152303-9fd13543fe6e?w=800",
+              "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+              "duration_minutes": 20,
+              "video_type": "full",
+              "category": "Dance",
+              "ticker_symbol": "EMMA_0126D1",
+              "views": 2500000,
+              "likes": 185000,
+              "share_price": 15.87,
+              "available_shares": 65.0,
+              "total_shares": 100.0,
+              "price_history": [
+                {
+                  "date": "2024-01-01",
+                  "price": 10.0
+                },
+                {
+                  "date": "2024-01-15",
+                  "price": 12.0
+                },
+                {
+                  "date": "2024-02-01",
+                  "price": 14.5
+                },
+                {
+                  "date": "2024-02-15",
+                  "price": 15.5
+                },
+                {
+                  "date": "2026-01-24 02:39",
+                  "price": 15.87
+                }
+              ],
+              "last_price_change": 0.3699999999999992,
+              "last_price_change_percent": 2.39,
+              "created_at": "2026-01-24T02:37:07.428486+00:00"
+            },
+            {
+              "video_id": "vid_emma_2",
+              "creator_id": "creator_emma",
+              "title": "Quick Dance Challenge #viral",
+              "description": "Can you keep up? 60 seconds of pure energy!",
+              "thumbnail": "https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800",
+              "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+              "duration_minutes": 1,
+              "video_type": "short",
+              "category": "Dance",
+              "ticker_symbol": "EMMA_0126S2",
+              "views": 8500000,
+              "likes": 920000,
+              "share_price": 24.09,
+              "available_shares": 45.0,
+              "total_shares": 100.0,
+              "price_history": [
+                {
+                  "date": "2024-01-01",
+                  "price": 10.0
+                },
+                {
+                  "date": "2024-01-15",
+                  "price": 15.0
+                },
+                {
+                  "date": "2024-02-01",
+                  "price": 19.0
+                },
+                {
+                  "date": "2024-02-15",
+                  "price": 22.0
+                },
+                {
+                  "date": "2026-01-24 02:39",
+                  "price": 24.09
+                }
+              ],
+              "last_price_change": 2.09,
+              "last_price_change_percent": 9.5,
+              "created_at": "2026-01-24T02:37:07.428494+00:00"
+            }
+          ]
         }
-      ]
-    },
-    {
-      "test": "Get My Creator Profile",
-      "success": false,
-      "details": "Expected 200, got 404: {'detail': 'Creator not found'}",
-      "response_data": null
+      }
     },
     {
       "test": "Become Creator",
@@ -3405,16 +3980,17 @@
       "response_data": {
         "success": true,
         "creator": {
-          "creator_id": "creator_77888857e41a",
-          "user_id": "test-user-demo",
-          "name": "Test Creator",
-          "category": "Tech",
-          "image": "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400",
-          "stock_symbol": "$TES89",
-          "subscriber_count": 0,
-          "total_views": 0,
-          "created_at": "2026-01-24T02:11:03.212686+00:00"
-        }
+          "creator_id": "creator_emma",
+          "name": "Emma Dance",
+          "category": "Dance",
+          "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
+          "stock_symbol": "$EMMA",
+          "subscriber_count": 245000,
+          "total_views": 12500000,
+          "created_at": "2026-01-24T02:37:07.427867+00:00",
+          "user_id": "creator-test-user"
+        },
+        "message": "Already a creator"
       }
     },
     {
@@ -3424,10 +4000,10 @@
       "response_data": {
         "success": true,
         "video": {
-          "video_id": "vid_ac903811b054",
-          "creator_id": "creator_77888857e41a",
-          "title": "Test Video Upload",
-          "description": "This is a test video for API testing",
+          "video_id": "vid_67207373404a",
+          "creator_id": "creator_emma",
+          "title": "Test Video Upload with Ticker",
+          "description": "This is a test video for API testing with ticker symbol generation",
           "thumbnail": "https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800",
           "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
           "duration_minutes": 15,
@@ -3435,26 +4011,158 @@
           "category": "Tech",
           "views": 0,
           "likes": 0,
-          "share_price": 10.0,
+          "share_price": 12.45,
           "available_shares": 100.0,
           "total_shares": 100.0,
           "price_history": [
             {
               "date": "2026-01-24",
-              "price": 10.0
+              "price": 12.45
             }
           ],
           "last_price_change": 0,
           "last_price_change_percent": 0,
-          "created_at": "2026-01-24T02:11:03.250136+00:00"
+          "created_at": "2026-01-24T02:39:27.497418+00:00",
+          "ticker_symbol": "EMMA_0126R1"
         }
       }
     },
     {
-      "test": "Get My Videos",
-      "success": false,
-      "details": "Expected 200, got 404: {'detail': 'Video not found'}",
+      "test": "Video Upload Ticker Generation",
+      "success": true,
+      "details": "Generated ticker: EMMA_0126R1",
       "response_data": null
+    },
+    {
+      "test": "Get My Videos",
+      "success": true,
+      "details": "Status: 200",
+      "response_data": {
+        "is_creator": true,
+        "creator": {
+          "creator_id": "creator_emma",
+          "name": "Emma Dance",
+          "category": "Dance",
+          "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
+          "stock_symbol": "$EMMA",
+          "subscriber_count": 245000,
+          "total_views": 12500000,
+          "created_at": "2026-01-24T02:37:07.427867+00:00",
+          "user_id": "creator-test-user"
+        },
+        "videos": [
+          {
+            "video_id": "vid_emma_1",
+            "creator_id": "creator_emma",
+            "title": "20-Min Dance Workout for Beginners",
+            "description": "Learn the hottest dance moves with this easy-to-follow tutorial. Perfect for beginners!",
+            "thumbnail": "https://images.unsplash.com/photo-1524594152303-9fd13543fe6e?w=800",
+            "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+            "duration_minutes": 20,
+            "video_type": "full",
+            "category": "Dance",
+            "ticker_symbol": "EMMA_0126D1",
+            "views": 2500000,
+            "likes": 185000,
+            "share_price": 15.87,
+            "available_shares": 65.0,
+            "total_shares": 100.0,
+            "price_history": [
+              {
+                "date": "2024-01-01",
+                "price": 10.0
+              },
+              {
+                "date": "2024-01-15",
+                "price": 12.0
+              },
+              {
+                "date": "2024-02-01",
+                "price": 14.5
+              },
+              {
+                "date": "2024-02-15",
+                "price": 15.5
+              },
+              {
+                "date": "2026-01-24 02:39",
+                "price": 15.87
+              }
+            ],
+            "last_price_change": 0.3699999999999992,
+            "last_price_change_percent": 2.39,
+            "created_at": "2026-01-24T02:37:07.428486+00:00"
+          },
+          {
+            "video_id": "vid_emma_2",
+            "creator_id": "creator_emma",
+            "title": "Quick Dance Challenge #viral",
+            "description": "Can you keep up? 60 seconds of pure energy!",
+            "thumbnail": "https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800",
+            "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+            "duration_minutes": 1,
+            "video_type": "short",
+            "category": "Dance",
+            "ticker_symbol": "EMMA_0126S2",
+            "views": 8500000,
+            "likes": 920000,
+            "share_price": 24.09,
+            "available_shares": 45.0,
+            "total_shares": 100.0,
+            "price_history": [
+              {
+                "date": "2024-01-01",
+                "price": 10.0
+              },
+              {
+                "date": "2024-01-15",
+                "price": 15.0
+              },
+              {
+                "date": "2024-02-01",
+                "price": 19.0
+              },
+              {
+                "date": "2024-02-15",
+                "price": 22.0
+              },
+              {
+                "date": "2026-01-24 02:39",
+                "price": 24.09
+              }
+            ],
+            "last_price_change": 2.09,
+            "last_price_change_percent": 9.5,
+            "created_at": "2026-01-24T02:37:07.428494+00:00"
+          },
+          {
+            "video_id": "vid_67207373404a",
+            "creator_id": "creator_emma",
+            "title": "Test Video Upload with Ticker",
+            "description": "This is a test video for API testing with ticker symbol generation",
+            "thumbnail": "https://images.unsplash.com/photo-1611162616475-46b635cb6868?w=800",
+            "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+            "duration_minutes": 15,
+            "video_type": "full",
+            "category": "Tech",
+            "views": 0,
+            "likes": 0,
+            "share_price": 12.45,
+            "available_shares": 100.0,
+            "total_shares": 100.0,
+            "price_history": [
+              {
+                "date": "2026-01-24",
+                "price": 12.45
+              }
+            ],
+            "last_price_change": 0,
+            "last_price_change_percent": 0,
+            "created_at": "2026-01-24T02:39:27.497418+00:00",
+            "ticker_symbol": "EMMA_0126R1"
+          }
+        ]
+      }
     }
   ]
 }
