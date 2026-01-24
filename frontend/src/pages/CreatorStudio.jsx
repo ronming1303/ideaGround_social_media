@@ -268,11 +268,23 @@ export default function CreatorStudio() {
           </div>
         </div>
         
-        <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
-          <DialogTrigger asChild>
+        <div className="flex gap-3">
+          <Link to="/analytics">
             <Button 
-              data-testid="upload-video-btn"
-              className="bg-primary text-white hover:bg-primary/90 rounded-full"
+              data-testid="view-analytics-btn"
+              variant="outline"
+              className="rounded-full"
+            >
+              <BarChart3 className="w-4 h-4 mr-2" />
+              Analytics
+            </Button>
+          </Link>
+          
+          <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
+            <DialogTrigger asChild>
+              <Button 
+                data-testid="upload-video-btn"
+                className="bg-primary text-white hover:bg-primary/90 rounded-full"
             >
               <Upload className="w-4 h-4 mr-2" />
               Upload Video
