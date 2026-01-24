@@ -816,6 +816,61 @@ async def get_portfolio(user: User = Depends(get_current_user)):
         "wallet_balance": user.wallet_balance
     }
 
+@api_router.get("/portfolio/performance")
+async def get_portfolio_performance(user: User = Depends(get_current_user)):
+    """
+    Get user's portfolio performance summary for the dashboard banner.
+    Returns today's gain/loss percentage and total portfolio value.
+    """
+    ownerships = await db.share_ownerships.find(
+        {"user_id": user.user_id}, {"_id": 0}
+    ).to_list(100)
+    
+    if not ownerships:
+        return {
+            "has_portfolio": False,
+            "total_value": 0,
+            "total_invested": 0,
+            "total_gain": 0,
+            "gain_percent": 0,
+            "total_potential_bonus": 0,
+            "holdings_count": 0
+        }
+    
+    total_value = 0
+    total_invested = 0
+    total_gain = 0
+    total_potential_bonus = 0
+    
+    for ownership in ownerships:
+        video = await db.videos.find_one({"video_id": ownership["video_id"]}, {"_id": 0})
+        if video:
+            current_value = ownership["shares_owned"] * video["share_price"]
+            purchase_value = ownership["shares_owned"] * ownership["purchase_price"]
+            gain = current_value - purchase_value
+            
+            # Early investor bonus calculation
+            is_early = ownership.get("is_early_investor", False)
+            bonus_multiplier = ownership.get("early_bonus_multiplier", 1.0)
+            if is_early and gain > 0:
+                total_potential_bonus += gain * (bonus_multiplier - 1)
+            
+            total_value += current_value
+            total_invested += purchase_value
+            total_gain += gain
+    
+    gain_percent = (total_gain / total_invested * 100) if total_invested > 0 else 0
+    
+    return {
+        "has_portfolio": True,
+        "total_value": total_value,
+        "total_invested": total_invested,
+        "total_gain": total_gain,
+        "gain_percent": gain_percent,
+        "total_potential_bonus": total_potential_bonus,
+        "holdings_count": len(ownerships)
+    }
+
 # ==================== WALLET ENDPOINTS ====================
 
 @api_router.get("/wallet")
