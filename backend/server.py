@@ -644,7 +644,7 @@ async def buy_shares(req: BuyShareRequest, user: User = Depends(get_current_user
 
 @api_router.post("/shares/sell")
 async def sell_shares(req: SellShareRequest, user: User = Depends(get_current_user)):
-    """Sell shares of a video"""
+    """Sell shares of a video - applies early investor bonus if applicable"""
     video = await db.videos.find_one({"video_id": req.video_id}, {"_id": 0})
     if not video:
         raise HTTPException(status_code=404, detail="Video not found")
@@ -656,7 +656,25 @@ async def sell_shares(req: SellShareRequest, user: User = Depends(get_current_us
     if not ownership or ownership["shares_owned"] < req.shares:
         raise HTTPException(status_code=400, detail="Not enough shares to sell")
     
-    total_value = req.shares * video["share_price"]
+    # Calculate base value
+    base_value = req.shares * video["share_price"]
+    
+    # Apply early investor bonus if applicable
+    bonus_multiplier = ownership.get("early_bonus_multiplier", 1.0)
+    is_early = ownership.get("is_early_investor", False)
+    
+    # Bonus only applies to profit (value above purchase price)
+    purchase_value = req.shares * ownership["purchase_price"]
+    profit = base_value - purchase_value
+    
+    if is_early and profit > 0:
+        # Apply bonus to profit portion only
+        bonus_profit = profit * bonus_multiplier
+        total_value = purchase_value + bonus_profit
+        bonus_earned = bonus_profit - profit
+    else:
+        total_value = base_value
+        bonus_earned = 0
     
     # Update user balance
     await db.users.update_one(
@@ -680,7 +698,7 @@ async def sell_shares(req: SellShareRequest, user: User = Depends(get_current_us
             {"$set": {"shares_owned": new_shares}}
         )
     
-    # Record transaction
+    # Record transaction with bonus info
     transaction_doc = {
         "transaction_id": f"txn_{uuid.uuid4().hex[:12]}",
         "user_id": user.user_id,
@@ -688,11 +706,21 @@ async def sell_shares(req: SellShareRequest, user: User = Depends(get_current_us
         "amount": total_value,
         "video_id": req.video_id,
         "shares": req.shares,
+        "early_bonus_applied": is_early and bonus_earned > 0,
+        "bonus_earned": bonus_earned,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     await db.transactions.insert_one(transaction_doc)
     
-    return {"success": True, "shares_sold": req.shares, "total_value": total_value}
+    return {
+        "success": True, 
+        "shares_sold": req.shares, 
+        "base_value": base_value,
+        "total_value": total_value,
+        "early_bonus_applied": is_early and bonus_earned > 0,
+        "bonus_earned": bonus_earned,
+        "bonus_multiplier": bonus_multiplier if is_early else 1.0
+    }
 
 # ==================== PORTFOLIO ENDPOINTS ====================
 
