@@ -478,11 +478,20 @@ async def get_video(video_id: str, request: Request):
             video["user_shares"] = 0
             video["user_is_early_investor"] = False
             video["user_early_bonus"] = 1.0
+        
+        # Check if user is watching this video
+        watchlist_item = await db.watchlist.find_one(
+            {"user_id": user.user_id, "video_id": video_id}, {"_id": 0}
+        )
+        video["user_watching"] = watchlist_item is not None
+        video["watch_price_when_added"] = watchlist_item.get("price_when_added") if watchlist_item else None
     else:
         video["user_liked"] = False
         video["user_shares"] = 0
         video["user_is_early_investor"] = False
         video["user_early_bonus"] = 1.0
+        video["user_watching"] = False
+        video["watch_price_when_added"] = None
     
     return video
 
