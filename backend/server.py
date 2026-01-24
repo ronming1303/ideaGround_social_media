@@ -852,12 +852,38 @@ async def get_market_ticker():
     for video in videos:
         creator = await db.creators.find_one({"creator_id": video["creator_id"]}, {"_id": 0})
         change_percent = video.get("last_price_change_percent", 0)
+        
+        # Use unique video ticker symbol if available, otherwise generate one
+        ticker_symbol = video.get("ticker_symbol")
+        if not ticker_symbol and creator:
+            # Parse created_at date
+            created_at = video.get("created_at")
+            if isinstance(created_at, str):
+                try:
+                    created_at = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
+                except:
+                    created_at = datetime.now(timezone.utc)
+            elif not created_at:
+                created_at = datetime.now(timezone.utc)
+            
+            # Generate ticker symbol dynamically
+            ticker_symbol = generate_video_ticker(
+                creator.get("stock_symbol", "$UNKN"),
+                video.get("video_type", "full"),
+                video.get("category", creator.get("category", "")),
+                created_at,
+                1  # Default sequence
+            )
+        
         ticker_items.append({
-            "symbol": creator.get("stock_symbol") if creator else f"${video['video_id'][:4].upper()}",
+            "symbol": ticker_symbol or f"${video['video_id'][:6].upper()}",
+            "video_id": video["video_id"],
             "title": video["title"][:30] + "..." if len(video["title"]) > 30 else video["title"],
             "price": video.get("share_price", 10.0),
             "change_percent": change_percent,
-            "is_positive": change_percent >= 0
+            "is_positive": change_percent >= 0,
+            "creator_symbol": creator.get("stock_symbol") if creator else None
+        })
         })
     
     return ticker_items
