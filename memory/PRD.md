@@ -143,3 +143,50 @@ UserSessions
 2. Add real-time price simulation
 3. Implement video upload for creators
 4. Add social sharing functionality
+
+---
+
+## Enhancement Update (Jan 24, 2026 - Session 2)
+
+### New Features Implemented
+
+#### 1. Real-Time Price Simulation
+- **Endpoint**: `POST /api/simulate-prices`
+- Simulates market-like price changes based on:
+  - Base volatility (-5% to +8%)
+  - Engagement factor (views boost)
+  - Like factor (likes boost)
+  - Scarcity premium (fewer available shares = price pressure)
+- Updates `share_price`, `price_history`, `last_price_change`, `last_price_change_percent`
+
+#### 2. Trending Stocks Dashboard
+- **Endpoints**:
+  - `GET /api/trending` - Returns top gainers, losers, hot stocks, most active
+  - `GET /api/market-ticker` - Returns ticker data for all stocks
+- **Frontend Components**:
+  - `TrendingTicker.jsx` - Animated scrolling ticker at top of dashboard
+  - `TrendingStocks.jsx` - Market Activity card with tabs for Gainers/Losers/Hot/Active
+  - "Simulate" button to trigger price updates
+
+#### 3. Creator Video Upload
+- **Endpoints**:
+  - `POST /api/creators/become` - Register as a creator
+  - `GET /api/creators/me` - Get current user's creator profile
+  - `POST /api/videos/upload` - Upload a new video
+  - `GET /api/videos/my` - Get creator's uploaded videos
+- **Frontend**:
+  - `CreatorStudio.jsx` - Full creator management page
+  - "Become a Creator" flow for non-creators
+  - Video upload form with validation
+  - Video type selection (Short ≤3min, Full 10-30min)
+  - Thumbnail selection with suggestions
+
+### API Route Order Fix
+Fixed route conflicts by ensuring specific routes (`/videos/my`, `/creators/me`) are defined before parameterized routes (`/videos/{video_id}`, `/creators/{creator_id}`).
+
+### Test Results
+- Backend: 100% success
+- All new endpoints working correctly
+- Price simulation updates all videos
+- Trending data populates correctly
+- Creator registration and video upload functional
