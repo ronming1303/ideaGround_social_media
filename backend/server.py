@@ -2111,6 +2111,284 @@ async def get_single_video_analytics(video_id: str, user: User = Depends(get_cur
 async def root():
     return {"message": "ideaGround API", "version": "1.0.0"}
 
+# ==================== ADMIN ENDPOINTS ====================
+
+ADMIN_SECRET = "ideaground_admin_2026"  # Simple admin auth - in production use proper auth
+
+async def verify_admin(request: Request):
+    """Verify admin access via header or query param"""
+    admin_key = request.headers.get("X-Admin-Key") or request.query_params.get("admin_key")
+    if admin_key != ADMIN_SECRET:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    return True
+
+@api_router.get("/admin/stats")
+async def get_admin_stats(request: Request):
+    """Get platform-wide statistics for admin dashboard"""
+    await verify_admin(request)
+    
+    # User stats
+    total_users = await db.users.count_documents({})
+    total_creators = await db.creators.count_documents({})
+    
+    # Video stats
+    total_videos = await db.videos.count_documents({})
+    videos = await db.videos.find({}, {"_id": 0}).to_list(100)
+    total_market_cap = sum(v.get("share_price", 10) * v.get("total_shares", 100) for v in videos)
+    total_shares_traded = sum(v.get("total_shares", 100) - v.get("available_shares", 100) for v in videos)
+    
+    # Transaction stats
+    total_transactions = await db.transactions.count_documents({})
+    transactions = await db.transactions.find({}, {"_id": 0}).to_list(1000)
+    
+    total_buy_volume = sum(abs(t.get("amount", 0)) for t in transactions if t.get("transaction_type") == "buy_share")
+    total_sell_volume = sum(t.get("amount", 0) for t in transactions if t.get("transaction_type") == "sell_share")
+    total_redemption_volume = sum(t.get("gross_amount", 0) for t in transactions if t.get("transaction_type") == "redemption")
+    
+    # Platform earnings
+    platform_earnings = await db.platform_earnings.find({}, {"_id": 0}).to_list(1000)
+    total_platform_earnings = sum(e.get("fee_amount", 0) for e in platform_earnings)
+    total_redemptions_count = len(platform_earnings)
+    
+    # User wallet balances
+    users = await db.users.find({}, {"_id": 0}).to_list(1000)
+    total_user_balances = sum(u.get("wallet_balance", 0) for u in users)
+    
+    # Active users (users with transactions)
+    active_user_ids = set(t.get("user_id") for t in transactions)
+    active_users = len(active_user_ids)
+    
+    return {
+        "users": {
+            "total": total_users,
+            "creators": total_creators,
+            "active": active_users,
+            "total_wallet_balances": round(total_user_balances, 2)
+        },
+        "content": {
+            "total_videos": total_videos,
+            "total_market_cap": round(total_market_cap, 2),
+            "total_shares_traded": round(total_shares_traded, 2)
+        },
+        "transactions": {
+            "total_count": total_transactions,
+            "buy_volume": round(total_buy_volume, 2),
+            "sell_volume": round(total_sell_volume, 2),
+            "redemption_volume": round(total_redemption_volume, 2)
+        },
+        "platform_revenue": {
+            "total_earnings": round(total_platform_earnings, 2),
+            "total_redemptions": total_redemptions_count,
+            "fee_percent": PLATFORM_FEE_PERCENT
+        },
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+
+@api_router.get("/admin/earnings")
+async def get_admin_earnings(request: Request):
+    """Get detailed platform earnings breakdown"""
+    await verify_admin(request)
+    
+    # Get all platform earnings
+    earnings = await db.platform_earnings.find({}, {"_id": 0}).sort("created_at", -1).to_list(100)
+    
+    # Enrich with video and user info
+    enriched_earnings = []
+    for earning in earnings:
+        video = await db.videos.find_one({"video_id": earning.get("video_id")}, {"_id": 0})
+        user = await db.users.find_one({"user_id": earning.get("user_id")}, {"_id": 0})
+        
+        enriched_earnings.append({
+            "earning_id": earning.get("earning_id"),
+            "user": {
+                "user_id": earning.get("user_id"),
+                "name": user.get("name", "Unknown") if user else "Unknown",
+                "email": user.get("email", "") if user else ""
+            },
+            "video": {
+                "video_id": earning.get("video_id"),
+                "title": video.get("title", "Unknown") if video else "Unknown"
+            },
+            "transaction_type": earning.get("transaction_type"),
+            "gross_amount": earning.get("gross_amount"),
+            "fee_percent": earning.get("fee_percent"),
+            "fee_amount": earning.get("fee_amount"),
+            "created_at": earning.get("created_at")
+        })
+    
+    # Calculate totals
+    total_earnings = sum(e.get("fee_amount", 0) for e in earnings)
+    total_gross = sum(e.get("gross_amount", 0) for e in earnings)
+    
+    # Group by day for chart
+    daily_earnings = {}
+    for earning in earnings:
+        date_str = earning.get("created_at", "")[:10]  # Get YYYY-MM-DD
+        if date_str not in daily_earnings:
+            daily_earnings[date_str] = 0
+        daily_earnings[date_str] += earning.get("fee_amount", 0)
+    
+    daily_chart = [{"date": k, "earnings": round(v, 2)} for k, v in sorted(daily_earnings.items())]
+    
+    return {
+        "summary": {
+            "total_earnings": round(total_earnings, 2),
+            "total_gross_volume": round(total_gross, 2),
+            "transaction_count": len(earnings),
+            "avg_fee_per_transaction": round(total_earnings / len(earnings), 2) if earnings else 0
+        },
+        "earnings": enriched_earnings,
+        "daily_chart": daily_chart
+    }
+
+@api_router.get("/admin/transactions")
+async def get_admin_transactions(request: Request, limit: int = 50):
+    """Get all transactions for audit"""
+    await verify_admin(request)
+    
+    transactions = await db.transactions.find({}, {"_id": 0}).sort("created_at", -1).limit(limit).to_list(limit)
+    
+    # Enrich with user and video info
+    enriched_txns = []
+    for txn in transactions:
+        user = await db.users.find_one({"user_id": txn.get("user_id")}, {"_id": 0})
+        video = None
+        if txn.get("video_id"):
+            video = await db.videos.find_one({"video_id": txn.get("video_id")}, {"_id": 0})
+        
+        enriched_txns.append({
+            "transaction_id": txn.get("transaction_id"),
+            "user": {
+                "user_id": txn.get("user_id"),
+                "name": user.get("name", "Unknown") if user else "Unknown"
+            },
+            "video": {
+                "video_id": txn.get("video_id"),
+                "title": video.get("title", "N/A") if video else "N/A"
+            } if txn.get("video_id") else None,
+            "type": txn.get("transaction_type"),
+            "amount": txn.get("amount"),
+            "shares": txn.get("shares"),
+            "platform_fee": txn.get("platform_fee"),
+            "early_bonus_applied": txn.get("early_bonus_applied"),
+            "bonus_earned": txn.get("bonus_earned"),
+            "created_at": txn.get("created_at")
+        })
+    
+    return {
+        "count": len(enriched_txns),
+        "transactions": enriched_txns
+    }
+
+@api_router.get("/admin/users")
+async def get_admin_users(request: Request):
+    """Get all users for admin management"""
+    await verify_admin(request)
+    
+    users = await db.users.find({}, {"_id": 0}).to_list(100)
+    
+    enriched_users = []
+    for user in users:
+        # Check if user is a creator
+        creator = await db.creators.find_one({"user_id": user.get("user_id")}, {"_id": 0})
+        
+        # Get user's portfolio value
+        ownerships = await db.share_ownerships.find({"user_id": user.get("user_id")}, {"_id": 0}).to_list(100)
+        portfolio_value = 0
+        for ownership in ownerships:
+            video = await db.videos.find_one({"video_id": ownership.get("video_id")}, {"_id": 0})
+            if video:
+                portfolio_value += ownership.get("shares_owned", 0) * video.get("share_price", 0)
+        
+        # Get transaction count
+        txn_count = await db.transactions.count_documents({"user_id": user.get("user_id")})
+        
+        enriched_users.append({
+            "user_id": user.get("user_id"),
+            "name": user.get("name"),
+            "email": user.get("email"),
+            "picture": user.get("picture"),
+            "wallet_balance": user.get("wallet_balance", 0),
+            "portfolio_value": round(portfolio_value, 2),
+            "total_value": round(user.get("wallet_balance", 0) + portfolio_value, 2),
+            "is_creator": creator is not None,
+            "creator_name": creator.get("name") if creator else None,
+            "transaction_count": txn_count,
+            "created_at": user.get("created_at")
+        })
+    
+    # Sort by total value
+    enriched_users.sort(key=lambda x: x["total_value"], reverse=True)
+    
+    return {
+        "count": len(enriched_users),
+        "users": enriched_users
+    }
+
+@api_router.get("/admin/cashflow")
+async def get_admin_cashflow(request: Request):
+    """Get cash flow overview"""
+    await verify_admin(request)
+    
+    transactions = await db.transactions.find({}, {"_id": 0}).sort("created_at", 1).to_list(1000)
+    
+    # Calculate cumulative cash flow
+    cash_flow = []
+    running_total = 0
+    deposits_total = 0
+    buy_total = 0
+    sell_total = 0
+    redemption_total = 0
+    
+    for txn in transactions:
+        txn_type = txn.get("transaction_type", "")
+        amount = txn.get("amount", 0)
+        
+        if txn_type == "deposit":
+            deposits_total += amount
+            running_total += amount
+        elif txn_type == "buy_share":
+            buy_total += abs(amount)
+        elif txn_type == "sell_share":
+            sell_total += amount
+        elif txn_type == "redemption":
+            redemption_total += txn.get("net_value", amount)
+    
+    # Group transactions by date
+    daily_flow = {}
+    for txn in transactions:
+        date_str = txn.get("created_at", "")[:10]
+        if date_str not in daily_flow:
+            daily_flow[date_str] = {"deposits": 0, "buys": 0, "sells": 0, "redemptions": 0}
+        
+        txn_type = txn.get("transaction_type", "")
+        amount = abs(txn.get("amount", 0))
+        
+        if txn_type == "deposit":
+            daily_flow[date_str]["deposits"] += amount
+        elif txn_type == "buy_share":
+            daily_flow[date_str]["buys"] += amount
+        elif txn_type == "sell_share":
+            daily_flow[date_str]["sells"] += amount
+        elif txn_type == "redemption":
+            daily_flow[date_str]["redemptions"] += txn.get("gross_amount", amount)
+    
+    chart_data = [
+        {"date": k, **v} 
+        for k, v in sorted(daily_flow.items())
+    ]
+    
+    return {
+        "summary": {
+            "total_deposits": round(deposits_total, 2),
+            "total_buy_volume": round(buy_total, 2),
+            "total_sell_volume": round(sell_total, 2),
+            "total_redemptions": round(redemption_total, 2),
+            "net_platform_inflow": round(deposits_total - redemption_total, 2)
+        },
+        "daily_chart": chart_data
+    }
+
 # Include the router
 app.include_router(api_router)
 
