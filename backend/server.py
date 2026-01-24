@@ -970,6 +970,16 @@ async def upload_video(req: CreateVideoRequest, user: User = Depends(get_current
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     
+    # Generate unique ticker symbol for this video
+    sequence = await get_next_video_sequence(creator["creator_id"], req.category)
+    video_doc["ticker_symbol"] = generate_video_ticker(
+        creator.get("stock_symbol", "$UNKN"),
+        req.video_type,
+        req.category,
+        datetime.now(timezone.utc),
+        sequence
+    )
+    
     await db.videos.insert_one(video_doc)
     
     # Update creator's total videos count would go here if we had that field
