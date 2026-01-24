@@ -762,7 +762,7 @@ async def sell_shares(req: SellShareRequest, user: User = Depends(get_current_us
 
 @api_router.get("/portfolio")
 async def get_portfolio(user: User = Depends(get_current_user)):
-    """Get user's portfolio with all owned shares"""
+    """Get user's portfolio with all owned shares including early investor status"""
     ownerships = await db.share_ownerships.find(
         {"user_id": user.user_id}, {"_id": 0}
     ).to_list(100)
@@ -770,6 +770,7 @@ async def get_portfolio(user: User = Depends(get_current_user)):
     portfolio_items = []
     total_value = 0
     total_gain = 0
+    total_potential_bonus = 0
     
     for ownership in ownerships:
         video = await db.videos.find_one({"video_id": ownership["video_id"]}, {"_id": 0})
@@ -780,6 +781,15 @@ async def get_portfolio(user: User = Depends(get_current_user)):
             gain = current_value - purchase_value
             gain_percent = (gain / purchase_value * 100) if purchase_value > 0 else 0
             
+            # Early investor info
+            is_early = ownership.get("is_early_investor", False)
+            bonus_multiplier = ownership.get("early_bonus_multiplier", 1.0)
+            
+            # Calculate potential bonus if sold now
+            potential_bonus = 0
+            if is_early and gain > 0:
+                potential_bonus = gain * (bonus_multiplier - 1)
+            
             portfolio_items.append({
                 "video": video,
                 "creator": creator,
@@ -788,16 +798,21 @@ async def get_portfolio(user: User = Depends(get_current_user)):
                 "current_price": video["share_price"],
                 "current_value": current_value,
                 "gain": gain,
-                "gain_percent": gain_percent
+                "gain_percent": gain_percent,
+                "is_early_investor": is_early,
+                "early_bonus_multiplier": bonus_multiplier,
+                "potential_bonus": potential_bonus
             })
             
             total_value += current_value
             total_gain += gain
+            total_potential_bonus += potential_bonus
     
     return {
         "items": portfolio_items,
         "total_value": total_value,
         "total_gain": total_gain,
+        "total_potential_bonus": total_potential_bonus,
         "wallet_balance": user.wallet_balance
     }
 
