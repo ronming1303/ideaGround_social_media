@@ -57,23 +57,26 @@ export default function Explore() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse text-muted-foreground">Loading content...</div>
+      <div className="min-h-screen flex items-center justify-center orange-gradient-subtle">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+          <span className="text-muted-foreground">Discovering content...</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="page-enter p-6 lg:p-8 max-w-7xl mx-auto min-h-screen orange-gradient-subtle">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="font-heading text-3xl font-bold mb-1">Explore</h1>
+        <h1 className="font-heading text-3xl font-bold mb-1 gradient-text">Explore</h1>
         <p className="text-muted-foreground">Discover new content and creators</p>
       </div>
 
       {/* Search */}
       <div className="relative mb-8">
-        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary/60" />
         <Input
           data-testid="explore-search"
           type="text"
