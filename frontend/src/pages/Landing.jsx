@@ -2,10 +2,12 @@ import { useState } from "react";
 import { useAuth } from "../App";
 import { Button } from "../components/ui/button";
 import { Play, TrendingUp, Users, DollarSign, ArrowRight, Sparkles } from "lucide-react";
+import OnboardingDemo from "../components/OnboardingDemo";
 
 export default function Landing() {
   const { login } = useAuth();
   const [isHovering, setIsHovering] = useState(false);
+  const [showDemo, setShowDemo] = useState(false);
 
   const features = [
     {
