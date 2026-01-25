@@ -54,22 +54,25 @@ export default function Watchlist() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
+      <div className="flex items-center justify-center min-h-[50vh] orange-gradient-subtle">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+          <span className="text-muted-foreground">Loading watchlist...</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto" data-testid="watchlist-page">
+    <div className="page-enter p-6 lg:p-8 max-w-7xl mx-auto min-h-screen orange-gradient-subtle" data-testid="watchlist-page">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-2">
-          <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center">
-            <Eye className="w-6 h-6 text-amber-600" />
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500/20 to-amber-500/20 flex items-center justify-center orange-glow">
+            <Eye className="w-6 h-6 text-primary" />
           </div>
           <div>
-            <h1 className="text-3xl font-heading font-bold">My Watchlist</h1>
+            <h1 className="text-3xl font-heading font-bold gradient-text">My Watchlist</h1>
             <p className="text-muted-foreground">
               Track videos you&apos;re interested in before investing
             </p>
@@ -79,14 +82,14 @@ export default function Watchlist() {
 
       {/* Stats Summary */}
       {watchlist && watchlist.count > 0 && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <Card className="border-border/50">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 stagger-children">
+          <Card className="border-border/50 card-hover-orange">
             <CardContent className="p-4">
               <p className="text-sm text-muted-foreground">Watching</p>
-              <p className="text-2xl font-heading font-bold">{watchlist.count}</p>
+              <p className="text-2xl font-heading font-bold gradient-text">{watchlist.count}</p>
             </CardContent>
           </Card>
-          <Card className="border-border/50">
+          <Card className="border-border/50 card-hover-orange">
             <CardContent className="p-4">
               <p className="text-sm text-muted-foreground">Price Drops</p>
               <p className="text-2xl font-heading font-bold text-emerald-600">
@@ -94,10 +97,10 @@ export default function Watchlist() {
               </p>
             </CardContent>
           </Card>
-          <Card className="border-border/50">
+          <Card className="border-border/50 card-hover-orange">
             <CardContent className="p-4">
               <p className="text-sm text-muted-foreground">Early Bonus Available</p>
-              <p className="text-2xl font-heading font-bold text-amber-600">
+              <p className="text-2xl font-heading font-bold text-primary">
                 {watchlist.items.filter(i => i.early_tier_available).length}
               </p>
             </CardContent>
