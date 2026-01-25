@@ -348,22 +348,10 @@ export default function Dashboard() {
         </div>
 
         <TabsContent value={activeTab} className="mt-0">
-          {/* Bento grid layout */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-            {filteredVideos.slice(0, 1).map((video, i) => (
-              <div key={video.video_id} className="md:col-span-8">
-                <VideoCard video={video} isLarge />
-              </div>
-            ))}
-            <div className="md:col-span-4 space-y-6">
-              {filteredVideos.slice(1, 3).map((video) => (
-                <VideoCard key={video.video_id} video={video} />
-              ))}
-            </div>
-            {filteredVideos.slice(3).map((video) => (
-              <div key={video.video_id} className="md:col-span-4">
-                <VideoCard video={video} />
-              </div>
+          {/* Uniform grid layout - 4 columns on desktop */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {filteredVideos.map((video) => (
+              <VideoCard key={video.video_id} video={video} />
             ))}
           </div>
         </TabsContent>
