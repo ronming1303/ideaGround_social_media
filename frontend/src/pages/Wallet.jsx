@@ -113,39 +113,42 @@ export default function Wallet() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse text-muted-foreground">Loading wallet...</div>
+      <div className="min-h-screen flex items-center justify-center orange-gradient-subtle">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+          <span className="text-muted-foreground">Loading wallet...</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 lg:p-8 max-w-4xl mx-auto">
+    <div className="page-enter p-6 lg:p-8 max-w-4xl mx-auto min-h-screen orange-gradient-subtle">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="font-heading text-3xl font-bold mb-1">Wallet</h1>
+        <h1 className="font-heading text-3xl font-bold mb-1 gradient-text">Wallet</h1>
         <p className="text-muted-foreground">Manage your funds</p>
       </div>
 
       {/* Balance card */}
-      <Card className="border-border/50 mb-8 overflow-hidden">
-        <div className="bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 p-8">
+      <Card className="border-border/50 mb-8 overflow-hidden card-hover-orange">
+        <div className="bg-gradient-to-br from-orange-500/10 via-orange-100/30 to-orange-600/5 p-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500/20 to-orange-600/20 flex items-center justify-center orange-glow">
                   <WalletIcon className="w-6 h-6 text-primary" />
                 </div>
                 <span className="text-sm text-muted-foreground">Available Balance</span>
               </div>
-              <h2 className="font-heading text-5xl font-bold">{formatCurrency(wallet?.balance || 0)}</h2>
+              <h2 className="font-heading text-5xl font-bold gradient-text">{formatCurrency(wallet?.balance || 0)}</h2>
             </div>
 
             <Dialog open={depositDialogOpen} onOpenChange={setDepositDialogOpen}>
               <DialogTrigger asChild>
                 <Button 
                   data-testid="add-funds-btn"
-                  className="bg-primary text-white hover:bg-primary/90 rounded-full px-8 py-6 text-lg"
+                  className="bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700 rounded-full px-8 py-6 text-lg shadow-lg orange-glow"
                 >
                   <Plus className="w-5 h-5 mr-2" />
                   Add Funds
@@ -153,20 +156,20 @@ export default function Wallet() {
               </DialogTrigger>
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                  <DialogTitle className="font-heading">Add Funds</DialogTitle>
+                  <DialogTitle className="font-heading gradient-text">Add Funds</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-6 py-4">
                   <div>
                     <label className="text-sm font-medium mb-2 block">Amount</label>
                     <div className="relative">
-                      <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                      <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary" />
                       <Input
                         data-testid="deposit-amount-input"
                         type="number"
                         value={depositAmount}
                         onChange={(e) => setDepositAmount(e.target.value)}
                         placeholder="0.00"
-                        className="pl-10 h-14 text-xl font-mono"
+                        className="pl-10 h-14 text-xl font-mono border-primary/20 focus:border-primary"
                       />
                     </div>
                   </div>
