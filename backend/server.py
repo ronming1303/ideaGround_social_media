@@ -2218,11 +2218,21 @@ async def get_admin_earnings(request: Request):
     # Get all platform earnings
     earnings = await db.platform_earnings.find({}, {"_id": 0}).sort("created_at", -1).to_list(100)
     
+    # Batch fetch videos and users to avoid N+1 queries
+    video_ids = list(set(e.get("video_id") for e in earnings if e.get("video_id")))
+    user_ids = list(set(e.get("user_id") for e in earnings if e.get("user_id")))
+    
+    videos = await db.videos.find({"video_id": {"$in": video_ids}}, {"_id": 0}).to_list(len(video_ids)) if video_ids else []
+    users = await db.users.find({"user_id": {"$in": user_ids}}, {"_id": 0}).to_list(len(user_ids)) if user_ids else []
+    
+    video_map = {v["video_id"]: v for v in videos}
+    user_map = {u["user_id"]: u for u in users}
+    
     # Enrich with video and user info
     enriched_earnings = []
     for earning in earnings:
-        video = await db.videos.find_one({"video_id": earning.get("video_id")}, {"_id": 0})
-        user = await db.users.find_one({"user_id": earning.get("user_id")}, {"_id": 0})
+        video = video_map.get(earning.get("video_id"))
+        user = user_map.get(earning.get("user_id"))
         
         enriched_earnings.append({
             "earning_id": earning.get("earning_id"),
