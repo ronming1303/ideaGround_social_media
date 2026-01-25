@@ -1328,11 +1328,18 @@ async def get_wallet(user: User = Depends(get_current_user)):
         {"user_id": user.user_id}, {"_id": 0}
     ).sort("created_at", -1).limit(20).to_list(20)
     
+    # Batch fetch videos to avoid N+1 queries
+    video_ids = list(set(t["video_id"] for t in transactions if t.get("video_id")))
+    if video_ids:
+        videos = await db.videos.find({"video_id": {"$in": video_ids}}, {"_id": 0}).to_list(len(video_ids))
+        video_map = {v["video_id"]: v for v in videos}
+    else:
+        video_map = {}
+    
     # Enrich transactions with video data
     for txn in transactions:
         if txn.get("video_id"):
-            video = await db.videos.find_one({"video_id": txn["video_id"]}, {"_id": 0})
-            txn["video"] = video
+            txn["video"] = video_map.get(txn["video_id"])
     
     return {
         "balance": user.wallet_balance,
