@@ -333,13 +333,67 @@ Fixed route conflicts by ensuring specific routes (`/videos/my`, `/creators/me`)
 - Frontend: 100% (all UI features verified)
 - New test file: `/app/backend/tests/test_early_investor_features.py`
 
-### Current Status - Version 1.0 Complete
+---
+
+## Enhancement Update (Jan 25, 2026 - Session 5)
+
+### Feature 3: Redeem Button
+**Purpose**: Allow users to cash out all shares of a video to their wallet with a 5% platform fee.
+
+**Implementation**:
+- **Backend Endpoint**: `POST /api/shares/redeem` (already existed)
+  - Accepts `video_id` in request body
+  - Calculates gross value including early investor bonus
+  - Applies 5% platform fee
+  - Credits net value to user wallet
+  - Records platform earning in `platform_earnings` collection
+- **Frontend**: New "Redeem" button in Portfolio.jsx next to each holding
+  - Green button with wallet icon
+  - Opens dialog showing:
+    - Total shares to redeem
+    - Current value
+    - Early investor bonus (if applicable)
+    - Platform fee (5%)
+    - Net amount to wallet
+    - Explanation: "Redeem vs Sell" - Redeem has 5% fee but cashes out all shares, Sell has no fee for partial shares
+
+**UI Components**:
+- Portfolio Page: "Redeem" button next to "Sell" button for each holding
+- Redeem Dialog: Fee breakdown with visual explanation
+
+### Feature 4: Admin Dashboard
+**Purpose**: Provide platform owner with analytics, revenue tracking, and transaction auditing.
+
+**Implementation**:
+- **Route**: `/admin` (accessible without main app authentication)
+- **Authentication**: Simple key-based auth with `ideaground_admin_2026`
+- **Backend Endpoints** (all require `X-Admin-Key` header):
+  - `GET /api/admin/stats` - Platform-wide statistics
+  - `GET /api/admin/earnings` - Platform earnings from 5% fees
+  - `GET /api/admin/transactions` - Transaction audit log
+  - `GET /api/admin/users` - User management data
+  - `GET /api/admin/cashflow` - Cash flow overview
+
+**Admin Dashboard Features**:
+- **Stats Cards**: Total Users (6), Total Videos (10), Platform Earnings ($2.76), Transactions (22+)
+- **Tabs**:
+  - Overview: Cash Flow chart, Platform Revenue chart
+  - Platform Earnings: Log of all redemption fees
+  - Transactions: Complete audit log with type badges
+  - Users: User management table with portfolio values
+- **Charts**: Interactive Recharts visualizations
+
+### Test Results (Iteration 7)
+- Backend: 100% (12/12 tests passed)
+- Frontend: 100% (all UI features verified)
+- New test file: `/app/backend/tests/test_admin_redeem.py`
+
+### Current Status - Version 1.1 Complete
 - All P0 features working correctly
-- Dashboard fully functional with all sections visible
-- Price simulation and trending data working
-- Custom logo integrated throughout the app
-- Early Discovery Bonus system fully implemented
-- Transparent Revenue Distribution fully implemented
+- Admin Dashboard fully implemented with 4 tabs
+- Redeem Button working with 5% fee calculation
+- Platform earnings tracking enabled
+- Dashboard, Portfolio, Admin all functional
 
 ### Upcoming Tasks
 1. (P1) Complete Video Analytics frontend integration
@@ -347,3 +401,4 @@ Fixed route conflicts by ensuring specific routes (`/videos/my`, `/creators/me`)
 3. (P2) Price Alerts notification system
 4. (P2) Commenter Rewards System
 5. (P2) Curator Earnings (referral shares)
+
