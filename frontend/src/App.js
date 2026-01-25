@@ -187,6 +187,11 @@ function AppRouter() {
         </ProtectedRoute>
       } />
       <Route path="/admin" element={<Admin />} />
+      <Route path="/why" element={
+        <ProtectedRoute>
+          <AppLayout><WhyIdeaGround /></AppLayout>
+        </ProtectedRoute>
+      } />
     </Routes>
   );
 }
