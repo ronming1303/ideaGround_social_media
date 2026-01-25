@@ -11,7 +11,7 @@ import {
 } from "../components/ui/dropdown-menu";
 import { 
   Home, Compass, Briefcase, Wallet, LogOut, 
-  Settings, User, ChevronDown, Video, Eye, PieChart
+  Settings, User, ChevronDown, Video, Eye, PieChart, HelpCircle
 } from "lucide-react";
 import { cn } from "../lib/utils";
 import { useState, useEffect } from "react";
