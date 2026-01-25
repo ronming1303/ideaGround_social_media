@@ -2284,13 +2284,21 @@ async def get_admin_transactions(request: Request, limit: int = 50):
     
     transactions = await db.transactions.find({}, {"_id": 0}).sort("created_at", -1).limit(limit).to_list(limit)
     
+    # Batch fetch users and videos to avoid N+1 queries
+    user_ids = list(set(t.get("user_id") for t in transactions if t.get("user_id")))
+    video_ids = list(set(t.get("video_id") for t in transactions if t.get("video_id")))
+    
+    users = await db.users.find({"user_id": {"$in": user_ids}}, {"_id": 0}).to_list(len(user_ids)) if user_ids else []
+    videos = await db.videos.find({"video_id": {"$in": video_ids}}, {"_id": 0}).to_list(len(video_ids)) if video_ids else []
+    
+    user_map = {u["user_id"]: u for u in users}
+    video_map = {v["video_id"]: v for v in videos}
+    
     # Enrich with user and video info
     enriched_txns = []
     for txn in transactions:
-        user = await db.users.find_one({"user_id": txn.get("user_id")}, {"_id": 0})
-        video = None
-        if txn.get("video_id"):
-            video = await db.videos.find_one({"video_id": txn.get("video_id")}, {"_id": 0})
+        user = user_map.get(txn.get("user_id"))
+        video = video_map.get(txn.get("video_id")) if txn.get("video_id") else None
         
         enriched_txns.append({
             "transaction_id": txn.get("transaction_id"),
@@ -2323,21 +2331,51 @@ async def get_admin_users(request: Request):
     
     users = await db.users.find({}, {"_id": 0}).to_list(100)
     
+    # Batch fetch all creators, ownerships, and videos to avoid N+1 queries
+    user_ids = [u.get("user_id") for u in users]
+    
+    # Get all creators
+    creators = await db.creators.find({"user_id": {"$in": user_ids}}, {"_id": 0}).to_list(len(user_ids))
+    creator_map = {c["user_id"]: c for c in creators}
+    
+    # Get all ownerships
+    all_ownerships = await db.share_ownerships.find({"user_id": {"$in": user_ids}}, {"_id": 0}).to_list(1000)
+    
+    # Get all videos for portfolio calculation
+    video_ids = list(set(o.get("video_id") for o in all_ownerships if o.get("video_id")))
+    videos = await db.videos.find({"video_id": {"$in": video_ids}}, {"_id": 0, "video_id": 1, "share_price": 1}).to_list(len(video_ids)) if video_ids else []
+    video_map = {v["video_id"]: v for v in videos}
+    
+    # Group ownerships by user
+    user_ownerships = {}
+    for o in all_ownerships:
+        uid = o.get("user_id")
+        if uid not in user_ownerships:
+            user_ownerships[uid] = []
+        user_ownerships[uid].append(o)
+    
+    # Get transaction counts in batch
+    txn_pipeline = [
+        {"$match": {"user_id": {"$in": user_ids}}},
+        {"$group": {"_id": "$user_id", "count": {"$sum": 1}}}
+    ]
+    txn_counts = await db.transactions.aggregate(txn_pipeline).to_list(len(user_ids))
+    txn_count_map = {t["_id"]: t["count"] for t in txn_counts}
+    
     enriched_users = []
     for user in users:
-        # Check if user is a creator
-        creator = await db.creators.find_one({"user_id": user.get("user_id")}, {"_id": 0})
+        user_id = user.get("user_id")
+        creator = creator_map.get(user_id)
+        ownerships = user_ownerships.get(user_id, [])
         
-        # Get user's portfolio value
-        ownerships = await db.share_ownerships.find({"user_id": user.get("user_id")}, {"_id": 0}).to_list(100)
+        # Calculate portfolio value
         portfolio_value = 0
         for ownership in ownerships:
-            video = await db.videos.find_one({"video_id": ownership.get("video_id")}, {"_id": 0})
+            video = video_map.get(ownership.get("video_id"))
             if video:
                 portfolio_value += ownership.get("shares_owned", 0) * video.get("share_price", 0)
         
-        # Get transaction count
-        txn_count = await db.transactions.count_documents({"user_id": user.get("user_id")})
+        txn_count = txn_count_map.get(user_id, 0)
         
         enriched_users.append({
             "user_id": user.get("user_id"),
