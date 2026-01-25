@@ -94,8 +94,10 @@ export default function Landing() {
                 <Button 
                   data-testid="watch-demo-btn"
                   variant="outline"
-                  className="rounded-full px-8 py-6 text-lg font-medium border-2"
+                  onClick={() => setShowDemo(true)}
+                  className="rounded-full px-8 py-6 text-lg font-medium border-2 hover:bg-orange-50 hover:border-orange-300 transition-colors"
                 >
+                  <Play className="w-5 h-5 mr-2 text-orange-500" />
                   Watch Demo
                 </Button>
               </div>
