@@ -443,3 +443,19 @@ Fixed route conflicts by ensuring specific routes (`/videos/my`, `/creators/me`)
 4. (P2) Commenter Rewards System
 5. (P2) Curator Earnings (referral shares)
 
+### Why ideaGround Page (Jan 25, 2026)
+
+**New Page**: `/why` - Comprehensive landing page explaining ideaGround's value proposition
+
+**Sections Implemented**:
+1. **Hero Section**: Gradient title, "Redefining Social Media Economics" badge
+2. **The Problem**: 4 cards showing traditional platform issues (creators get pennies, fans get nothing, early supporters ignored, unfair algorithms)
+3. **The Solution**: 4 solution cards with color gradients (creators keep more, fans earn too, early discovery bonus, transparent & fair)
+4. **Fair Revenue Distribution**: Visual bar showing 50%/40%/10% split with legend
+5. **Comparison Table**: Side-by-side comparison of traditional vs ideaGround features with checkmarks/X icons
+6. **Platform Features**: 6 feature cards with stat badges (Video Stock Market, Invest in Content, Early Investor Rewards, Portfolio Tracking, Revenue Sharing, Secure & Transparent)
+7. **How It Works**: 4-step process (Discover → Invest → Grow → Earn)
+8. **CTA Section**: Orange gradient card with "Start Exploring" and "View Dashboard" buttons
+
+**Navigation**: Added "Why ideaGround" link to sidebar below "Creator Studio"
+
