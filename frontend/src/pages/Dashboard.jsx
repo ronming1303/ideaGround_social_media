@@ -69,7 +69,7 @@ export default function Dashboard() {
     <Link 
       to={`/video/${video.video_id}`}
       data-testid={`video-card-${video.video_id}`}
-      className="group relative overflow-hidden rounded-2xl bg-card border border-border/50 shadow-sm hover:shadow-hover transition-all duration-300 hover:-translate-y-1"
+      className="group relative overflow-hidden rounded-2xl bg-card border border-border/50 shadow-sm card-hover-orange transition-all duration-300 hover:-translate-y-1"
     >
       {/* Fixed aspect ratio for all cards - 16:9 for uniformity */}
       <div className="relative aspect-video">
@@ -78,15 +78,16 @@ export default function Dashboard() {
           alt={video.title}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+        {/* Orange-tinted gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-orange-900/10"></div>
         
         {/* Top badges row */}
         <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
           {/* Stock price badge with change indicator */}
-          <div className={`px-2.5 py-1.5 rounded-lg text-sm font-mono font-semibold flex items-center gap-1.5 backdrop-blur-sm ${
+          <div className={`px-3 py-1.5 rounded-lg text-sm font-mono font-bold flex items-center gap-1.5 backdrop-blur-sm shadow-lg ${
             (video.last_price_change_percent || 0) >= 0 
-              ? 'bg-secondary/90 text-white' 
-              : 'bg-destructive/90 text-white'
+              ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white' 
+              : 'bg-gradient-to-r from-red-500 to-red-600 text-white'
           }`}>
             {(video.last_price_change_percent || 0) >= 0 ? (
               <TrendingUp className="w-3.5 h-3.5" />
@@ -99,7 +100,7 @@ export default function Dashboard() {
           {/* Duration & type badge */}
           <div className="flex items-center gap-2">
             {video.video_type === 'short' && (
-              <Badge className="bg-primary/90 text-white border-0 backdrop-blur-sm">
+              <Badge className="bg-gradient-to-r from-primary to-orange-600 text-white border-0 backdrop-blur-sm shadow-md">
                 <Sparkles className="w-3 h-3 mr-1" />
                 Short
               </Badge>
@@ -111,16 +112,16 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Play overlay */}
+        {/* Play overlay with orange gradient */}
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-          <div className="w-16 h-16 rounded-full bg-white/95 flex items-center justify-center shadow-xl transform group-hover:scale-110 transition-transform">
-            <Play className="w-7 h-7 text-primary fill-primary ml-1" />
+          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-transform orange-glow-strong">
+            <Play className="w-7 h-7 text-white fill-white ml-1" />
           </div>
         </div>
 
         {/* Content overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-4">
-          <h3 className="font-heading font-semibold text-white mb-2 line-clamp-2 text-base leading-snug">
+        <div className="absolute bottom-0 left-0 right-0 p-5">
+          <h3 className="font-heading font-semibold text-white mb-3 line-clamp-2 text-base leading-snug">
             {video.title}
           </h3>
           <div className="flex items-center justify-between">
@@ -129,7 +130,7 @@ export default function Dashboard() {
                 <img 
                   src={video.creator.image} 
                   alt={video.creator.name}
-                  className="w-7 h-7 rounded-full object-cover border-2 border-white/40"
+                  className="w-7 h-7 rounded-full object-cover border-2 border-orange-400/50"
                 />
                 <span className="text-sm text-white/90 font-medium">{video.creator.name}</span>
               </div>
