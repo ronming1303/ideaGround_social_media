@@ -536,11 +536,16 @@ async def get_video_top_earners(video_id: str, limit: int = 5):
             "top_earners": []
         }
     
+    # Batch fetch users to avoid N+1 queries
+    user_ids = list(set(o["user_id"] for o in ownerships))
+    users = await db.users.find({"user_id": {"$in": user_ids}}, {"_id": 0}).to_list(len(user_ids))
+    user_map = {u["user_id"]: u for u in users}
+    
     # Calculate profit for each investor
     earners = []
     for ownership in ownerships:
-        # Get user info
-        user_doc = await db.users.find_one({"user_id": ownership["user_id"]}, {"_id": 0})
+        # Get user info from batch
+        user_doc = user_map.get(ownership["user_id"])
         if not user_doc:
             continue
         
