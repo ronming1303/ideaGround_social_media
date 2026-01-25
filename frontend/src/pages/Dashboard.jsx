@@ -348,8 +348,8 @@ export default function Dashboard() {
         </div>
 
         <TabsContent value={activeTab} className="mt-0">
-          {/* Uniform grid layout - 4 columns on desktop */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {/* Uniform grid layout - 3 columns on desktop for bigger cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 stagger-children">
             {filteredVideos.map((video) => (
               <VideoCard key={video.video_id} video={video} />
             ))}
