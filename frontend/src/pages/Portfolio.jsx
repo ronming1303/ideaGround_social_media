@@ -168,25 +168,25 @@ export default function Portfolio() {
     : 0;
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="page-enter p-6 lg:p-8 max-w-7xl mx-auto min-h-screen orange-gradient-subtle">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="font-heading text-3xl font-bold mb-1">Portfolio</h1>
+        <h1 className="font-heading text-3xl font-bold mb-1 gradient-text">Portfolio</h1>
         <p className="text-muted-foreground">Track your video investments</p>
       </div>
 
       {/* Main stats */}
-      <div className="grid lg:grid-cols-4 gap-6 mb-8">
-        <Card className="lg:col-span-2 border-border/50 overflow-hidden">
+      <div className="grid lg:grid-cols-4 gap-6 mb-8 stagger-children">
+        <Card className="lg:col-span-2 border-border/50 overflow-hidden card-hover-orange">
           <CardContent className="p-6">
             <div className="flex items-start justify-between mb-6">
               <div>
                 <p className="text-sm text-muted-foreground mb-1">Total Portfolio Value</p>
-                <h2 className="font-heading text-4xl font-bold">{formatCurrency(totalPortfolioValue)}</h2>
+                <h2 className="font-heading text-4xl font-bold gradient-text">{formatCurrency(totalPortfolioValue)}</h2>
               </div>
-              <div className={`flex items-center gap-1 px-3 py-1 rounded-full ${portfolio?.total_gain >= 0 ? 'bg-secondary/10 text-secondary' : 'bg-destructive/10 text-destructive'}`}>
+              <div className={`flex items-center gap-1 px-3 py-1.5 rounded-full font-semibold ${portfolio?.total_gain >= 0 ? 'bg-gradient-to-r from-orange-500/10 to-orange-600/10 text-orange-600' : 'bg-destructive/10 text-destructive'}`}>
                 {portfolio?.total_gain >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                <span className="font-medium">{totalGainPercent >= 0 ? '+' : ''}{totalGainPercent.toFixed(1)}%</span>
+                <span>{totalGainPercent >= 0 ? '+' : ''}{totalGainPercent.toFixed(1)}%</span>
               </div>
             </div>
             
@@ -196,7 +196,7 @@ export default function Portfolio() {
                 <AreaChart data={portfolioHistory?.history || []}>
                   <defs>
                     <linearGradient id="portfolioGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(24, 95%, 53%)" stopOpacity={0.3}/>
+                      <stop offset="5%" stopColor="hsl(24, 95%, 53%)" stopOpacity={0.4}/>
                       <stop offset="95%" stopColor="hsl(24, 95%, 53%)" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
@@ -213,11 +213,11 @@ export default function Portfolio() {
           </CardContent>
         </Card>
 
-        <Card className="border-border/50">
+        <Card className="border-border/50 card-hover-orange">
           <CardContent className="p-6">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-xl bg-secondary/10 flex items-center justify-center">
-                <Briefcase className="w-6 h-6 text-secondary" />
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500/10 to-orange-600/20 flex items-center justify-center">
+                <Briefcase className="w-6 h-6 text-primary" />
               </div>
             </div>
             <p className="text-sm text-muted-foreground mb-1">Invested Value</p>
