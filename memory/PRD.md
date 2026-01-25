@@ -459,3 +459,27 @@ Fixed route conflicts by ensuring specific routes (`/videos/my`, `/creators/me`)
 
 **Navigation**: Added "Why ideaGround" link to sidebar below "Creator Studio"
 
+### Interactive Onboarding Demo (Jan 25, 2026)
+
+**New Component**: `OnboardingDemo.jsx` - 7-slide interactive walkthrough modal
+
+**Slides**:
+1. **Welcome** - Platform introduction with animated logo
+2. **Discover & Browse** - Finding content (video grid visual)
+3. **Buy Video Shares** - Purchase flow (mock buy card)
+4. **Early Investor Bonus** - Tiered rewards (gold/silver/bronze badges)
+5. **Track Your Portfolio** - Dashboard preview (chart visual)
+6. **Fair Revenue Sharing** - 50/40/10 split bar
+7. **Ready to Start** - CTA with $500 free credits
+
+**Features**:
+- Auto-advance slides (5 seconds each)
+- Manual navigation (Next/Back/dot indicators)
+- Skip tutorial option
+- Progress bar at top
+- Color-coded gradient backgrounds per slide
+- Animated visual elements
+- "Get Started Free" triggers Google login on final slide
+
+**Integration**: Connected to "Watch Demo" button on Landing page
+
