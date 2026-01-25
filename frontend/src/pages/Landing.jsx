@@ -230,6 +230,13 @@ export default function Landing() {
           </p>
         </div>
       </footer>
+
+      {/* Onboarding Demo Modal */}
+      <OnboardingDemo 
+        open={showDemo} 
+        onOpenChange={setShowDemo}
+        onGetStarted={login}
+      />
     </div>
   );
 }
