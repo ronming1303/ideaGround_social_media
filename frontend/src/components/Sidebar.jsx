@@ -33,37 +33,43 @@ const MiniDonut = ({ data }) => {
   const total = data.reduce((sum, item) => sum + item.value, 0);
   if (total === 0) return null;
   
-  let currentAngle = 0;
   const size = 60;
   const strokeWidth = 8;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   
+  // Pre-calculate angles for each segment
+  const segments = data.map((item, index) => {
+    const previousTotal = data.slice(0, index).reduce((sum, i) => sum + i.value, 0);
+    const percentage = item.value / total;
+    const startAngle = previousTotal / total;
+    return {
+      ...item,
+      percentage,
+      startAngle,
+      strokeDasharray: `${percentage * circumference} ${circumference}`,
+      strokeDashoffset: -startAngle * circumference
+    };
+  });
+  
   return (
     <div className="relative" style={{ width: size, height: size }}>
       <svg width={size} height={size} className="-rotate-90">
-        {data.map((item, index) => {
-          const percentage = item.value / total;
-          const strokeDasharray = `${percentage * circumference} ${circumference}`;
-          const strokeDashoffset = -currentAngle * circumference;
-          currentAngle += percentage;
-          
-          return (
-            <circle
-              key={index}
-              cx={size / 2}
-              cy={size / 2}
-              r={radius}
-              fill="none"
-              stroke={item.color}
-              strokeWidth={strokeWidth}
-              strokeDasharray={strokeDasharray}
-              strokeDashoffset={strokeDashoffset}
-              strokeLinecap="round"
-              className="transition-all duration-500"
-            />
-          );
-        })}
+        {segments.map((segment, index) => (
+          <circle
+            key={index}
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            fill="none"
+            stroke={segment.color}
+            strokeWidth={strokeWidth}
+            strokeDasharray={segment.strokeDasharray}
+            strokeDashoffset={segment.strokeDashoffset}
+            strokeLinecap="round"
+            className="transition-all duration-500"
+          />
+        ))}
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
         <span className="text-xs font-bold text-foreground">{data.length}</span>
