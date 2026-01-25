@@ -414,9 +414,14 @@ async def get_videos(video_type: Optional[str] = None, limit: int = 20):
     
     videos = await db.videos.find(query, {"_id": 0}).sort("created_at", -1).limit(limit).to_list(limit)
     
+    # Batch fetch creators to avoid N+1 queries
+    creator_ids = list(set(v["creator_id"] for v in videos if "creator_id" in v))
+    creators = await db.creators.find({"creator_id": {"$in": creator_ids}}, {"_id": 0}).to_list(len(creator_ids))
+    creator_map = {c["creator_id"]: c for c in creators}
+    
     # Enrich with creator data
     for video in videos:
-        creator = await db.creators.find_one({"creator_id": video["creator_id"]}, {"_id": 0})
+        creator = creator_map.get(video.get("creator_id"))
         if creator:
             video["creator"] = creator
     
