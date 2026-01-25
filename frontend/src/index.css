@@ -6,7 +6,7 @@
 
 @layer base {
     :root {
-        --background: 30 20% 98%;
+        --background: 30 25% 98%;
         --foreground: 20 14% 4%;
         --card: 0 0% 100%;
         --card-foreground: 20 14% 4%;
@@ -16,14 +16,14 @@
         --primary-foreground: 0 0% 100%;
         --secondary: 173 58% 39%;
         --secondary-foreground: 0 0% 100%;
-        --muted: 30 10% 94%;
+        --muted: 30 15% 94%;
         --muted-foreground: 20 5% 45%;
-        --accent: 24 95% 96%;
+        --accent: 24 100% 96%;
         --accent-foreground: 24 95% 40%;
         --destructive: 0 84.2% 60.2%;
         --destructive-foreground: 0 0% 98%;
-        --border: 30 10% 90%;
-        --input: 30 10% 90%;
+        --border: 30 15% 88%;
+        --input: 30 15% 90%;
         --ring: 24 95% 53%;
         --chart-1: 24 95% 53%;
         --chart-2: 173 58% 39%;
@@ -31,6 +31,18 @@
         --chart-4: 43 74% 66%;
         --chart-5: 27 87% 67%;
         --radius: 0.75rem;
+        
+        /* Orange theme extensions */
+        --orange-50: 33 100% 96%;
+        --orange-100: 34 100% 92%;
+        --orange-200: 32 98% 83%;
+        --orange-300: 31 97% 72%;
+        --orange-400: 27 96% 61%;
+        --orange-500: 24 95% 53%;
+        --orange-600: 21 90% 48%;
+        --orange-700: 17 88% 40%;
+        --orange-800: 15 79% 34%;
+        --orange-900: 15 75% 28%;
     }
 }
 
@@ -58,7 +70,7 @@ code {
     }
 }
 
-/* Custom scrollbar */
+/* Custom scrollbar with orange theme */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -70,15 +82,26 @@ code {
 }
 
 ::-webkit-scrollbar-thumb {
-    background: hsl(var(--border));
+    background: hsl(var(--primary) / 0.3);
     border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: hsl(var(--muted-foreground));
+    background: hsl(var(--primary) / 0.5);
 }
 
-/* Animation utilities */
+/* Page transition animations */
+@keyframes page-enter {
+    from { 
+        opacity: 0; 
+        transform: translateY(12px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
 @keyframes fade-in {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -94,6 +117,16 @@ code {
     50% { box-shadow: 0 0 20px 10px hsl(24 95% 53% / 0); }
 }
 
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* Page enter animation */
+.page-enter {
+    animation: page-enter 0.4s ease-out;
+}
+
 .animate-fade-in {
     animation: fade-in 0.3s ease-out;
 }
@@ -106,17 +139,63 @@ code {
     animation: pulse-glow 2s infinite;
 }
 
+/* Staggered animation for grid items */
+.stagger-children > * {
+    animation: fade-in 0.4s ease-out backwards;
+}
+.stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.3s; }
+.stagger-children > *:nth-child(7) { animation-delay: 0.35s; }
+.stagger-children > *:nth-child(8) { animation-delay: 0.4s; }
+.stagger-children > *:nth-child(9) { animation-delay: 0.45s; }
+
 /* Gradient text */
 .gradient-text {
-    background: linear-gradient(135deg, hsl(24 95% 53%) 0%, hsl(173 58% 39%) 100%);
+    background: linear-gradient(135deg, hsl(24 95% 53%) 0%, hsl(21 90% 48%) 50%, hsl(173 58% 39%) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
 
-/* Glass effect */
+/* Orange gradient backgrounds */
+.orange-gradient-bg {
+    background: linear-gradient(135deg, hsl(24 95% 53% / 0.05) 0%, hsl(33 100% 96%) 50%, hsl(24 95% 53% / 0.03) 100%);
+}
+
+.orange-gradient-subtle {
+    background: linear-gradient(180deg, hsl(33 100% 97%) 0%, hsl(0 0% 100%) 100%);
+}
+
+.orange-glow {
+    box-shadow: 0 4px 20px -2px hsl(24 95% 53% / 0.15);
+}
+
+.orange-glow-strong {
+    box-shadow: 0 8px 32px -4px hsl(24 95% 53% / 0.25);
+}
+
+/* Card hover with orange accent */
+.card-hover-orange {
+    transition: all 0.3s ease;
+}
+.card-hover-orange:hover {
+    box-shadow: 0 8px 30px -8px hsl(24 95% 53% / 0.2);
+    border-color: hsl(24 95% 53% / 0.3);
+}
+
+/* Glass effect with orange tint */
 .glass {
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.glass-orange {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 247, 237, 0.85) 100%);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
 }
@@ -129,4 +208,22 @@ code {
 
 .animate-ticker {
     animation: ticker 30s linear infinite;
+}
+
+/* Skeleton loading with orange */
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        hsl(var(--muted)) 25%,
+        hsl(24 95% 53% / 0.1) 50%,
+        hsl(var(--muted)) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+/* Selection color */
+::selection {
+    background: hsl(24 95% 53% / 0.2);
+    color: hsl(24 95% 40%);
 }
