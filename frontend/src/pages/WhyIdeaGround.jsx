@@ -134,7 +134,7 @@ export default function WhyIdeaGround() {
       {/* The Problem Section */}
       <div className="px-8 lg:px-12 max-w-7xl mx-auto mb-20">
         <div className="text-center mb-12">
-          <h2 className="font-heading text-3xl font-bold mb-4">The Problem with Today's Platforms</h2>
+          <h2 className="font-heading text-3xl font-bold mb-4">The Problem with Today&apos;s Platforms</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Social media created a system where platforms win, creators struggle, and fans get nothing
           </p>
