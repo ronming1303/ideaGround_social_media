@@ -174,14 +174,17 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse text-muted-foreground">Loading content...</div>
+      <div className="min-h-screen flex items-center justify-center orange-gradient-subtle">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+          <span className="text-muted-foreground">Loading content...</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div>
+    <div className="page-enter orange-gradient-subtle min-h-screen">
       {/* Trending Ticker */}
       <TrendingTicker />
       
