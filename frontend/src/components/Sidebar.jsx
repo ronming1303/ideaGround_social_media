@@ -26,6 +26,7 @@ const navItems = [
   { path: "/watchlist", label: "Watchlist", icon: Eye },
   { path: "/wallet", label: "Wallet", icon: Wallet },
   { path: "/studio", label: "Creator Studio", icon: Video },
+  { path: "/why", label: "Why ideaGround", icon: HelpCircle },
 ];
 
 // Mini donut chart component for portfolio allocation
