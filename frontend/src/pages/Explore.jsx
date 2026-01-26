@@ -59,10 +59,12 @@ export default function Explore() {
     return num;
   };
 
-  const filteredVideos = videos.filter(video => 
-    video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    video.creator?.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredVideos = videos.filter(video => {
+    const matchesSearch = video.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      video.creator?.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesGenre = selectedGenre === "all" || video.category === selectedGenre;
+    return matchesSearch && matchesGenre;
+  });
 
   const filteredCreators = creators.filter(creator =>
     creator.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
