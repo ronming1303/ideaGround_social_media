@@ -19,6 +19,19 @@ export default function Explore() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("videos");
+  const [selectedGenre, setSelectedGenre] = useState("all");
+
+  // Genre categories like stock market sectors
+  const genres = [
+    { id: "all", label: "All", icon: Sparkles },
+    { id: "Podcast", label: "Podcast", icon: Mic },
+    { id: "Dance", label: "Music & Dance", icon: Music },
+    { id: "Tech", label: "Tech & Tutorial", icon: Cpu },
+    { id: "Food", label: "Food & Lifestyle", icon: Utensils },
+    { id: "Travel", label: "Travel & Vlog", icon: Plane },
+    { id: "Art", label: "Art & Decor", icon: Palette },
+    { id: "Other", label: "Others", icon: MoreHorizontal },
+  ];
 
   useEffect(() => {
     fetchData();
