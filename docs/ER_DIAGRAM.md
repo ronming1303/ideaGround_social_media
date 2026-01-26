@@ -1,203 +1,199 @@
 # ideaGround - Entity Relationship Diagram
+> Version 1.0 Final | January 2026
 
-## Database: MongoDB
+## Database: MongoDB (ideaground)
 
----
-
-## ER Diagram
+## Collections Overview
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────────────┐
-│                           IDEAGROUND ER DIAGRAM                                      │
-└─────────────────────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────┐
+│                           DATABASE SCHEMA                                │
+├─────────────────────────────────────────────────────────────────────────┤
+│  users ──────────┬─────── share_ownerships ──────┬─────── videos        │
+│                  │                               │                       │
+│  creators ───────┴───────── transactions ────────┴─────── watchlist     │
+│                                                                          │
+│  platform_earnings                                                       │
+└─────────────────────────────────────────────────────────────────────────┘
+```
 
-┌──────────────────┐       1:N        ┌──────────────────┐
-│      USERS       │─────────────────▶│   USER_SESSIONS  │
-├──────────────────┤                  ├──────────────────┤
-│ PK: user_id      │                  │ PK: session_id   │
-│    name          │                  │ FK: user_id      │
-│    email         │                  │    session_token │
-│    picture       │                  │    expires_at    │
-│    wallet_balance│                  │    created_at    │
-│    subscriptions │                  └──────────────────┘
-│    created_at    │
+## Entity Relationship Diagram
+
+```
+┌──────────────────┐         ┌──────────────────┐         ┌──────────────────┐
+│      users       │         │ share_ownerships │         │      videos      │
+├──────────────────┤         ├──────────────────┤         ├──────────────────┤
+│ user_id (PK)     │◀───┐    │ user_id (FK)     │    ┌───▶│ video_id (PK)    │
+│ email            │    │    │ video_id (FK)    │────┘    │ title            │
+│ name             │    │    │ shares_owned     │         │ thumbnail        │
+│ picture          │    │    │ purchase_price   │         │ video_url        │
+│ wallet_balance   │    │    │ is_early_investor│         │ creator_id (FK)  │──┐
+│ is_admin         │    │    │ early_bonus_mult │         │ category         │  │
+│ created_at       │    │    │ investor_rank    │         │ video_type       │  │
+└──────────────────┘    │    │ created_at       │         │ duration_minutes │  │
+                        │    └──────────────────┘         │ share_price      │  │
+                        │                                 │ total_shares     │  │
+                        │                                 │ available_shares │  │
+┌──────────────────┐    │    ┌──────────────────┐         │ views            │  │
+│    creators      │    │    │   transactions   │         │ likes            │  │
+├──────────────────┤    │    ├──────────────────┤         │ ticker_symbol    │  │
+│ creator_id (PK)  │◀───┼────│ user_id (FK)     │         │ last_price_change│  │
+│ user_id (FK)     │────┘    │ video_id (FK)    │────────▶│ created_at       │  │
+│ name             │         │ transaction_id   │         └──────────────────┘  │
+│ image            │         │ transaction_type │                               │
+│ stock_symbol     │         │ amount           │         ┌──────────────────┐  │
+│ category         │         │ shares           │         │    watchlist     │  │
+│ subscribers      │         │ platform_fee     │         ├──────────────────┤  │
+│ total_videos     │         │ early_bonus      │         │ user_id (FK)     │──┘
+│ created_at       │         │ created_at       │         │ video_id (FK)    │
+└──────────────────┘         └──────────────────┘         │ added_at         │
+                                                          │ price_at_add     │
+┌──────────────────┐                                      └──────────────────┘
+│platform_earnings │
+├──────────────────┤
+│ earning_id (PK)  │
+│ user_id (FK)     │
+│ video_id (FK)    │
+│ transaction_type │
+│ gross_amount     │
+│ fee_percent      │
+│ fee_amount       │
+│ created_at       │
 └──────────────────┘
-        │
-        │ 1:N
-        ▼
-┌──────────────────┐       1:N        ┌──────────────────┐
-│    CREATORS      │─────────────────▶│     VIDEOS       │
-├──────────────────┤                  ├──────────────────┤
-│ PK: creator_id   │                  │ PK: video_id     │
-│ FK: user_id      │                  │ FK: creator_id   │
-│    name          │                  │    ticker_symbol │
-│    stock_symbol  │                  │    title         │
-│    image         │                  │    description   │
-│    category      │                  │    video_url     │
-│    subscribers   │                  │    thumbnail     │
-│    created_at    │                  │    duration_mins │
-└──────────────────┘                  │    video_type    │
-                                      │    views         │
-                                      │    likes         │
-                                      │    share_price   │
-                                      │    total_shares  │
-                                      │    available_shares│
-                                      │    created_at    │
-                                      └──────────────────┘
-                                              │
-                    ┌─────────────────────────┼─────────────────────────┐
-                    │                         │                         │
-                    ▼ N:1                     ▼ N:1                     ▼ N:1
-        ┌──────────────────┐      ┌──────────────────┐      ┌──────────────────┐
-        │ SHARE_OWNERSHIPS │      │   VIDEO_LIKES    │      │   TRANSACTIONS   │
-        ├──────────────────┤      ├──────────────────┤      ├──────────────────┤
-        │ PK: ownership_id │      │ PK: like_id      │      │ PK: transaction_id│
-        │ FK: user_id      │      │ FK: user_id      │      │ FK: user_id      │
-        │ FK: video_id     │      │ FK: video_id     │      │ FK: video_id     │
-        │    shares_owned  │      │    created_at    │      │    type          │
-        │    purchase_price│      └──────────────────┘      │    amount        │
-        │    is_early_investor│                             │    shares        │
-        │    early_bonus_mult│                              │    early_bonus   │
-        │    purchased_at  │                                │    created_at    │
-        └──────────────────┘                                └──────────────────┘
 ```
 
----
+## Collection Schemas
 
-## Relationship Summary
-
-| Relationship | Type | Description |
-|--------------|------|-------------|
-| Users → User_Sessions | 1:N | One user can have multiple active sessions |
-| Users → Creators | 1:1 | One user can become one creator |
-| Creators → Videos | 1:N | One creator can upload many videos |
-| Users → Share_Ownerships | 1:N | One user can own shares in many videos |
-| Videos → Share_Ownerships | 1:N | One video can have many shareholders |
-| Users → Video_Likes | 1:N | One user can like many videos |
-| Videos → Video_Likes | 1:N | One video can have many likes |
-| Users → Transactions | 1:N | One user can have many transactions |
-| Videos → Transactions | 1:N | One video can have many transactions |
-
----
-
-## Entity Schemas
-
-### Users Collection
+### users
 ```javascript
 {
-  user_id: String (PK),          // Unique identifier
-  name: String,                   // Display name
-  email: String (Unique),         // Email address
-  picture: String,                // Profile picture URL
-  wallet_balance: Float,          // Available funds (default: 100.00)
-  subscriptions: Array<String>,   // List of creator_ids
-  created_at: DateTime            // Account creation timestamp
+  user_id: String,        // Unique identifier
+  email: String,          // Google email
+  name: String,           // Display name
+  picture: String,        // Profile image URL
+  wallet_balance: Number, // Available funds (default: 500)
+  is_admin: Boolean,      // Admin access flag
+  created_at: String      // ISO timestamp
 }
 ```
 
-### Creators Collection
+### videos
 ```javascript
 {
-  creator_id: String (PK),        // Unique identifier (creator_<name>)
-  user_id: String (FK),           // Reference to users collection
-  name: String,                   // Creator display name
-  stock_symbol: String,           // Trading symbol (e.g., $EMMA)
-  image: String,                  // Profile image URL
-  category: String,               // Content category
-  subscribers: Integer,           // Subscriber count
-  created_at: DateTime            // Creator registration timestamp
+  video_id: String,              // Unique identifier
+  title: String,                 // Video title
+  thumbnail: String,             // Thumbnail URL
+  video_url: String,             // Video source URL
+  creator_id: String,            // FK to creators
+  category: String,              // Genre: Podcast|Dance|Tech|Food|Travel
+  video_type: String,            // "short" or "full"
+  duration_minutes: Number,      // Video length
+  share_price: Number,           // Current price per share
+  total_shares: Number,          // Total available (default: 100)
+  available_shares: Number,      // Remaining for purchase
+  views: Number,                 // View count
+  likes: Number,                 // Like count
+  ticker_symbol: String,         // Stock ticker (e.g., EMMA_0126R1)
+  last_price_change: Number,     // $ change from last update
+  last_price_change_percent: Number, // % change
+  created_at: String             // ISO timestamp
 }
 ```
 
-### Videos Collection
+### share_ownerships
 ```javascript
 {
-  video_id: String (PK),          // Unique identifier (vid_<hash>)
-  creator_id: String (FK),        // Reference to creators collection
-  ticker_symbol: String,          // Unique trading ticker (e.g., EMMA_0126D1)
-  title: String,                  // Video title
-  description: String,            // Video description
-  video_url: String,              // Video file URL
-  thumbnail: String,              // Thumbnail image URL
-  duration_minutes: Integer,      // Video length in minutes
-  video_type: Enum,               // "short" (<3 min) or "full" (10-30 min)
-  views: Integer,                 // View count
-  likes: Integer,                 // Like count
-  share_price: Float,             // Current price per share
-  total_shares: Float,            // Total shares issued (default: 100)
-  available_shares: Float,        // Shares available for purchase
-  created_at: DateTime            // Upload timestamp
+  user_id: String,               // FK to users
+  video_id: String,              // FK to videos
+  shares_owned: Number,          // Current holding
+  purchase_price: Number,        // Avg price paid per share
+  is_early_investor: Boolean,    // Qualifies for bonus
+  early_bonus_multiplier: Number,// 1.0 | 1.25 | 1.5 | 2.0
+  investor_rank: Number,         // Position when bought
+  created_at: String             // ISO timestamp
 }
 ```
 
-### Share Ownerships Collection
+### transactions
 ```javascript
 {
-  ownership_id: String (PK),      // Unique identifier
-  user_id: String (FK),           // Reference to users collection
-  video_id: String (FK),          // Reference to videos collection
-  shares_owned: Float,            // Number of shares owned
-  purchase_price: Float,          // Average purchase price
-  is_early_investor: Boolean,     // Early investor status
-  early_bonus_multiplier: Float,  // Bonus multiplier (1.0 - 2.5)
-  purchased_at: DateTime          // First purchase timestamp
+  transaction_id: String,        // Unique identifier
+  user_id: String,               // FK to users
+  video_id: String,              // FK to videos (nullable for deposits)
+  transaction_type: String,      // buy|sell|deposit|redeem
+  amount: Number,                // Dollar amount
+  shares: Number,                // Shares involved (nullable)
+  platform_fee: Number,          // Fee charged (redeem only)
+  early_bonus_applied: Boolean,  // Bonus was applied
+  bonus_earned: Number,          // Bonus amount
+  created_at: String             // ISO timestamp
 }
 ```
 
-### Transactions Collection
+### creators
 ```javascript
 {
-  transaction_id: String (PK),    // Unique identifier
-  user_id: String (FK),           // Reference to users collection
-  transaction_type: Enum,         // "buy_share", "sell_share", "deposit", "withdrawal"
-  amount: Float,                  // Transaction amount (negative for buys)
-  video_id: String (FK, Optional),// Reference to videos collection
-  shares: Float (Optional),       // Number of shares traded
-  is_early_investment: Boolean,   // Was this an early investment
-  early_bonus_multiplier: Float,  // Bonus applied
-  bonus_earned: Float,            // Actual bonus amount earned
-  created_at: DateTime            // Transaction timestamp
+  creator_id: String,            // Unique identifier
+  user_id: String,               // FK to users (if registered)
+  name: String,                  // Creator name
+  image: String,                 // Profile image URL
+  stock_symbol: String,          // Creator ticker prefix
+  category: String,              // Primary content category
+  subscribers: Number,           // Follower count
+  total_videos: Number,          // Videos uploaded
+  created_at: String             // ISO timestamp
 }
 ```
 
-### Video Likes Collection
+### watchlist
 ```javascript
 {
-  like_id: String (PK),           // Unique identifier
-  user_id: String (FK),           // Reference to users collection
-  video_id: String (FK),          // Reference to videos collection
-  created_at: DateTime            // Like timestamp
+  user_id: String,               // FK to users
+  video_id: String,              // FK to videos
+  added_at: String,              // ISO timestamp
+  price_at_add: Number           // Price when added
 }
 ```
 
-### User Sessions Collection
+### platform_earnings
 ```javascript
 {
-  session_id: String (PK),        // Unique identifier
-  user_id: String (FK),           // Reference to users collection
-  session_token: String (Unique), // Token stored in HTTP-only cookie
-  expires_at: DateTime,           // Session expiration
-  created_at: DateTime            // Session creation timestamp
+  earning_id: String,            // Unique identifier
+  user_id: String,               // FK to users
+  video_id: String,              // FK to videos
+  transaction_type: String,      // redeem
+  gross_amount: Number,          // Pre-fee amount
+  fee_percent: Number,           // 5
+  fee_amount: Number,            // Platform revenue
+  created_at: String             // ISO timestamp
 }
 ```
-
----
 
 ## Indexes
 
-| Collection | Index | Type | Purpose |
-|------------|-------|------|---------|
-| users | email | Unique | Fast user lookup by email |
-| users | user_id | Primary | Primary key lookup |
-| creators | user_id | Index | Find creator by user |
-| videos | creator_id | Index | Find videos by creator |
-| videos | ticker_symbol | Unique | Unique ticker lookup |
-| share_ownerships | user_id, video_id | Compound | User's ownership of specific video |
-| transactions | user_id | Index | User transaction history |
-| video_likes | user_id, video_id | Compound Unique | Prevent duplicate likes |
-| user_sessions | session_token | Unique | Session validation |
+```javascript
+// Primary indexes (automatic on _id)
+
+// Recommended indexes for performance:
+users:            { user_id: 1 }, { email: 1 }
+videos:           { video_id: 1 }, { creator_id: 1 }, { category: 1 }
+share_ownerships: { user_id: 1 }, { video_id: 1 }, { user_id: 1, video_id: 1 }
+transactions:     { user_id: 1 }, { video_id: 1 }, { created_at: -1 }
+watchlist:        { user_id: 1, video_id: 1 }
+platform_earnings:{ created_at: -1 }
+```
+
+## Relationships Summary
+
+| From | To | Type | Description |
+|------|-----|------|-------------|
+| users | share_ownerships | 1:N | User owns multiple shares |
+| videos | share_ownerships | 1:N | Video has multiple shareholders |
+| users | transactions | 1:N | User has transaction history |
+| videos | transactions | 1:N | Video appears in transactions |
+| creators | videos | 1:N | Creator uploads videos |
+| users | watchlist | 1:N | User watches multiple videos |
+| users | platform_earnings | 1:N | User generates platform fees |
 
 ---
-
-*Document Version: 1.0*
-*Last Updated: January 24, 2026*
+*ER Diagram for ideaGround v1.0 Final*
