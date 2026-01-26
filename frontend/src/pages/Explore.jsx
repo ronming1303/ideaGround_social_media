@@ -91,7 +91,7 @@ export default function Explore() {
       </div>
 
       {/* Search */}
-      <div className="relative mb-8">
+      <div className="relative mb-6">
         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary/60" />
         <Input
           data-testid="explore-search"
@@ -101,6 +101,44 @@ export default function Explore() {
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-12 h-14 rounded-xl text-lg"
         />
+      </div>
+
+      {/* Genre Filter - Like Stock Sectors */}
+      <div className="mb-8">
+        <div className="flex items-center gap-2 mb-3">
+          <Palette className="w-4 h-4 text-primary" />
+          <span className="text-sm font-medium text-muted-foreground">Browse by Sector</span>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {genres.map((genre) => {
+            const Icon = genre.icon;
+            const isActive = selectedGenre === genre.id;
+            const count = genre.id === "all" 
+              ? videos.length 
+              : videos.filter(v => v.category === genre.id).length;
+            
+            return (
+              <button
+                key={genre.id}
+                data-testid={`genre-${genre.id}`}
+                onClick={() => setSelectedGenre(genre.id)}
+                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                  isActive 
+                    ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/25' 
+                    : 'bg-white border border-border hover:border-orange-300 hover:bg-orange-50 text-gray-700'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                {genre.label}
+                <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                  isActive ? 'bg-white/20' : 'bg-gray-100'
+                }`}>
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Tabs */}
