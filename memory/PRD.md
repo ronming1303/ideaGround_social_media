@@ -490,3 +490,24 @@ Fixed route conflicts by ensuring specific routes (`/videos/my`, `/creators/me`)
 - White cards on orange background for better contrast
 - Unified color scheme: orange-500/600 gradients throughout
 
+### Genre/Sector Filter (Jan 27, 2026)
+
+**New Feature**: Added "Browse by Sector" filter to Explore page
+
+**Categories** (like stock market sectors):
+- All (default)
+- Podcast
+- Music & Dance
+- Tech & Tutorial
+- Food & Lifestyle
+- Travel & Vlog
+- Art & Decor
+- Others
+
+**UI Implementation**:
+- Horizontal chip/pill buttons with icons
+- Count badges showing videos per category
+- Orange gradient active state
+- Smooth hover transitions
+- Filters videos in real-time without page reload
+
