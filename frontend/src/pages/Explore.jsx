@@ -9,7 +9,8 @@ import { Badge } from "../components/ui/badge";
 import { Input } from "../components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { 
-  Search, Play, Eye, Heart, Clock, TrendingUp, Users, Sparkles
+  Search, Play, Eye, Heart, Clock, TrendingUp, Users, Sparkles,
+  Mic, Music, Palette, GraduationCap, MoreHorizontal, Utensils, Plane, Cpu
 } from "lucide-react";
 
 export default function Explore() {
