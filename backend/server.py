@@ -299,6 +299,17 @@ async def create_session(request: Request, response: Response):
         
         auth_data = auth_response.json()
     
+    # RESTRICTED ACCESS CHECK
+    user_email = auth_data.get("email", "").lower()
+    if user_email not in [email.lower() for email in ALLOWED_EMAILS]:
+        raise HTTPException(
+            status_code=403, 
+            detail="Access restricted. This application is currently in private beta. Please contact the administrator for access."
+        )
+    
+    # Check if user is admin
+    is_admin = user_email in [email.lower() for email in ADMIN_EMAILS]
+    
     user_id = f"user_{uuid.uuid4().hex[:12]}"
     session_token = auth_data.get("session_token", f"session_{uuid.uuid4().hex}")
     
@@ -307,12 +318,13 @@ async def create_session(request: Request, response: Response):
     
     if existing_user:
         user_id = existing_user["user_id"]
-        # Update user data
+        # Update user data including admin status
         await db.users.update_one(
             {"user_id": user_id},
             {"$set": {
                 "name": auth_data["name"],
-                "picture": auth_data.get("picture")
+                "picture": auth_data.get("picture"),
+                "is_admin": is_admin
             }}
         )
     else:
@@ -323,6 +335,7 @@ async def create_session(request: Request, response: Response):
             "name": auth_data["name"],
             "picture": auth_data.get("picture"),
             "wallet_balance": 500.00,
+            "is_admin": is_admin,
             "subscriptions": [],
             "created_at": datetime.now(timezone.utc).isoformat()
         }
