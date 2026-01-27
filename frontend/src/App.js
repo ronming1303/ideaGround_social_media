@@ -55,8 +55,14 @@ const AuthCallback = () => {
           navigate("/dashboard", { state: { user: response.data } });
         } catch (error) {
           console.error("Auth error:", error);
-          toast.error("Authentication failed");
-          navigate("/");
+          // Check if it's an access restriction error
+          if (error.response?.status === 403) {
+            toast.error(error.response?.data?.detail || "Access restricted. This application is in private beta.");
+            setTimeout(() => navigate("/"), 2000);
+          } else {
+            toast.error("Authentication failed");
+            navigate("/");
+          }
         }
       } else {
         navigate("/");
