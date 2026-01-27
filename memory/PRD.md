@@ -10,10 +10,24 @@
 - **For Investors**: Earn 40% of revenue by backing content early
 - **For Early Supporters**: Up to 2x bonus multiplier on profits
 
+## Access Control (Private Beta)
+
+### Allowed Users
+| Email | Access Level |
+|-------|--------------|
+| kshitiz.dadhich2015@gmail.com | Admin |
+| rumingliu1303@gmail.com | User |
+
+### Access Restriction
+- Only whitelisted emails can log in via Google OAuth
+- Unauthorized users receive 403 error with "Access restricted" message
+- Admin users have `is_admin: true` flag in database
+
 ## Features Implemented
 
 ### Core Platform
 - [x] User authentication (Google OAuth)
+- [x] **Restricted access** (whitelist-based)
 - [x] Video browsing with genre/sector filters
 - [x] Real-time share price simulation
 - [x] Buy/Sell shares with instant execution
