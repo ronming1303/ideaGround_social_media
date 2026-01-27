@@ -21,6 +21,17 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
+# Restricted Access - Only these emails can access the app
+ALLOWED_EMAILS = [
+    "kshitiz.dadhich2015@gmail.com",
+    "rumingliu1303@gmail.com"
+]
+
+# Admin emails - These users get admin privileges
+ADMIN_EMAILS = [
+    "kshitiz.dadhich2015@gmail.com"
+]
+
 # Create the main app
 app = FastAPI(title="ideaGround API")
 
