@@ -12,6 +12,8 @@ import uuid
 from datetime import datetime, timezone, timedelta
 import httpx
 import random
+import hashlib
+import secrets
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -21,7 +23,10 @@ mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
 db = client[os.environ['DB_NAME']]
 
-# Restricted Access - Only these emails can access the app
+# Local Auth Mode (for Docker deployment)
+LOCAL_AUTH_ENABLED = os.environ.get('LOCAL_AUTH_ENABLED', 'false').lower() == 'true'
+
+# Restricted Access - Only these emails can access the app (Cloud mode only)
 ALLOWED_EMAILS = [
     "kshitiz.dadhich2015@gmail.com",
     "rumingliu1303@gmail.com"
@@ -29,7 +34,26 @@ ALLOWED_EMAILS = [
 
 # Admin emails - These users get admin privileges
 ADMIN_EMAILS = [
-    "kshitiz.dadhich2015@gmail.com"
+    "kshitiz.dadhich2015@gmail.com",
+    "admin@ideaground.local"  # Local admin
+]
+
+# Default local users for Docker deployment
+DEFAULT_LOCAL_USERS = [
+    {
+        "email": "admin@ideaground.local",
+        "password": "admin123",
+        "name": "Admin User",
+        "is_admin": True,
+        "wallet_balance": 1000.00
+    },
+    {
+        "email": "demo@ideaground.local",
+        "password": "demo123",
+        "name": "Demo Investor",
+        "is_admin": False,
+        "wallet_balance": 500.00
+    }
 ]
 
 # Create the main app
