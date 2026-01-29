@@ -1,0 +1,74 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    container_name: ideaground-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: ideaground
+    volumes:
+      - mongodb_data:/data/db
+      - ./seed-data:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "27017:27017"
+    networks:
+      - ideaground-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/ideaground --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # FastAPI Backend
+  backend:
+    build:
+      context: ..
+      dockerfile: docker-local/Dockerfile.backend
+    container_name: ideaground-backend
+    restart: unless-stopped
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017
+      - DB_NAME=ideaground
+      - LOCAL_AUTH_ENABLED=true
+      - CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+    ports:
+      - "8001:8001"
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - ideaground-network
+    healthcheck:
+      test: curl -f http://localhost:8001/api/health || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # React Frontend
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker-local/Dockerfile.frontend
+      args:
+        - REACT_APP_BACKEND_URL=http://localhost:8001
+        - REACT_APP_LOCAL_AUTH=true
+    container_name: ideaground-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      - ideaground-network
+
+volumes:
+  mongodb_data:
+    name: ideaground_mongodb_data
+
+networks:
+  ideaground-network:
+    name: ideaground-network
+    driver: bridge
