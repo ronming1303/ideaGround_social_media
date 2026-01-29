@@ -451,6 +451,150 @@ async def demo_login(response: Response):
     
     return {**existing_user, "session_token": demo_session_token}
 
+# ==================== LOCAL AUTH (Docker Deployment) ====================
+
+class LocalLoginRequest(BaseModel):
+    email: str
+    password: str
+
+class LocalRegisterRequest(BaseModel):
+    email: str
+    password: str
+    name: str
+
+def hash_password(password: str) -> str:
+    """Hash a password using SHA256"""
+    return hashlib.sha256(password.encode()).hexdigest()
+
+@api_router.post("/auth/local/login")
+async def local_login(request: LocalLoginRequest, response: Response):
+    """Login with email/password (for local Docker deployment)"""
+    if not LOCAL_AUTH_ENABLED:
+        raise HTTPException(status_code=400, detail="Local auth is disabled. Use Google OAuth.")
+    
+    email = request.email.lower()
+    password_hash = hash_password(request.password)
+    
+    # Check database for user
+    user = await db.users.find_one({"email": email}, {"_id": 0})
+    
+    if not user:
+        # Check default users
+        for default_user in DEFAULT_LOCAL_USERS:
+            if default_user["email"].lower() == email:
+                if hash_password(default_user["password"]) == password_hash:
+                    # Create user in database
+                    user_id = f"user_{uuid.uuid4().hex[:12]}"
+                    user = {
+                        "user_id": user_id,
+                        "email": email,
+                        "password_hash": password_hash,
+                        "name": default_user["name"],
+                        "picture": f"https://ui-avatars.com/api/?name={default_user['name'].replace(' ', '+')}&background=f97316&color=fff",
+                        "wallet_balance": default_user["wallet_balance"],
+                        "is_admin": default_user["is_admin"],
+                        "created_at": datetime.now(timezone.utc).isoformat()
+                    }
+                    await db.users.insert_one(user)
+                    user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
+                    break
+    
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+    
+    # Verify password
+    if user.get("password_hash") != password_hash:
+        raise HTTPException(status_code=401, detail="Invalid email or password")
+    
+    # Create session
+    session_token = f"local_{secrets.token_urlsafe(32)}"
+    expires_at = datetime.now(timezone.utc) + timedelta(days=7)
+    
+    session_doc = {
+        "session_id": str(uuid.uuid4()),
+        "user_id": user["user_id"],
+        "session_token": session_token,
+        "expires_at": expires_at.isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.user_sessions.insert_one(session_doc)
+    
+    # Set cookie
+    response.set_cookie(
+        key="session_token",
+        value=session_token,
+        httponly=True,
+        secure=False,  # Local development
+        samesite="lax",
+        path="/",
+        max_age=7 * 24 * 60 * 60
+    )
+    
+    # Return user without password_hash
+    user_response = {k: v for k, v in user.items() if k != "password_hash"}
+    return {**user_response, "session_token": session_token}
+
+@api_router.post("/auth/local/register")
+async def local_register(request: LocalRegisterRequest, response: Response):
+    """Register a new user (for local Docker deployment)"""
+    if not LOCAL_AUTH_ENABLED:
+        raise HTTPException(status_code=400, detail="Local auth is disabled. Use Google OAuth.")
+    
+    email = request.email.lower()
+    
+    # Check if user already exists
+    existing = await db.users.find_one({"email": email}, {"_id": 0})
+    if existing:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    # Create user
+    user_id = f"user_{uuid.uuid4().hex[:12]}"
+    user = {
+        "user_id": user_id,
+        "email": email,
+        "password_hash": hash_password(request.password),
+        "name": request.name,
+        "picture": f"https://ui-avatars.com/api/?name={request.name.replace(' ', '+')}&background=f97316&color=fff",
+        "wallet_balance": 500.00,
+        "is_admin": False,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.users.insert_one(user)
+    
+    # Create session
+    session_token = f"local_{secrets.token_urlsafe(32)}"
+    expires_at = datetime.now(timezone.utc) + timedelta(days=7)
+    
+    session_doc = {
+        "session_id": str(uuid.uuid4()),
+        "user_id": user_id,
+        "session_token": session_token,
+        "expires_at": expires_at.isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.user_sessions.insert_one(session_doc)
+    
+    # Set cookie
+    response.set_cookie(
+        key="session_token",
+        value=session_token,
+        httponly=True,
+        secure=False,
+        samesite="lax",
+        path="/",
+        max_age=7 * 24 * 60 * 60
+    )
+    
+    return {"user_id": user_id, "email": email, "name": request.name, "session_token": session_token}
+
+@api_router.get("/auth/mode")
+async def get_auth_mode():
+    """Check which auth mode is enabled"""
+    return {
+        "local_auth_enabled": LOCAL_AUTH_ENABLED,
+        "mode": "local" if LOCAL_AUTH_ENABLED else "google_oauth"
+    }
+
 # ==================== VIDEO ENDPOINTS ====================
 
 @api_router.get("/videos")
