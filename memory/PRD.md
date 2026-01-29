@@ -128,4 +128,39 @@ See `/app/docs/ER_DIAGRAM.md` for full schema.
 - [x] Deployment health check passed
 
 ---
+
+## Local Docker Deployment (Offline Version)
+
+A complete Docker-based setup for running ideaGround locally without internet.
+
+### Location
+`/app/docker-local/`
+
+### Files
+- `Dockerfile.backend` - Python backend container (fixed: uses custom pip index for emergentintegrations)
+- `Dockerfile.frontend` - React frontend container
+- `docker-compose.local.yml` - Service orchestration
+- `local_auth.py` - Local username/password authentication
+- `nginx.conf` - Reverse proxy configuration
+- `seed-data/mongo-init.js` - Sample data seeding
+- `start.sh` / `start.bat` - Launch scripts
+- `stop.sh` / `stop.bat` - Stop scripts
+- `scripts/backup.sh` / `restore.sh` - Data backup utilities
+
+### Local Credentials
+| User | Email | Password |
+|------|-------|----------|
+| Admin | admin@ideaground.local | admin123 |
+| Demo | demo@ideaground.local | demo123 |
+
+### Build Instructions
+```bash
+# From project root directory
+docker-compose -f docker-local/docker-compose.local.yml up --build
+```
+
+### Recent Fix (Dec 2025)
+- Fixed pip install failure by adding `--extra-index-url https://d33sy5i8bnduwe.cloudfront.net/simple/` for `emergentintegrations` package
+
+---
 *ideaGround v1.0 Final - Ready for Production*
