@@ -12,10 +12,10 @@ ENV REACT_APP_BACKEND_URL=$REACT_APP_BACKEND_URL
 ENV REACT_APP_LOCAL_AUTH=$REACT_APP_LOCAL_AUTH
 
 # Copy package files
-COPY frontend/package.json frontend/yarn.lock ./
+COPY frontend/package.json ./
 
-# Install dependencies
-RUN yarn install --frozen-lockfile
+# Install dependencies (yarn.lock may not exist)
+RUN yarn install
 
 # Copy source code
 COPY frontend/ .
