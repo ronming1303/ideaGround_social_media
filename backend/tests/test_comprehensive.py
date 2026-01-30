@@ -514,10 +514,13 @@ class TestInvestorMetrics:
         response = requests.get(f"{BASE_URL}/api/platform/investor-metrics")
         assert response.status_code == 200
         data = response.json()
-        assert "total_market_cap" in data
-        assert "total_investors" in data
-        assert "total_videos" in data
-        print(f"✓ Platform metrics: market cap ${data['total_market_cap']:.2f}, {data['total_investors']} investors")
+        # Data is nested under "overview"
+        assert "overview" in data
+        overview = data["overview"]
+        assert "total_market_cap" in overview
+        assert "total_users" in overview
+        assert "total_videos" in overview
+        print(f"✓ Platform metrics: market cap ${overview['total_market_cap']:.2f}, {overview['total_users']} users")
 
 
 class TestVideoLike:
