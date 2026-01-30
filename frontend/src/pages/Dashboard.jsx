@@ -477,9 +477,9 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Market Activity / Trending Stocks */}
+      {/* Market Activity Dashboard */}
       <div className="mt-8">
-        <TrendingStocks onRefresh={manualRefresh} />
+        <MarketOverview onRefresh={manualRefresh} />
       </div>
       </div>
     </div>
