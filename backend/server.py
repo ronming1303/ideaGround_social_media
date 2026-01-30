@@ -891,6 +891,80 @@ def calculate_early_bonus(shares_sold_percent: float) -> tuple[bool, float]:
         return True, 1.5
     return False, 1.0
 
+def calculate_price_impact(shares_traded: float, available_shares: float, total_shares: float, is_buy: bool) -> float:
+    """
+    Calculate immediate price impact based on supply/demand dynamics.
+    
+    Buy pressure increases price, sell pressure decreases price.
+    Impact is proportional to:
+    1. Trade size relative to available shares (larger trades = bigger impact)
+    2. Current scarcity (scarcer = more volatile)
+    
+    Returns: percentage change (e.g., 0.05 for +5%)
+    """
+    # Base impact per share (1-3% per share of available supply traded)
+    trade_ratio = shares_traded / max(available_shares, 1)  # Prevent division by zero
+    
+    # Scarcity multiplier: scarcer shares = more price impact
+    scarcity = 1 - (available_shares / total_shares)
+    scarcity_multiplier = 1 + (scarcity * 2)  # 1x to 3x based on scarcity
+    
+    # Base impact: 0.5% to 2% per 1% of available shares traded
+    base_impact = trade_ratio * 0.02 * scarcity_multiplier
+    
+    # Cap the impact at 15% per trade to prevent extreme swings
+    impact = min(base_impact, 0.15)
+    
+    # Negative for sells, positive for buys
+    return impact if is_buy else -impact
+
+async def update_video_price(video_id: str, price_change_percent: float, reason: str = "trade"):
+    """
+    Update video price with change and record in price history.
+    
+    Args:
+        video_id: The video to update
+        price_change_percent: Percentage change (e.g., 0.05 for +5%)
+        reason: Why the price changed (trade, simulation, etc.)
+    """
+    video = await db.videos.find_one({"video_id": video_id}, {"_id": 0})
+    if not video:
+        return None
+    
+    current_price = video.get("share_price", 10.0)
+    new_price = max(1.0, current_price * (1 + price_change_percent))  # Minimum $1
+    new_price = round(new_price, 2)
+    
+    price_change = new_price - current_price
+    price_change_pct = (price_change / current_price) * 100 if current_price > 0 else 0
+    
+    # Update price history
+    price_history = video.get("price_history", [])
+    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")
+    price_history.append({"date": timestamp, "price": new_price, "reason": reason})
+    
+    # Keep only last 50 price points
+    if len(price_history) > 50:
+        price_history = price_history[-50:]
+    
+    # Update in database
+    await db.videos.update_one(
+        {"video_id": video_id},
+        {"$set": {
+            "share_price": new_price,
+            "price_history": price_history,
+            "last_price_change": round(price_change, 2),
+            "last_price_change_percent": round(price_change_pct, 2)
+        }}
+    )
+    
+    return {
+        "old_price": current_price,
+        "new_price": new_price,
+        "change": round(price_change, 2),
+        "change_percent": round(price_change_pct, 2)
+    }
+
 @api_router.post("/shares/buy")
 async def buy_shares(req: BuyShareRequest, user: User = Depends(get_current_user)):
     """Buy shares of a video"""
