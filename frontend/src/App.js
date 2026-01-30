@@ -194,6 +194,7 @@ function AppRouter() {
         </ProtectedRoute>
       } />
       <Route path="/admin" element={<Admin />} />
+      <Route path="/investors" element={<InvestorDashboard />} />
       <Route path="/why" element={
         <ProtectedRoute>
           <AppLayout><WhyIdeaGround /></AppLayout>
