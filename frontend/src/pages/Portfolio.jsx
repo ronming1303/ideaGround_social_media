@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { API, useAuth } from "../App";
@@ -11,9 +11,10 @@ import { Input } from "../components/ui/input";
 import { Slider } from "../components/ui/slider";
 import { 
   TrendingUp, TrendingDown, DollarSign, Briefcase, 
-  ArrowUpRight, ArrowDownRight, ChevronUp, ChevronDown, Minus, Award, Sparkles, Wallet
+  ArrowUpRight, ArrowDownRight, ChevronUp, ChevronDown, Minus, Award, Sparkles, Wallet, RefreshCw
 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell, CartesianGrid, Legend } from "recharts";
+import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
 
 export default function Portfolio() {
   const { user } = useAuth();
@@ -27,31 +28,42 @@ export default function Portfolio() {
   const [selling, setSelling] = useState(false);
   const [redeeming, setRedeeming] = useState(false);
 
-  useEffect(() => {
-    fetchPortfolio();
-    fetchPortfolioHistory();
-  }, []);
-
-  const fetchPortfolio = async () => {
+  const fetchPortfolio = useCallback(async () => {
     try {
       const response = await axios.get(`${API}/portfolio`, { withCredentials: true });
       setPortfolio(response.data);
     } catch (error) {
       console.error("Error fetching portfolio:", error);
-      toast.error("Failed to load portfolio");
+      if (loading) toast.error("Failed to load portfolio");
     } finally {
       setLoading(false);
     }
-  };
+  }, [loading]);
 
-  const fetchPortfolioHistory = async () => {
+  const fetchPortfolioHistory = useCallback(async () => {
     try {
       const response = await axios.get(`${API}/portfolio/history`, { withCredentials: true });
       setPortfolioHistory(response.data);
     } catch (error) {
       console.log("Portfolio history not available");
     }
-  };
+  }, []);
+
+  // Initial fetch
+  useEffect(() => {
+    fetchPortfolio();
+    fetchPortfolioHistory();
+  }, []);
+
+  // Auto-refresh polling (every 10 seconds for portfolio - shows real-time value)
+  // TODO: Replace with WebSocket for real-time updates
+  const { refresh: manualRefresh, lastUpdated } = useDataSync(
+    useCallback(async () => {
+      await Promise.all([fetchPortfolio(), fetchPortfolioHistory()]);
+    }, [fetchPortfolio, fetchPortfolioHistory]),
+    POLL_INTERVALS.FAST, // 5 seconds for portfolio
+    !loading
+  );
 
   const handleSellShares = async () => {
     if (!selectedItem || sharesToSell <= 0 || sharesToSell > selectedItem.shares_owned) {
