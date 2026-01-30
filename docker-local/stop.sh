@@ -1,5 +1,12 @@
 #!/bin/bash
-echo "Stopping ideaGround..."
-cd "$(dirname "$0")"
-docker-compose -f docker-compose.local.yml down
-echo "ideaGround stopped."
+
+echo "=========================================="
+echo "  ideaGround Local - Stopping..."
+echo "=========================================="
+echo
+
+cd "$(dirname "$0")/.."
+docker-compose -f docker-local/docker-compose.local.yml down
+
+echo
+echo "Containers stopped successfully."

@@ -1,112 +1,139 @@
-# ideaGround Local - Docker Setup
-> Standalone version for offline use
+# ideaGround - Local Docker Setup
+
+Run ideaGround completely offline on your local machine using Docker.
+
+## Prerequisites
+
+- **Docker Desktop** installed and running
+  - Windows/Mac: https://www.docker.com/products/docker-desktop/
+  - Linux: https://docs.docker.com/engine/install/
 
 ## Quick Start
 
-### Prerequisites
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed
+### Windows
 
-### Run the App
+1. Open Command Prompt or PowerShell
+2. Navigate to the project folder:
+   ```cmd
+   cd path\to\ideaground
+   ```
+3. Run:
+   ```cmd
+   docker-compose -f docker-local/docker-compose.local.yml up --build
+   ```
 
-**Windows:**
+### Mac/Linux
+
+1. Open Terminal
+2. Navigate to the project folder:
+   ```bash
+   cd path/to/ideaground
+   ```
+3. Run:
+   ```bash
+   docker-compose -f docker-local/docker-compose.local.yml up --build
+   ```
+
+## Access the App
+
+Once all containers are running (you'll see health checks passing):
+
+- **Frontend**: http://localhost:8080
+- **Backend API**: http://localhost:8001/api
+- **MongoDB**: localhost:27017
+
+## Login Credentials
+
+| User Type | Email | Password |
+|-----------|-------|----------|
+| Admin | admin@ideaground.local | admin123 |
+| Demo User | demo@ideaground.local | demo123 |
+
+## Services
+
+| Service | Internal Port | External Port |
+|---------|---------------|---------------|
+| Frontend (nginx) | 80 | 8080 |
+| Backend (FastAPI) | 8001 | 8001 |
+| MongoDB | 27017 | 27017 |
+
+## Commands
+
+### Start (with rebuild)
 ```bash
-double-click start.bat
+docker-compose -f docker-local/docker-compose.local.yml up --build
 ```
 
-**Mac/Linux:**
+### Start (background mode)
 ```bash
-chmod +x start.sh
-./start.sh
+docker-compose -f docker-local/docker-compose.local.yml up -d
 ```
 
-**Or manually:**
+### Stop
 ```bash
-docker-compose -f docker-compose.local.yml up --build
+docker-compose -f docker-local/docker-compose.local.yml down
 ```
 
-### Access
-Open browser: **http://localhost:3000**
-
-### Default Login
-| Email | Password | Role |
-|-------|----------|------|
-| admin@ideaground.local | admin123 | Admin |
-| demo@ideaground.local | demo123 | User |
-
-### Stop the App
+### View logs
 ```bash
-docker-compose -f docker-compose.local.yml down
+docker-compose -f docker-local/docker-compose.local.yml logs -f
 ```
 
----
+### Reset everything (delete data)
+```bash
+docker-compose -f docker-local/docker-compose.local.yml down -v
+```
 
 ## Data Persistence
 
-Your data is stored in Docker volumes:
-- `ideaground_mongodb_data` - Database
-
-### Backup Data
-```bash
-./scripts/backup.sh
-```
-
-### Restore Data
-```bash
-./scripts/restore.sh backup_file.gz
-```
-
-### Reset to Fresh State
-```bash
-docker-compose -f docker-compose.local.yml down -v
-docker-compose -f docker-compose.local.yml up --build
-```
-
----
+Your data is stored in a Docker volume named `ideaground_mongodb_data`. 
+- Data persists across restarts
+- Use `down -v` to completely reset
 
 ## Troubleshooting
 
-### Port Already in Use
-Edit `docker-compose.local.yml` and change ports:
-```yaml
-ports:
-  - "3001:3000"  # Change 3000 to 3001
+### "Cannot connect to Docker daemon"
+- Make sure Docker Desktop is running
+
+### Build fails with pip error
+- This setup already includes the fix for emergentintegrations
+- If still failing, try: `docker system prune -a` then rebuild
+
+### Frontend not loading
+- Wait for health checks to pass (can take 30-60 seconds)
+- Check logs: `docker-compose -f docker-local/docker-compose.local.yml logs frontend`
+
+### API errors
+- Check backend logs: `docker-compose -f docker-local/docker-compose.local.yml logs backend`
+
+## Architecture
+
 ```
-
-### Slow First Start
-First run downloads ~1GB of images. Subsequent starts are fast.
-
-### Docker Not Running
-Make sure Docker Desktop is running (check system tray).
-
----
-
-## Development
-
-### View Logs
-```bash
-docker-compose -f docker-compose.local.yml logs -f
+┌─────────────────────────────────────────────────────────────┐
+│                      Your Browser                            │
+│                   http://localhost:8080                      │
+└─────────────────────────────┬───────────────────────────────┘
+                              │
+┌─────────────────────────────▼───────────────────────────────┐
+│                    Frontend Container                        │
+│                    (nginx + React)                           │
+│                      Port: 8080                              │
+│   - Serves React app                                         │
+│   - Proxies /api/* to backend                               │
+└─────────────────────────────┬───────────────────────────────┘
+                              │ /api/*
+┌─────────────────────────────▼───────────────────────────────┐
+│                    Backend Container                         │
+│                    (FastAPI + Python)                        │
+│                      Port: 8001                              │
+│   - REST API                                                 │
+│   - Local authentication                                     │
+└─────────────────────────────┬───────────────────────────────┘
+                              │
+┌─────────────────────────────▼───────────────────────────────┐
+│                    MongoDB Container                         │
+│                      Port: 27017                             │
+│   - User data                                                │
+│   - Videos, shares, transactions                             │
+└─────────────────────────────────────────────────────────────┘
 ```
-
-### Rebuild After Changes
-```bash
-docker-compose -f docker-compose.local.yml up --build
-```
-
-### Access MongoDB Shell
-```bash
-docker exec -it ideaground-mongodb mongosh ideaground
-```
-
----
-
-## Differences from Cloud Version
-
-| Feature | Cloud (Emergent) | Local (Docker) |
-|---------|------------------|----------------|
-| Auth | Google OAuth | Email/Password |
-| Database | Shared MongoDB | Local MongoDB |
-| Data | Synced | Per-machine |
-| Internet | Required | Not required |
-
----
-*ideaGround Local v1.0*
