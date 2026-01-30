@@ -11,7 +11,7 @@ import {
 } from "../components/ui/dropdown-menu";
 import { 
   Home, Compass, Briefcase, Wallet, LogOut, 
-  Settings, User, ChevronDown, Video, Eye, PieChart, HelpCircle
+  Settings, User, ChevronDown, Video, Eye, PieChart, HelpCircle, BarChart3
 } from "lucide-react";
 import { cn } from "../lib/utils";
 import { useState, useEffect } from "react";
@@ -26,6 +26,7 @@ const navItems = [
   { path: "/watchlist", label: "Watchlist", icon: Eye },
   { path: "/wallet", label: "Wallet", icon: Wallet },
   { path: "/studio", label: "Creator Studio", icon: Video },
+  { path: "/investors", label: "Investor Metrics", icon: BarChart3 },
   { path: "/why", label: "Why ideaGround", icon: HelpCircle },
 ];
 
