@@ -203,6 +203,58 @@ class BecomeCreatorRequest(BaseModel):
     category: str
     image: str
 
+# ==================== COMMENT REWARDS SYSTEM ====================
+
+class Comment(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+    comment_id: str = Field(default_factory=lambda: f"cmt_{uuid.uuid4().hex[:12]}")
+    video_id: str
+    user_id: str
+    user_name: str
+    user_picture: Optional[str] = None
+    content: str
+    upvotes: int = 0
+    downvotes: int = 0
+    voters: List[str] = []  # user_ids who voted
+    micro_shares_earned: float = 0.0
+    is_rewarded: bool = False
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+class CommentRequest(BaseModel):
+    video_id: str
+    content: str
+
+class VoteCommentRequest(BaseModel):
+    comment_id: str
+    vote_type: str  # "up" or "down"
+
+class CommentReward(BaseModel):
+    model_config = ConfigDict(populate_by_name=True)
+    reward_id: str = Field(default_factory=lambda: f"rwd_{uuid.uuid4().hex[:12]}")
+    comment_id: str
+    video_id: str
+    user_id: str
+    micro_shares: float
+    claimed: bool = False
+    created_at: str = Field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+# Comment reward thresholds - micro-shares earned based on net upvotes
+COMMENT_REWARD_TIERS = [
+    {"min_votes": 3, "shares": 0.01},    # 3+ net upvotes = 0.01 shares
+    {"min_votes": 10, "shares": 0.05},   # 10+ net upvotes = 0.05 shares
+    {"min_votes": 25, "shares": 0.10},   # 25+ net upvotes = 0.10 shares
+    {"min_votes": 50, "shares": 0.25},   # 50+ net upvotes = 0.25 shares
+    {"min_votes": 100, "shares": 0.50},  # 100+ net upvotes = 0.50 shares
+]
+
+def calculate_comment_reward(net_votes: int) -> float:
+    """Calculate micro-shares earned based on net upvotes"""
+    reward = 0.0
+    for tier in COMMENT_REWARD_TIERS:
+        if net_votes >= tier["min_votes"]:
+            reward = tier["shares"]
+    return reward
+
 # ==================== TICKER SYMBOL GENERATOR ====================
 
 # Category type codes for video ticker symbols
