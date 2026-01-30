@@ -208,24 +208,24 @@ impact = min(impact, 0.15)  // Cap at 15%
 - Auto-refresh every 30 seconds
 - **API**: `GET /api/platform/investor-metrics`
 
-### 4. Market Activity Dashboard with Expandable Panels (NEW - Jan 2026)
+### 4. Market Activity Dashboard with Expandable Panels (Jan 2026)
 - **Location**: Dashboard page, below video grid
 - **Component**: `/app/frontend/src/components/MarketOverview.jsx`
 - **API**: `GET /api/market-overview`
+- **Features**:
+  - **Expand All / Collapse All** toggle button for quick scanning
+  - Clean, simple list design matching original TrendingStocks style
+  - Two sections: Price Movement & Investment Opportunities
 - **8 Investment Metrics Panels**:
-  1. **Top Gainers** - Rising fast today (highest positive price change)
-  2. **Top Losers** - Buy the dip opportunities (highest negative price change)
-  3. **Hot Stocks** - Selling out fast (highest scarcity %)
-  4. **Early Bonus** - 1.5x-2.5x bonus eligible (<30% sold)
-  5. **Undervalued** - High views, low price (best value ratio)
-  6. **Best ROI** - Proven winners (highest returns since launch)
-  7. **New Listings** - Fresh content, get in early
-  8. **Most Traded** - Where the action is (24h transaction count)
-- **Expandable Panels**: Click header to expand/collapse
-- **Panel Features**: Icon, title, qualifier, item count, top stock preview
-- **Stock Items**: Rank, thumbnail, title, ticker, creator, price, metric
-- **Navigation**: Click any stock to go to video page
-- **Simulate Prices**: Button to trigger market simulation
+  1. **Top Gainers** - Rising fast today
+  2. **Top Losers** - Buy the dip opportunities
+  3. **Hot Stocks** - Selling out fast
+  4. **Early Bonus** - 1.5x-2.5x bonus eligible
+  5. **Undervalued** - High views, low price
+  6. **Best ROI** - Proven winners
+  7. **New Listings** - Fresh content
+  8. **Most Traded** - Where the action is
+- **Stock Items**: Thumbnail, ticker badge, creator, title, price, category-specific metric
 
 ## VC Demo Flow (Tested Jan 2026)
 
