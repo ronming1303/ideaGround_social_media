@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { API } from "../App";
@@ -10,8 +10,9 @@ import { Input } from "../components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { 
   Search, Play, Eye, Heart, Clock, TrendingUp, Users, Sparkles,
-  Mic, Music, Palette, GraduationCap, MoreHorizontal, Utensils, Plane, Cpu
+  Mic, Music, Palette, GraduationCap, MoreHorizontal, Utensils, Plane, Cpu, RefreshCw
 } from "lucide-react";
+import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
 
 export default function Explore() {
   const [videos, setVideos] = useState([]);
@@ -33,11 +34,7 @@ export default function Explore() {
     { id: "Other", label: "Others", icon: MoreHorizontal },
   ];
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const [videosRes, creatorsRes] = await Promise.all([
         axios.get(`${API}/videos`, { withCredentials: true }),
@@ -47,11 +44,24 @@ export default function Explore() {
       setCreators(creatorsRes.data);
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Failed to load content");
+      if (loading) toast.error("Failed to load content");
     } finally {
       setLoading(false);
     }
-  };
+  }, [loading]);
+
+  // Initial fetch
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // Auto-refresh polling (every 15 seconds)
+  // TODO: Replace with WebSocket for real-time updates
+  const { refresh: manualRefresh, lastUpdated } = useDataSync(
+    fetchData,
+    POLL_INTERVALS.NORMAL,
+    !loading
+  );
 
   const formatNumber = (num) => {
     if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
