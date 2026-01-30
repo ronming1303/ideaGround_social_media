@@ -115,6 +115,27 @@ See `/app/docs/ER_DIAGRAM.md` for full schema.
 - [ ] Price Alerts notifications
 - [ ] Social Posts (text content)
 - [ ] Shareholder Governance (voting)
+- [ ] **WebSocket real-time updates** (replace current polling)
+
+## Real-Time Data Sync (Implemented Jan 2026)
+
+### Current: Polling-Based Auto-Refresh
+- **Dashboard**: 15-second refresh interval
+- **Video Player**: 5-second refresh (critical for share trading)
+- **Portfolio**: 5-second refresh (real-time P&L)
+- **Explore**: 15-second refresh
+- **Watchlist**: 15-second refresh
+- **Wallet**: 15-second refresh
+
+### Implementation
+- Custom hook: `/app/frontend/src/hooks/useDataSync.js`
+- Modular design for easy WebSocket migration
+- Configurable intervals via `POLL_INTERVALS`
+
+### Future: WebSocket (Planned)
+- Replace polling with WebSocket connections
+- Instant updates when any user trades
+- Same API surface - components won't need changes
 
 ---
 
