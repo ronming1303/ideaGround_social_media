@@ -41,6 +41,8 @@
 - [x] Share redemption with 5% platform fee
 - [x] Top Earners leaderboard per video
 - [x] Portfolio performance charts
+- [x] **Market Activity Dashboard** (8 expandable panels, auto-expand with data)
+- [x] **Commenter Rewards System** (micro-shares for top-voted comments)
 
 ### Admin Features
 - [x] Platform analytics dashboard
