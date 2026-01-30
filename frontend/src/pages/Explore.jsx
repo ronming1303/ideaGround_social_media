@@ -165,85 +165,87 @@ export default function Explore() {
         {/* Videos tab */}
         <TabsContent value="videos" className="mt-0">
           {filteredVideos.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 stagger-children">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 stagger-children">
               {filteredVideos.map((video) => (
                 <Link 
                   key={video.video_id}
                   to={`/video/${video.video_id}`}
                   data-testid={`explore-video-${video.video_id}`}
-                  className="group relative overflow-hidden rounded-2xl bg-card border border-border/50 shadow-sm card-hover-orange transition-all duration-300 hover:-translate-y-1"
+                  className="group overflow-hidden rounded-xl bg-card border border-border/50 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
                 >
-                  {/* Fixed aspect ratio for all cards - 16:9 for uniformity */}
-                  <div className="relative aspect-video">
+                  {/* Thumbnail with minimal overlays */}
+                  <div className="relative aspect-video overflow-hidden">
                     <img 
                       src={video.thumbnail} 
                       alt={video.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    {/* Orange-tinted gradient overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-orange-900/10"></div>
                     
-                    {/* Top badges row */}
-                    <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
-                      {/* Stock price badge */}
-                      <div className={`px-3 py-1.5 rounded-lg text-sm font-mono font-bold flex items-center gap-1.5 backdrop-blur-sm shadow-lg ${
-                        (video.last_price_change_percent || 0) >= 0 
-                          ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white' 
-                          : 'bg-gradient-to-r from-red-500 to-red-600 text-white'
-                      }`}>
-                        <TrendingUp className="w-3.5 h-3.5" />
-                        ${video.share_price.toFixed(2)}
-                      </div>
-                      
-                      {/* Duration & type badge */}
-                      <div className="flex items-center gap-2">
-                        {video.video_type === 'short' && (
-                          <Badge className="bg-gradient-to-r from-primary to-orange-600 text-white border-0 backdrop-blur-sm shadow-md">
-                            <Sparkles className="w-3 h-3 mr-1" />
-                            Short
-                          </Badge>
-                        )}
-                        <Badge className="bg-black/60 text-white border-0 backdrop-blur-sm">
-                          <Clock className="w-3 h-3 mr-1" />
-                          {video.duration_minutes}m
-                        </Badge>
-                      </div>
+                    {/* Duration badge - bottom right */}
+                    <div className="absolute bottom-2 right-2">
+                      <Badge className="bg-black/80 text-white border-0 text-xs px-1.5 py-0.5">
+                        {video.duration_minutes}:00
+                      </Badge>
                     </div>
 
-                    {/* Play overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <div className="w-16 h-16 rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-2xl transform group-hover:scale-110 transition-transform orange-glow-strong">
-                        <Play className="w-7 h-7 text-white fill-white ml-1" />
+                    {/* Play overlay on hover */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20">
+                      <div className="w-14 h-14 rounded-full bg-black/70 flex items-center justify-center">
+                        <Play className="w-6 h-6 text-white fill-white ml-0.5" />
                       </div>
                     </div>
+                  </div>
 
-                    {/* Content overlay */}
-                    <div className="absolute bottom-0 left-0 right-0 p-5">
-                      <h3 className="font-heading font-semibold text-white mb-3 line-clamp-2 text-base leading-snug">
+                  {/* Video Info - Below thumbnail */}
+                  <div className="p-3">
+                    {/* Title and Price Row */}
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <h3 className="font-medium text-sm line-clamp-2 leading-snug flex-1">
                         {video.title}
                       </h3>
-                      <div className="flex items-center justify-between">
-                        {video.creator && (
-                          <div className="flex items-center gap-2">
-                            <img 
-                              src={video.creator.image} 
-                              alt={video.creator.name}
-                              className="w-7 h-7 rounded-full object-cover border-2 border-orange-400/50"
-                            />
-                            <span className="text-sm text-white/90 font-medium">{video.creator?.name}</span>
-                          </div>
+                      {/* Price badge */}
+                      <div className={`flex-shrink-0 px-2 py-1 rounded-md text-xs font-mono font-bold flex items-center gap-1 ${
+                        (video.last_price_change_percent || 0) >= 0 
+                          ? 'bg-emerald-500/10 text-emerald-600' 
+                          : 'bg-red-500/10 text-red-500'
+                      }`}>
+                        {(video.last_price_change_percent || 0) >= 0 ? (
+                          <TrendingUp className="w-3 h-3" />
+                        ) : (
+                          <TrendingDown className="w-3 h-3" />
                         )}
-                        <div className="flex items-center gap-3 text-xs text-white/70">
-                          <span className="flex items-center gap-1">
-                            <Eye className="w-3.5 h-3.5" />
-                            {formatNumber(video.views)}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Heart className="w-3.5 h-3.5" />
-                            {formatNumber(video.likes)}
-                          </span>
-                        </div>
+                        ${video.share_price.toFixed(2)}
                       </div>
+                    </div>
+
+                    {/* Creator info */}
+                    {video.creator && (
+                      <div className="flex items-center gap-2 mb-2">
+                        <img 
+                          src={video.creator.image} 
+                          alt={video.creator.name}
+                          className="w-6 h-6 rounded-full object-cover"
+                        />
+                        <span className="text-sm text-muted-foreground truncate">{video.creator.name}</span>
+                      </div>
+                    )}
+
+                    {/* Stats row */}
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                      <span className="flex items-center gap-1">
+                        <Eye className="w-3.5 h-3.5" />
+                        {formatNumber(video.views)} views
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Heart className="w-3.5 h-3.5" />
+                        {formatNumber(video.likes)}
+                      </span>
+                      {video.video_type === 'short' && (
+                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4">
+                          <Sparkles className="w-2.5 h-2.5 mr-0.5" />
+                          Short
+                        </Badge>
+                      )}
                     </div>
                   </div>
                 </Link>
