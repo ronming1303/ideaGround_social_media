@@ -300,9 +300,8 @@ export default function VideoPlayer() {
           </div>
         </div>
 
-        {/* Stock ticker column - Simplified with Scarcity Focus */}
+        {/* Stock Trading Card - Clean & Simple */}
         <div className="space-y-6">
-          {/* Main Trading Card */}
           <Card className="border-border/50 overflow-hidden shadow-lg" data-testid="trading-card">
             {/* Ticker Header */}
             <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-4 text-white">
@@ -323,66 +322,9 @@ export default function VideoPlayer() {
               </div>
             </div>
             
-            <CardContent className="p-4">
-              {/* Scarcity Progress Bar - KEY ELEMENT */}
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium">Ownership Progress</span>
-                  <span className="font-mono text-sm font-bold text-orange-500">
-                    {((video.total_shares - video.available_shares) / video.total_shares * 100).toFixed(0)}% owned
-                  </span>
-                </div>
-                <div className="relative w-full h-4 bg-muted rounded-full overflow-hidden">
-                  <div 
-                    className="absolute inset-y-0 left-0 bg-gradient-to-r from-orange-400 to-orange-600 rounded-full transition-all duration-500"
-                    style={{ width: `${((video.total_shares - video.available_shares) / video.total_shares * 100)}%` }}
-                  />
-                  {/* Bonus threshold markers */}
-                  <div className="absolute top-0 left-[10%] w-0.5 h-full bg-amber-300/50" title="2.5x bonus ends" />
-                  <div className="absolute top-0 left-[20%] w-0.5 h-full bg-amber-400/50" title="2x bonus ends" />
-                  <div className="absolute top-0 left-[30%] w-0.5 h-full bg-amber-500/50" title="1.5x bonus ends" />
-                </div>
-                <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                  <span>0%</span>
-                  <span className="text-amber-500">30% (bonus ends)</span>
-                  <span>100%</span>
-                </div>
-              </div>
-
-              {/* Key Stats */}
-              <div className="grid grid-cols-2 gap-3 mb-6">
-                <div className="p-3 rounded-xl bg-gradient-to-br from-orange-500/10 to-orange-500/5 border border-orange-500/20">
-                  <p className="text-xs text-muted-foreground mb-1">Available</p>
-                  <p className="font-mono text-xl font-bold text-orange-600">
-                    {video.available_shares.toFixed(0)}
-                    <span className="text-sm font-normal text-muted-foreground">/{video.total_shares}</span>
-                  </p>
-                </div>
-                <div className="p-3 rounded-xl bg-gradient-to-br from-emerald-500/10 to-emerald-500/5 border border-emerald-500/20">
-                  <p className="text-xs text-muted-foreground mb-1">You Own</p>
-                  <p className="font-mono text-xl font-bold text-emerald-600">{video.user_shares || 0}</p>
-                </div>
-              </div>
-
-              {/* Early Investor Bonus Alert */}
-              {video.early_investor_tier && (
-                <div className="mb-4 p-3 rounded-xl bg-gradient-to-r from-amber-500/20 to-orange-500/10 border border-amber-500/30">
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-amber-500 animate-pulse" />
-                    <div>
-                      <p className="text-sm font-semibold text-amber-700">
-                        🔥 Early Investor Bonus: {video.early_bonus_available}x
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        Only {(30 - video.shares_sold_percent).toFixed(0)}% left until bonus ends!
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Price Chart - Compact */}
-              <div className="h-24 mb-4">
+            <CardContent className="p-5">
+              {/* Price Chart */}
+              <div className="h-32 mb-5">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={video.price_history}>
                     <defs>
@@ -418,21 +360,48 @@ export default function VideoPlayer() {
                 </ResponsiveContainer>
               </div>
 
-              {/* BUY BUTTON - Prominent */}
+              {/* Simple Stats - Clear Labels */}
+              <div className="grid grid-cols-2 gap-4 mb-5">
+                <div className="p-4 rounded-xl bg-muted/50">
+                  <p className="text-xs text-muted-foreground mb-1">Available Shares</p>
+                  <p className="font-mono text-2xl font-bold">{video.available_shares.toFixed(0)}<span className="text-sm text-muted-foreground font-normal">/{video.total_shares}</span></p>
+                </div>
+                <div className="p-4 rounded-xl bg-muted/50">
+                  <p className="text-xs text-muted-foreground mb-1">You Own</p>
+                  <p className="font-mono text-2xl font-bold">{video.user_shares || 0} <span className="text-sm text-muted-foreground font-normal">shares</span></p>
+                </div>
+              </div>
+
+              {/* Early Investor Bonus - Only show if applicable */}
+              {video.early_investor_tier && (
+                <div className="mb-5 p-4 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center">
+                      <Sparkles className="w-5 h-5 text-amber-600" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-amber-800">Early Investor Bonus Active!</p>
+                      <p className="text-sm text-amber-700">Get <span className="font-bold">{video.early_bonus_available}x bonus</span> on your profits</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* BUY BUTTON */}
               <Dialog open={buyDialogOpen} onOpenChange={setBuyDialogOpen}>
                 <DialogTrigger asChild>
                   <Button 
                     data-testid="buy-shares-btn"
-                    className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl py-7 text-xl font-bold shadow-lg shadow-orange-500/25 transition-all hover:scale-[1.02] hover:shadow-xl"
+                    className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl py-6 text-lg font-bold shadow-lg shadow-orange-500/25 transition-all hover:scale-[1.01]"
                     disabled={video.available_shares <= 0}
                   >
-                    <ShoppingCart className="w-6 h-6 mr-3" />
-                    {video.available_shares <= 0 ? 'SOLD OUT' : 'BUY SHARES'}
+                    <ShoppingCart className="w-5 h-5 mr-2" />
+                    {video.available_shares <= 0 ? 'SOLD OUT' : 'Buy Shares'}
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-md">
                   <DialogHeader>
-                    <DialogTitle className="font-heading text-xl">Buy Shares of ${video.ticker_symbol || 'VID'}</DialogTitle>
+                    <DialogTitle className="font-heading text-xl">Buy Shares</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-6 py-4">
                     <div className="flex items-center gap-4 p-4 rounded-xl bg-muted/50">
