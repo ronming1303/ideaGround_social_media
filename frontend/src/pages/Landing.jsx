@@ -53,13 +53,22 @@ export default function Landing() {
               />
               <span className="font-heading font-bold text-xl">ideaGround</span>
             </div>
-            <Button 
-              data-testid="login-btn-nav"
-              onClick={login}
-              className="bg-primary text-white hover:bg-primary/90 rounded-full px-6"
-            >
-              Sign in with Google
-            </Button>
+            <div className="flex items-center gap-4">
+              <Link 
+                to="/investors"
+                className="hidden sm:flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+              >
+                <BarChart3 className="w-4 h-4" />
+                Investor Metrics
+              </Link>
+              <Button 
+                data-testid="login-btn-nav"
+                onClick={login}
+                className="bg-primary text-white hover:bg-primary/90 rounded-full px-6"
+              >
+                Sign in with Google
+              </Button>
+            </div>
           </div>
         </div>
       </nav>
