@@ -50,6 +50,25 @@ export default function MarketOverview({ onRefresh }) {
     fetchData();
   }, []);
 
+  // Auto-expand panels that have data when data loads
+  useEffect(() => {
+    if (data) {
+      const autoExpanded = {};
+      // Check price_movement panels
+      Object.entries(data.price_movement || {}).forEach(([key, val]) => {
+        if (val.items?.length > 0) autoExpanded[key] = true;
+      });
+      // Check opportunities panels
+      Object.entries(data.opportunities || {}).forEach(([key, val]) => {
+        if (val.items?.length > 0) autoExpanded[key] = true;
+      });
+      setExpandedPanels(autoExpanded);
+      // Update allExpanded state based on how many are expanded
+      const expandedCount = Object.values(autoExpanded).filter(Boolean).length;
+      setAllExpanded(expandedCount === allPanelKeys.length);
+    }
+  }, [data]);
+
   const fetchData = async () => {
     try {
       const response = await axios.get(`${API}/market-overview`, { withCredentials: true });
