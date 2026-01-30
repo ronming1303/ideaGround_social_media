@@ -1001,6 +1001,16 @@ async def buy_shares(req: BuyShareRequest, user: User = Depends(get_current_user
         {"$inc": {"available_shares": -req.shares}}
     )
     
+    # === IMMEDIATE PRICE IMPACT (Supply/Demand) ===
+    # Buying shares increases price due to demand
+    price_impact = calculate_price_impact(
+        shares_traded=req.shares,
+        available_shares=video["available_shares"],
+        total_shares=video["total_shares"],
+        is_buy=True
+    )
+    price_update = await update_video_price(req.video_id, price_impact, reason="buy")
+    
     # Check existing ownership
     existing = await db.share_ownerships.find_one(
         {"user_id": user.user_id, "video_id": req.video_id}
@@ -1044,6 +1054,8 @@ async def buy_shares(req: BuyShareRequest, user: User = Depends(get_current_user
         "amount": -total_cost,
         "video_id": req.video_id,
         "shares": req.shares,
+        "price_at_trade": video["share_price"],
+        "price_after_trade": price_update["new_price"] if price_update else video["share_price"],
         "is_early_investment": is_early,
         "early_bonus_multiplier": bonus_multiplier,
         "created_at": datetime.now(timezone.utc).isoformat()
@@ -1055,7 +1067,8 @@ async def buy_shares(req: BuyShareRequest, user: User = Depends(get_current_user
         "shares_bought": req.shares, 
         "total_cost": total_cost,
         "is_early_investor": is_early,
-        "early_bonus_multiplier": bonus_multiplier
+        "early_bonus_multiplier": bonus_multiplier,
+        "price_impact": price_update  # Include price change info
     }
     
     return response
