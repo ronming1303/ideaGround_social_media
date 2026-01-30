@@ -3,40 +3,47 @@ FROM node:18-alpine AS builder
 
 WORKDIR /app
 
-# Build arguments
+# Build arguments for environment
 ARG REACT_APP_BACKEND_URL=http://localhost:8080
 ARG REACT_APP_LOCAL_AUTH=true
 
 # Set environment variables for build
 ENV REACT_APP_BACKEND_URL=$REACT_APP_BACKEND_URL
 ENV REACT_APP_LOCAL_AUTH=$REACT_APP_LOCAL_AUTH
+ENV CI=false
 
-# Copy all frontend files first
-COPY frontend/ .
+# Copy package files first for better caching
+COPY frontend/package.json ./
 
-# Install dependencies with legacy peer deps to handle version conflicts
-RUN npm install --legacy-peer-deps
+# Install dependencies - use npm with legacy peer deps for React 19 compatibility
+RUN npm install --legacy-peer-deps --no-audit --no-fund
 
-# Build the app using craco
+# Copy all source files
+COPY frontend/ ./
+
+# Build the production app
 RUN npm run build
 
-# Production stage - serve with nginx
+# Production stage with nginx
 FROM nginx:alpine
 
 # Install curl for health check
 RUN apk add --no-cache curl
 
+# Remove default nginx config
+RUN rm /etc/nginx/conf.d/default.conf
+
 # Copy custom nginx config
 COPY docker-local/nginx.conf /etc/nginx/conf.d/default.conf
 
-# Copy built files
+# Copy built React app
 COPY --from=builder /app/build /usr/share/nginx/html
 
 # Expose port
 EXPOSE 80
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:80 || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=3 \
+    CMD curl -f http://localhost:80/ || exit 1
 
 CMD ["nginx", "-g", "daemon off;"]

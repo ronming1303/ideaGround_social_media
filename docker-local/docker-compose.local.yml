@@ -1,5 +1,4 @@
 services:
-  # MongoDB Database
   mongodb:
     image: mongo:7.0
     container_name: ideaground-mongodb
@@ -14,12 +13,12 @@ services:
     networks:
       - ideaground-network
     healthcheck:
-      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/ideaground --quiet
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
       timeout: 5s
       retries: 5
+      start_period: 10s
 
-  # FastAPI Backend
   backend:
     build:
       context: ..
@@ -30,7 +29,7 @@ services:
       - MONGO_URL=mongodb://mongodb:27017
       - DB_NAME=ideaground
       - LOCAL_AUTH_ENABLED=true
-      - CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
+      - CORS_ORIGINS=http://localhost:3000,http://localhost:8080,http://127.0.0.1:3000,http://127.0.0.1:8080
     ports:
       - "8001:8001"
     depends_on:
@@ -39,23 +38,23 @@ services:
     networks:
       - ideaground-network
     healthcheck:
-      test: curl -f http://localhost:8001/api/health || exit 1
-      interval: 10s
-      timeout: 5s
+      test: ["CMD", "curl", "-f", "http://localhost:8001/api/health"]
+      interval: 15s
+      timeout: 10s
       retries: 5
+      start_period: 30s
 
-  # React Frontend
   frontend:
     build:
       context: ..
       dockerfile: docker-local/Dockerfile.frontend
       args:
-        - REACT_APP_BACKEND_URL=http://localhost:8001
-        - REACT_APP_LOCAL_AUTH=true
+        REACT_APP_BACKEND_URL: http://localhost:8080
+        REACT_APP_LOCAL_AUTH: "true"
     container_name: ideaground-frontend
     restart: unless-stopped
     ports:
-      - "3000:80"
+      - "8080:80"
     depends_on:
       backend:
         condition: service_healthy

@@ -6,22 +6,26 @@ WORKDIR /app
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
     curl \
+    gcc \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy local requirements (simplified, no cloud packages)
-COPY docker-local/requirements.local.txt ./requirements.txt
+# Copy backend code and requirements
+COPY backend/requirements.txt ./requirements.txt
 
-# Install Python dependencies (includes emergentintegrations from custom index)
+# Install Python dependencies with extra index for emergentintegrations
 RUN pip install --no-cache-dir -r requirements.txt --extra-index-url https://d33sy5i8bnduwe.cloudfront.net/simple/
 
-# Copy backend code
+# Copy the rest of backend code
 COPY backend/ .
+
+# Copy local auth module
+COPY docker-local/local_auth.py ./local_auth.py
 
 # Expose port
 EXPOSE 8001
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=10s --retries=5 \
     CMD curl -f http://localhost:8001/api/health || exit 1
 
 # Run the server
