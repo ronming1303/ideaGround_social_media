@@ -8,7 +8,7 @@ import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Play, TrendingUp, TrendingDown, Eye, Heart, Sparkles, ArrowUpRight, Briefcase } from "lucide-react";
 import TrendingTicker from "../components/TrendingTicker";
-import TrendingStocks from "../components/TrendingStocks";
+import MarketOverview from "../components/MarketOverview";
 import LiveActivityFeed from "../components/LiveActivityFeed";
 import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
 
