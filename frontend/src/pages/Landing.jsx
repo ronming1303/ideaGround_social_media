@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { useAuth } from "../App";
 import { Button } from "../components/ui/button";
-import { Play, TrendingUp, Users, DollarSign, ArrowRight, Sparkles } from "lucide-react";
+import { Play, TrendingUp, Users, DollarSign, ArrowRight, Sparkles, BarChart3 } from "lucide-react";
 import OnboardingDemo from "../components/OnboardingDemo";
 
 export default function Landing() {
