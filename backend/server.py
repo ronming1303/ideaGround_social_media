@@ -2143,7 +2143,8 @@ async def get_live_activity(limit: int = 20):
 @api_router.get("/videos/{video_id}/comments")
 async def get_video_comments(video_id: str, request: Request):
     """Get all comments for a video, sorted by net votes (top comments first)"""
-    user_id = await get_current_user_id(request)
+    user = await get_optional_user(request)
+    user_id = user.user_id if user else None
     
     comments = await db.comments.find(
         {"video_id": video_id},
@@ -2177,14 +2178,7 @@ async def get_video_comments(video_id: str, request: Request):
 @api_router.post("/comments")
 async def create_comment(req: CommentRequest, request: Request):
     """Create a new comment on a video"""
-    user_id = await get_current_user_id(request)
-    if not user_id:
-        raise HTTPException(status_code=401, detail="Not authenticated")
-    
-    # Get user info
-    user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+    user = await get_current_user(request)
     
     # Validate video exists
     video = await db.videos.find_one({"video_id": req.video_id}, {"_id": 0, "video_id": 1})
@@ -2201,9 +2195,9 @@ async def create_comment(req: CommentRequest, request: Request):
     # Create comment
     comment = Comment(
         video_id=req.video_id,
-        user_id=user_id,
-        user_name=user.get("name", "Anonymous"),
-        user_picture=user.get("picture"),
+        user_id=user.user_id,
+        user_name=user.name,
+        user_picture=user.picture,
         content=content
     )
     
@@ -2218,9 +2212,7 @@ async def create_comment(req: CommentRequest, request: Request):
 @api_router.post("/comments/vote")
 async def vote_comment(req: VoteCommentRequest, request: Request):
     """Upvote or downvote a comment"""
-    user_id = await get_current_user_id(request)
-    if not user_id:
-        raise HTTPException(status_code=401, detail="Not authenticated")
+    user = await get_current_user(request)
     
     if req.vote_type not in ["up", "down"]:
         raise HTTPException(status_code=400, detail="Invalid vote type")
@@ -2232,15 +2224,15 @@ async def vote_comment(req: VoteCommentRequest, request: Request):
     
     # Check if user already voted
     voters = comment.get("voters", [])
-    if user_id in voters:
+    if user.user_id in voters:
         raise HTTPException(status_code=400, detail="You already voted on this comment")
     
     # Can't vote on own comment
-    if comment.get("user_id") == user_id:
+    if comment.get("user_id") == user.user_id:
         raise HTTPException(status_code=400, detail="Can't vote on your own comment")
     
     # Apply vote
-    update = {"$push": {"voters": user_id}}
+    update = {"$push": {"voters": user.user_id}}
     if req.vote_type == "up":
         update["$inc"] = {"upvotes": 1}
     else:
@@ -2263,9 +2255,7 @@ async def vote_comment(req: VoteCommentRequest, request: Request):
 @api_router.post("/comments/{comment_id}/claim-reward")
 async def claim_comment_reward(comment_id: str, request: Request):
     """Claim micro-shares reward for a top-voted comment"""
-    user_id = await get_current_user_id(request)
-    if not user_id:
-        raise HTTPException(status_code=401, detail="Not authenticated")
+    user = await get_current_user(request)
     
     # Get comment
     comment = await db.comments.find_one({"comment_id": comment_id}, {"_id": 0})
@@ -2273,7 +2263,7 @@ async def claim_comment_reward(comment_id: str, request: Request):
         raise HTTPException(status_code=404, detail="Comment not found")
     
     # Must be comment owner
-    if comment.get("user_id") != user_id:
+    if comment.get("user_id") != user.user_id:
         raise HTTPException(status_code=403, detail="You can only claim rewards for your own comments")
     
     # Calculate reward based on net votes
@@ -2298,7 +2288,7 @@ async def claim_comment_reward(comment_id: str, request: Request):
     # Award micro-shares
     # Check if user already owns shares of this video
     existing_ownership = await db.share_ownerships.find_one(
-        {"user_id": user_id, "video_id": comment["video_id"]},
+        {"user_id": user.user_id, "video_id": comment["video_id"]},
         {"_id": 0}
     )
     
@@ -2311,7 +2301,7 @@ async def claim_comment_reward(comment_id: str, request: Request):
         ) / new_shares if new_shares > 0 else 0
         
         await db.share_ownerships.update_one(
-            {"user_id": user_id, "video_id": comment["video_id"]},
+            {"user_id": user.user_id, "video_id": comment["video_id"]},
             {"$set": {
                 "shares_owned": new_shares,
                 "purchase_price": new_avg_price,
@@ -2321,7 +2311,7 @@ async def claim_comment_reward(comment_id: str, request: Request):
     else:
         # Create new ownership
         ownership = ShareOwnership(
-            user_id=user_id,
+            user_id=user.user_id,
             video_id=comment["video_id"],
             shares_owned=additional_shares,
             purchase_price=0,  # Free!
@@ -2348,7 +2338,7 @@ async def claim_comment_reward(comment_id: str, request: Request):
     reward = CommentReward(
         comment_id=comment_id,
         video_id=comment["video_id"],
-        user_id=user_id,
+        user_id=user.user_id,
         micro_shares=additional_shares,
         claimed=True
     )
@@ -2356,7 +2346,7 @@ async def claim_comment_reward(comment_id: str, request: Request):
     
     # Record transaction
     transaction = Transaction(
-        user_id=user_id,
+        user_id=user.user_id,
         transaction_type="comment_reward",
         video_id=comment["video_id"],
         shares=additional_shares,
@@ -2377,12 +2367,10 @@ async def claim_comment_reward(comment_id: str, request: Request):
 @api_router.get("/comments/my-rewards")
 async def get_my_comment_rewards(request: Request):
     """Get all comment rewards earned by the current user"""
-    user_id = await get_current_user_id(request)
-    if not user_id:
-        raise HTTPException(status_code=401, detail="Not authenticated")
+    user = await get_current_user(request)
     
     rewards = await db.comment_rewards.find(
-        {"user_id": user_id},
+        {"user_id": user.user_id},
         {"_id": 0}
     ).to_list(100)
     
