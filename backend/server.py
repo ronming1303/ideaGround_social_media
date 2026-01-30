@@ -2138,7 +2138,261 @@ async def get_live_activity(limit: int = 20):
         }
     }
 
-@api_router.get("/platform/stats")
+# ==================== COMMENT REWARDS SYSTEM ENDPOINTS ====================
+
+@api_router.get("/videos/{video_id}/comments")
+async def get_video_comments(video_id: str, request: Request):
+    """Get all comments for a video, sorted by net votes (top comments first)"""
+    user_id = await get_current_user_id(request)
+    
+    comments = await db.comments.find(
+        {"video_id": video_id},
+        {"_id": 0}
+    ).to_list(100)
+    
+    # Sort by net votes (upvotes - downvotes), then by date
+    comments.sort(key=lambda c: (c.get("upvotes", 0) - c.get("downvotes", 0), c.get("created_at", "")), reverse=True)
+    
+    # Add user's vote status and can_claim info
+    for comment in comments:
+        comment["user_voted"] = user_id in comment.get("voters", []) if user_id else False
+        comment["net_votes"] = comment.get("upvotes", 0) - comment.get("downvotes", 0)
+        comment["is_own_comment"] = comment.get("user_id") == user_id
+        # Check if reward can be claimed
+        potential_reward = calculate_comment_reward(comment["net_votes"])
+        comment["potential_reward"] = potential_reward
+        comment["can_claim_reward"] = (
+            comment["is_own_comment"] and 
+            potential_reward > comment.get("micro_shares_earned", 0) and
+            not comment.get("is_rewarded", False)
+        )
+    
+    # Get reward tiers for UI
+    return {
+        "comments": comments,
+        "reward_tiers": COMMENT_REWARD_TIERS,
+        "total_comments": len(comments)
+    }
+
+@api_router.post("/comments")
+async def create_comment(req: CommentRequest, request: Request):
+    """Create a new comment on a video"""
+    user_id = await get_current_user_id(request)
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Get user info
+    user = await db.users.find_one({"user_id": user_id}, {"_id": 0})
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    # Validate video exists
+    video = await db.videos.find_one({"video_id": req.video_id}, {"_id": 0, "video_id": 1})
+    if not video:
+        raise HTTPException(status_code=404, detail="Video not found")
+    
+    # Validate content
+    content = req.content.strip()
+    if not content or len(content) < 3:
+        raise HTTPException(status_code=400, detail="Comment too short")
+    if len(content) > 500:
+        raise HTTPException(status_code=400, detail="Comment too long (max 500 characters)")
+    
+    # Create comment
+    comment = Comment(
+        video_id=req.video_id,
+        user_id=user_id,
+        user_name=user.get("name", "Anonymous"),
+        user_picture=user.get("picture"),
+        content=content
+    )
+    
+    await db.comments.insert_one(comment.model_dump())
+    
+    return {
+        "success": True,
+        "comment": comment.model_dump(),
+        "message": "Comment posted! Get upvotes to earn micro-shares."
+    }
+
+@api_router.post("/comments/vote")
+async def vote_comment(req: VoteCommentRequest, request: Request):
+    """Upvote or downvote a comment"""
+    user_id = await get_current_user_id(request)
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    if req.vote_type not in ["up", "down"]:
+        raise HTTPException(status_code=400, detail="Invalid vote type")
+    
+    # Get comment
+    comment = await db.comments.find_one({"comment_id": req.comment_id}, {"_id": 0})
+    if not comment:
+        raise HTTPException(status_code=404, detail="Comment not found")
+    
+    # Check if user already voted
+    voters = comment.get("voters", [])
+    if user_id in voters:
+        raise HTTPException(status_code=400, detail="You already voted on this comment")
+    
+    # Can't vote on own comment
+    if comment.get("user_id") == user_id:
+        raise HTTPException(status_code=400, detail="Can't vote on your own comment")
+    
+    # Apply vote
+    update = {"$push": {"voters": user_id}}
+    if req.vote_type == "up":
+        update["$inc"] = {"upvotes": 1}
+    else:
+        update["$inc"] = {"downvotes": 1}
+    
+    await db.comments.update_one({"comment_id": req.comment_id}, update)
+    
+    # Get updated comment
+    updated_comment = await db.comments.find_one({"comment_id": req.comment_id}, {"_id": 0})
+    net_votes = updated_comment.get("upvotes", 0) - updated_comment.get("downvotes", 0)
+    
+    return {
+        "success": True,
+        "upvotes": updated_comment.get("upvotes", 0),
+        "downvotes": updated_comment.get("downvotes", 0),
+        "net_votes": net_votes,
+        "potential_reward": calculate_comment_reward(net_votes)
+    }
+
+@api_router.post("/comments/{comment_id}/claim-reward")
+async def claim_comment_reward(comment_id: str, request: Request):
+    """Claim micro-shares reward for a top-voted comment"""
+    user_id = await get_current_user_id(request)
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    # Get comment
+    comment = await db.comments.find_one({"comment_id": comment_id}, {"_id": 0})
+    if not comment:
+        raise HTTPException(status_code=404, detail="Comment not found")
+    
+    # Must be comment owner
+    if comment.get("user_id") != user_id:
+        raise HTTPException(status_code=403, detail="You can only claim rewards for your own comments")
+    
+    # Calculate reward based on net votes
+    net_votes = comment.get("upvotes", 0) - comment.get("downvotes", 0)
+    new_reward = calculate_comment_reward(net_votes)
+    already_earned = comment.get("micro_shares_earned", 0)
+    
+    if new_reward <= already_earned:
+        raise HTTPException(status_code=400, detail="No new reward to claim. Get more upvotes!")
+    
+    # Calculate additional shares to award
+    additional_shares = new_reward - already_earned
+    
+    # Get video to check available shares
+    video = await db.videos.find_one({"video_id": comment["video_id"]}, {"_id": 0})
+    if not video:
+        raise HTTPException(status_code=404, detail="Video not found")
+    
+    if video.get("available_shares", 0) < additional_shares:
+        raise HTTPException(status_code=400, detail="Not enough shares available for this video")
+    
+    # Award micro-shares
+    # Check if user already owns shares of this video
+    existing_ownership = await db.share_ownerships.find_one(
+        {"user_id": user_id, "video_id": comment["video_id"]},
+        {"_id": 0}
+    )
+    
+    if existing_ownership:
+        # Update existing ownership
+        new_shares = existing_ownership.get("shares_owned", 0) + additional_shares
+        new_avg_price = (
+            (existing_ownership.get("shares_owned", 0) * existing_ownership.get("purchase_price", 0)) +
+            (additional_shares * 0)  # Free micro-shares, so price = 0
+        ) / new_shares if new_shares > 0 else 0
+        
+        await db.share_ownerships.update_one(
+            {"user_id": user_id, "video_id": comment["video_id"]},
+            {"$set": {
+                "shares_owned": new_shares,
+                "purchase_price": new_avg_price,
+                "updated_at": datetime.now(timezone.utc).isoformat()
+            }}
+        )
+    else:
+        # Create new ownership
+        ownership = ShareOwnership(
+            user_id=user_id,
+            video_id=comment["video_id"],
+            shares_owned=additional_shares,
+            purchase_price=0,  # Free!
+            is_early_investor=False
+        )
+        await db.share_ownerships.insert_one(ownership.model_dump())
+    
+    # Update video available shares
+    await db.videos.update_one(
+        {"video_id": comment["video_id"]},
+        {"$inc": {"available_shares": -additional_shares}}
+    )
+    
+    # Update comment with new reward amount
+    await db.comments.update_one(
+        {"comment_id": comment_id},
+        {"$set": {
+            "micro_shares_earned": new_reward,
+            "is_rewarded": True
+        }}
+    )
+    
+    # Record reward
+    reward = CommentReward(
+        comment_id=comment_id,
+        video_id=comment["video_id"],
+        user_id=user_id,
+        micro_shares=additional_shares,
+        claimed=True
+    )
+    await db.comment_rewards.insert_one(reward.model_dump())
+    
+    # Record transaction
+    transaction = Transaction(
+        user_id=user_id,
+        transaction_type="comment_reward",
+        video_id=comment["video_id"],
+        shares=additional_shares,
+        price_per_share=0,
+        amount=0,
+        description=f"Comment reward: {additional_shares} micro-shares for {net_votes} upvotes"
+    )
+    await db.transactions.insert_one(transaction.model_dump())
+    
+    return {
+        "success": True,
+        "shares_earned": additional_shares,
+        "total_shares_earned": new_reward,
+        "net_votes": net_votes,
+        "message": f"Congratulations! You earned {additional_shares} micro-shares!"
+    }
+
+@api_router.get("/comments/my-rewards")
+async def get_my_comment_rewards(request: Request):
+    """Get all comment rewards earned by the current user"""
+    user_id = await get_current_user_id(request)
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    rewards = await db.comment_rewards.find(
+        {"user_id": user_id},
+        {"_id": 0}
+    ).to_list(100)
+    
+    total_shares = sum(r.get("micro_shares", 0) for r in rewards)
+    
+    return {
+        "rewards": rewards,
+        "total_micro_shares": total_shares,
+        "total_rewards": len(rewards)
+    }
 async def get_platform_stats():
     """
     Get platform-wide statistics for display.
