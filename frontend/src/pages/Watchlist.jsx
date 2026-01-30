@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { API, useAuth } from "../App";
@@ -8,29 +8,39 @@ import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { 
   Eye, EyeOff, TrendingUp, TrendingDown, Clock, 
-  ShoppingCart, Sparkles, ArrowUpRight, PlayCircle
+  ShoppingCart, Sparkles, ArrowUpRight, PlayCircle, RefreshCw
 } from "lucide-react";
+import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
 
 export default function Watchlist() {
   const { user } = useAuth();
   const [watchlist, setWatchlist] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchWatchlist();
-  }, []);
-
-  const fetchWatchlist = async () => {
+  const fetchWatchlist = useCallback(async () => {
     try {
       const response = await axios.get(`${API}/watchlist`, { withCredentials: true });
       setWatchlist(response.data);
     } catch (error) {
       console.error("Error fetching watchlist:", error);
-      toast.error("Failed to load watchlist");
+      if (loading) toast.error("Failed to load watchlist");
     } finally {
       setLoading(false);
     }
-  };
+  }, [loading]);
+
+  // Initial fetch
+  useEffect(() => {
+    fetchWatchlist();
+  }, []);
+
+  // Auto-refresh polling (every 15 seconds)
+  // TODO: Replace with WebSocket for real-time updates
+  const { refresh: manualRefresh, lastUpdated } = useDataSync(
+    fetchWatchlist,
+    POLL_INTERVALS.NORMAL,
+    !loading
+  );
 
   const handleRemove = async (videoId) => {
     try {
@@ -40,7 +50,7 @@ export default function Watchlist() {
         { withCredentials: true }
       );
       toast.success("Removed from watchlist");
-      fetchWatchlist(); // Refresh
+      manualRefresh(); // Refresh using sync hook
     } catch (error) {
       toast.error("Failed to remove from watchlist");
     }
