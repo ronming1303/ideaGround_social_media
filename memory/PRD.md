@@ -146,7 +146,7 @@ Prices now update in TWO ways:
 When someone **buys** shares:
 - Price increases proportional to trade size
 - Scarcity multiplier: scarcer shares = bigger impact
-- Formula: `impact = (shares_traded / available_shares) × 0.02 × scarcity_multiplier`
+- Formula: `impact = (shares_traded / available_shares) × 2% × scarcity_multiplier`
 - Max impact capped at 15% per trade
 
 When someone **sells/redeems** shares:
@@ -173,6 +173,25 @@ impact = min(impact, 0.15)  // Cap at 15%
 - `trade_ratio = 5/30 = 0.167`
 - `scarcity = 0.70`, `scarcity_multiplier = 2.4`
 - `impact = 0.167 × 0.02 × 2.4 = 0.8%` price increase
+
+## VC Demo Features (Implemented Jan 2026)
+
+### 1. Live Activity Feed
+- Real-time transaction feed on Dashboard sidebar
+- Shows: user name, action (buy/sell), shares, video, amount, time
+- Auto-refreshes every 5 seconds
+- Platform stats: 24h volume, active traders
+- Location: `/app/frontend/src/components/LiveActivityFeed.jsx`
+- API: `GET /api/activity/live`
+
+### 2. Simplified Video Buy UI
+- Orange gradient trading card with ticker symbol
+- **Scarcity progress bar** showing ownership %
+- Bonus threshold markers (10%, 20%, 30%)
+- Early investor bonus alerts with countdown
+- Prominent BUY button with hover effects
+- Real-time price updates
+- Location: Video page sidebar
 
 ---
 
