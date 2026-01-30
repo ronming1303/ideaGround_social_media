@@ -1941,6 +1941,168 @@ async def get_platform_stats():
         "timestamp": datetime.now(timezone.utc).isoformat()
     }
 
+@api_router.get("/platform/investor-metrics")
+async def get_investor_metrics():
+    """
+    Comprehensive platform metrics for investor/VC dashboard.
+    Shows platform economics, growth indicators, and key metrics.
+    """
+    from datetime import timedelta
+    
+    now = datetime.now(timezone.utc)
+    twenty_four_hours_ago = (now - timedelta(hours=24)).isoformat()
+    seven_days_ago = (now - timedelta(days=7)).isoformat()
+    thirty_days_ago = (now - timedelta(days=30)).isoformat()
+    
+    # === USER METRICS ===
+    total_users = await db.users.count_documents({})
+    users = await db.users.find({}, {"_id": 0, "wallet_balance": 1, "created_at": 1}).to_list(10000)
+    total_wallet_balances = sum(u.get("wallet_balance", 0) for u in users)
+    
+    # === CONTENT METRICS ===
+    videos = await db.videos.find({}, {"_id": 0}).to_list(100)
+    total_videos = len(videos)
+    total_market_cap = sum(v.get("share_price", 10) * v.get("total_shares", 100) for v in videos)
+    total_shares_available = sum(v.get("available_shares", 100) for v in videos)
+    total_shares_sold = sum(v.get("total_shares", 100) - v.get("available_shares", 100) for v in videos)
+    avg_share_price = sum(v.get("share_price", 10) for v in videos) / max(len(videos), 1)
+    
+    # Top performing videos
+    top_videos = sorted(videos, key=lambda v: v.get("share_price", 10) * (v.get("total_shares", 100) - v.get("available_shares", 100)), reverse=True)[:5]
+    
+    # === TRANSACTION METRICS ===
+    all_transactions = await db.transactions.find({}, {"_id": 0}).to_list(10000)
+    
+    buy_transactions = [t for t in all_transactions if t.get("transaction_type") == "buy_share"]
+    sell_transactions = [t for t in all_transactions if t.get("transaction_type") == "sell_share"]
+    redemptions = [t for t in all_transactions if t.get("transaction_type") == "redemption"]
+    
+    total_buy_volume = sum(abs(t.get("amount", 0)) for t in buy_transactions)
+    total_sell_volume = sum(t.get("amount", 0) for t in sell_transactions)
+    total_redemption_volume = sum(t.get("gross_amount", t.get("amount", 0)) for t in redemptions)
+    
+    avg_transaction_size = total_buy_volume / max(len(buy_transactions), 1)
+    
+    # 24h metrics
+    recent_txns = [t for t in all_transactions if t.get("created_at", "") >= twenty_four_hours_ago]
+    volume_24h = sum(abs(t.get("amount", 0)) for t in recent_txns if t.get("transaction_type") == "buy_share")
+    transactions_24h = len(recent_txns)
+    
+    # 7d metrics
+    week_txns = [t for t in all_transactions if t.get("created_at", "") >= seven_days_ago]
+    volume_7d = sum(abs(t.get("amount", 0)) for t in week_txns if t.get("transaction_type") == "buy_share")
+    
+    # Active traders
+    active_traders_24h = len(set(t.get("user_id") for t in recent_txns))
+    active_traders_7d = len(set(t.get("user_id") for t in week_txns))
+    
+    # === PLATFORM REVENUE ===
+    platform_earnings = await db.platform_earnings.find({}, {"_id": 0}).to_list(1000)
+    total_platform_revenue = sum(e.get("fee_amount", 0) for e in platform_earnings)
+    
+    # Revenue by period
+    revenue_24h = sum(e.get("fee_amount", 0) for e in platform_earnings if e.get("created_at", "") >= twenty_four_hours_ago)
+    revenue_7d = sum(e.get("fee_amount", 0) for e in platform_earnings if e.get("created_at", "") >= seven_days_ago)
+    
+    # === SHARE OWNERSHIP METRICS ===
+    ownerships = await db.share_ownerships.find({}, {"_id": 0}).to_list(10000)
+    unique_investors = len(set(o.get("user_id") for o in ownerships))
+    total_shares_held = sum(o.get("shares_owned", 0) for o in ownerships)
+    
+    # Early investors
+    early_investors = len([o for o in ownerships if o.get("is_early_investor", False)])
+    
+    # === GROWTH INDICATORS ===
+    # Transaction volume by day (last 7 days)
+    daily_volumes = []
+    for i in range(7):
+        day_start = (now - timedelta(days=i+1)).replace(hour=0, minute=0, second=0).isoformat()
+        day_end = (now - timedelta(days=i)).replace(hour=0, minute=0, second=0).isoformat()
+        day_txns = [t for t in all_transactions if day_start <= t.get("created_at", "") < day_end]
+        day_volume = sum(abs(t.get("amount", 0)) for t in day_txns if t.get("transaction_type") == "buy_share")
+        day_label = (now - timedelta(days=i+1)).strftime("%b %d")
+        daily_volumes.append({"date": day_label, "volume": round(day_volume, 2), "transactions": len(day_txns)})
+    
+    daily_volumes.reverse()  # Oldest first
+    
+    # === TOP TRADERS ===
+    trader_volumes = {}
+    for t in buy_transactions:
+        user_id = t.get("user_id")
+        trader_volumes[user_id] = trader_volumes.get(user_id, 0) + abs(t.get("amount", 0))
+    
+    top_trader_ids = sorted(trader_volumes.keys(), key=lambda x: trader_volumes[x], reverse=True)[:5]
+    top_traders_data = await db.users.find({"user_id": {"$in": top_trader_ids}}, {"_id": 0, "user_id": 1, "name": 1}).to_list(5)
+    top_traders_map = {u["user_id"]: u["name"] for u in top_traders_data}
+    
+    top_traders = [
+        {"name": top_traders_map.get(uid, "Anonymous"), "volume": round(trader_volumes[uid], 2)}
+        for uid in top_trader_ids
+    ]
+    
+    # === PROJECTIONS (Simple) ===
+    # Assuming 20% monthly growth (for demo purposes)
+    projected_monthly_revenue = total_platform_revenue * 1.2 if total_platform_revenue > 0 else 100
+    projected_annual_revenue = projected_monthly_revenue * 12
+    
+    return {
+        "overview": {
+            "total_users": total_users,
+            "total_videos": total_videos,
+            "total_market_cap": round(total_market_cap, 2),
+            "total_wallet_balances": round(total_wallet_balances, 2),
+            "unique_investors": unique_investors,
+            "early_investors": early_investors
+        },
+        "trading": {
+            "total_buy_volume": round(total_buy_volume, 2),
+            "total_sell_volume": round(total_sell_volume, 2),
+            "total_redemptions": round(total_redemption_volume, 2),
+            "total_transactions": len(all_transactions),
+            "avg_transaction_size": round(avg_transaction_size, 2),
+            "volume_24h": round(volume_24h, 2),
+            "volume_7d": round(volume_7d, 2),
+            "transactions_24h": transactions_24h,
+            "active_traders_24h": active_traders_24h,
+            "active_traders_7d": active_traders_7d
+        },
+        "shares": {
+            "total_shares_sold": round(total_shares_sold, 2),
+            "total_shares_available": round(total_shares_available, 2),
+            "total_shares_held": round(total_shares_held, 2),
+            "avg_share_price": round(avg_share_price, 2),
+            "ownership_rate": round((total_shares_sold / max(total_shares_sold + total_shares_available, 1)) * 100, 1)
+        },
+        "revenue": {
+            "total_platform_revenue": round(total_platform_revenue, 2),
+            "revenue_24h": round(revenue_24h, 2),
+            "revenue_7d": round(revenue_7d, 2),
+            "fee_percent": PLATFORM_FEE_PERCENT,
+            "projected_monthly": round(projected_monthly_revenue, 2),
+            "projected_annual": round(projected_annual_revenue, 2)
+        },
+        "revenue_model": {
+            "creator_share": 50,
+            "investor_share": 40,
+            "platform_share": 10
+        },
+        "charts": {
+            "daily_volumes": daily_volumes
+        },
+        "top_videos": [
+            {
+                "title": v.get("title", "")[:40],
+                "ticker": v.get("ticker_symbol", "VID"),
+                "price": v.get("share_price", 10),
+                "market_cap": round(v.get("share_price", 10) * v.get("total_shares", 100), 2),
+                "ownership_pct": round((1 - v.get("available_shares", 100) / v.get("total_shares", 100)) * 100, 1)
+            }
+            for v in top_videos
+        ],
+        "top_traders": top_traders,
+        "timestamp": now.isoformat()
+    }
+
 @api_router.get("/market-ticker")
 async def get_market_ticker():
     """Get scrolling ticker data for market overview"""
