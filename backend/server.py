@@ -1834,6 +1834,113 @@ async def get_trending_stocks():
         "timestamp": datetime.now(timezone.utc).isoformat()
     }
 
+# ==================== LIVE ACTIVITY FEED ====================
+
+@api_router.get("/activity/live")
+async def get_live_activity(limit: int = 20):
+    """
+    Get recent platform-wide activity for live feed display.
+    Shows recent trades, creating social proof and FOMO.
+    """
+    # Get recent transactions
+    transactions = await db.transactions.find(
+        {"transaction_type": {"$in": ["buy_share", "sell_share", "redemption"]}},
+        {"_id": 0}
+    ).sort("created_at", -1).limit(limit).to_list(limit)
+    
+    if not transactions:
+        return {"activities": [], "stats": {"total_volume_24h": 0, "active_traders": 0}}
+    
+    # Batch fetch users and videos to avoid N+1
+    user_ids = list(set(t.get("user_id") for t in transactions))
+    video_ids = list(set(t.get("video_id") for t in transactions))
+    
+    users = await db.users.find({"user_id": {"$in": user_ids}}, {"_id": 0, "user_id": 1, "name": 1}).to_list(len(user_ids))
+    videos = await db.videos.find({"video_id": {"$in": video_ids}}, {"_id": 0, "video_id": 1, "title": 1, "ticker_symbol": 1, "share_price": 1}).to_list(len(video_ids))
+    
+    user_map = {u["user_id"]: u for u in users}
+    video_map = {v["video_id"]: v for v in videos}
+    
+    activities = []
+    for txn in transactions:
+        user = user_map.get(txn.get("user_id"), {})
+        video = video_map.get(txn.get("video_id"), {})
+        
+        # Anonymize user name (show first name + last initial)
+        full_name = user.get("name", "Anonymous")
+        name_parts = full_name.split()
+        display_name = f"{name_parts[0]} {name_parts[-1][0]}." if len(name_parts) > 1 else name_parts[0]
+        
+        txn_type = txn.get("transaction_type")
+        
+        activity = {
+            "id": txn.get("transaction_id"),
+            "user_name": display_name,
+            "action": "bought" if txn_type == "buy_share" else ("sold" if txn_type == "sell_share" else "redeemed"),
+            "shares": txn.get("shares", 0),
+            "video_title": video.get("title", "Unknown")[:30],
+            "ticker": video.get("ticker_symbol", "???"),
+            "amount": abs(txn.get("amount", 0)),
+            "price_at_trade": txn.get("price_at_trade", 0),
+            "price_after_trade": txn.get("price_after_trade"),
+            "is_early_investor": txn.get("is_early_investment", False),
+            "bonus_earned": txn.get("bonus_earned", 0),
+            "timestamp": txn.get("created_at"),
+            "type": txn_type
+        }
+        activities.append(activity)
+    
+    # Calculate 24h stats
+    from datetime import timedelta
+    twenty_four_hours_ago = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
+    
+    recent_txns = await db.transactions.find(
+        {"created_at": {"$gte": twenty_four_hours_ago}},
+        {"_id": 0, "amount": 1, "user_id": 1}
+    ).to_list(1000)
+    
+    total_volume_24h = sum(abs(t.get("amount", 0)) for t in recent_txns)
+    active_traders_24h = len(set(t.get("user_id") for t in recent_txns))
+    
+    return {
+        "activities": activities,
+        "stats": {
+            "total_volume_24h": round(total_volume_24h, 2),
+            "active_traders": active_traders_24h,
+            "total_transactions_24h": len(recent_txns)
+        }
+    }
+
+@api_router.get("/platform/stats")
+async def get_platform_stats():
+    """
+    Get platform-wide statistics for display.
+    Used for showing social proof on dashboard.
+    """
+    # Total users
+    total_users = await db.users.count_documents({})
+    
+    # Total videos and market cap
+    videos = await db.videos.find({}, {"_id": 0, "share_price": 1, "total_shares": 1}).to_list(100)
+    total_videos = len(videos)
+    total_market_cap = sum(v.get("share_price", 10) * v.get("total_shares", 100) for v in videos)
+    
+    # Transaction volume
+    transactions = await db.transactions.find({}, {"_id": 0, "amount": 1, "transaction_type": 1}).to_list(10000)
+    total_volume = sum(abs(t.get("amount", 0)) for t in transactions if t.get("transaction_type") == "buy_share")
+    
+    # Active investors (users with share ownership)
+    active_investors = await db.share_ownerships.distinct("user_id")
+    
+    return {
+        "total_users": total_users,
+        "total_videos": total_videos,
+        "total_market_cap": round(total_market_cap, 2),
+        "total_volume": round(total_volume, 2),
+        "active_investors": len(active_investors),
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+
 @api_router.get("/market-ticker")
 async def get_market_ticker():
     """Get scrolling ticker data for market overview"""
