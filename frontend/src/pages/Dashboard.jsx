@@ -365,11 +365,23 @@ export default function Dashboard() {
         </div>
 
         <TabsContent value={activeTab} className="mt-0">
-          {/* Uniform grid layout - 3 columns on desktop for bigger cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 stagger-children">
-            {filteredVideos.map((video) => (
-              <VideoCard key={video.video_id} video={video} />
-            ))}
+          {/* Main content with Live Activity sidebar */}
+          <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
+            {/* Videos Grid - takes 3 columns on XL */}
+            <div className="xl:col-span-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children">
+                {filteredVideos.map((video) => (
+                  <VideoCard key={video.video_id} video={video} />
+                ))}
+              </div>
+            </div>
+            
+            {/* Live Activity Feed - sticky sidebar on XL screens */}
+            <div className="xl:col-span-1">
+              <div className="xl:sticky xl:top-24">
+                <LiveActivityFeed />
+              </div>
+            </div>
           </div>
         </TabsContent>
       </Tabs>
