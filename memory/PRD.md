@@ -111,13 +111,41 @@ See `/app/docs/ER_DIAGRAM.md` for full schema.
 
 ## Future Roadmap (v2.0)
 
+- [x] ~~Commenter Rewards (micro-shares)~~ **IMPLEMENTED Jan 2026**
 - [ ] Creator Analytics frontend
-- [ ] Commenter Rewards (micro-shares)
 - [ ] Curator Earnings (referral shares)
 - [ ] Price Alerts notifications
 - [ ] Social Posts (text content)
 - [ ] Shareholder Governance (voting)
 - [ ] **WebSocket real-time updates** (replace current polling)
+- [ ] Investment Journey Timeline
+
+## Commenter Rewards System (Implemented Jan 2026)
+
+### How It Works
+Users earn micro-shares by posting popular comments on videos:
+- Comments with **3+ net upvotes** earn **0.01 shares**
+- Comments with **10+ net upvotes** earn **0.05 shares**
+- Comments with **25+ net upvotes** earn **0.10 shares**
+- Comments with **50+ net upvotes** earn **0.25 shares**
+- Comments with **100+ net upvotes** earn **0.50 shares**
+
+### Features
+- **Voting**: Users can upvote/downvote comments (can't vote on own)
+- **Claim Rewards**: Comment owners manually claim earned micro-shares
+- **Reward Badges**: Visual indicators (Rising, Bronze, Silver, Gold) based on potential reward
+- **Anti-Gaming**: One vote per user per comment, no self-voting
+
+### API Endpoints
+- `GET /api/videos/{video_id}/comments` - Get comments with reward info
+- `POST /api/comments` - Create new comment
+- `POST /api/comments/vote` - Vote on comment (up/down)
+- `POST /api/comments/{id}/claim-reward` - Claim micro-shares
+- `GET /api/comments/my-rewards` - View earned rewards
+
+### Location
+- Component: `/app/frontend/src/components/VideoComments.jsx`
+- Backend: `/app/backend/server.py` (Comment endpoints)
 
 ## Real-Time Data Sync (Implemented Jan 2026)
 
