@@ -479,7 +479,7 @@ export default function Dashboard() {
 
       {/* Market Activity / Trending Stocks */}
       <div className="mt-8">
-        <TrendingStocks onRefresh={handlePriceRefresh} />
+        <TrendingStocks onRefresh={manualRefresh} />
       </div>
       </div>
     </div>
