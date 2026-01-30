@@ -1222,6 +1222,16 @@ async def redeem_shares(req: RedeemRequest, user: User = Depends(get_current_use
         {"$inc": {"available_shares": shares_to_redeem}}
     )
     
+    # === IMMEDIATE PRICE IMPACT (Supply/Demand) ===
+    # Redemption acts like a large sell - decreases price
+    price_impact = calculate_price_impact(
+        shares_traded=shares_to_redeem,
+        available_shares=video["available_shares"] + shares_to_redeem,
+        total_shares=video["total_shares"],
+        is_buy=False
+    )
+    price_update = await update_video_price(req.video_id, price_impact, reason="redeem")
+    
     # Delete ownership record
     await db.share_ownerships.delete_one(
         {"user_id": user.user_id, "video_id": req.video_id}
@@ -1237,6 +1247,8 @@ async def redeem_shares(req: RedeemRequest, user: User = Depends(get_current_use
         "platform_fee": platform_fee,
         "video_id": req.video_id,
         "shares": shares_to_redeem,
+        "price_at_trade": video["share_price"],
+        "price_after_trade": price_update["new_price"] if price_update else video["share_price"],
         "early_bonus_applied": is_early and bonus_earned > 0,
         "bonus_earned": bonus_earned,
         "created_at": datetime.now(timezone.utc).isoformat()
@@ -1264,7 +1276,8 @@ async def redeem_shares(req: RedeemRequest, user: User = Depends(get_current_use
         "platform_fee_percent": PLATFORM_FEE_PERCENT,
         "net_value": net_value,
         "early_bonus_applied": is_early and bonus_earned > 0,
-        "bonus_earned": bonus_earned
+        "bonus_earned": bonus_earned,
+        "price_impact": price_update  # Include price change info
     }
 
 # ==================== PORTFOLIO ENDPOINTS ====================
