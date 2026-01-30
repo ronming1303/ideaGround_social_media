@@ -1119,6 +1119,16 @@ async def sell_shares(req: SellShareRequest, user: User = Depends(get_current_us
         {"$inc": {"available_shares": req.shares}}
     )
     
+    # === IMMEDIATE PRICE IMPACT (Supply/Demand) ===
+    # Selling shares decreases price due to increased supply
+    price_impact = calculate_price_impact(
+        shares_traded=req.shares,
+        available_shares=video["available_shares"] + req.shares,  # After adding back
+        total_shares=video["total_shares"],
+        is_buy=False
+    )
+    price_update = await update_video_price(req.video_id, price_impact, reason="sell")
+    
     # Update ownership
     new_shares = ownership["shares_owned"] - req.shares
     if new_shares <= 0:
@@ -1137,6 +1147,8 @@ async def sell_shares(req: SellShareRequest, user: User = Depends(get_current_us
         "amount": total_value,
         "video_id": req.video_id,
         "shares": req.shares,
+        "price_at_trade": video["share_price"],
+        "price_after_trade": price_update["new_price"] if price_update else video["share_price"],
         "early_bonus_applied": is_early and bonus_earned > 0,
         "bonus_earned": bonus_earned,
         "created_at": datetime.now(timezone.utc).isoformat()
@@ -1150,7 +1162,8 @@ async def sell_shares(req: SellShareRequest, user: User = Depends(get_current_us
         "total_value": total_value,
         "early_bonus_applied": is_early and bonus_earned > 0,
         "bonus_earned": bonus_earned,
-        "bonus_multiplier": bonus_multiplier if is_early else 1.0
+        "bonus_multiplier": bonus_multiplier if is_early else 1.0,
+        "price_impact": price_update  # Include price change info
     }
 
 PLATFORM_FEE_PERCENT = 5.0  # 5% platform fee on redemptions
