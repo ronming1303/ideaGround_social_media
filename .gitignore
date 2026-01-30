@@ -93,3 +93,7 @@ frontend/node_modules/.cache/default-development/11.pack
 
 # Note: .env files are tracked for Emergent deployment
 # Sensitive values are auto-updated during deployment
+-e 
+# Environment files
+*.env
+*.env.*
