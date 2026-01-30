@@ -193,6 +193,20 @@ impact = min(impact, 0.15)  // Cap at 15%
 - Real-time price updates
 - Location: Video page sidebar
 
+### 3. Platform Metrics / Investor Dashboard (NEW)
+- **URL**: `/investors` (public, no login required)
+- Comprehensive metrics for VC presentations
+- **Key Metrics Cards**: Revenue, Volume, Users, Market Cap
+- **Revenue Model Pie Chart**: Creator 50% / Investors 40% / Platform 10%
+- **7-Day Trading Volume Chart**: Area chart showing daily activity
+- **Trading Statistics**: 24h/7d volume, transactions, active traders
+- **Share Ownership**: Progress bar, ownership rate, early investors
+- **Revenue Breakdown**: 24h, 7d, projected monthly, projected annual
+- **Top Performing Videos**: Ranked by market cap with ownership %
+- **Top Traders**: Leaderboard by trading volume
+- Auto-refresh every 30 seconds
+- **API**: `GET /api/platform/investor-metrics`
+
 ---
 
 ## Deployment Checklist
