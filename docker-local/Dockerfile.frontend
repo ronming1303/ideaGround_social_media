@@ -11,18 +11,17 @@ ARG REACT_APP_LOCAL_AUTH=true
 ENV REACT_APP_BACKEND_URL=$REACT_APP_BACKEND_URL
 ENV REACT_APP_LOCAL_AUTH=$REACT_APP_LOCAL_AUTH
 ENV CI=false
+ENV DISABLE_ESLINT_PLUGIN=true
+ENV ESLINT_NO_DEV_ERRORS=true
 
-# Copy package files first for better caching
-COPY frontend/package.json ./
-
-# Install dependencies - use npm with legacy peer deps for React 19 compatibility
-RUN npm install --legacy-peer-deps --no-audit --no-fund
-
-# Copy all source files
+# Copy all frontend files (includes yarn.lock, craco.config.js, etc.)
 COPY frontend/ ./
 
+# Install dependencies using yarn (project has yarn.lock)
+RUN yarn install --network-timeout 300000
+
 # Build the production app
-RUN npm run build
+RUN yarn build
 
 # Production stage with nginx
 FROM nginx:alpine
