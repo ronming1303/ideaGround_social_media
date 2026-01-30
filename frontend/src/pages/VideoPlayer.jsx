@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts";
 import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
+import VideoComments from "../components/VideoComments";
 
 export default function VideoPlayer() {
   const { videoId } = useParams();
