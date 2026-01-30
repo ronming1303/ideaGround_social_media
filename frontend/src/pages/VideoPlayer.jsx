@@ -298,6 +298,11 @@ export default function VideoPlayer() {
             <div className="mt-6 p-4 rounded-2xl bg-muted/50">
               <p className="text-muted-foreground">{video.description}</p>
             </div>
+
+            {/* Comments Section */}
+            <div className="mt-6">
+              <VideoComments videoId={videoId} />
+            </div>
           </div>
         </div>
 
