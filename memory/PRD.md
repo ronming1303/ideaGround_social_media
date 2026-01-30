@@ -208,6 +208,25 @@ impact = min(impact, 0.15)  // Cap at 15%
 - Auto-refresh every 30 seconds
 - **API**: `GET /api/platform/investor-metrics`
 
+### 4. Market Activity Dashboard with Expandable Panels (NEW - Jan 2026)
+- **Location**: Dashboard page, below video grid
+- **Component**: `/app/frontend/src/components/MarketOverview.jsx`
+- **API**: `GET /api/market-overview`
+- **8 Investment Metrics Panels**:
+  1. **Top Gainers** - Rising fast today (highest positive price change)
+  2. **Top Losers** - Buy the dip opportunities (highest negative price change)
+  3. **Hot Stocks** - Selling out fast (highest scarcity %)
+  4. **Early Bonus** - 1.5x-2.5x bonus eligible (<30% sold)
+  5. **Undervalued** - High views, low price (best value ratio)
+  6. **Best ROI** - Proven winners (highest returns since launch)
+  7. **New Listings** - Fresh content, get in early
+  8. **Most Traded** - Where the action is (24h transaction count)
+- **Expandable Panels**: Click header to expand/collapse
+- **Panel Features**: Icon, title, qualifier, item count, top stock preview
+- **Stock Items**: Rank, thumbnail, title, ticker, creator, price, metric
+- **Navigation**: Click any stock to go to video page
+- **Simulate Prices**: Button to trigger market simulation
+
 ## VC Demo Flow (Tested Jan 2026)
 
 ### Recommended Demo Steps:
@@ -215,11 +234,12 @@ impact = min(impact, 0.15)  // Cap at 15%
 2. **Investor Dashboard** (`/investors`) → Show platform economics without login
 3. **Login** → Sign in with Google
 4. **Dashboard** → Show Live Activity Feed (right sidebar)
-5. **Click Video** → Show trading card with price, chart, available shares
-6. **Add to Watchlist** → Demonstrate tracking feature
-7. **Watchlist Page** → Show Investment Thesis Card (score, metrics, analysis)
-8. **Buy Shares** → Execute purchase, show price impact
-9. **Portfolio** → Show holdings with P&L
+5. **Dashboard** → Scroll to Market Activity, expand panels to show metrics
+6. **Click Video** → Show trading card with price, chart, available shares
+7. **Add to Watchlist** → Demonstrate tracking feature
+8. **Watchlist Page** → Show Investment Thesis Card (score, metrics, analysis)
+9. **Buy Shares** → Execute purchase, show price impact
+10. **Portfolio** → Show holdings with P&L
 
 ### All Features Verified Working ✅
 
