@@ -54,7 +54,7 @@ export default function Dashboard() {
 
   // Auto-refresh polling (every 15 seconds)
   // TODO: Replace with WebSocket for real-time updates
-  const { refresh: manualRefresh, lastUpdated } = useDataSync(
+  const { refresh: manualRefresh } = useDataSync(
     useCallback(async () => {
       await Promise.all([fetchData(), fetchPortfolioPerformance()]);
     }, [fetchData, fetchPortfolioPerformance]),
@@ -62,19 +62,11 @@ export default function Dashboard() {
     !loading // Only poll after initial load
   );
 
-  const handlePriceRefresh = useCallback(() => {
-    manualRefresh();
-  }, [manualRefresh]);
-
   const formatViews = (views) => {
     if (views >= 1000000) return `${(views / 1000000).toFixed(1)}M`;
     if (views >= 1000) return `${(views / 1000).toFixed(1)}K`;
     return views;
   };
-
-  const filteredVideos = activeTab === "all" 
-    ? videos 
-    : videos.filter(v => v.video_type === activeTab);
 
   const VideoCard = ({ video }) => (
     <Link 
