@@ -137,6 +137,43 @@ See `/app/docs/ER_DIAGRAM.md` for full schema.
 - Instant updates when any user trades
 - Same API surface - components won't need changes
 
+## Supply/Demand Pricing Model (Implemented Jan 2026)
+
+### How Prices Change
+Prices now update in TWO ways:
+
+#### 1. Immediate Trade Impact (Real-time)
+When someone **buys** shares:
+- Price increases proportional to trade size
+- Scarcity multiplier: scarcer shares = bigger impact
+- Formula: `impact = (shares_traded / available_shares) × 0.02 × scarcity_multiplier`
+- Max impact capped at 15% per trade
+
+When someone **sells/redeems** shares:
+- Price decreases proportional to trade size
+- Same formula but negative impact
+
+#### 2. Background Market Simulation
+- Random market volatility: -5% to +8%
+- Engagement boost: views/likes affect prices
+- Scarcity premium: fewer available shares = higher base price
+
+### Price Impact Formula
+```
+trade_ratio = shares_traded / available_shares
+scarcity = 1 - (available_shares / total_shares)
+scarcity_multiplier = 1 + (scarcity × 2)  // 1x to 3x
+impact = trade_ratio × 0.02 × scarcity_multiplier
+impact = min(impact, 0.15)  // Cap at 15%
+```
+
+### Example
+- Video has 100 shares, 30 available (70% sold = high scarcity)
+- User buys 5 shares
+- `trade_ratio = 5/30 = 0.167`
+- `scarcity = 0.70`, `scarcity_multiplier = 2.4`
+- `impact = 0.167 × 0.02 × 2.4 = 0.8%` price increase
+
 ---
 
 ## Deployment Checklist
