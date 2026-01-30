@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { API, useAuth } from "../App";
 import { toast } from "sonner";
@@ -8,8 +8,9 @@ import { Input } from "../components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
 import { 
   Wallet as WalletIcon, Plus, ArrowUpRight, ArrowDownLeft, 
-  TrendingUp, ShoppingCart, DollarSign, History
+  TrendingUp, ShoppingCart, DollarSign, History, RefreshCw
 } from "lucide-react";
+import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
 
 export default function Wallet() {
   const { user, setUser } = useAuth();
@@ -19,21 +20,30 @@ export default function Wallet() {
   const [depositAmount, setDepositAmount] = useState("");
   const [depositing, setDepositing] = useState(false);
 
-  useEffect(() => {
-    fetchWallet();
-  }, []);
-
-  const fetchWallet = async () => {
+  const fetchWallet = useCallback(async () => {
     try {
       const response = await axios.get(`${API}/wallet`, { withCredentials: true });
       setWallet(response.data);
     } catch (error) {
       console.error("Error fetching wallet:", error);
-      toast.error("Failed to load wallet");
+      if (loading) toast.error("Failed to load wallet");
     } finally {
       setLoading(false);
     }
-  };
+  }, [loading]);
+
+  // Initial fetch
+  useEffect(() => {
+    fetchWallet();
+  }, []);
+
+  // Auto-refresh polling (every 15 seconds)
+  // TODO: Replace with WebSocket for real-time updates
+  const { refresh: manualRefresh, lastUpdated } = useDataSync(
+    fetchWallet,
+    POLL_INTERVALS.NORMAL,
+    !loading
+  );
 
   const handleDeposit = async () => {
     const amount = parseFloat(depositAmount);
