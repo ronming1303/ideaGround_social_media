@@ -16,6 +16,7 @@ import CreatorAnalytics from "./pages/CreatorAnalytics";
 import Watchlist from "./pages/Watchlist";
 import Admin from "./pages/Admin";
 import WhyIdeaGround from "./pages/WhyIdeaGround";
+import InvestorDashboard from "./pages/InvestorDashboard";
 
 // Components
 import Sidebar from "./components/Sidebar";
