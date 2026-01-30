@@ -195,6 +195,7 @@ impact = min(impact, 0.15)  // Cap at 15%
 
 ### 3. Platform Metrics / Investor Dashboard (NEW)
 - **URL**: `/investors` (public, no login required)
+- **Navigation**: Link in Landing page navbar + Sidebar navigation
 - Comprehensive metrics for VC presentations
 - **Key Metrics Cards**: Revenue, Volume, Users, Market Cap
 - **Revenue Model Pie Chart**: Creator 50% / Investors 40% / Platform 10%
@@ -206,6 +207,21 @@ impact = min(impact, 0.15)  // Cap at 15%
 - **Top Traders**: Leaderboard by trading volume
 - Auto-refresh every 30 seconds
 - **API**: `GET /api/platform/investor-metrics`
+
+## VC Demo Flow (Tested Jan 2026)
+
+### Recommended Demo Steps:
+1. **Landing Page** → Show "Investor Metrics" link in navbar
+2. **Investor Dashboard** (`/investors`) → Show platform economics without login
+3. **Login** → Sign in with Google
+4. **Dashboard** → Show Live Activity Feed (right sidebar)
+5. **Click Video** → Show trading card with price, chart, available shares
+6. **Add to Watchlist** → Demonstrate tracking feature
+7. **Watchlist Page** → Show Investment Thesis Card (score, metrics, analysis)
+8. **Buy Shares** → Execute purchase, show price impact
+9. **Portfolio** → Show holdings with P&L
+
+### All Features Verified Working ✅
 
 ---
 
