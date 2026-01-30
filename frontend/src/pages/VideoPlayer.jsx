@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { API, useAuth } from "../App";
@@ -12,9 +12,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { 
   Play, Heart, Share2, Bell, TrendingUp, TrendingDown, 
   Eye, Clock, DollarSign, ArrowLeft, ShoppingCart, ChevronUp, ChevronDown,
-  Award, Users, Sparkles, PieChart, EyeOff
+  Award, Users, Sparkles, PieChart, EyeOff, RefreshCw
 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts";
+import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
 
 export default function VideoPlayer() {
   const { videoId } = useParams();
@@ -30,12 +31,7 @@ export default function VideoPlayer() {
   const [buying, setBuying] = useState(false);
   const [topEarners, setTopEarners] = useState(null);
 
-  useEffect(() => {
-    fetchVideo();
-    fetchTopEarners();
-  }, [videoId]);
-
-  const fetchVideo = async () => {
+  const fetchVideo = useCallback(async () => {
     try {
       const response = await axios.get(`${API}/videos/${videoId}`, { withCredentials: true });
       setVideo(response.data);
@@ -45,20 +41,37 @@ export default function VideoPlayer() {
       setWatching(response.data.user_watching || false);
     } catch (error) {
       console.error("Error fetching video:", error);
-      toast.error("Failed to load video");
+      if (loading) toast.error("Failed to load video");
     } finally {
       setLoading(false);
     }
-  };
+  }, [videoId, loading]);
 
-  const fetchTopEarners = async () => {
+  const fetchTopEarners = useCallback(async () => {
     try {
       const response = await axios.get(`${API}/videos/${videoId}/top-earners`, { withCredentials: true });
       setTopEarners(response.data);
     } catch (error) {
       console.log("Top earners not available");
     }
-  };
+  }, [videoId]);
+
+  // Initial fetch
+  useEffect(() => {
+    setLoading(true);
+    fetchVideo();
+    fetchTopEarners();
+  }, [videoId]);
+
+  // Auto-refresh polling (every 10 seconds for video page - more critical)
+  // TODO: Replace with WebSocket for real-time updates
+  const { refresh: manualRefresh, lastUpdated } = useDataSync(
+    useCallback(async () => {
+      await Promise.all([fetchVideo(), fetchTopEarners()]);
+    }, [fetchVideo, fetchTopEarners]),
+    POLL_INTERVALS.FAST, // 5 seconds for video page
+    !loading // Only poll after initial load
+  );
 
   const handleLike = async () => {
     try {
