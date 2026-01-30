@@ -348,27 +348,113 @@ export default function Dashboard() {
       </div>
 
       {/* Content tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-8">
-        <div className="flex items-center justify-between mb-6">
-          <TabsList className="bg-muted/50">
-            <TabsTrigger value="all" data-testid="tab-all" className="rounded-full">All</TabsTrigger>
-            <TabsTrigger value="short" data-testid="tab-shorts" className="rounded-full">Shorts</TabsTrigger>
-            <TabsTrigger value="full" data-testid="tab-full" className="rounded-full">Full Videos</TabsTrigger>
-          </TabsList>
-          <Link to="/explore">
-            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-              View all <ArrowUpRight className="w-4 h-4 ml-1" />
-            </Button>
-          </Link>
-        </div>
+      {/* YouTube/Instagram Style Feed */}
+      <div className="space-y-10">
+        {/* Shorts Section - Horizontal scroll, vertical cards */}
+        {videos.filter(v => v.video_type === 'short').length > 0 && (
+          <section>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center">
+                  <Sparkles className="w-4 h-4 text-white" />
+                </div>
+                <h2 className="font-heading text-xl font-bold">Shorts</h2>
+              </div>
+              <Link to="/explore">
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                  View all <ArrowUpRight className="w-4 h-4 ml-1" />
+                </Button>
+              </Link>
+            </div>
+            
+            {/* Horizontal scrolling shorts */}
+            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-2 px-2">
+              {videos.filter(v => v.video_type === 'short').map((video) => (
+                <Link 
+                  key={video.video_id}
+                  to={`/video/${video.video_id}`}
+                  data-testid={`short-card-${video.video_id}`}
+                  className="flex-shrink-0 group"
+                >
+                  {/* Vertical Short Card - 9:16 aspect ratio with overlay */}
+                  <div className="relative w-40 h-72 rounded-xl overflow-hidden bg-black shadow-lg">
+                    <img 
+                      src={video.thumbnail} 
+                      alt={video.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    {/* Gradient overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                    
+                    {/* Price badge - top right */}
+                    <div className={`absolute top-2 right-2 px-2 py-1 rounded-md text-xs font-mono font-bold backdrop-blur-sm ${
+                      (video.last_price_change_percent || 0) >= 0 
+                        ? 'bg-emerald-500/80 text-white' 
+                        : 'bg-red-500/80 text-white'
+                    }`}>
+                      ${video.share_price.toFixed(2)}
+                    </div>
+                    
+                    {/* Content - bottom */}
+                    <div className="absolute bottom-0 left-0 right-0 p-3">
+                      <h3 className="text-white font-medium text-sm line-clamp-2 mb-2">{video.title}</h3>
+                      <div className="flex items-center gap-2">
+                        {video.creator && (
+                          <img 
+                            src={video.creator.image} 
+                            alt={video.creator.name}
+                            className="w-5 h-5 rounded-full object-cover"
+                          />
+                        )}
+                        <span className="text-white/70 text-xs truncate">{video.creator?.name}</span>
+                      </div>
+                      <div className="flex items-center gap-2 mt-1.5 text-white/60 text-xs">
+                        <span className="flex items-center gap-0.5">
+                          <Eye className="w-3 h-3" />
+                          {formatViews(video.views)}
+                        </span>
+                        <span className="flex items-center gap-0.5">
+                          <Heart className="w-3 h-3" />
+                          {formatViews(video.likes)}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    {/* Play icon on hover */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                        <Play className="w-5 h-5 text-white fill-white ml-0.5" />
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
 
-        <TabsContent value={activeTab} className="mt-0">
+        {/* Videos Section - Grid layout */}
+        <section>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
+                <Play className="w-4 h-4 text-white" />
+              </div>
+              <h2 className="font-heading text-xl font-bold">Videos</h2>
+            </div>
+            <Link to="/explore">
+              <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                View all <ArrowUpRight className="w-4 h-4 ml-1" />
+              </Button>
+            </Link>
+          </div>
+          
           {/* Main content with Live Activity sidebar */}
           <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
             {/* Videos Grid - takes 3 columns on XL */}
             <div className="xl:col-span-3">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 stagger-children">
-                {filteredVideos.map((video) => (
+                {videos.filter(v => v.video_type !== 'short').map((video) => (
                   <VideoCard key={video.video_id} video={video} />
                 ))}
               </div>
@@ -381,8 +467,8 @@ export default function Dashboard() {
               </div>
             </div>
           </div>
-        </TabsContent>
-      </Tabs>
+        </section>
+      </div>
 
       {/* Trending creators */}
       <div>
