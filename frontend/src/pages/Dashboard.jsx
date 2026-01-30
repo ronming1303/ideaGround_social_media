@@ -7,9 +7,10 @@ import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { Play, TrendingUp, TrendingDown, Clock, Eye, Heart, Sparkles, ArrowUpRight, Briefcase, RefreshCw } from "lucide-react";
+import { Play, TrendingUp, TrendingDown, Clock, Eye, Heart, Sparkles, ArrowUpRight, Briefcase, RefreshCw, Activity, DollarSign } from "lucide-react";
 import TrendingTicker from "../components/TrendingTicker";
 import TrendingStocks from "../components/TrendingStocks";
+import LiveActivityFeed from "../components/LiveActivityFeed";
 import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
 
 export default function Dashboard() {
