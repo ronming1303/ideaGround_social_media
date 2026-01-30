@@ -7,9 +7,10 @@ import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { Play, TrendingUp, TrendingDown, Clock, Eye, Heart, Sparkles, ArrowUpRight, Briefcase } from "lucide-react";
+import { Play, TrendingUp, TrendingDown, Clock, Eye, Heart, Sparkles, ArrowUpRight, Briefcase, RefreshCw } from "lucide-react";
 import TrendingTicker from "../components/TrendingTicker";
 import TrendingStocks from "../components/TrendingStocks";
+import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -17,15 +18,9 @@ export default function Dashboard() {
   const [creators, setCreators] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("all");
-  const [refreshKey, setRefreshKey] = useState(0);
   const [portfolioPerformance, setPortfolioPerformance] = useState(null);
 
-  useEffect(() => {
-    fetchData();
-    fetchPortfolioPerformance();
-  }, [refreshKey]);
-
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const [videosRes, creatorsRes] = await Promise.all([
         axios.get(`${API}/videos`, { withCredentials: true }),
@@ -35,13 +30,14 @@ export default function Dashboard() {
       setCreators(creatorsRes.data);
     } catch (error) {
       console.error("Error fetching data:", error);
-      toast.error("Failed to load content");
+      // Only show toast on initial load, not on poll failures
+      if (loading) toast.error("Failed to load content");
     } finally {
       setLoading(false);
     }
-  };
+  }, [loading]);
 
-  const fetchPortfolioPerformance = async () => {
+  const fetchPortfolioPerformance = useCallback(async () => {
     try {
       const response = await axios.get(`${API}/portfolio/performance`, { withCredentials: true });
       setPortfolioPerformance(response.data);
@@ -49,11 +45,27 @@ export default function Dashboard() {
       // User might not be authenticated, that's okay
       console.log("Portfolio performance not available");
     }
-  };
+  }, []);
+
+  // Initial fetch
+  useEffect(() => {
+    fetchData();
+    fetchPortfolioPerformance();
+  }, []);
+
+  // Auto-refresh polling (every 15 seconds)
+  // TODO: Replace with WebSocket for real-time updates
+  const { refresh: manualRefresh, lastUpdated } = useDataSync(
+    useCallback(async () => {
+      await Promise.all([fetchData(), fetchPortfolioPerformance()]);
+    }, [fetchData, fetchPortfolioPerformance]),
+    POLL_INTERVALS.NORMAL,
+    !loading // Only poll after initial load
+  );
 
   const handlePriceRefresh = useCallback(() => {
-    setRefreshKey(k => k + 1);
-  }, []);
+    manualRefresh();
+  }, [manualRefresh]);
 
   const formatViews = (views) => {
     if (views >= 1000000) return `${(views / 1000000).toFixed(1)}M`;
