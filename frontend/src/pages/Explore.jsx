@@ -9,7 +9,7 @@ import { Badge } from "../components/ui/badge";
 import { Input } from "../components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { 
-  Search, Play, Eye, Heart, Clock, TrendingUp, Users, Sparkles,
+  Search, Play, Eye, Heart, Clock, TrendingUp, TrendingDown, Users, Sparkles,
   Mic, Music, Palette, GraduationCap, MoreHorizontal, Utensils, Plane, Cpu, RefreshCw
 } from "lucide-react";
 import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
