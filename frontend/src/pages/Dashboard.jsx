@@ -6,8 +6,7 @@ import { toast } from "sonner";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { Play, TrendingUp, TrendingDown, Clock, Eye, Heart, Sparkles, ArrowUpRight, Briefcase, RefreshCw, Activity, DollarSign } from "lucide-react";
+import { Play, TrendingUp, TrendingDown, Eye, Heart, Sparkles, ArrowUpRight, Briefcase } from "lucide-react";
 import TrendingTicker from "../components/TrendingTicker";
 import TrendingStocks from "../components/TrendingStocks";
 import LiveActivityFeed from "../components/LiveActivityFeed";
@@ -18,7 +17,6 @@ export default function Dashboard() {
   const [videos, setVideos] = useState([]);
   const [creators, setCreators] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("all");
   const [portfolioPerformance, setPortfolioPerformance] = useState(null);
 
   const fetchData = useCallback(async () => {
