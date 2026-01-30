@@ -1834,6 +1834,181 @@ async def get_trending_stocks():
         "timestamp": datetime.now(timezone.utc).isoformat()
     }
 
+@api_router.get("/market-overview")
+async def get_market_overview():
+    """
+    Comprehensive market overview with all investment metrics.
+    Returns 8 categories for the Market Activity dashboard.
+    """
+    from datetime import timedelta
+    
+    videos = await db.videos.find({}, {"_id": 0}).to_list(100)
+    
+    # Batch fetch creators
+    creator_ids = list(set(v["creator_id"] for v in videos if "creator_id" in v))
+    creators = await db.creators.find({"creator_id": {"$in": creator_ids}}, {"_id": 0}).to_list(len(creator_ids))
+    creator_map = {c["creator_id"]: c for c in creators}
+    
+    # Enrich videos with creator data and calculate metrics
+    for video in videos:
+        video["creator"] = creator_map.get(video.get("creator_id"))
+        
+        # Calculate scarcity percentage
+        total = video.get("total_shares", 100)
+        available = video.get("available_shares", 100)
+        video["shares_sold_percent"] = ((total - available) / total) * 100 if total > 0 else 0
+        
+        # Calculate early bonus tier
+        sold_pct = video["shares_sold_percent"]
+        if sold_pct < 10:
+            video["early_bonus"] = 2.5
+            video["early_bonus_tier"] = "Diamond"
+        elif sold_pct < 20:
+            video["early_bonus"] = 2.0
+            video["early_bonus_tier"] = "Gold"
+        elif sold_pct < 30:
+            video["early_bonus"] = 1.5
+            video["early_bonus_tier"] = "Silver"
+        else:
+            video["early_bonus"] = None
+            video["early_bonus_tier"] = None
+        
+        # Calculate value ratio (views per dollar of share price)
+        views = video.get("views", 0)
+        price = video.get("share_price", 10)
+        video["value_ratio"] = views / price if price > 0 else 0
+        
+        # Calculate ROI since initial price ($10)
+        initial_price = 10.0
+        current_price = video.get("share_price", 10)
+        video["roi_percent"] = ((current_price - initial_price) / initial_price) * 100
+    
+    # Helper to format video for response
+    def format_video(v, extra_fields=None):
+        result = {
+            "video_id": v["video_id"],
+            "title": v["title"][:40],
+            "thumbnail": v["thumbnail"],
+            "share_price": v.get("share_price", 10.0),
+            "price_change_percent": v.get("last_price_change_percent", 0),
+            "shares_sold_percent": v.get("shares_sold_percent", 0),
+            "views": v.get("views", 0),
+            "ticker": v.get("creator", {}).get("stock_symbol", "VID") if v.get("creator") else "VID",
+            "creator_name": v.get("creator", {}).get("name", "Unknown") if v.get("creator") else "Unknown"
+        }
+        if extra_fields:
+            result.update(extra_fields)
+        return result
+    
+    # === SECTION 1: PRICE MOVEMENT ===
+    
+    # Top Gainers - highest positive price change
+    by_price_change = sorted(videos, key=lambda v: v.get("last_price_change_percent", 0), reverse=True)
+    top_gainers = [format_video(v) for v in by_price_change if v.get("last_price_change_percent", 0) > 0][:3]
+    
+    # Top Losers - highest negative price change (potential dip buys)
+    top_losers = [format_video(v) for v in reversed(by_price_change) if v.get("last_price_change_percent", 0) < 0][:3]
+    
+    # Hot Stocks - highest scarcity (most shares sold)
+    by_scarcity = sorted(videos, key=lambda v: v.get("shares_sold_percent", 0), reverse=True)
+    hot_stocks = [format_video(v) for v in by_scarcity[:3]]
+    
+    # === SECTION 2: INVESTMENT OPPORTUNITIES ===
+    
+    # Early Bonus - videos with bonus still available (< 30% sold)
+    early_bonus_videos = [v for v in videos if v.get("early_bonus") is not None]
+    early_bonus_videos = sorted(early_bonus_videos, key=lambda v: v.get("early_bonus", 0), reverse=True)
+    early_bonus = [format_video(v, {"early_bonus": v["early_bonus"], "early_tier": v["early_bonus_tier"]}) for v in early_bonus_videos[:3]]
+    
+    # Undervalued - highest views per dollar (value ratio)
+    by_value = sorted(videos, key=lambda v: v.get("value_ratio", 0), reverse=True)
+    undervalued = [format_video(v, {"value_ratio": v["value_ratio"]}) for v in by_value[:3]]
+    
+    # Best ROI - highest price increase since launch
+    by_roi = sorted(videos, key=lambda v: v.get("roi_percent", 0), reverse=True)
+    best_roi = [format_video(v, {"roi_percent": v["roi_percent"]}) for v in by_roi if v.get("roi_percent", 0) > 0][:3]
+    
+    # New Listings - most recently created
+    by_date = sorted(videos, key=lambda v: v.get("created_at", ""), reverse=True)
+    new_listings = [format_video(v, {"created_at": v.get("created_at")}) for v in by_date[:3]]
+    
+    # Most Traded - videos with most transactions in last 24h
+    twenty_four_hours_ago = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
+    recent_txns = await db.transactions.find(
+        {"created_at": {"$gte": twenty_four_hours_ago}, "transaction_type": {"$in": ["buy_share", "sell_share"]}},
+        {"_id": 0, "video_id": 1}
+    ).to_list(1000)
+    
+    # Count transactions per video
+    txn_counts = {}
+    for txn in recent_txns:
+        vid = txn.get("video_id")
+        if vid:
+            txn_counts[vid] = txn_counts.get(vid, 0) + 1
+    
+    # Sort videos by transaction count
+    for v in videos:
+        v["txn_count_24h"] = txn_counts.get(v["video_id"], 0)
+    
+    by_trades = sorted(videos, key=lambda v: v.get("txn_count_24h", 0), reverse=True)
+    most_traded = [format_video(v, {"txn_count_24h": v["txn_count_24h"]}) for v in by_trades if v.get("txn_count_24h", 0) > 0][:3]
+    
+    return {
+        "price_movement": {
+            "top_gainers": {
+                "title": "Top Gainers",
+                "qualifier": "Rising fast today",
+                "icon": "trending-up",
+                "items": top_gainers
+            },
+            "top_losers": {
+                "title": "Top Losers",
+                "qualifier": "Buy the dip?",
+                "icon": "trending-down",
+                "items": top_losers
+            },
+            "hot_stocks": {
+                "title": "Hot Stocks",
+                "qualifier": "Selling out fast",
+                "icon": "flame",
+                "items": hot_stocks
+            }
+        },
+        "opportunities": {
+            "early_bonus": {
+                "title": "Early Bonus",
+                "qualifier": "Get 1.5-2.5x on profits",
+                "icon": "star",
+                "items": early_bonus
+            },
+            "undervalued": {
+                "title": "Undervalued",
+                "qualifier": "High views, low price",
+                "icon": "gem",
+                "items": undervalued
+            },
+            "best_roi": {
+                "title": "Best ROI",
+                "qualifier": "Proven winners",
+                "icon": "trophy",
+                "items": best_roi
+            },
+            "new_listings": {
+                "title": "New Listings",
+                "qualifier": "Fresh content, get in early",
+                "icon": "sparkles",
+                "items": new_listings
+            },
+            "most_traded": {
+                "title": "Most Traded",
+                "qualifier": "Where the action is",
+                "icon": "zap",
+                "items": most_traded
+            }
+        },
+        "timestamp": datetime.now(timezone.utc).isoformat()
+    }
+
 # ==================== LIVE ACTIVITY FEED ====================
 
 @api_router.get("/activity/live")
