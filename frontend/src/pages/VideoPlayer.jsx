@@ -418,7 +418,7 @@ export default function VideoPlayer() {
 
                     {/* Share selection */}
                     <div>
-                      <label className="text-sm font-medium mb-3 block">How many shares?</label>
+                      <label className="text-sm font-medium mb-2 block">Number of Shares</label>
                       <div className="flex items-center gap-4">
                         <Slider
                           data-testid="shares-slider"
@@ -434,31 +434,25 @@ export default function VideoPlayer() {
                           type="number"
                           value={sharesToBuy}
                           onChange={(e) => setSharesToBuy(Math.min(Math.max(1, Number(e.target.value)), video.available_shares))}
-                          className="w-20 text-center font-mono text-lg"
+                          className="w-20 text-center font-mono"
                         />
                       </div>
                     </div>
 
                     {/* Order Summary */}
-                    <div className="p-4 rounded-xl bg-gradient-to-br from-orange-500/10 to-orange-500/5 border border-orange-500/20">
+                    <div className="p-4 rounded-xl bg-muted/50">
                       <div className="flex justify-between mb-2">
                         <span className="text-muted-foreground">Price per share</span>
                         <span className="font-mono">${video.share_price.toFixed(2)}</span>
                       </div>
                       <div className="flex justify-between mb-2">
-                        <span className="text-muted-foreground">Quantity</span>
-                        <span className="font-mono">x{sharesToBuy}</span>
+                        <span className="text-muted-foreground">Shares</span>
+                        <span className="font-mono">× {sharesToBuy}</span>
                       </div>
-                      <div className="flex justify-between pt-3 border-t border-orange-500/20">
-                        <span className="font-bold">Total</span>
-                        <span className="font-heading font-bold text-2xl text-orange-600">${(video.share_price * sharesToBuy).toFixed(2)}</span>
+                      <div className="flex justify-between pt-2 border-t border-border">
+                        <span className="font-medium">Total</span>
+                        <span className="font-heading font-bold text-xl">${(video.share_price * sharesToBuy).toFixed(2)}</span>
                       </div>
-                    </div>
-
-                    {/* Wallet Balance */}
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Your wallet balance:</span>
-                      <span className="font-mono font-medium">${user?.wallet_balance?.toFixed(2) || '0.00'}</span>
                     </div>
 
                     {/* Confirm Button */}
@@ -466,17 +460,21 @@ export default function VideoPlayer() {
                       data-testid="confirm-buy-btn"
                       onClick={handleBuyShares}
                       disabled={buying || (user?.wallet_balance < video.share_price * sharesToBuy)}
-                      className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl py-6 text-lg font-bold"
+                      className="w-full bg-primary hover:bg-primary/90 text-white rounded-full py-6"
                     >
-                      {buying ? "Processing..." : `Confirm Purchase`}
+                      {buying ? "Processing..." : `Buy ${sharesToBuy} Shares`}
                     </Button>
+
+                    <p className="text-xs text-muted-foreground text-center">
+                      Your balance: ${user?.wallet_balance?.toFixed(2) || '0.00'}
+                    </p>
                   </div>
                 </DialogContent>
               </Dialog>
 
-              {/* Quick info */}
+              {/* Simple info text */}
               <p className="text-xs text-muted-foreground text-center mt-3">
-                Price updates when people buy or sell
+                Prices change based on supply & demand
               </p>
             </CardContent>
           </Card>
