@@ -201,11 +201,11 @@ export default function WhyIdeaGround() {
               {/* Visual Bar */}
               <div className="w-full lg:w-2/3">
                 <div className="h-16 rounded-2xl overflow-hidden flex shadow-lg">
-                  <div className="w-[50%] bg-gradient-to-r from-orange-500 to-orange-600 flex items-center justify-center">
-                    <span className="text-white font-bold text-lg">Creators 50%</span>
+                  <div className="w-[50%] bg-gradient-to-r from-orange-500 to-orange-600 flex items-center justify-center px-2">
+                    <span className="text-white font-bold text-sm md:text-base text-center leading-tight">Creators<br className="md:hidden" /> 80% → 50%</span>
                   </div>
-                  <div className="w-[40%] bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center">
-                    <span className="text-white font-bold text-lg">Investors 40%</span>
+                  <div className="w-[40%] bg-gradient-to-r from-emerald-500 to-teal-500 flex items-center justify-center px-2">
+                    <span className="text-white font-bold text-sm md:text-base text-center leading-tight">Investors<br className="md:hidden" /> 10% → 40%</span>
                   </div>
                   <div className="w-[10%] bg-gradient-to-r from-slate-500 to-slate-600 flex items-center justify-center">
                     <span className="text-white font-bold text-sm">10%</span>
@@ -213,23 +213,32 @@ export default function WhyIdeaGround() {
                 </div>
                 <div className="flex justify-between mt-3 text-sm text-muted-foreground">
                   <span>Content creators get the largest share</span>
-                  <span>Platform only takes 10%</span>
+                  <span>Community takes 10%</span>
                 </div>
               </div>
               
               {/* Legend */}
               <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-4 h-4 rounded bg-gradient-to-r from-orange-500 to-orange-600"></div>
-                  <span className="font-medium">Creators - Build the content</span>
+                <div className="flex items-start gap-3">
+                  <div className="w-4 h-4 rounded bg-gradient-to-r from-orange-500 to-orange-600 mt-1 flex-shrink-0"></div>
+                  <div>
+                    <span className="font-medium">Creators - Build the content</span>
+                    <p className="text-xs text-muted-foreground">Starts at 80%, down to 50% on IPOs</p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-4 h-4 rounded bg-gradient-to-r from-emerald-500 to-teal-500"></div>
-                  <span className="font-medium">Investors - Fund the growth</span>
+                <div className="flex items-start gap-3">
+                  <div className="w-4 h-4 rounded bg-gradient-to-r from-emerald-500 to-teal-500 mt-1 flex-shrink-0"></div>
+                  <div>
+                    <span className="font-medium">Investors - Fund the growth</span>
+                    <p className="text-xs text-muted-foreground">Starts at 10%, up to 40% on IPOs</p>
+                  </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-4 h-4 rounded bg-gradient-to-r from-slate-500 to-slate-600"></div>
-                  <span className="font-medium">Platform - Maintain the system</span>
+                <div className="flex items-start gap-3">
+                  <div className="w-4 h-4 rounded bg-gradient-to-r from-slate-500 to-slate-600 mt-1 flex-shrink-0"></div>
+                  <div>
+                    <span className="font-medium">Community - Market makers</span>
+                    <p className="text-xs text-muted-foreground">Fixed 10% for ecosystem growth</p>
+                  </div>
                 </div>
               </div>
             </div>
