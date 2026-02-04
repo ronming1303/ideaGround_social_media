@@ -213,7 +213,7 @@ export default function WhyIdeaGround() {
                 </div>
                 <div className="flex justify-between mt-3 text-sm text-muted-foreground">
                   <span>Content creators get the largest share</span>
-                  <span>Community takes 10%</span>
+                  <span>Fans & community share the rest</span>
                 </div>
               </div>
               
@@ -234,14 +234,23 @@ export default function WhyIdeaGround() {
               </div>
             </div>
             
+            {/* Investor Definition */}
+            <div className="mt-8 p-4 rounded-xl bg-emerald-50 border border-emerald-200">
+              <p className="text-sm text-emerald-700 leading-relaxed">
+                <strong className="text-emerald-800">Investors (10% → 40%):</strong> Fans and early supporters who back content they believe in. 
+                They put money in, expecting returns as videos grow. If creators choose to divest (80% → 50%), 
+                investor share increases proportionally — rewarding those who discovered value early.
+              </p>
+            </div>
+            
             {/* Community Definition */}
-            <div className="mt-8 p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <div className="mt-3 p-4 rounded-xl bg-slate-50 border border-slate-200">
               <p className="text-sm text-slate-600 leading-relaxed">
-                <strong className="text-slate-800">Community (10%):</strong> Protocol participants who ensure fair, transparent video markets — 
-                <span className="text-slate-700"> Curators</span> (discover & verify quality content), 
-                <span className="text-slate-700"> Validators</span> (audit engagement metrics & revenue), 
-                <span className="text-slate-700"> Market Makers</span> (provide liquidity & price stability), and 
-                <span className="text-slate-700"> Governance</span> (vote on platform rules & disputes).
+                <strong className="text-slate-800">Community (10%):</strong> Protocol participants who contribute effort, not capital — 
+                <span className="text-slate-700"> Curators</span> (discover quality), 
+                <span className="text-slate-700"> Validators</span> (audit metrics), 
+                <span className="text-slate-700"> Market Makers</span> (provide liquidity), and 
+                <span className="text-slate-700"> Governance</span> (vote on rules).
               </p>
             </div>
           </CardContent>
