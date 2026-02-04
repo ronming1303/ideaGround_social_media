@@ -98,8 +98,8 @@ export default function WhyIdeaGround() {
   ];
 
   const comparison = [
-    { feature: "Creator revenue share", traditional: "45-55%", ideaground: "50%" },
-    { feature: "Fan earnings", traditional: "0%", ideaground: "40% of revenue" },
+    { feature: "Creator revenue share", traditional: "45-55%", ideaground: "80% (can sell 30% stake)" },
+    { feature: "Fan earnings", traditional: "0%", ideaground: "10% → 40% of revenue" },
     { feature: "Early supporter rewards", traditional: "None", ideaground: "Up to 2x bonus" },
     { feature: "Revenue transparency", traditional: "Hidden", ideaground: "Fully visible" },
     { feature: "Investment opportunity", traditional: "None", ideaground: "Buy video shares" },
