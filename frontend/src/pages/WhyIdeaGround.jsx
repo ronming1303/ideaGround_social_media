@@ -410,49 +410,6 @@ export default function WhyIdeaGround() {
           </CardContent>
         </Card>
       </div>
-        
-        {/* The Big Pitch */}
-        <Card className="border-0 bg-gradient-to-br from-slate-800 via-slate-900 to-slate-800 overflow-hidden">
-          <CardContent className="p-8 lg:p-12 text-center relative">
-            <div className="absolute inset-0 opacity-20">
-              <div className="absolute inset-0" style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-              }}></div>
-            </div>
-            <div className="relative">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-400 text-sm font-medium mb-6">
-                <Sparkles className="w-4 h-4" />
-                A New Paradigm
-              </div>
-              <h3 className="font-heading text-2xl md:text-4xl font-bold text-white mb-6">
-                The New Asset Class
-              </h3>
-              <p className="text-slate-300 max-w-3xl mx-auto text-lg leading-relaxed mb-6">
-                Bigger than crypto. More tangible than NFTs. <strong className="text-white">Human creativity</strong> — 
-                the one thing AI cannot replicate — becomes a <strong className="text-white">digital asset</strong>, 
-                backed by real engagement, real revenue, and secured on a <strong className="text-amber-400">transparent blockchain protocol</strong>.
-              </p>
-              <div className="grid md:grid-cols-3 gap-4 max-w-2xl mx-auto mb-8">
-                <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                  <p className="text-amber-400 font-bold text-xl">Creativity</p>
-                  <p className="text-slate-400 text-sm">as collateral</p>
-                </div>
-                <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                  <p className="text-emerald-400 font-bold text-xl">Revenue</p>
-                  <p className="text-slate-400 text-sm">as backing</p>
-                </div>
-                <div className="p-4 rounded-xl bg-white/5 border border-white/10">
-                  <p className="text-blue-400 font-bold text-xl">Blockchain</p>
-                  <p className="text-slate-400 text-sm">as security</p>
-                </div>
-              </div>
-              <p className="text-white font-semibold text-xl">
-                Your creativity isn&apos;t a hobby anymore. <span className="text-amber-400">It&apos;s your equity.</span>
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
 
       {/* CTA Section */}
       <div className="px-8 lg:px-12 max-w-7xl mx-auto pb-20">
