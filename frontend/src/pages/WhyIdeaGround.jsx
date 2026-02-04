@@ -36,13 +36,13 @@ export default function WhyIdeaGround() {
     {
       icon: Coins,
       title: "Creators keep more",
-      description: "50% of video revenue goes directly to creators - no hidden fees or complicated terms",
+      description: "80% of video revenue goes directly to creators - no hidden fees or complicated terms",
       color: "from-orange-500 to-amber-500"
     },
     {
       icon: HandCoins,
       title: "Fans earn too",
-      description: "40% of revenue is shared with shareholders - your support literally pays off",
+      description: "10% of revenue is shared with shareholders - your support literally pays off",
       color: "from-emerald-500 to-teal-500"
     },
     {
