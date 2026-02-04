@@ -235,11 +235,10 @@ export default function WhyIdeaGround() {
             </div>
             
             {/* Investor Definition */}
-            <div className="mt-8 p-4 rounded-xl bg-emerald-50 border border-emerald-200">
-              <p className="text-sm text-emerald-700 leading-relaxed">
-                <strong className="text-emerald-800">Investors (10% → 40%):</strong> Fans and early supporters who back content they believe in. 
-                They put money in, expecting returns as videos grow. If creators choose to divest (80% → 50%), 
-                investor share increases proportionally — rewarding those who discovered value early.
+            <div className="mt-8 p-4 rounded-xl bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200">
+              <p className="text-sm text-emerald-800 leading-relaxed">
+                <strong className="text-emerald-900">💰 Investors (10% → 40%):</strong> You spot a rising star. You invest early. As the creator grows and chooses to unlock more shares for fans, your slice of the pie grows too — from 10% up to 40%. 
+                <span className="font-medium"> Early believers win big.</span>
               </p>
             </div>
             
