@@ -359,6 +359,104 @@ export default function WhyIdeaGround() {
         </div>
       </div>
 
+      {/* The AI-Proof Opportunity Section */}
+      <div className="px-8 lg:px-12 max-w-7xl mx-auto mb-20">
+        <Card className="border-0 overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+          <CardContent className="p-8 lg:p-12">
+            {/* Header */}
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-400 text-sm font-medium mb-4">
+                <Brain className="w-4 h-4" />
+                The Human Edge
+              </div>
+              <h2 className="font-heading text-3xl md:text-4xl font-bold text-white mb-4">
+                Your Creativity is <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500">AI-Proof</span>
+              </h2>
+              <p className="text-slate-400 max-w-2xl mx-auto text-lg">
+                AI is replacing jobs — that&apos;s inevitable. But it can never replace human creativity, insight, or the ability to recognize what&apos;s truly valuable.
+              </p>
+            </div>
+            
+            {/* Three Pillars */}
+            <div className="grid md:grid-cols-3 gap-6 mb-12">
+              <div className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-amber-500/30 transition-colors">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center mb-4">
+                  <Lightbulb className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="font-heading font-semibold text-white text-lg mb-2">Creativity Can&apos;t Be Coded</h3>
+                <p className="text-slate-400 text-sm">
+                  Storytelling, original thought, authentic perspective — these remain exclusively human. Your creativity is your moat.
+                </p>
+              </div>
+              
+              <div className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-emerald-500/30 transition-colors">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mb-4">
+                  <Target className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="font-heading font-semibold text-white text-lg mb-2">Low Barrier, High Potential</h3>
+                <p className="text-slate-400 text-sm">
+                  No million followers needed. Just valuable contributions — create, comment, curate, or invest. Everyone can earn.
+                </p>
+              </div>
+              
+              <div className="p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-purple-500/30 transition-colors">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-4">
+                  <Globe className="w-6 h-6 text-white" />
+                </div>
+                <h3 className="font-heading font-semibold text-white text-lg mb-2">Democratized Earnings</h3>
+                <p className="text-slate-400 text-sm">
+                  Today&apos;s platforms give 90% of revenue to 1% of creators. We make every participant a stakeholder in success.
+                </p>
+              </div>
+            </div>
+            
+            {/* The Problem vs Solution */}
+            <div className="grid md:grid-cols-2 gap-6 mb-12">
+              <div className="p-6 rounded-2xl bg-red-500/10 border border-red-500/20">
+                <h4 className="font-heading font-semibold text-red-400 mb-3 flex items-center gap-2">
+                  <XCircle className="w-5 h-5" /> The Old World
+                </h4>
+                <ul className="space-y-2 text-slate-400 text-sm">
+                  <li>• Traditional jobs disappearing to automation</li>
+                  <li>• Social platforms extract value, users get nothing</li>
+                  <li>• Only mega-influencers can monetize</li>
+                  <li>• Your engagement makes others rich</li>
+                </ul>
+              </div>
+              
+              <div className="p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
+                <h4 className="font-heading font-semibold text-emerald-400 mb-3 flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5" /> The ideaGround Way
+                </h4>
+                <ul className="space-y-2 text-slate-400 text-sm">
+                  <li>• Turn creativity into sustainable income</li>
+                  <li>• Every contribution earns real rewards</li>
+                  <li>• Transparent, algorithmic profit-sharing</li>
+                  <li>• Your taste and judgment become assets</li>
+                </ul>
+              </div>
+            </div>
+            
+            {/* The Big Pitch */}
+            <div className="text-center p-8 rounded-2xl bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-amber-500/20 border border-amber-500/30">
+              <Rocket className="w-10 h-10 text-amber-400 mx-auto mb-4" />
+              <h3 className="font-heading text-2xl md:text-3xl font-bold text-white mb-4">
+                The Next-Gen Asset Class
+              </h3>
+              <p className="text-slate-300 max-w-3xl mx-auto text-lg leading-relaxed">
+                We&apos;re not just building a platform — we&apos;re creating a <span className="text-amber-400 font-semibold">once-in-a-generation opportunity</span>. 
+                In an era where AI disrupts traditional work, ideaGround transforms what machines can&apos;t replicate — 
+                <span className="text-white font-medium"> your creativity, your taste, your human insight</span> — 
+                into your most valuable, income-generating asset.
+              </p>
+              <p className="text-amber-400 font-semibold mt-4 text-lg">
+                Your creativity isn&apos;t a hobby anymore. It&apos;s your career.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
       {/* CTA Section */}
       <div className="px-8 lg:px-12 max-w-7xl mx-auto pb-20">
         <Card className="border-0 bg-gradient-to-br from-orange-500 to-orange-600 overflow-hidden">
