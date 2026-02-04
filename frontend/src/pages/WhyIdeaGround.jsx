@@ -1,7 +1,8 @@
 import { 
   TrendingUp, Users, DollarSign, Shield, Zap, Heart,
   PiggyBank, Award, BarChart3, Lock, Sparkles, ArrowRight,
-  CheckCircle2, XCircle, Scale, Coins, HandCoins, Share2
+  CheckCircle2, XCircle, Scale, Coins, HandCoins, Share2,
+  Brain, Lightbulb, Target, Globe, Rocket
 } from "lucide-react";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
