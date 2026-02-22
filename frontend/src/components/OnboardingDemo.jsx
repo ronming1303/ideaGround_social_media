@@ -87,11 +87,7 @@ const SlideVisual = ({ type, isActive }) => {
             <div className="absolute inset-4 border-2 border-white/30 rounded-2xl"></div>
             {/* Logo card */}
             <div className="absolute inset-8 bg-white rounded-2xl shadow-2xl flex items-center justify-center">
-              <img 
-                src="https://customer-assets.emergentagent.com/job_ideaground/artifacts/iyc80xh6_image.png" 
-                alt="ideaGround" 
-                className="w-20 h-20 object-contain"
-              />
+              <span className="font-heading font-bold text-2xl gradient-text">ideaGround</span>
             </div>
             {/* Floating badges */}
             <div className="absolute -top-2 -right-2 w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-xl animate-bounce">

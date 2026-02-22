@@ -116,14 +116,6 @@ export default function Sidebar({ className }) {
       {/* Sticky Logo Header */}
       <div className="sticky top-0 z-10 p-6 border-b border-border bg-card/95 backdrop-blur-sm">
         <Link to="/dashboard" className="flex items-center gap-3 group">
-          <div className="relative">
-            <img 
-              src="https://customer-assets.emergentagent.com/job_ideaground/artifacts/iyc80xh6_image.png" 
-              alt="ideaGround Logo" 
-              className="w-10 h-10 object-contain transition-transform group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-primary/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          </div>
           <span className="font-heading font-bold text-xl gradient-text">ideaGround</span>
         </Link>
       </div>

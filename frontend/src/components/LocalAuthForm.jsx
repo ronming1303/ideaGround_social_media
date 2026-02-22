@@ -77,11 +77,6 @@ export default function LocalAuthForm({ onSuccess }) {
     <Card className="w-full max-w-md border-border/50 shadow-xl">
       <CardHeader className="text-center pb-2">
         <div className="flex items-center justify-center gap-3 mb-4">
-          <img 
-            src="https://customer-assets.emergentagent.com/job_ideaground/artifacts/iyc80xh6_image.png" 
-            alt="ideaGround Logo" 
-            className="w-12 h-12 object-contain"
-          />
           <CardTitle className="font-heading text-2xl gradient-text">ideaGround</CardTitle>
         </div>
         <CardDescription>Local Development Mode</CardDescription>

@@ -1,7 +1,10 @@
 {
   "permissions": {
     "allow": [
-      "Bash(open:*)"
+      "Bash(open:*)",
+      "Bash(DOCKER_HOST=unix:///Users/ruming/.docker/run/docker.sock docker compose:*)",
+      "Bash(curl:*)",
+      "Bash(python3:*)"
     ]
   }
 }

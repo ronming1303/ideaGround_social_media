@@ -46,12 +46,7 @@ export default function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-2">
-              <img 
-                src="https://customer-assets.emergentagent.com/job_ideaground/artifacts/iyc80xh6_image.png" 
-                alt="ideaGround Logo" 
-                className="w-8 h-8 object-contain"
-              />
-              <span className="font-heading font-bold text-xl">ideaGround</span>
+              <span className="font-heading font-bold text-xl gradient-text">ideaGround</span>
             </div>
             <div className="flex items-center gap-4">
               <Link 
@@ -228,11 +223,6 @@ export default function Landing() {
       <footer className="py-12 px-4 border-t border-border">
         <div className="max-w-7xl mx-auto text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <img 
-              src="https://customer-assets.emergentagent.com/job_ideaground/artifacts/iyc80xh6_image.png" 
-              alt="ideaGround Logo" 
-              className="w-8 h-8 object-contain"
-            />
             <span className="font-heading font-bold text-xl">ideaGround</span>
           </div>
           <p className="text-sm text-muted-foreground">
