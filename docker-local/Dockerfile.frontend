@@ -21,6 +21,9 @@ COPY frontend/package.json ./
 # Install dependencies with npm (more reliable than yarn in Docker)
 RUN npm install --legacy-peer-deps --no-audit --no-fund --loglevel=error
 
+# Fix ajv version conflict with react-scripts
+RUN npm install ajv@^8 --legacy-peer-deps --no-audit --no-fund --loglevel=error
+
 # Copy all source files
 COPY frontend/ ./
 
