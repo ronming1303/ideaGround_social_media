@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import { API } from "../App";
 import { TrendingUp, TrendingDown } from "lucide-react";
@@ -39,9 +40,10 @@ export default function TrendingTicker() {
           style={{ animationDuration: `${tickerItems.length * 3}s` }}
         >
           {duplicatedItems.map((item, index) => (
-            <div 
+            <Link
               key={`${item.symbol}-${index}`}
-              className="flex items-center gap-2 px-6 border-r border-border/30"
+              to={`/video/${item.video_id}`}
+              className="flex items-center gap-2 px-6 border-r border-border/30 hover:bg-accent/50 transition-colors cursor-pointer"
             >
               <span className="font-mono font-semibold text-sm">{item.symbol}</span>
               <span className="text-sm text-muted-foreground">${item.price.toFixed(2)}</span>
@@ -58,7 +60,7 @@ export default function TrendingTicker() {
                 )}
                 {item.is_positive ? "+" : ""}{item.change_percent.toFixed(1)}%
               </span>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
