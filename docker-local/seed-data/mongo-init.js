@@ -116,8 +116,8 @@ const videos = [
   {
     video_id: "vid_recipe",
     title: "5-Minute Pasta That Will Blow Your Mind",
-    thumbnail: "https://img.youtube.com/vi/ZiO9ELGPOrw/hqdefault.jpg",
-    video_url: "https://www.youtube.com/embed/ZiO9ELGPOrw",
+    thumbnail: "https://img.youtube.com/vi/VmRIBe4OYpg/hqdefault.jpg",
+    video_url: "https://www.youtube.com/embed/VmRIBe4OYpg",
     creator_id: "creator_foodie",
     category: "Food",
     video_type: "short",
@@ -264,6 +264,82 @@ const videos = [
     last_price_change: -1.25,
     last_price_change_percent: -6.1,
     created_at: new Date().toISOString()
+  },
+  {
+    video_id: "vid_podcast_economy",
+    title: "How The Economic Machine Works - Ray Dalio",
+    thumbnail: "https://img.youtube.com/vi/PHe0bXAIuk0/hqdefault.jpg",
+    video_url: "https://www.youtube.com/embed/PHe0bXAIuk0",
+    creator_id: "creator_podcast",
+    category: "Podcast",
+    video_type: "full",
+    duration_minutes: 31,
+    share_price: 24.50,
+    total_shares: 100,
+    available_shares: 38,
+    views: 2100000,
+    likes: 145000,
+    ticker_symbol: "TALK_ECON01",
+    last_price_change: 3.00,
+    last_price_change_percent: 13.9,
+    created_at: new Date().toISOString()
+  },
+  {
+    video_id: "vid_food_ramen",
+    title: "How to Make Perfect Ramen from Scratch",
+    thumbnail: "https://img.youtube.com/vi/7z1Ygygfquw/hqdefault.jpg",
+    video_url: "https://www.youtube.com/embed/7z1Ygygfquw",
+    creator_id: "creator_foodie",
+    category: "Food",
+    video_type: "full",
+    duration_minutes: 20,
+    share_price: 10.75,
+    total_shares: 100,
+    available_shares: 66,
+    views: 860000,
+    likes: 71000,
+    ticker_symbol: "FOOD_RAMEN01",
+    last_price_change: 0.50,
+    last_price_change_percent: 4.9,
+    created_at: new Date().toISOString()
+  },
+  {
+    video_id: "vid_tech_short01",
+    title: "This One Keyboard Shortcut Saves Hours",
+    thumbnail: "https://img.youtube.com/vi/2PZobQd9cMI/hqdefault.jpg",
+    video_url: "https://www.youtube.com/embed/2PZobQd9cMI",
+    creator_id: "creator_techguru",
+    category: "Tech",
+    video_type: "short",
+    duration_minutes: 1,
+    share_price: 7.25,
+    total_shares: 100,
+    available_shares: 85,
+    views: 2200000,
+    likes: 175000,
+    ticker_symbol: "TECH_SHORT01",
+    last_price_change: 0.75,
+    last_price_change_percent: 11.5,
+    created_at: new Date().toISOString()
+  },
+  {
+    video_id: "vid_food_short01",
+    title: "3-Ingredient Dessert You Need to Try",
+    thumbnail: "https://img.youtube.com/vi/jl38HGupIeQ/hqdefault.jpg",
+    video_url: "https://www.youtube.com/embed/jl38HGupIeQ",
+    creator_id: "creator_foodie",
+    category: "Food",
+    video_type: "short",
+    duration_minutes: 1,
+    share_price: 6.00,
+    total_shares: 100,
+    available_shares: 90,
+    views: 1600000,
+    likes: 130000,
+    ticker_symbol: "FOOD_SHORT01",
+    last_price_change: -0.25,
+    last_price_change_percent: -4.0,
+    created_at: new Date().toISOString()
   }
 ];
 
@@ -282,5 +358,5 @@ db.transactions.createIndex({ "created_at": -1 });
 db.watchlist.createIndex({ "user_id": 1, "video_id": 1 }, { unique: true });
 
 print("✅ ideaGround database seeded successfully!");
-print("📊 Created: 5 creators, 10 videos");
+print("📊 Created: 5 creators, 16 videos");
 print("🔐 Default users will be created on first login");
