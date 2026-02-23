@@ -551,14 +551,14 @@ export default function VideoPlayer() {
                     <div className="w-3 h-3 rounded-full bg-primary" />
                     <span className="text-sm">Creator</span>
                   </div>
-                  <span className="font-mono text-sm font-medium">50%</span>
+                  <span className="font-mono text-sm font-medium">80%</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-secondary" />
                     <span className="text-sm">Shareholders</span>
                   </div>
-                  <span className="font-mono text-sm font-medium">40%</span>
+                  <span className="font-mono text-sm font-medium">10%</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -570,8 +570,8 @@ export default function VideoPlayer() {
               </div>
               {/* Visual bar */}
               <div className="flex h-2 rounded-full overflow-hidden mt-3">
-                <div className="bg-primary" style={{ width: '50%' }} />
-                <div className="bg-secondary" style={{ width: '40%' }} />
+                <div className="bg-primary" style={{ width: '80%' }} />
+                <div className="bg-secondary" style={{ width: '10%' }} />
                 <div className="bg-muted-foreground" style={{ width: '10%' }} />
               </div>
             </CardContent>
