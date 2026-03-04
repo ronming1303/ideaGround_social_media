@@ -427,20 +427,24 @@ async def google_auth_callback(code: str = None, error: str = None, state: str =
     is_admin = user_email in [e.lower() for e in ADMIN_EMAILS]
 
     # Create or update user in DB
+    user_name = google_user.get("name") or google_user.get("email", "User")
+    encoded_name = user_name.replace(" ", "+")
+    avatar_url = f"https://ui-avatars.com/api/?name={encoded_name}&background=f97316&color=fff"
+
     existing_user = await db.users.find_one({"email": google_user["email"]}, {"_id": 0})
     if existing_user:
         user_id = existing_user["user_id"]
         await db.users.update_one(
             {"user_id": user_id},
-            {"$set": {"name": google_user.get("name"), "picture": google_user.get("picture"), "is_admin": is_admin}},
+            {"$set": {"name": user_name, "picture": avatar_url, "is_admin": is_admin}},
         )
     else:
         user_id = f"user_{uuid.uuid4().hex[:12]}"
         await db.users.insert_one({
             "user_id": user_id,
             "email": google_user["email"],
-            "name": google_user.get("name"),
-            "picture": google_user.get("picture"),
+            "name": user_name,
+            "picture": avatar_url,
             "wallet_balance": 500.00,
             "is_admin": is_admin,
             "subscriptions": [],
