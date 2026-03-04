@@ -29,6 +29,10 @@ services:
       - MONGO_URL=mongodb://mongodb:27017
       - DB_NAME=ideaground
       - LOCAL_AUTH_ENABLED=true
+      - GOOGLE_CLIENT_ID=GOOGLE_CLIENT_ID_REMOVED
+      - GOOGLE_CLIENT_SECRET=GOOGLE_CLIENT_SECRET_REMOVED
+      - GOOGLE_REDIRECT_URI=http://localhost:8080/api/auth/google/callback
+      - FRONTEND_URL=http://localhost:8080
       - CORS_ORIGINS=http://localhost:3000,http://localhost:8080,http://127.0.0.1:3000,http://127.0.0.1:8080
     ports:
       - "127.0.0.1:8001:8001"

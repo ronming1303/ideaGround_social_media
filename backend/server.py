@@ -26,6 +26,12 @@ db = client[os.environ['DB_NAME']]
 # Local Auth Mode (for Docker deployment)
 LOCAL_AUTH_ENABLED = os.environ.get('LOCAL_AUTH_ENABLED', 'false').lower() == 'true'
 
+# Google OAuth configuration
+GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
+GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET', '')
+GOOGLE_REDIRECT_URI = os.environ.get('GOOGLE_REDIRECT_URI', 'http://localhost:8080/api/auth/google/callback')
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:8080')
+
 # Restricted Access - Only these emails can access the app (Cloud mode only)
 ALLOWED_EMAILS = [
     "kshitiz.dadhich2015@gmail.com",
@@ -353,6 +359,118 @@ async def get_optional_user(request: Request) -> Optional[User]:
         return None
 
 # ==================== AUTH ENDPOINTS ====================
+
+@api_router.get("/auth/google")
+async def google_auth_redirect():
+    """Redirect user to Google OAuth consent screen"""
+    import urllib.parse
+    from fastapi.responses import RedirectResponse
+
+    if not GOOGLE_CLIENT_ID:
+        raise HTTPException(status_code=500, detail="Google OAuth not configured")
+
+    params = {
+        "client_id": GOOGLE_CLIENT_ID,
+        "redirect_uri": GOOGLE_REDIRECT_URI,
+        "response_type": "code",
+        "scope": "openid email profile",
+        "access_type": "offline",
+        "prompt": "select_account",
+        "state": secrets.token_urlsafe(16),
+    }
+    url = "https://accounts.google.com/o/oauth2/v2/auth?" + urllib.parse.urlencode(params)
+    return RedirectResponse(url=url)
+
+
+@api_router.get("/auth/google/callback")
+async def google_auth_callback(code: str = None, error: str = None, state: str = None):
+    """Handle Google OAuth callback, create session, redirect to frontend"""
+    from fastapi.responses import RedirectResponse
+
+    if error or not code:
+        return RedirectResponse(url=f"{FRONTEND_URL}/?auth_error={error or 'missing_code'}")
+
+    # Exchange authorization code for access token
+    async with httpx.AsyncClient() as client:
+        token_resp = await client.post(
+            "https://oauth2.googleapis.com/token",
+            data={
+                "code": code,
+                "client_id": GOOGLE_CLIENT_ID,
+                "client_secret": GOOGLE_CLIENT_SECRET,
+                "redirect_uri": GOOGLE_REDIRECT_URI,
+                "grant_type": "authorization_code",
+            },
+        )
+        if token_resp.status_code != 200:
+            logger.error(f"Token exchange failed: {token_resp.text}")
+            return RedirectResponse(url=f"{FRONTEND_URL}/?auth_error=token_exchange_failed")
+
+        access_token = token_resp.json().get("access_token")
+
+        # Fetch user info from Google
+        user_resp = await client.get(
+            "https://www.googleapis.com/oauth2/v2/userinfo",
+            headers={"Authorization": f"Bearer {access_token}"},
+        )
+        if user_resp.status_code != 200:
+            return RedirectResponse(url=f"{FRONTEND_URL}/?auth_error=userinfo_failed")
+
+        google_user = user_resp.json()
+
+    user_email = google_user.get("email", "").lower()
+
+    # Restricted access check
+    if user_email not in [e.lower() for e in ALLOWED_EMAILS]:
+        return RedirectResponse(url=f"{FRONTEND_URL}/?auth_error=access_restricted")
+
+    is_admin = user_email in [e.lower() for e in ADMIN_EMAILS]
+
+    # Create or update user in DB
+    existing_user = await db.users.find_one({"email": google_user["email"]}, {"_id": 0})
+    if existing_user:
+        user_id = existing_user["user_id"]
+        await db.users.update_one(
+            {"user_id": user_id},
+            {"$set": {"name": google_user.get("name"), "picture": google_user.get("picture"), "is_admin": is_admin}},
+        )
+    else:
+        user_id = f"user_{uuid.uuid4().hex[:12]}"
+        await db.users.insert_one({
+            "user_id": user_id,
+            "email": google_user["email"],
+            "name": google_user.get("name"),
+            "picture": google_user.get("picture"),
+            "wallet_balance": 500.00,
+            "is_admin": is_admin,
+            "subscriptions": [],
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        })
+
+    # Create session
+    session_token = f"session_{secrets.token_urlsafe(32)}"
+    expires_at = datetime.now(timezone.utc) + timedelta(days=7)
+    await db.user_sessions.insert_one({
+        "session_id": str(uuid.uuid4()),
+        "user_id": user_id,
+        "session_token": session_token,
+        "expires_at": expires_at.isoformat(),
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    })
+
+    # Set cookie and redirect to frontend dashboard
+    redirect = RedirectResponse(url=f"{FRONTEND_URL}/dashboard", status_code=302)
+    redirect.set_cookie(
+        key="session_token",
+        value=session_token,
+        httponly=True,
+        secure=False,
+        samesite="lax",
+        max_age=7 * 24 * 60 * 60,
+        path="/",
+    )
+    return redirect
+
 
 @api_router.post("/auth/session")
 async def create_session(request: Request, response: Response):
