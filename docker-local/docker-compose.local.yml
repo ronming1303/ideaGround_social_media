@@ -31,9 +31,9 @@ services:
       - LOCAL_AUTH_ENABLED=true
       - GOOGLE_CLIENT_ID=GOOGLE_CLIENT_ID_REMOVED
       - GOOGLE_CLIENT_SECRET=GOOGLE_CLIENT_SECRET_REMOVED
-      - GOOGLE_REDIRECT_URI=http://localhost:8080/api/auth/google/callback
-      - FRONTEND_URL=http://localhost:8080
-      - CORS_ORIGINS=http://localhost:3000,http://localhost:8080,http://127.0.0.1:3000,http://127.0.0.1:8080
+      - GOOGLE_REDIRECT_URI=https://ideaground.net/api/auth/google/callback
+      - FRONTEND_URL=https://ideaground.net
+      - CORS_ORIGINS=https://ideaground.net,http://localhost:3000,http://localhost:8080
     ports:
       - "127.0.0.1:8001:8001"
     depends_on:
@@ -53,7 +53,7 @@ services:
       context: ..
       dockerfile: docker-local/Dockerfile.frontend
       args:
-        REACT_APP_BACKEND_URL: http://localhost:8080
+        REACT_APP_BACKEND_URL: ""
         REACT_APP_LOCAL_AUTH: "true"
     container_name: ideaground-frontend
     restart: unless-stopped
