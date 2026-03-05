@@ -36,7 +36,8 @@ FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:8080')
 ALLOWED_EMAILS = [
     "kshitiz.dadhich2015@gmail.com",
     "rumingliu1303@gmail.com",
-    "gmxx314@yahoo.com",
+    "junyuehan@gmail.com",
+    "glf9871@gmail.com",
 ]
 
 # Admin emails - These users get admin privileges

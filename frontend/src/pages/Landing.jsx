@@ -226,7 +226,7 @@ export default function Landing() {
             <span className="font-heading font-bold text-xl">ideaGround</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            © 2024 ideaGround. Democratizing video ownership.
+            © 2026 ideaGround. Democratizing video ownership.
           </p>
         </div>
       </footer>
