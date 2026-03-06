@@ -11,7 +11,7 @@ import { Input } from "../components/ui/input";
 import { Slider } from "../components/ui/slider";
 import { 
   TrendingUp, TrendingDown, DollarSign, Briefcase, 
-  ArrowUpRight, ArrowDownRight, ChevronUp, ChevronDown, Minus, Award, Sparkles, Wallet, RefreshCw
+  ArrowUpRight, ArrowDownRight, ChevronUp, ChevronDown, Minus, Sparkles, Wallet, RefreshCw
 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell, CartesianGrid, Legend } from "recharts";
 import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
@@ -367,28 +367,18 @@ export default function Portfolio() {
                       data-testid={`holding-${item.video.video_id}`}
                       className="flex items-center gap-4 p-4 rounded-xl bg-muted/50 hover:bg-muted transition-colors"
                     >
-                      <Link to={`/video/${item.video.video_id}`} className="flex-shrink-0 relative">
-                        <img 
-                          src={item.video.thumbnail} 
+                      <Link to={`/video/${item.video.video_id}`} className="flex-shrink-0">
+                        <img
+                          src={item.video.thumbnail}
                           alt={item.video.title}
                           className="w-20 h-14 rounded-lg object-cover"
                         />
-                        {item.is_early_investor && (
-                          <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-amber-500 flex items-center justify-center" title={`${item.early_bonus_multiplier}x Early Investor Bonus`}>
-                            <Award className="w-3 h-3 text-white" />
-                          </div>
-                        )}
                       </Link>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <Link to={`/video/${item.video.video_id}`}>
                             <h4 className="font-medium truncate hover:text-primary transition-colors">{item.video.title}</h4>
                           </Link>
-                          {item.is_early_investor && (
-                            <Badge variant="outline" className="text-xs bg-amber-500/10 text-amber-700 border-amber-500/30 flex-shrink-0">
-                              {item.early_bonus_multiplier}x Bonus
-                            </Badge>
-                          )}
                         </div>
                         <p className="text-sm text-muted-foreground">
                           {item.shares_owned} shares @ ${item.purchase_price.toFixed(2)} avg
@@ -400,12 +390,6 @@ export default function Portfolio() {
                           {item.gain >= 0 ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                           {item.gain >= 0 ? '+' : ''}{item.gain_percent.toFixed(1)}%
                         </p>
-                        {item.potential_bonus > 0 && (
-                          <p className="text-xs text-amber-600 flex items-center justify-end gap-1">
-                            <Sparkles className="w-3 h-3" />
-                            +{formatCurrency(item.potential_bonus)} bonus
-                          </p>
-                        )}
                       </div>
                       <Button 
                         data-testid={`sell-btn-${item.video.video_id}`}
@@ -568,38 +552,13 @@ export default function Portfolio() {
                   <span className="text-muted-foreground">Base value</span>
                   <span className="font-mono">{formatCurrency(selectedItem.current_price * sharesToSell)}</span>
                 </div>
-                {selectedItem.is_early_investor && selectedItem.gain > 0 && (
-                  <div className="flex justify-between mb-2 text-amber-600">
-                    <span className="flex items-center gap-1">
-                      <Award className="w-3 h-3" />
-                      Early bonus ({selectedItem.early_bonus_multiplier}x on profit)
-                    </span>
-                    <span className="font-mono">
-                      +{formatCurrency((sharesToSell / selectedItem.shares_owned) * selectedItem.potential_bonus)}
-                    </span>
-                  </div>
-                )}
                 <div className="flex justify-between pt-2 border-t border-border">
                   <span className="font-medium">You&apos;ll receive</span>
                   <span className="font-heading font-bold text-lg text-secondary">
-                    +{formatCurrency(
-                      selectedItem.current_price * sharesToSell + 
-                      (selectedItem.is_early_investor && selectedItem.gain > 0 
-                        ? (sharesToSell / selectedItem.shares_owned) * selectedItem.potential_bonus 
-                        : 0)
-                    )}
+                    +{formatCurrency(selectedItem.current_price * sharesToSell)}
                   </span>
                 </div>
               </div>
-
-              {selectedItem.is_early_investor && (
-                <div className="flex items-center gap-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
-                  <Sparkles className="w-4 h-4 text-amber-600" />
-                  <p className="text-sm text-amber-700">
-                    You&apos;re an early investor! Profit bonus will be applied on sale.
-                  </p>
-                </div>
-              )}
 
               <Button 
                 data-testid="confirm-sell-btn"
@@ -646,25 +605,14 @@ export default function Portfolio() {
                   <span className="text-muted-foreground">Current value</span>
                   <span className="font-mono">{formatCurrency(selectedItem.current_value)}</span>
                 </div>
-                {selectedItem.is_early_investor && selectedItem.gain > 0 && (
-                  <div className="flex justify-between mb-2 text-amber-600">
-                    <span className="flex items-center gap-1">
-                      <Award className="w-3 h-3" />
-                      Early bonus ({selectedItem.early_bonus_multiplier}x on profit)
-                    </span>
-                    <span className="font-mono">+{formatCurrency(selectedItem.potential_bonus)}</span>
-                  </div>
-                )}
                 <div className="flex justify-between mb-2 text-destructive">
                   <span>Platform fee (5%)</span>
-                  <span className="font-mono">
-                    -{formatCurrency((selectedItem.current_value + (selectedItem.potential_bonus || 0)) * 0.05)}
-                  </span>
+                  <span className="font-mono">-{formatCurrency(selectedItem.current_value * 0.05)}</span>
                 </div>
                 <div className="flex justify-between pt-2 border-t border-border">
                   <span className="font-medium">Net to wallet</span>
                   <span className="font-heading font-bold text-lg text-secondary">
-                    +{formatCurrency((selectedItem.current_value + (selectedItem.potential_bonus || 0)) * 0.95)}
+                    +{formatCurrency(selectedItem.current_value * 0.95)}
                   </span>
                 </div>
               </div>

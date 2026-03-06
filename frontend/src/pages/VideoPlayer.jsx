@@ -479,9 +479,9 @@ export default function VideoPlayer() {
               </Dialog>
 
               {/* Simple info text */}
-              <p className="text-xs text-muted-foreground text-center mt-3">
+              {/* <p className="text-xs text-muted-foreground text-center mt-3">
                 Prices change based on supply & demand
-              </p>
+              </p> */}
             </CardContent>
           </Card>
 
@@ -630,11 +630,6 @@ export default function VideoPlayer() {
                             <Users className="w-4 h-4 text-muted-foreground" />
                           </div>
                         )}
-                        {earner.is_early_investor && (
-                          <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-amber-500 flex items-center justify-center" title="Early Investor">
-                            <Sparkles className="w-2.5 h-2.5 text-white" />
-                          </div>
-                        )}
                       </div>
                       
                       {/* Name & Shares */}
@@ -644,25 +639,9 @@ export default function VideoPlayer() {
                         </p>
                         <p className="text-xs text-muted-foreground">
                           {earner.shares_owned} share{earner.shares_owned !== 1 ? 's' : ''}
-                          {earner.is_early_investor && (
-                            <span className="text-amber-600 ml-1">• {earner.bonus_multiplier}x</span>
-                          )}
                         </p>
                       </div>
                       
-                      {/* Profit */}
-                      <div className="text-right">
-                        <p className={`text-sm font-mono font-medium ${
-                          earner.profit >= 0 ? 'text-emerald-600' : 'text-red-500'
-                        }`}>
-                          {earner.profit >= 0 ? '+' : ''}${earner.profit.toFixed(2)}
-                        </p>
-                        <p className={`text-xs ${
-                          earner.profit_percent >= 0 ? 'text-emerald-600/70' : 'text-red-500/70'
-                        }`}>
-                          {earner.profit_percent >= 0 ? '+' : ''}{earner.profit_percent.toFixed(1)}%
-                        </p>
-                      </div>
                     </div>
                   ))}
                 </div>

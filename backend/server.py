@@ -1396,14 +1396,12 @@ async def get_portfolio_history(user: User = Depends(get_current_user)):
     ).to_list(100)
     
     current_value = 0
-    unrealized_gains = 0
+    unrealized_gains = 0  # always 0 since price is fixed per video
     for ownership in ownerships:
         video = await db.videos.find_one({"video_id": ownership["video_id"]}, {"_id": 0})
         if video:
-            value = ownership["shares_owned"] * video["share_price"]
-            cost = ownership["shares_owned"] * ownership["purchase_price"]
+            value = ownership["shares_owned"] * video.get("share_price", SHARE_PRICE_MIN)
             current_value += value
-            unrealized_gains += (value - cost)
     
     # Add current state as last point
     if history:
@@ -3039,7 +3037,7 @@ async def get_single_video_analytics(video_id: str, user: User = Depends(get_cur
     # Get share ownership data
     ownerships = await db.share_ownerships.find({"video_id": video_id}, {"_id": 0}).to_list(100)
     unique_investors = len(ownerships)
-    total_invested = sum(o.get("shares_owned", 0) * o.get("purchase_price", 10) for o in ownerships)
+    total_invested = sum(o.get("shares_owned", 0) for o in ownerships) * video.get("share_price", SHARE_PRICE_MIN)
     
     shares_sold = video.get("total_shares", 100) - video.get("available_shares", 100)
     market_cap = video.get("share_price", 10) * video.get("total_shares", 100)

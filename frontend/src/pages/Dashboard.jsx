@@ -105,16 +105,7 @@ export default function Dashboard() {
             {video.title}
           </h3>
           {/* Price badge */}
-          <div className={`flex-shrink-0 px-2 py-1 rounded-md text-xs font-mono font-bold flex items-center gap-1 ${
-            (video.last_price_change_percent || 0) >= 0 
-              ? 'bg-emerald-500/10 text-emerald-600' 
-              : 'bg-red-500/10 text-red-500'
-          }`}>
-            {(video.last_price_change_percent || 0) >= 0 ? (
-              <TrendingUp className="w-3 h-3" />
-            ) : (
-              <TrendingDown className="w-3 h-3" />
-            )}
+          <div className="flex-shrink-0 px-2 py-1 rounded-md text-xs font-mono font-bold bg-emerald-500/10 text-emerald-600">
             ${video.share_price.toFixed(2)}
           </div>
         </div>
@@ -377,11 +368,7 @@ export default function Dashboard() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                     
                     {/* Price badge - top right */}
-                    <div className={`absolute top-2 right-2 px-2 py-1 rounded-md text-xs font-mono font-bold backdrop-blur-sm ${
-                      (video.last_price_change_percent || 0) >= 0 
-                        ? 'bg-emerald-500/80 text-white' 
-                        : 'bg-red-500/80 text-white'
-                    }`}>
+                    <div className="absolute top-2 right-2 px-2 py-1 rounded-md text-xs font-mono font-bold backdrop-blur-sm bg-emerald-500/80 text-white">
                       ${video.share_price.toFixed(2)}
                     </div>
                     

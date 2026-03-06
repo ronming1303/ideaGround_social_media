@@ -463,63 +463,63 @@ db.users.insertMany(seedUsers);
 
 // Seed Share Ownerships
 const shareOwnerships = [
-  // vid_dance_viral (available: 65, owned: 35)
-  { ownership_id: "own_seed_001", user_id: "user_seed_alice", video_id: "vid_dance_viral", shares_owned: 20, purchase_price: 14.00, is_early_investor: true, early_bonus_multiplier: 1.5, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_002", user_id: "user_seed_bob", video_id: "vid_dance_viral", shares_owned: 15, purchase_price: 15.00, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  // vid_dance_viral share_price=15
+  { ownership_id: "own_seed_001", user_id: "user_seed_alice", video_id: "vid_dance_viral", shares_owned: 20, purchase_price: 15, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_002", user_id: "user_seed_bob", video_id: "vid_dance_viral", shares_owned: 15, purchase_price: 15, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
 
-  // vid_tech_review (available: 45, owned: 55)
-  { ownership_id: "own_seed_003", user_id: "user_seed_carol", video_id: "vid_tech_review", shares_owned: 30, purchase_price: 18.00, is_early_investor: true, early_bonus_multiplier: 1.5, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_004", user_id: "user_seed_alice", video_id: "vid_tech_review", shares_owned: 15, purchase_price: 21.00, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_005", user_id: "user_seed_david", video_id: "vid_tech_review", shares_owned: 10, purchase_price: 22.00, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  // vid_tech_review share_price=20
+  { ownership_id: "own_seed_003", user_id: "user_seed_carol", video_id: "vid_tech_review", shares_owned: 30, purchase_price: 20, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_004", user_id: "user_seed_alice", video_id: "vid_tech_review", shares_owned: 15, purchase_price: 20, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_005", user_id: "user_seed_david", video_id: "vid_tech_review", shares_owned: 10, purchase_price: 20, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
 
-  // vid_tech_ai (available: 30, owned: 70)
-  { ownership_id: "own_seed_006", user_id: "user_seed_carol", video_id: "vid_tech_ai", shares_owned: 40, purchase_price: 22.00, is_early_investor: true, early_bonus_multiplier: 1.5, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_007", user_id: "user_seed_alice", video_id: "vid_tech_ai", shares_owned: 20, purchase_price: 26.00, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_008", user_id: "user_seed_bob", video_id: "vid_tech_ai", shares_owned: 10, purchase_price: 28.00, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  // vid_tech_ai share_price=20
+  { ownership_id: "own_seed_006", user_id: "user_seed_carol", video_id: "vid_tech_ai", shares_owned: 40, purchase_price: 20, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_007", user_id: "user_seed_alice", video_id: "vid_tech_ai", shares_owned: 20, purchase_price: 20, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_008", user_id: "user_seed_bob", video_id: "vid_tech_ai", shares_owned: 10, purchase_price: 20, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
 
-  // vid_podcast_ai (available: 55, owned: 45)
-  { ownership_id: "own_seed_009", user_id: "user_seed_bob", video_id: "vid_podcast_ai", shares_owned: 25, purchase_price: 16.00, is_early_investor: true, early_bonus_multiplier: 1.5, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_010", user_id: "user_seed_david", video_id: "vid_podcast_ai", shares_owned: 20, purchase_price: 17.50, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  // vid_podcast_ai share_price=18
+  { ownership_id: "own_seed_009", user_id: "user_seed_bob", video_id: "vid_podcast_ai", shares_owned: 25, purchase_price: 18, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_010", user_id: "user_seed_david", video_id: "vid_podcast_ai", shares_owned: 20, purchase_price: 18, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
 
-  // vid_travel_bali (available: 50, owned: 50)
-  { ownership_id: "own_seed_011", user_id: "user_seed_david", video_id: "vid_travel_bali", shares_owned: 30, purchase_price: 14.00, is_early_investor: true, early_bonus_multiplier: 1.5, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_012", user_id: "user_seed_alice", video_id: "vid_travel_bali", shares_owned: 20, purchase_price: 16.00, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  // vid_travel_bali share_price=17
+  { ownership_id: "own_seed_011", user_id: "user_seed_david", video_id: "vid_travel_bali", shares_owned: 30, purchase_price: 17, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_012", user_id: "user_seed_alice", video_id: "vid_travel_bali", shares_owned: 20, purchase_price: 17, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
 
-  // vid_podcast_economy (available: 38, owned: 62)
-  { ownership_id: "own_seed_013", user_id: "user_seed_carol", video_id: "vid_podcast_economy", shares_owned: 35, purchase_price: 20.00, is_early_investor: true, early_bonus_multiplier: 1.5, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_014", user_id: "user_seed_bob", video_id: "vid_podcast_economy", shares_owned: 27, purchase_price: 23.00, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  // vid_podcast_economy share_price=20
+  { ownership_id: "own_seed_013", user_id: "user_seed_carol", video_id: "vid_podcast_economy", shares_owned: 35, purchase_price: 20, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_014", user_id: "user_seed_bob", video_id: "vid_podcast_economy", shares_owned: 27, purchase_price: 20, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
 
-  // vid_recipe (available: 80, owned: 20)
-  { ownership_id: "own_seed_015", user_id: "user_seed_alice", video_id: "vid_recipe", shares_owned: 12, purchase_price: 8.00, is_early_investor: true, early_bonus_multiplier: 1.5, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_016", user_id: "user_seed_david", video_id: "vid_recipe", shares_owned: 8, purchase_price: 8.75, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  // vid_recipe share_price=9
+  { ownership_id: "own_seed_015", user_id: "user_seed_alice", video_id: "vid_recipe", shares_owned: 12, purchase_price: 9, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_016", user_id: "user_seed_david", video_id: "vid_recipe", shares_owned: 8, purchase_price: 9, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
 
-  // vid_travel_japan (available: 70, owned: 30)
-  { ownership_id: "own_seed_017", user_id: "user_seed_david", video_id: "vid_travel_japan", shares_owned: 18, purchase_price: 11.00, is_early_investor: true, early_bonus_multiplier: 1.5, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_018", user_id: "user_seed_carol", video_id: "vid_travel_japan", shares_owned: 12, purchase_price: 12.00, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  // vid_travel_japan share_price=12
+  { ownership_id: "own_seed_017", user_id: "user_seed_david", video_id: "vid_travel_japan", shares_owned: 18, purchase_price: 12, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_018", user_id: "user_seed_carol", video_id: "vid_travel_japan", shares_owned: 12, purchase_price: 12, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
 
-  // vid_dance_tutorial (available: 72, owned: 28)
-  { ownership_id: "own_seed_019", user_id: "user_seed_bob", video_id: "vid_dance_tutorial", shares_owned: 16, purchase_price: 10.00, is_early_investor: true, early_bonus_multiplier: 1.5, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_020", user_id: "user_seed_alice", video_id: "vid_dance_tutorial", shares_owned: 12, purchase_price: 11.00, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  // vid_dance_tutorial share_price=11
+  { ownership_id: "own_seed_019", user_id: "user_seed_bob", video_id: "vid_dance_tutorial", shares_owned: 16, purchase_price: 11, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_020", user_id: "user_seed_alice", video_id: "vid_dance_tutorial", shares_owned: 12, purchase_price: 11, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
 
-  // vid_food_dessert (available: 60, owned: 40)
-  { ownership_id: "own_seed_021", user_id: "user_seed_carol", video_id: "vid_food_dessert", shares_owned: 22, purchase_price: 12.50, is_early_investor: true, early_bonus_multiplier: 1.5, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_022", user_id: "user_seed_david", video_id: "vid_food_dessert", shares_owned: 18, purchase_price: 13.50, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  // vid_food_dessert share_price=14
+  { ownership_id: "own_seed_021", user_id: "user_seed_carol", video_id: "vid_food_dessert", shares_owned: 22, purchase_price: 14, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_022", user_id: "user_seed_david", video_id: "vid_food_dessert", shares_owned: 18, purchase_price: 14, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
 
-  // vid_tech_tutorial (available: 58, owned: 42)
-  { ownership_id: "own_seed_023", user_id: "user_seed_alice", video_id: "vid_tech_tutorial", shares_owned: 25, purchase_price: 17.00, is_early_investor: true, early_bonus_multiplier: 1.5, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_024", user_id: "user_seed_bob", video_id: "vid_tech_tutorial", shares_owned: 17, purchase_price: 19.00, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  // vid_tech_tutorial share_price=19
+  { ownership_id: "own_seed_023", user_id: "user_seed_alice", video_id: "vid_tech_tutorial", shares_owned: 25, purchase_price: 19, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_024", user_id: "user_seed_bob", video_id: "vid_tech_tutorial", shares_owned: 17, purchase_price: 19, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
 
-  // vid_food_ramen (available: 66, owned: 34)
-  { ownership_id: "own_seed_025", user_id: "user_seed_david", video_id: "vid_food_ramen", shares_owned: 20, purchase_price: 9.50, is_early_investor: true, early_bonus_multiplier: 1.5, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_026", user_id: "user_seed_carol", video_id: "vid_food_ramen", shares_owned: 14, purchase_price: 10.50, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  // vid_food_ramen share_price=11
+  { ownership_id: "own_seed_025", user_id: "user_seed_david", video_id: "vid_food_ramen", shares_owned: 20, purchase_price: 11, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_026", user_id: "user_seed_carol", video_id: "vid_food_ramen", shares_owned: 14, purchase_price: 11, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
 
-  // vid_tech_short01 (available: 85, owned: 15)
-  { ownership_id: "own_seed_027", user_id: "user_seed_bob", video_id: "vid_tech_short01", shares_owned: 10, purchase_price: 6.50, is_early_investor: true, early_bonus_multiplier: 1.5, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_028", user_id: "user_seed_alice", video_id: "vid_tech_short01", shares_owned: 5, purchase_price: 7.25, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  // vid_tech_short01 share_price=7
+  { ownership_id: "own_seed_027", user_id: "user_seed_bob", video_id: "vid_tech_short01", shares_owned: 10, purchase_price: 7, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_028", user_id: "user_seed_alice", video_id: "vid_tech_short01", shares_owned: 5, purchase_price: 7, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
 
-  // vid_food_short01 (available: 90, owned: 10)
-  { ownership_id: "own_seed_029", user_id: "user_seed_carol", video_id: "vid_food_short01", shares_owned: 6, purchase_price: 5.50, is_early_investor: true, early_bonus_multiplier: 1.5, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_030", user_id: "user_seed_david", video_id: "vid_food_short01", shares_owned: 4, purchase_price: 6.00, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() }
+  // vid_food_short01 share_price=6
+  { ownership_id: "own_seed_029", user_id: "user_seed_carol", video_id: "vid_food_short01", shares_owned: 6, purchase_price: 6, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_030", user_id: "user_seed_david", video_id: "vid_food_short01", shares_owned: 4, purchase_price: 6, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() }
 ];
 
 db.share_ownerships.insertMany(shareOwnerships);
