@@ -10,7 +10,6 @@ import { Play, TrendingUp, TrendingDown, Eye, Heart, Sparkles, ArrowUpRight, Bri
 import TrendingTicker from "../components/TrendingTicker";
 import MarketOverview from "../components/MarketOverview";
 import LiveActivityFeed from "../components/LiveActivityFeed";
-import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -52,15 +51,9 @@ export default function Dashboard() {
     fetchPortfolioPerformance();
   }, []);
 
-  // Auto-refresh polling (every 15 seconds)
-  // TODO: Replace with WebSocket for real-time updates
-  const { refresh: manualRefresh } = useDataSync(
-    useCallback(async () => {
-      await Promise.all([fetchData(), fetchPortfolioPerformance()]);
-    }, [fetchData, fetchPortfolioPerformance]),
-    POLL_INTERVALS.NORMAL,
-    !loading // Only poll after initial load
-  );
+  const manualRefresh = useCallback(async () => {
+    await Promise.all([fetchData(), fetchPortfolioPerformance()]);
+  }, [fetchData, fetchPortfolioPerformance]);
 
   const formatViews = (views) => {
     if (views >= 1000000) return `${(views / 1000000).toFixed(1)}M`;
