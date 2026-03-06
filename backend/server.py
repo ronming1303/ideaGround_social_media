@@ -825,19 +825,8 @@ async def get_video(video_id: str, request: Request):
     shares_sold_percent = (shares_sold / video["total_shares"]) * 100
     video["shares_sold_percent"] = shares_sold_percent
     
-    # Determine current early investor tier
-    if shares_sold_percent < 10:
-        video["early_investor_tier"] = "platinum"
-        video["early_bonus_available"] = 2.5
-    elif shares_sold_percent < 20:
-        video["early_investor_tier"] = "gold"
-        video["early_bonus_available"] = 2.0
-    elif shares_sold_percent < 30:
-        video["early_investor_tier"] = "silver"
-        video["early_bonus_available"] = 1.5
-    else:
-        video["early_investor_tier"] = None
-        video["early_bonus_available"] = 1.0
+    video["early_investor_tier"] = None
+    video["early_bonus_available"] = 1.0
     
     # Revenue split info (transparent breakdown)
     video["revenue_split"] = {
@@ -1051,95 +1040,21 @@ async def subscribe_creator(creator_id: str, user: User = Depends(get_current_us
 
 # ==================== SHARE/STOCK ENDPOINTS ====================
 
+# Share price range: $5-$20 (integer), fixed per video, no trading impact
+SHARE_PRICE_MIN = 5
+SHARE_PRICE_MAX = 20
+
 def calculate_early_bonus(shares_sold_percent: float) -> tuple[bool, float]:
-    """
-    Calculate early investor bonus based on when investment was made.
-    - First 10% of shares sold: 2.5x bonus
-    - 10-20% sold: 2.0x bonus
-    - 20-30% sold: 1.5x bonus
-    - After 30%: no bonus (1.0x)
-    """
-    if shares_sold_percent < 10:
-        return True, 2.5
-    elif shares_sold_percent < 20:
-        return True, 2.0
-    elif shares_sold_percent < 30:
-        return True, 1.5
+    """Simplified: no early investor bonus."""
     return False, 1.0
 
 def calculate_price_impact(shares_traded: float, available_shares: float, total_shares: float, is_buy: bool) -> float:
-    """
-    Calculate immediate price impact based on supply/demand dynamics.
-    
-    Buy pressure increases price, sell pressure decreases price.
-    Impact is proportional to:
-    1. Trade size relative to available shares (larger trades = bigger impact)
-    2. Current scarcity (scarcer = more volatile)
-    
-    Returns: percentage change (e.g., 0.05 for +5%)
-    """
-    # Base impact per share (1-3% per share of available supply traded)
-    trade_ratio = shares_traded / max(available_shares, 1)  # Prevent division by zero
-    
-    # Scarcity multiplier: scarcer shares = more price impact
-    scarcity = 1 - (available_shares / total_shares)
-    scarcity_multiplier = 1 + (scarcity * 2)  # 1x to 3x based on scarcity
-    
-    # Base impact: 0.5% to 2% per 1% of available shares traded
-    base_impact = trade_ratio * 0.02 * scarcity_multiplier
-    
-    # Cap the impact at 15% per trade to prevent extreme swings
-    impact = min(base_impact, 0.15)
-    
-    # Negative for sells, positive for buys
-    return impact if is_buy else -impact
+    """Simplified: no price impact from trades."""
+    return 0
 
 async def update_video_price(video_id: str, price_change_percent: float, reason: str = "trade"):
-    """
-    Update video price with change and record in price history.
-    
-    Args:
-        video_id: The video to update
-        price_change_percent: Percentage change (e.g., 0.05 for +5%)
-        reason: Why the price changed (trade, simulation, etc.)
-    """
-    video = await db.videos.find_one({"video_id": video_id}, {"_id": 0})
-    if not video:
-        return None
-    
-    current_price = video.get("share_price", 10.0)
-    new_price = max(1.0, current_price * (1 + price_change_percent))  # Minimum $1
-    new_price = round(new_price, 2)
-    
-    price_change = new_price - current_price
-    price_change_pct = (price_change / current_price) * 100 if current_price > 0 else 0
-    
-    # Update price history
-    price_history = video.get("price_history", [])
-    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")
-    price_history.append({"date": timestamp, "price": new_price, "reason": reason})
-    
-    # Keep only last 50 price points
-    if len(price_history) > 50:
-        price_history = price_history[-50:]
-    
-    # Update in database
-    await db.videos.update_one(
-        {"video_id": video_id},
-        {"$set": {
-            "share_price": new_price,
-            "price_history": price_history,
-            "last_price_change": round(price_change, 2),
-            "last_price_change_percent": round(price_change_pct, 2)
-        }}
-    )
-    
-    return {
-        "old_price": current_price,
-        "new_price": new_price,
-        "change": round(price_change, 2),
-        "change_percent": round(price_change_pct, 2)
-    }
+    """Simplified: price is fixed per video, no changes from trades."""
+    return None
 
 @api_router.post("/shares/buy")
 async def buy_shares(req: BuyShareRequest, user: User = Depends(get_current_user)):
@@ -1153,76 +1068,51 @@ async def buy_shares(req: BuyShareRequest, user: User = Depends(get_current_user
     
     if req.shares > video["available_shares"]:
         raise HTTPException(status_code=400, detail="Not enough shares available")
-    
-    total_cost = req.shares * video["share_price"]
-    
+
+    share_price = video.get("share_price", SHARE_PRICE_MIN)
+    total_cost = req.shares * share_price
+
     # Re-fetch user for latest balance
     user_doc = await db.users.find_one({"user_id": user.user_id}, {"_id": 0})
     if user_doc["wallet_balance"] < total_cost:
         raise HTTPException(status_code=400, detail="Insufficient balance")
-    
-    # Calculate early investor status BEFORE updating shares
-    shares_sold_percent = ((video["total_shares"] - video["available_shares"]) / video["total_shares"]) * 100
-    is_early, bonus_multiplier = calculate_early_bonus(shares_sold_percent)
-    
+
     # Update user balance
     await db.users.update_one(
         {"user_id": user.user_id},
         {"$inc": {"wallet_balance": -total_cost}}
     )
-    
+
     # Update video available shares
     await db.videos.update_one(
         {"video_id": req.video_id},
         {"$inc": {"available_shares": -req.shares}}
     )
-    
-    # === IMMEDIATE PRICE IMPACT (Supply/Demand) ===
-    # Buying shares increases price due to demand
-    price_impact = calculate_price_impact(
-        shares_traded=req.shares,
-        available_shares=video["available_shares"],
-        total_shares=video["total_shares"],
-        is_buy=True
-    )
-    price_update = await update_video_price(req.video_id, price_impact, reason="buy")
-    
+
     # Check existing ownership
     existing = await db.share_ownerships.find_one(
         {"user_id": user.user_id, "video_id": req.video_id}
     )
-    
+
     if existing:
-        # Update existing ownership - keep original early status if already early
         new_shares = existing["shares_owned"] + req.shares
-        avg_price = (existing["shares_owned"] * existing["purchase_price"] + req.shares * video["share_price"]) / new_shares
-        # Keep the better bonus if already an early investor
-        final_bonus = max(existing.get("early_bonus_multiplier", 1.0), bonus_multiplier)
-        final_is_early = existing.get("is_early_investor", False) or is_early
         await db.share_ownerships.update_one(
             {"user_id": user.user_id, "video_id": req.video_id},
-            {"$set": {
-                "shares_owned": new_shares, 
-                "purchase_price": avg_price,
-                "is_early_investor": final_is_early,
-                "early_bonus_multiplier": final_bonus
-            }}
+            {"$set": {"shares_owned": new_shares, "purchase_price": share_price}}
         )
     else:
-        # Create new ownership with early investor status
         ownership_doc = {
             "ownership_id": f"own_{uuid.uuid4().hex[:12]}",
             "user_id": user.user_id,
             "video_id": req.video_id,
             "shares_owned": req.shares,
-            "purchase_price": video["share_price"],
-            "is_early_investor": is_early,
-            "early_bonus_multiplier": bonus_multiplier,
+            "purchase_price": share_price,
+            "is_early_investor": False,
+            "early_bonus_multiplier": 1.0,
             "purchased_at": datetime.now(timezone.utc).isoformat()
         }
         await db.share_ownerships.insert_one(ownership_doc)
-    
-    # Record transaction with early investor info
+
     transaction_doc = {
         "transaction_id": f"txn_{uuid.uuid4().hex[:12]}",
         "user_id": user.user_id,
@@ -1230,81 +1120,42 @@ async def buy_shares(req: BuyShareRequest, user: User = Depends(get_current_user
         "amount": -total_cost,
         "video_id": req.video_id,
         "shares": req.shares,
-        "price_at_trade": video["share_price"],
-        "price_after_trade": price_update["new_price"] if price_update else video["share_price"],
-        "is_early_investment": is_early,
-        "early_bonus_multiplier": bonus_multiplier,
+        "price_at_trade": share_price,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     await db.transactions.insert_one(transaction_doc)
-    
-    response = {
-        "success": True, 
-        "shares_bought": req.shares, 
-        "total_cost": total_cost,
-        "is_early_investor": is_early,
-        "early_bonus_multiplier": bonus_multiplier,
-        "price_impact": price_update  # Include price change info
-    }
-    
-    return response
+
+    return {"success": True, "shares_bought": req.shares, "total_cost": total_cost}
 
 @api_router.post("/shares/sell")
 async def sell_shares(req: SellShareRequest, user: User = Depends(get_current_user)):
-    """Sell shares of a video - applies early investor bonus if applicable"""
+    """Sell shares of a video at fixed price"""
     video = await db.videos.find_one({"video_id": req.video_id}, {"_id": 0})
     if not video:
         raise HTTPException(status_code=404, detail="Video not found")
-    
+
     ownership = await db.share_ownerships.find_one(
         {"user_id": user.user_id, "video_id": req.video_id}, {"_id": 0}
     )
-    
+
     if not ownership or ownership["shares_owned"] < req.shares:
         raise HTTPException(status_code=400, detail="Not enough shares to sell")
-    
-    # Calculate base value
-    base_value = req.shares * video["share_price"]
-    
-    # Apply early investor bonus if applicable
-    bonus_multiplier = ownership.get("early_bonus_multiplier", 1.0)
-    is_early = ownership.get("is_early_investor", False)
-    
-    # Bonus only applies to profit (value above purchase price)
-    purchase_value = req.shares * ownership["purchase_price"]
-    profit = base_value - purchase_value
-    
-    if is_early and profit > 0:
-        # Apply bonus to profit portion only
-        bonus_profit = profit * bonus_multiplier
-        total_value = purchase_value + bonus_profit
-        bonus_earned = bonus_profit - profit
-    else:
-        total_value = base_value
-        bonus_earned = 0
-    
+
+    share_price = video.get("share_price", SHARE_PRICE_MIN)
+    total_value = req.shares * share_price
+
     # Update user balance
     await db.users.update_one(
         {"user_id": user.user_id},
         {"$inc": {"wallet_balance": total_value}}
     )
-    
+
     # Update video available shares
     await db.videos.update_one(
         {"video_id": req.video_id},
         {"$inc": {"available_shares": req.shares}}
     )
-    
-    # === IMMEDIATE PRICE IMPACT (Supply/Demand) ===
-    # Selling shares decreases price due to increased supply
-    price_impact = calculate_price_impact(
-        shares_traded=req.shares,
-        available_shares=video["available_shares"] + req.shares,  # After adding back
-        total_shares=video["total_shares"],
-        is_buy=False
-    )
-    price_update = await update_video_price(req.video_id, price_impact, reason="sell")
-    
+
     # Update ownership
     new_shares = ownership["shares_owned"] - req.shares
     if new_shares <= 0:
@@ -1314,8 +1165,7 @@ async def sell_shares(req: SellShareRequest, user: User = Depends(get_current_us
             {"user_id": user.user_id, "video_id": req.video_id},
             {"$set": {"shares_owned": new_shares}}
         )
-    
-    # Record transaction with bonus info
+
     transaction_doc = {
         "transaction_id": f"txn_{uuid.uuid4().hex[:12]}",
         "user_id": user.user_id,
@@ -1323,97 +1173,52 @@ async def sell_shares(req: SellShareRequest, user: User = Depends(get_current_us
         "amount": total_value,
         "video_id": req.video_id,
         "shares": req.shares,
-        "price_at_trade": video["share_price"],
-        "price_after_trade": price_update["new_price"] if price_update else video["share_price"],
-        "early_bonus_applied": is_early and bonus_earned > 0,
-        "bonus_earned": bonus_earned,
+        "price_at_trade": share_price,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     await db.transactions.insert_one(transaction_doc)
-    
-    return {
-        "success": True, 
-        "shares_sold": req.shares, 
-        "base_value": base_value,
-        "total_value": total_value,
-        "early_bonus_applied": is_early and bonus_earned > 0,
-        "bonus_earned": bonus_earned,
-        "bonus_multiplier": bonus_multiplier if is_early else 1.0,
-        "price_impact": price_update  # Include price change info
-    }
+
+    return {"success": True, "shares_sold": req.shares, "total_value": total_value}
 
 PLATFORM_FEE_PERCENT = 5.0  # 5% platform fee on redemptions
 
 @api_router.post("/shares/redeem")
 async def redeem_shares(req: RedeemRequest, user: User = Depends(get_current_user)):
-    """
-    Redeem (cash out) all shares of a video to wallet.
-    Applies 5% platform fee on the total redemption amount.
-    """
+    """Redeem (cash out) all shares of a video to wallet at fixed price."""
     video = await db.videos.find_one({"video_id": req.video_id}, {"_id": 0})
     if not video:
         raise HTTPException(status_code=404, detail="Video not found")
-    
+
     ownership = await db.share_ownerships.find_one(
         {"user_id": user.user_id, "video_id": req.video_id}, {"_id": 0}
     )
-    
+
     if not ownership or ownership["shares_owned"] <= 0:
         raise HTTPException(status_code=400, detail="No shares to redeem")
-    
+
     shares_to_redeem = ownership["shares_owned"]
-    
-    # Calculate base value
-    base_value = shares_to_redeem * video["share_price"]
-    
-    # Apply early investor bonus if applicable
-    bonus_multiplier = ownership.get("early_bonus_multiplier", 1.0)
-    is_early = ownership.get("is_early_investor", False)
-    
-    # Bonus only applies to profit
-    purchase_value = shares_to_redeem * ownership["purchase_price"]
-    profit = base_value - purchase_value
-    
-    if is_early and profit > 0:
-        bonus_profit = profit * bonus_multiplier
-        gross_value = purchase_value + bonus_profit
-        bonus_earned = bonus_profit - profit
-    else:
-        gross_value = base_value
-        bonus_earned = 0
-    
-    # Calculate platform fee (5% of gross value)
+    share_price = video.get("share_price", SHARE_PRICE_MIN)
+    gross_value = shares_to_redeem * share_price
     platform_fee = gross_value * (PLATFORM_FEE_PERCENT / 100)
     net_value = gross_value - platform_fee
-    
+
     # Credit net amount to user wallet
     await db.users.update_one(
         {"user_id": user.user_id},
         {"$inc": {"wallet_balance": net_value}}
     )
-    
+
     # Return shares to pool
     await db.videos.update_one(
         {"video_id": req.video_id},
         {"$inc": {"available_shares": shares_to_redeem}}
     )
-    
-    # === IMMEDIATE PRICE IMPACT (Supply/Demand) ===
-    # Redemption acts like a large sell - decreases price
-    price_impact = calculate_price_impact(
-        shares_traded=shares_to_redeem,
-        available_shares=video["available_shares"] + shares_to_redeem,
-        total_shares=video["total_shares"],
-        is_buy=False
-    )
-    price_update = await update_video_price(req.video_id, price_impact, reason="redeem")
-    
+
     # Delete ownership record
     await db.share_ownerships.delete_one(
         {"user_id": user.user_id, "video_id": req.video_id}
     )
-    
-    # Record user transaction
+
     transaction_doc = {
         "transaction_id": f"txn_{uuid.uuid4().hex[:12]}",
         "user_id": user.user_id,
@@ -1423,15 +1228,11 @@ async def redeem_shares(req: RedeemRequest, user: User = Depends(get_current_use
         "platform_fee": platform_fee,
         "video_id": req.video_id,
         "shares": shares_to_redeem,
-        "price_at_trade": video["share_price"],
-        "price_after_trade": price_update["new_price"] if price_update else video["share_price"],
-        "early_bonus_applied": is_early and bonus_earned > 0,
-        "bonus_earned": bonus_earned,
+        "price_at_trade": share_price,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     await db.transactions.insert_one(transaction_doc)
-    
-    # Record platform earning
+
     platform_earning_doc = {
         "earning_id": f"earn_{uuid.uuid4().hex[:12]}",
         "user_id": user.user_id,
@@ -1443,17 +1244,14 @@ async def redeem_shares(req: RedeemRequest, user: User = Depends(get_current_use
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     await db.platform_earnings.insert_one(platform_earning_doc)
-    
+
     return {
         "success": True,
         "shares_redeemed": shares_to_redeem,
         "gross_value": gross_value,
         "platform_fee": platform_fee,
         "platform_fee_percent": PLATFORM_FEE_PERCENT,
-        "net_value": net_value,
-        "early_bonus_applied": is_early and bonus_earned > 0,
-        "bonus_earned": bonus_earned,
-        "price_impact": price_update  # Include price change info
+        "net_value": net_value
     }
 
 # ==================== PORTFOLIO ENDPOINTS ====================
@@ -1467,50 +1265,35 @@ async def get_portfolio(user: User = Depends(get_current_user)):
     
     portfolio_items = []
     total_value = 0
-    total_gain = 0
-    total_potential_bonus = 0
-    
+
     for ownership in ownerships:
         video = await db.videos.find_one({"video_id": ownership["video_id"]}, {"_id": 0})
         if video:
             creator = await db.creators.find_one({"creator_id": video["creator_id"]}, {"_id": 0})
-            current_value = ownership["shares_owned"] * video["share_price"]
-            purchase_value = ownership["shares_owned"] * ownership["purchase_price"]
-            gain = current_value - purchase_value
-            gain_percent = (gain / purchase_value * 100) if purchase_value > 0 else 0
-            
-            # Early investor info
-            is_early = ownership.get("is_early_investor", False)
-            bonus_multiplier = ownership.get("early_bonus_multiplier", 1.0)
-            
-            # Calculate potential bonus if sold now
-            potential_bonus = 0
-            if is_early and gain > 0:
-                potential_bonus = gain * (bonus_multiplier - 1)
-            
+            vp = video.get("share_price", SHARE_PRICE_MIN)
+            current_value = ownership["shares_owned"] * vp
+
             portfolio_items.append({
                 "video": video,
                 "creator": creator,
                 "shares_owned": ownership["shares_owned"],
-                "purchase_price": ownership["purchase_price"],
-                "current_price": video["share_price"],
+                "purchase_price": vp,
+                "current_price": vp,
                 "current_value": current_value,
-                "gain": gain,
-                "gain_percent": gain_percent,
-                "is_early_investor": is_early,
-                "early_bonus_multiplier": bonus_multiplier,
-                "potential_bonus": potential_bonus
+                "gain": 0,
+                "gain_percent": 0,
+                "is_early_investor": False,
+                "early_bonus_multiplier": 1.0,
+                "potential_bonus": 0
             })
-            
+
             total_value += current_value
-            total_gain += gain
-            total_potential_bonus += potential_bonus
-    
+
     return {
         "items": portfolio_items,
         "total_value": total_value,
-        "total_gain": total_gain,
-        "total_potential_bonus": total_potential_bonus,
+        "total_gain": 0,
+        "total_potential_bonus": 0,
         "wallet_balance": user.wallet_balance
     }
 
@@ -1534,38 +1317,22 @@ async def get_portfolio_performance(user: User = Depends(get_current_user)):
             "total_potential_bonus": 0,
             "holdings_count": 0
         }
-    
+
     total_value = 0
-    total_invested = 0
-    total_gain = 0
-    total_potential_bonus = 0
-    
-    for ownership in ownerships:
-        video = await db.videos.find_one({"video_id": ownership["video_id"]}, {"_id": 0})
-        if video:
-            current_value = ownership["shares_owned"] * video["share_price"]
-            purchase_value = ownership["shares_owned"] * ownership["purchase_price"]
-            gain = current_value - purchase_value
-            
-            # Early investor bonus calculation
-            is_early = ownership.get("is_early_investor", False)
-            bonus_multiplier = ownership.get("early_bonus_multiplier", 1.0)
-            if is_early and gain > 0:
-                total_potential_bonus += gain * (bonus_multiplier - 1)
-            
-            total_value += current_value
-            total_invested += purchase_value
-            total_gain += gain
-    
-    gain_percent = (total_gain / total_invested * 100) if total_invested > 0 else 0
+    for o in ownerships:
+        v = await db.videos.find_one({"video_id": o["video_id"]}, {"_id": 0, "share_price": 1})
+        vp = v.get("share_price", SHARE_PRICE_MIN) if v else SHARE_PRICE_MIN
+        total_value += o["shares_owned"] * vp
+    total_invested = total_value
+    gain_percent = 0
     
     return {
         "has_portfolio": True,
         "total_value": total_value,
         "total_invested": total_invested,
-        "total_gain": total_gain,
+        "total_gain": 0,
         "gain_percent": gain_percent,
-        "total_potential_bonus": total_potential_bonus,
+        "total_potential_bonus": 0,
         "holdings_count": len(ownerships)
     }
 
@@ -3641,6 +3408,25 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.on_event("startup")
+async def init_video_prices():
+    """Ensure all video share_prices are integers in [SHARE_PRICE_MIN, SHARE_PRICE_MAX].
+    Rounds floats to int, clamps out-of-range values."""
+    all_videos = await db.videos.find({}, {"_id": 1, "share_price": 1}).to_list(None)
+    for v in all_videos:
+        raw = v.get("share_price", SHARE_PRICE_MIN)
+        clamped = max(SHARE_PRICE_MIN, min(SHARE_PRICE_MAX, int(round(raw))))
+        if clamped != raw:
+            await db.videos.update_one(
+                {"_id": v["_id"]},
+                {"$set": {"share_price": clamped}}
+            )
+    # Assign default for videos missing the field entirely
+    await db.videos.update_many(
+        {"share_price": {"$exists": False}},
+        {"$set": {"share_price": SHARE_PRICE_MIN}}
+    )
 
 @app.on_event("shutdown")
 async def shutdown_db_client():

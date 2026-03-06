@@ -7,7 +7,15 @@
       "Bash(python3:*)",
       "Bash(export PATH=\"/Applications/Docker.app/Contents/Resources/bin:$PATH\")",
       "Bash(docker compose -f docker-local/docker-compose.local.yml up --build -d)",
-      "Bash(docker compose -f /Volumes/Research/IG_desktop_v1_final/docker-local/docker-compose.local.yml up --build -d frontend)"
+      "Bash(docker compose -f /Volumes/Research/IG_desktop_v1_final/docker-local/docker-compose.local.yml up --build -d frontend)",
+      "Bash(/Applications/Docker.app/Contents/Resources/bin/docker compose build backend)",
+      "Bash(/Applications/Docker.app/Contents/Resources/bin/docker compose up -d backend)",
+      "Bash(/Applications/Docker.app/Contents/Resources/bin/docker compose -f docker-local/docker-compose.local.yml build backend)",
+      "Bash(/Applications/Docker.app/Contents/Resources/bin/docker compose -f docker-local/docker-compose.local.yml up -d backend)",
+      "Bash(PATH=\"/Applications/Docker.app/Contents/Resources/bin:$PATH\")",
+      "Bash(docker compose -f docker-local/docker-compose.local.yml build backend)",
+      "Bash(docker compose -f docker-local/docker-compose.local.yml up -d backend)",
+      "Bash(docker compose -f /Volumes/Research/IG_desktop_v1_final/docker-local/docker-compose.local.yml up -d backend)"
     ]
   }
 }

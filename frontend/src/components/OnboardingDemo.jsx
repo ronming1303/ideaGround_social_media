@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent } from "../components/ui/dialog";
 import { Button } from "../components/ui/button";
 import { 
-  Play, TrendingUp, DollarSign, Award, Users, PieChart,
+  Play, TrendingUp, DollarSign, Users, PieChart,
   ArrowRight, ArrowLeft, Sparkles, CheckCircle2, Zap,
   Eye, ShoppingCart, Wallet, BarChart3, Coins
 } from "lucide-react";
@@ -29,29 +29,20 @@ const slides = [
   {
     id: 3,
     title: "Buy Video Shares",
-    subtitle: "Invest starting from just $1",
-    description: "Found a video you believe in? Buy shares instantly. Prices are determined by popularity - the more people watch and engage, the higher your shares go.",
+    subtitle: "$5 per share, simple and fair",
+    description: "Found a video you believe in? Buy shares instantly at a fixed $5 per share. No complex pricing — just straightforward support for creators you believe in.",
     icon: ShoppingCart,
     visual: "buy",
-    highlights: ["Real-time pricing", "Instant transactions", "No hidden fees"]
+    highlights: ["Fixed $5 per share", "Instant transactions", "No hidden fees"]
   },
   {
     id: 4,
-    title: "Early Investor Bonus",
-    subtitle: "Get rewarded for discovering early",
-    description: "Be among the first 100 investors in a video and earn up to 2x bonus on your profits. We reward those who discover great content before it goes viral.",
-    icon: Award,
-    visual: "bonus",
-    highlights: ["First 10 investors: 2x bonus", "First 50 investors: 1.5x bonus", "First 100 investors: 1.25x bonus"]
-  },
-  {
-    id: 5,
     title: "Track Your Portfolio",
-    subtitle: "Monitor performance in real-time",
-    description: "Your personalized dashboard shows all your investments, gains, and portfolio performance. Watch your wealth grow as the videos you backed succeed.",
+    subtitle: "See all your holdings at a glance",
+    description: "Your personalized dashboard shows all your investments and portfolio performance. Track which creators you've backed and how many shares you hold.",
     icon: PieChart,
     visual: "portfolio",
-    highlights: ["Live price updates", "Gain/loss tracking", "Historical charts"]
+    highlights: ["All holdings in one place", "Share counts tracked", "Easy to manage"]
   },
   {
     id: 6,
@@ -134,12 +125,9 @@ const SlideVisual = ({ type }) => {
           <div className="bg-orange-50 rounded-xl p-3 mb-4">
             <div className="flex items-center justify-between mb-1">
               <span className="text-sm text-gray-600">Share Price</span>
-              <div className="flex items-center gap-1">
-                <TrendingUp className="w-4 h-4 text-orange-500" />
-                <span className="text-xs text-orange-500 font-medium">+25%</span>
-              </div>
+              <span className="text-xs text-orange-500 font-medium">Fixed</span>
             </div>
-            <span className="text-2xl font-bold text-orange-600">$12.50</span>
+            <span className="text-2xl font-bold text-orange-600">$5.00</span>
           </div>
           <div className="flex items-center justify-between mb-4 text-sm">
             <span className="text-gray-500">Quantity</span>
@@ -150,34 +138,8 @@ const SlideVisual = ({ type }) => {
             </div>
           </div>
           <div className="bg-orange-500 text-white text-center py-2.5 rounded-xl font-bold text-sm">
-            Buy for $125.00
+            Buy for $50.00
           </div>
-        </div>
-      );
-
-    case 'bonus':
-      return (
-        <div className="w-full max-w-[280px] mx-auto space-y-2.5">
-          {[
-            { rank: "Top 10", bonus: "2x", icon: "🥇", bg: "from-amber-400 to-yellow-500" },
-            { rank: "Top 50", bonus: "1.5x", icon: "🥈", bg: "from-gray-300 to-gray-400" },
-            { rank: "Top 100", bonus: "1.25x", icon: "🥉", bg: "from-orange-400 to-orange-500" }
-          ].map((tier, i) => (
-            <div key={i} className="bg-white rounded-xl shadow-md border border-orange-50 p-3 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${tier.bg} flex items-center justify-center shrink-0`}>
-                  <span className="text-lg">{tier.icon}</span>
-                </div>
-                <div>
-                  <span className="font-bold text-gray-800 text-sm">{tier.rank} Investor</span>
-                  <p className="text-xs text-gray-500">Early discovery reward</p>
-                </div>
-              </div>
-              <div className="bg-orange-100 px-3 py-1.5 rounded-xl">
-                <span className="text-base font-bold text-orange-600">{tier.bonus}</span>
-              </div>
-            </div>
-          ))}
         </div>
       );
 
@@ -185,11 +147,10 @@ const SlideVisual = ({ type }) => {
       return (
         <div className={card}>
           <div className="text-center mb-4">
-            <p className="text-xs text-gray-500 mb-1">Portfolio Value</p>
-            <p className="text-2xl font-bold text-gray-800">$2,450.00</p>
-            <div className="inline-flex items-center gap-1 bg-green-100 text-green-600 px-3 py-1 rounded-full text-xs font-medium mt-2">
-              <TrendingUp className="w-3 h-3" />
-              +$450.00 (22.5%)
+            <p className="text-xs text-gray-500 mb-1">Shares Held</p>
+            <p className="text-2xl font-bold text-gray-800">490 shares</p>
+            <div className="inline-flex items-center gap-1 bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-xs font-medium mt-2">
+              Value: $2,450.00
             </div>
           </div>
           <div className="h-20 flex items-end justify-between gap-1 mb-2">
