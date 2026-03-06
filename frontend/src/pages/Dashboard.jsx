@@ -447,27 +447,6 @@ export default function Dashboard() {
         </section>
       </div>
 
-      {/* Trending creators */}
-      <div>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="font-heading text-2xl font-bold">Trending Creators</h2>
-          <Link to="/explore">
-            <Button variant="ghost" className="text-muted-foreground hover:text-foreground">
-              View all <ArrowUpRight className="w-4 h-4 ml-1" />
-            </Button>
-          </Link>
-        </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {creators.map((creator) => (
-            <CreatorCard key={creator.creator_id} creator={creator} />
-          ))}
-        </div>
-      </div>
-
-      {/* Market Activity Dashboard */}
-      <div className="mt-8">
-        <MarketOverview onRefresh={manualRefresh} />
-      </div>
       </div>
     </div>
   );
