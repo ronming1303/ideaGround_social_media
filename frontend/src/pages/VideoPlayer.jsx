@@ -14,7 +14,7 @@ import {
   Eye, Clock, DollarSign, ArrowLeft, ShoppingCart, ChevronUp, ChevronDown,
   Award, Users, Sparkles, PieChart, EyeOff, RefreshCw
 } from "lucide-react";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, Area, AreaChart } from "recharts";
+import { XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
 import VideoComments from "../components/VideoComments";
 
@@ -31,6 +31,7 @@ export default function VideoPlayer() {
   const [sharesToBuy, setSharesToBuy] = useState(1);
   const [buying, setBuying] = useState(false);
   const [topEarners, setTopEarners] = useState(null);
+  const [volumeHistory, setVolumeHistory] = useState([]);
 
   const fetchVideo = useCallback(async () => {
     try {
@@ -57,11 +58,21 @@ export default function VideoPlayer() {
     }
   }, [videoId]);
 
+  const fetchVolumeHistory = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API}/videos/${videoId}/volume`, { withCredentials: true });
+      setVolumeHistory(response.data.volume_history || []);
+    } catch (error) {
+      console.log("Volume history not available");
+    }
+  }, [videoId]);
+
   // Initial fetch
   useEffect(() => {
     setLoading(true);
     fetchVideo();
     fetchTopEarners();
+    fetchVolumeHistory();
   }, [videoId]);
 
   // Auto-refresh polling (every 10 seconds for video page - more critical)
@@ -164,9 +175,6 @@ export default function VideoPlayer() {
     return views;
   };
 
-  const priceChange = video?.price_history?.length > 1 
-    ? ((video.share_price - video.price_history[0].price) / video.price_history[0].price * 100)
-    : 0;
 
   if (loading) {
     return (
@@ -315,12 +323,6 @@ export default function VideoPlayer() {
                 <Badge className="bg-white/20 hover:bg-white/30 text-white border-0 font-mono text-lg px-3">
                   ${video.ticker_symbol || (video.creator?.stock_symbol || 'VID')}
                 </Badge>
-                <span className={`flex items-center text-sm font-bold px-2 py-1 rounded-full ${
-                  priceChange >= 0 ? 'bg-emerald-500' : 'bg-red-500'
-                }`}>
-                  {priceChange >= 0 ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-                  {Math.abs(priceChange).toFixed(1)}%
-                </span>
               </div>
               <div className="flex items-baseline gap-2">
                 <span className="font-heading text-4xl font-bold">${video.share_price.toFixed(2)}</span>
@@ -329,41 +331,41 @@ export default function VideoPlayer() {
             </div>
             
             <CardContent className="p-5">
-              {/* Price Chart */}
-              <div className="h-32 mb-5">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={video.price_history}>
-                    <defs>
-                      <linearGradient id="colorPrice" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor={priceChange >= 0 ? "hsl(173, 58%, 39%)" : "hsl(0, 84%, 60%)"} stopOpacity={0.3}/>
-                        <stop offset="95%" stopColor={priceChange >= 0 ? "hsl(173, 58%, 39%)" : "hsl(0, 84%, 60%)"} stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
-                    <XAxis dataKey="date" hide />
-                    <YAxis hide domain={['dataMin - 2', 'dataMax + 2']} />
-                    <Tooltip 
-                      content={({ active, payload }) => {
-                        if (active && payload && payload.length) {
-                          return (
-                            <div className="bg-card border border-border rounded-lg p-2 shadow-lg">
-                              <p className="text-xs text-muted-foreground">{payload[0].payload.date}</p>
-                              <p className="font-mono font-medium">${payload[0].value.toFixed(2)}</p>
-                            </div>
-                          );
-                        }
-                        return null;
-                      }}
-                    />
-                    <Area 
-                      type="monotone" 
-                      dataKey="price" 
-                      stroke={priceChange >= 0 ? "hsl(173, 58%, 39%)" : "hsl(0, 84%, 60%)"}
-                      strokeWidth={2}
-                      fillOpacity={1} 
-                      fill="url(#colorPrice)" 
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
+              {/* Trading Volume Chart */}
+              <div className="mb-2">
+                <p className="text-xs text-muted-foreground mb-2">Trading Volume</p>
+                {volumeHistory.length > 0 ? (
+                  <div className="h-32">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={volumeHistory} barSize={8}>
+                        <XAxis dataKey="date" hide />
+                        <YAxis hide />
+                        <Tooltip
+                          content={({ active, payload }) => {
+                            if (active && payload && payload.length) {
+                              const d = payload[0].payload;
+                              return (
+                                <div className="bg-card border border-border rounded-lg p-2 shadow-lg text-xs">
+                                  <p className="text-muted-foreground mb-1">{d.date}</p>
+                                  <p className="text-emerald-600">Buy: {d.buy} shares</p>
+                                  {d.sell > 0 && <p className="text-orange-500">Sell: {d.sell} shares</p>}
+                                  <p className="font-medium">{d.traders} trader{d.traders !== 1 ? 's' : ''}</p>
+                                </div>
+                              );
+                            }
+                            return null;
+                          }}
+                        />
+                        <Bar dataKey="buy" fill="hsl(173, 58%, 39%)" radius={[2,2,0,0]} />
+                        <Bar dataKey="sell" fill="hsl(24, 95%, 53%)" radius={[2,2,0,0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                ) : (
+                  <div className="h-32 flex items-center justify-center text-xs text-muted-foreground">
+                    No trading activity yet
+                  </div>
+                )}
               </div>
 
               {/* Simple Stats - Clear Labels */}

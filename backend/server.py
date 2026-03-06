@@ -871,6 +871,33 @@ async def get_video(video_id: str, request: Request):
     
     return video
 
+@api_router.get("/videos/{video_id}/volume")
+async def get_video_volume(video_id: str):
+    """Get daily trading volume (shares bought + sold) for a video."""
+    from collections import defaultdict
+    txns = await db.transactions.find(
+        {"video_id": video_id, "transaction_type": {"$in": ["buy_share", "sell_share"]}},
+        {"_id": 0, "shares": 1, "created_at": 1, "transaction_type": 1, "user_id": 1}
+    ).to_list(None)
+
+    daily = defaultdict(lambda: {"buy": 0, "sell": 0, "traders": set()})
+    for t in txns:
+        date = t["created_at"][:10]
+        shares = t.get("shares", 0)
+        if t["transaction_type"] == "buy_share":
+            daily[date]["buy"] += shares
+        else:
+            daily[date]["sell"] += shares
+        daily[date]["traders"].add(t["user_id"])
+
+    result = [
+        {"date": d, "buy": v["buy"], "sell": v["sell"],
+         "volume": v["buy"] + v["sell"], "traders": len(v["traders"])}
+        for d, v in sorted(daily.items())
+    ]
+    return {"volume_history": result}
+
+
 @api_router.get("/videos/{video_id}/top-earners")
 async def get_video_top_earners(video_id: str, limit: int = 5):
     """
