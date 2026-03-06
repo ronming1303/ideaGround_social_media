@@ -2496,12 +2496,18 @@ async def get_market_ticker():
     ticker_items = []
     for video in videos:
         creator = await db.creators.find_one({"creator_id": video["creator_id"]}, {"_id": 0})
-        change_percent = video.get("last_price_change_percent", 0)
-        
+        share_price = video.get("share_price", SHARE_PRICE_MIN)
+
+        # Compute circulating value for this video
+        ownerships = await db.share_ownerships.find(
+            {"video_id": video["video_id"]}, {"_id": 0, "shares_owned": 1}
+        ).to_list(None)
+        circulating_shares = sum(o.get("shares_owned", 0) for o in ownerships)
+        circulating_value = circulating_shares * share_price
+
         # Use unique video ticker symbol if available, otherwise generate one
         ticker_symbol = video.get("ticker_symbol")
         if not ticker_symbol and creator:
-            # Parse created_at date
             created_at = video.get("created_at")
             if isinstance(created_at, str):
                 try:
@@ -2510,26 +2516,23 @@ async def get_market_ticker():
                     created_at = datetime.now(timezone.utc)
             elif not created_at:
                 created_at = datetime.now(timezone.utc)
-            
-            # Generate ticker symbol dynamically
             ticker_symbol = generate_video_ticker(
                 creator.get("stock_symbol", "$UNKN"),
                 video.get("video_type", "full"),
                 video.get("category", creator.get("category", "")),
                 created_at,
-                1  # Default sequence
+                1
             )
-        
+
         ticker_items.append({
             "symbol": ticker_symbol or f"${video['video_id'][:6].upper()}",
             "video_id": video["video_id"],
             "title": video["title"][:30] + "..." if len(video["title"]) > 30 else video["title"],
-            "price": video.get("share_price", 10.0),
-            "change_percent": change_percent,
-            "is_positive": change_percent >= 0,
+            "price": share_price,
+            "circulating_value": round(circulating_value, 2),
             "creator_symbol": creator.get("stock_symbol") if creator else None
         })
-    
+
     return ticker_items
 
 # ==================== CREATOR & VIDEO UPLOAD ====================

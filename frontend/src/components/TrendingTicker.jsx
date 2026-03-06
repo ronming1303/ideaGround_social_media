@@ -2,8 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { API } from "../App";
-import { TrendingUp, TrendingDown } from "lucide-react";
-import { cn } from "../lib/utils";
+import { BarChart2 } from "lucide-react";
 
 export default function TrendingTicker() {
   const [tickerItems, setTickerItems] = useState([]);
@@ -46,19 +45,10 @@ export default function TrendingTicker() {
               className="flex items-center gap-2 px-6 border-r border-border/30 hover:bg-accent/50 transition-colors cursor-pointer"
             >
               <span className="font-mono font-semibold text-sm">{item.symbol}</span>
-              <span className="text-sm text-muted-foreground">${item.price.toFixed(2)}</span>
-              <span 
-                className={cn(
-                  "flex items-center gap-0.5 text-xs font-medium",
-                  item.is_positive ? "text-secondary" : "text-destructive"
-                )}
-              >
-                {item.is_positive ? (
-                  <TrendingUp className="w-3 h-3" />
-                ) : (
-                  <TrendingDown className="w-3 h-3" />
-                )}
-                {item.is_positive ? "+" : ""}{item.change_percent.toFixed(1)}%
+              <span className="text-sm text-muted-foreground">${item.price.toFixed(0)}</span>
+              <span className="flex items-center gap-0.5 text-xs font-medium text-emerald-600">
+                <BarChart2 className="w-3 h-3" />
+                ${(item.circulating_value ?? 0).toLocaleString("en-US")}
               </span>
             </Link>
           ))}
