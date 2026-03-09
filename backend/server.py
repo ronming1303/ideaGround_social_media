@@ -1159,7 +1159,8 @@ async def buy_shares(req: BuyShareRequest, user: User = Depends(get_current_user
     }
     await db.transactions.insert_one(transaction_doc)
 
-    return {"success": True, "shares_bought": req.shares, "total_cost": total_cost}
+    new_balance = user_doc["wallet_balance"] - total_cost
+    return {"success": True, "shares_bought": req.shares, "total_cost": total_cost, "new_wallet_balance": new_balance}
 
 @api_router.post("/shares/sell")
 async def sell_shares(req: SellShareRequest, user: User = Depends(get_current_user)):

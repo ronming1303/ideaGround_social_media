@@ -20,7 +20,7 @@ import VideoComments from "../components/VideoComments";
 
 export default function VideoPlayer() {
   const { videoId } = useParams();
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const [video, setVideo] = useState(null);
   const [loading, setLoading] = useState(true);
   const [liked, setLiked] = useState(false);
@@ -162,6 +162,7 @@ export default function VideoPlayer() {
       setBuyDialogOpen(false);
       fetchVideo(); // Refresh video data
       fetchTopEarners(); // Refresh leaderboard
+      if (user) setUser({ ...user, wallet_balance: response.data.new_wallet_balance });
     } catch (error) {
       toast.error(error.response?.data?.detail || "Failed to buy shares");
     } finally {
