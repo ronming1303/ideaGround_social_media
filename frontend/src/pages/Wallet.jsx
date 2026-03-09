@@ -6,11 +6,103 @@ import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
-import { 
-  Wallet as WalletIcon, Plus, ArrowUpRight, ArrowDownLeft, 
-  TrendingUp, ShoppingCart, DollarSign, History, RefreshCw
+import {
+  Wallet as WalletIcon, Plus, ArrowUpRight, ArrowDownLeft,
+  TrendingUp, ShoppingCart, DollarSign, History, RefreshCw, CreditCard, Lock
 } from "lucide-react";
 import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY || "");
+
+const CARD_ELEMENT_OPTIONS = {
+  style: {
+    base: {
+      fontSize: "16px",
+      color: "#1a1a1a",
+      fontFamily: "inherit",
+      "::placeholder": { color: "#9ca3af" },
+    },
+    invalid: { color: "#ef4444" },
+  },
+};
+
+function StripeCheckoutForm({ amount, onSuccess, onCancel }) {
+  const stripe = useStripe();
+  const elements = useElements();
+  const [processing, setProcessing] = useState(false);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!stripe || !elements) return;
+
+    setProcessing(true);
+    try {
+      // Step 1: Create PaymentIntent on backend
+      const { data } = await axios.post(
+        `${API}/wallet/create-payment-intent`,
+        { amount },
+        { withCredentials: true }
+      );
+
+      // Step 2: Confirm card payment with Stripe
+      const result = await stripe.confirmCardPayment(data.client_secret, {
+        payment_method: { card: elements.getElement(CardElement) },
+      });
+
+      if (result.error) {
+        toast.error(result.error.message);
+        return;
+      }
+
+      // Step 3: Verify with backend and credit wallet
+      const confirm = await axios.post(
+        `${API}/wallet/confirm-payment`,
+        { payment_intent_id: result.paymentIntent.id },
+        { withCredentials: true }
+      );
+
+      onSuccess(confirm.data.new_balance, amount);
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Payment failed");
+    } finally {
+      setProcessing(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <div>
+        <label className="text-sm font-medium mb-2 block">Card Details</label>
+        <div className="border border-primary/20 rounded-xl p-4 focus-within:border-primary transition-colors bg-white">
+          <CardElement options={CARD_ELEMENT_OPTIONS} />
+        </div>
+        <p className="text-xs text-muted-foreground mt-2 flex items-center gap-1">
+          <Lock className="w-3 h-3" /> Test card: 4242 4242 4242 4242 · Any future date · Any CVV
+        </p>
+      </div>
+
+      <div className="p-4 rounded-xl bg-accent flex items-center justify-between">
+        <span className="text-sm font-medium">Total</span>
+        <span className="font-heading font-bold text-lg gradient-text">${amount.toFixed(2)}</span>
+      </div>
+
+      <div className="flex gap-3">
+        <Button type="button" variant="outline" onClick={onCancel} className="flex-1 rounded-full">
+          Back
+        </Button>
+        <Button
+          type="submit"
+          disabled={!stripe || processing}
+          className="flex-1 bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700 rounded-full"
+        >
+          {processing ? "Processing..." : `Pay $${amount.toFixed(2)}`}
+        </Button>
+      </div>
+    </form>
+  );
+}
 
 export default function Wallet() {
   const { user, setUser } = useAuth();
@@ -18,7 +110,7 @@ export default function Wallet() {
   const [loading, setLoading] = useState(true);
   const [depositDialogOpen, setDepositDialogOpen] = useState(false);
   const [depositAmount, setDepositAmount] = useState("");
-  const [depositing, setDepositing] = useState(false);
+  const [step, setStep] = useState("amount"); // "amount" | "payment"
 
   const fetchWallet = useCallback(async () => {
     try {
@@ -32,46 +124,31 @@ export default function Wallet() {
     }
   }, [loading]);
 
-  // Initial fetch
   useEffect(() => {
     fetchWallet();
   }, []);
 
-  // Auto-refresh polling (every 15 seconds)
-  // TODO: Replace with WebSocket for real-time updates
   const { refresh: manualRefresh, lastUpdated } = useDataSync(
     fetchWallet,
     POLL_INTERVALS.NORMAL,
     !loading
   );
 
-  const handleDeposit = async () => {
-    const amount = parseFloat(depositAmount);
-    if (isNaN(amount) || amount <= 0) {
-      toast.error("Please enter a valid amount");
-      return;
-    }
-
-    setDepositing(true);
-    try {
-      const response = await axios.post(
-        `${API}/wallet/deposit`,
-        { amount },
-        { withCredentials: true }
-      );
-      toast.success(`Successfully deposited $${amount.toFixed(2)}`);
-      setDepositDialogOpen(false);
+  const handleDialogClose = (open) => {
+    setDepositDialogOpen(open);
+    if (!open) {
       setDepositAmount("");
-      fetchWallet();
-      // Update user context
-      if (user) {
-        setUser({ ...user, wallet_balance: response.data.new_balance });
-      }
-    } catch (error) {
-      toast.error(error.response?.data?.detail || "Failed to deposit");
-    } finally {
-      setDepositing(false);
+      setStep("amount");
     }
+  };
+
+  const handlePaymentSuccess = (newBalance, amount) => {
+    toast.success(`Successfully deposited $${amount.toFixed(2)}`);
+    setDepositDialogOpen(false);
+    setDepositAmount("");
+    setStep("amount");
+    fetchWallet();
+    if (user) setUser({ ...user, wallet_balance: newBalance });
   };
 
   const formatCurrency = (value) => {
@@ -120,6 +197,8 @@ export default function Wallet() {
   };
 
   const quickDeposits = [50, 100, 250, 500];
+  const parsedAmount = parseFloat(depositAmount);
+  const validAmount = !isNaN(parsedAmount) && parsedAmount >= 1;
 
   if (loading) {
     return (
@@ -154,9 +233,9 @@ export default function Wallet() {
               <h2 className="font-heading text-5xl font-bold gradient-text">{formatCurrency(wallet?.balance || 0)}</h2>
             </div>
 
-            <Dialog open={depositDialogOpen} onOpenChange={setDepositDialogOpen}>
+            <Dialog open={depositDialogOpen} onOpenChange={handleDialogClose}>
               <DialogTrigger asChild>
-                <Button 
+                <Button
                   data-testid="add-funds-btn"
                   className="bg-gradient-to-r from-orange-500 to-orange-600 text-white hover:from-orange-600 hover:to-orange-700 rounded-full px-8 py-6 text-lg shadow-lg orange-glow"
                 >
@@ -166,56 +245,67 @@ export default function Wallet() {
               </DialogTrigger>
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                  <DialogTitle className="font-heading gradient-text">Add Funds</DialogTitle>
+                  <DialogTitle className="font-heading gradient-text flex items-center gap-2">
+                    <CreditCard className="w-5 h-5" />
+                    {step === "amount" ? "Add Funds" : "Payment"}
+                  </DialogTitle>
                 </DialogHeader>
-                <div className="space-y-6 py-4">
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Amount</label>
-                    <div className="relative">
-                      <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary" />
-                      <Input
-                        data-testid="deposit-amount-input"
-                        type="number"
-                        value={depositAmount}
-                        onChange={(e) => setDepositAmount(e.target.value)}
-                        placeholder="0.00"
-                        className="pl-10 h-14 text-xl font-mono border-primary/20 focus:border-primary"
+
+                {step === "amount" ? (
+                  <div className="space-y-6 py-4">
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">Amount</label>
+                      <div className="relative">
+                        <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary" />
+                        <Input
+                          data-testid="deposit-amount-input"
+                          type="number"
+                          value={depositAmount}
+                          onChange={(e) => setDepositAmount(e.target.value)}
+                          placeholder="0.00"
+                          min="1"
+                          className="pl-10 h-14 text-xl font-mono border-primary/20 focus:border-primary"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-sm font-medium mb-2 block">Quick Select</label>
+                      <div className="grid grid-cols-4 gap-2">
+                        {quickDeposits.map((amount) => (
+                          <Button
+                            key={amount}
+                            data-testid={`quick-deposit-${amount}`}
+                            variant="outline"
+                            onClick={() => setDepositAmount(amount.toString())}
+                            className="rounded-xl"
+                          >
+                            ${amount}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <Button
+                      data-testid="confirm-deposit-btn"
+                      onClick={() => setStep("payment")}
+                      disabled={!validAmount}
+                      className="w-full bg-primary text-white hover:bg-primary/90 rounded-full py-6"
+                    >
+                      Continue to Payment
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="py-4">
+                    <Elements stripe={stripePromise}>
+                      <StripeCheckoutForm
+                        amount={parsedAmount}
+                        onSuccess={handlePaymentSuccess}
+                        onCancel={() => setStep("amount")}
                       />
-                    </div>
+                    </Elements>
                   </div>
-
-                  <div>
-                    <label className="text-sm font-medium mb-2 block">Quick Select</label>
-                    <div className="grid grid-cols-4 gap-2">
-                      {quickDeposits.map((amount) => (
-                        <Button
-                          key={amount}
-                          data-testid={`quick-deposit-${amount}`}
-                          variant="outline"
-                          onClick={() => setDepositAmount(amount.toString())}
-                          className="rounded-xl"
-                        >
-                          ${amount}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="p-4 rounded-xl bg-accent">
-                    <p className="text-sm text-muted-foreground text-center">
-                      This is a simulated deposit for demo purposes. No real money is involved.
-                    </p>
-                  </div>
-
-                  <Button 
-                    data-testid="confirm-deposit-btn"
-                    onClick={handleDeposit}
-                    disabled={depositing || !depositAmount}
-                    className="w-full bg-primary text-white hover:bg-primary/90 rounded-full py-6"
-                  >
-                    {depositing ? "Processing..." : `Deposit ${depositAmount ? formatCurrency(parseFloat(depositAmount)) : '$0.00'}`}
-                  </Button>
-                </div>
+                )}
               </DialogContent>
             </Dialog>
           </div>
@@ -234,7 +324,7 @@ export default function Wallet() {
           {wallet?.transactions?.length > 0 ? (
             <div className="space-y-3">
               {wallet.transactions.map((txn, index) => (
-                <div 
+                <div
                   key={index}
                   data-testid={`transaction-${txn.transaction_id}`}
                   className="flex items-center gap-4 p-4 rounded-xl bg-muted/50"

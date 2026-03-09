@@ -34,6 +34,8 @@ services:
       - GOOGLE_REDIRECT_URI=https://ideaground.net/api/auth/google/callback
       - FRONTEND_URL=https://ideaground.net
       - CORS_ORIGINS=https://ideaground.net,http://localhost:3000,http://localhost:8080
+      - STRIPE_SECRET_KEY=STRIPE_SECRET_KEY_REMOVED
+      - STRIPE_PUBLISHABLE_KEY=STRIPE_PUBLISHABLE_KEY_REMOVED
     ports:
       - "127.0.0.1:8001:8001"
     depends_on:
@@ -55,6 +57,7 @@ services:
       args:
         REACT_APP_BACKEND_URL: ""
         REACT_APP_LOCAL_AUTH: "true"
+        REACT_APP_STRIPE_PUBLISHABLE_KEY: "STRIPE_PUBLISHABLE_KEY_REMOVED"
     container_name: ideaground-frontend
     restart: unless-stopped
     ports:

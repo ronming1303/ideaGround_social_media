@@ -14,6 +14,7 @@ import httpx
 import random
 import hashlib
 import secrets
+import stripe
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -25,6 +26,12 @@ db = client[os.environ['DB_NAME']]
 
 # Local Auth Mode (for Docker deployment)
 LOCAL_AUTH_ENABLED = os.environ.get('LOCAL_AUTH_ENABLED', 'false').lower() == 'true'
+
+# Stripe configuration
+STRIPE_SECRET_KEY = os.environ.get('STRIPE_SECRET_KEY', '')
+STRIPE_PUBLISHABLE_KEY = os.environ.get('STRIPE_PUBLISHABLE_KEY', '')
+if STRIPE_SECRET_KEY:
+    stripe.api_key = STRIPE_SECRET_KEY
 
 # Google OAuth configuration
 GOOGLE_CLIENT_ID = os.environ.get('GOOGLE_CLIENT_ID', '')
@@ -1640,6 +1647,65 @@ async def deposit(req: DepositRequest, user: User = Depends(get_current_user)):
     await db.transactions.insert_one(transaction_doc)
     
     return {"success": True, "new_balance": user.wallet_balance + req.amount}
+
+@api_router.post("/wallet/create-payment-intent")
+async def create_payment_intent(req: DepositRequest, user: User = Depends(get_current_user)):
+    """Create a Stripe PaymentIntent for wallet deposit"""
+    if req.amount <= 0:
+        raise HTTPException(status_code=400, detail="Invalid amount")
+    if not STRIPE_SECRET_KEY:
+        raise HTTPException(status_code=500, detail="Stripe not configured")
+
+    amount_cents = int(req.amount * 100)
+    intent = stripe.PaymentIntent.create(
+        amount=amount_cents,
+        currency="usd",
+        metadata={"user_id": user.user_id, "deposit_amount": str(req.amount)}
+    )
+    return {"client_secret": intent.client_secret}
+
+class ConfirmPaymentRequest(BaseModel):
+    payment_intent_id: str
+
+@api_router.post("/wallet/confirm-payment")
+async def confirm_payment(req: ConfirmPaymentRequest, user: User = Depends(get_current_user)):
+    """Verify payment with Stripe and credit wallet"""
+    if not STRIPE_SECRET_KEY:
+        raise HTTPException(status_code=500, detail="Stripe not configured")
+
+    intent = stripe.PaymentIntent.retrieve(req.payment_intent_id)
+
+    if intent.status != "succeeded":
+        raise HTTPException(status_code=400, detail="Payment not completed")
+
+    if intent.metadata.get("user_id") != user.user_id:
+        raise HTTPException(status_code=403, detail="Payment does not belong to this user")
+
+    # Idempotency: prevent double credit
+    existing = await db.transactions.find_one({"stripe_payment_intent_id": req.payment_intent_id})
+    if existing:
+        user_doc = await db.users.find_one({"user_id": user.user_id}, {"_id": 0})
+        return {"success": True, "new_balance": user_doc["wallet_balance"]}
+
+    amount = float(intent.metadata.get("deposit_amount"))
+
+    await db.users.update_one(
+        {"user_id": user.user_id},
+        {"$inc": {"wallet_balance": amount}}
+    )
+
+    transaction_doc = {
+        "transaction_id": f"txn_{uuid.uuid4().hex[:12]}",
+        "user_id": user.user_id,
+        "transaction_type": "deposit",
+        "amount": amount,
+        "stripe_payment_intent_id": req.payment_intent_id,
+        "created_at": datetime.now(timezone.utc).isoformat()
+    }
+    await db.transactions.insert_one(transaction_doc)
+
+    user_doc = await db.users.find_one({"user_id": user.user_id}, {"_id": 0})
+    return {"success": True, "new_balance": user_doc["wallet_balance"]}
 
 # ==================== AI RECOMMENDATIONS ====================
 
