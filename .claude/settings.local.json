@@ -15,7 +15,12 @@
       "Bash(PATH=\"/Applications/Docker.app/Contents/Resources/bin:$PATH\")",
       "Bash(docker compose -f docker-local/docker-compose.local.yml build backend)",
       "Bash(docker compose -f docker-local/docker-compose.local.yml up -d backend)",
-      "Bash(docker compose -f /Volumes/Research/IG_desktop_v1_final/docker-local/docker-compose.local.yml up -d backend)"
+      "Bash(docker compose -f /Volumes/Research/IG_desktop_v1_final/docker-local/docker-compose.local.yml up -d backend)",
+      "Bash(docker compose -f docker-compose.local.yml ps)",
+      "Bash(docker compose -f docker-compose.local.yml down -v)",
+      "Bash(docker compose -f docker-compose.local.yml up --build -d)",
+      "Bash(git add docker-local/docker-compose.local.yml docker-local/docker-compose.prod.yml .claude/settings.local.json)",
+      "Bash(git commit:*)"
     ]
   }
 }
