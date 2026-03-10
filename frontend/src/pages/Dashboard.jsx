@@ -293,7 +293,7 @@ export default function Dashboard() {
                 <TrendingUp className="w-5 h-5 text-secondary" />
               </div>
             </div>
-            <p className="text-2xl font-heading font-bold">${portfolioPerformance.total_value.toFixed(2)}</p>
+            <p className="text-2xl font-heading font-bold">${portfolioPerformance?.total_value?.toFixed(2) ?? '0.00'}</p>
             <p className="text-sm text-muted-foreground">Portfolio Value</p>
           </CardContent>
         </Card>
