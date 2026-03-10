@@ -21,7 +21,14 @@
       "Bash(docker compose -f docker-compose.local.yml up --build -d)",
       "Bash(git add docker-local/docker-compose.local.yml docker-local/docker-compose.prod.yml .claude/settings.local.json)",
       "Bash(git commit:*)",
-      "Bash(git push origin RL)"
+      "Bash(git push origin RL)",
+      "Bash(export PATH=\"$PATH:/Applications/Docker.app/Contents/Resources/bin\")",
+      "Bash(DOCKER_HOST=unix:///var/run/docker.sock docker ps)",
+      "Bash(DOCKER_HOST=unix:///Users/ruming/.docker/desktop/docker.sock docker ps)",
+      "Read(//Users/ruming/Library/Containers/com.docker.docker/Data/**)",
+      "Read(//Users/ruming/.docker/run/**)",
+      "Read(//private/var/run/**)",
+      "Read(//Users/ruming/.docker/**)"
     ]
   }
 }

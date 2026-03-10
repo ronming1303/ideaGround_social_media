@@ -501,7 +501,7 @@ export default function VideoPlayer() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <div className="w-3 h-3 rounded-full bg-muted-foreground" />
-                    <span className="text-sm">Platform</span>
+                    <span className="text-sm">Supporters</span>
                   </div>
                   <span className="font-mono text-sm font-medium">10%</span>
                 </div>
