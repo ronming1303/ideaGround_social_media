@@ -3,16 +3,16 @@ import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import { API, useAuth } from "../App";
 import { toast } from "sonner";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Input } from "../components/ui/input";
 import { Slider } from "../components/ui/slider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
-import { 
-  Play, Heart, Share2, Bell, TrendingUp, TrendingDown, 
-  Eye, Clock, DollarSign, ArrowLeft, ShoppingCart, ChevronUp, ChevronDown,
-  Award, Users, Sparkles, PieChart, EyeOff, RefreshCw
+import {
+  Heart, Share2, Bell, TrendingUp,
+  Eye, Clock, ArrowLeft, ShoppingCart,
+  Award, Users, PieChart, EyeOff
 } from "lucide-react";
 import { XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
@@ -77,7 +77,7 @@ export default function VideoPlayer() {
 
   // Auto-refresh polling (every 10 seconds for video page - more critical)
   // TODO: Replace with WebSocket for real-time updates
-  const { refresh: manualRefresh, lastUpdated } = useDataSync(
+  useDataSync(
     useCallback(async () => {
       await Promise.all([fetchVideo(), fetchTopEarners()]);
     }, [fetchVideo, fetchTopEarners]),
@@ -381,21 +381,6 @@ export default function VideoPlayer() {
                 </div>
               </div>
 
-              {/* Early Investor Bonus - Only show if applicable */}
-              {video.early_investor_tier && (
-                <div className="mb-5 p-4 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-amber-500/20 flex items-center justify-center">
-                      <Sparkles className="w-5 h-5 text-amber-600" />
-                    </div>
-                    <div>
-                      <p className="font-semibold text-amber-800">Early Investor Bonus Active!</p>
-                      <p className="text-sm text-amber-700">Get <span className="font-bold">{video.early_bonus_available}x bonus</span> on your profits</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
               {/* BUY BUTTON */}
               <Dialog open={buyDialogOpen} onOpenChange={setBuyDialogOpen}>
                 <DialogTrigger asChild>
@@ -488,56 +473,6 @@ export default function VideoPlayer() {
             </CardContent>
           </Card>
 
-          {/* Early Discovery Bonus Card */}
-          {video.early_investor_tier && (
-            <Card className="border-border/50 bg-gradient-to-br from-amber-500/10 to-orange-500/5 border-amber-500/20">
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center flex-shrink-0">
-                    <Award className="w-5 h-5 text-amber-600" />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h4 className="font-medium">Early Discovery Bonus</h4>
-                      <Badge variant="outline" className="text-xs bg-amber-500/10 text-amber-700 border-amber-500/30">
-                        {video.early_investor_tier.toUpperCase()}
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      Only {video.shares_sold_percent.toFixed(0)}% shares sold. Invest now for a <span className="font-semibold text-amber-600">{video.early_bonus_available}x bonus</span> on profits!
-                    </p>
-                    <div className="w-full bg-muted rounded-full h-2">
-                      <div 
-                        className="bg-gradient-to-r from-amber-500 to-orange-500 h-2 rounded-full transition-all"
-                        style={{ width: `${Math.min(video.shares_sold_percent, 30)}%` }}
-                      />
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-1">Early bonus ends at 30% sold</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* User Early Investor Status */}
-          {video.user_is_early_investor && video.user_shares > 0 && (
-            <Card className="border-border/50 bg-gradient-to-br from-emerald-500/10 to-teal-500/5 border-emerald-500/20">
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                    <Sparkles className="w-5 h-5 text-emerald-600" />
-                  </div>
-                  <div>
-                    <h4 className="font-medium text-emerald-700 mb-1">You&apos;re an Early Investor!</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Your {video.user_shares} shares qualify for a <span className="font-semibold text-emerald-600">{video.user_early_bonus}x bonus</span> on any profits when you sell.
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          )}
-
           {/* Revenue Split Card - Transparent Distribution */}
           <Card className="border-border/50">
             <CardContent className="p-4">
@@ -597,7 +532,7 @@ export default function VideoPlayer() {
                 </div>
                 
                 <div className="space-y-3">
-                  {topEarners.top_earners.map((earner, index) => (
+                  {topEarners.top_earners.map((earner) => (
                     <div 
                       key={earner.user_id}
                       data-testid={`earner-${earner.rank}`}
