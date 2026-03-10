@@ -259,7 +259,7 @@ export default function Dashboard() {
       {/* Welcome header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="font-heading text-3xl font-bold mb-1">
+          <h1 className="text-3xl font-heading font-bold gradient-text">
             Welcome back, {user?.name?.split(' ')[0] || 'Creator'}
           </h1>
           <p className="text-muted-foreground">Discover trending content and grow your portfolio</p>
@@ -293,8 +293,8 @@ export default function Dashboard() {
                 <TrendingUp className="w-5 h-5 text-secondary" />
               </div>
             </div>
-            <p className="text-2xl font-heading font-bold">{videos.length}</p>
-            <p className="text-sm text-muted-foreground">Videos Available</p>
+            <p className="text-2xl font-heading font-bold">${portfolioPerformance.total_value.toFixed(2)}</p>
+            <p className="text-sm text-muted-foreground">Portfolio Value</p>
           </CardContent>
         </Card>
         <Card className="border-border/50">
@@ -304,8 +304,8 @@ export default function Dashboard() {
                 <Play className="w-5 h-5 text-chart-4" />
               </div>
             </div>
-            <p className="text-2xl font-heading font-bold">{creators.length}</p>
-            <p className="text-sm text-muted-foreground">Creators</p>
+            <p className="text-2xl font-heading font-bold">{"fix here later"}</p>
+            <p className="text-sm text-muted-foreground">Watch List</p>
           </CardContent>
         </Card>
         <Card className="border-border/50">

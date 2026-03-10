@@ -97,7 +97,7 @@ export default function LiveActivityFeed() {
           <div className="flex items-center gap-4 mt-3 text-sm">
             <div className="flex items-center gap-1.5 text-muted-foreground">
               <DollarSign className="w-4 h-4 text-emerald-500" />
-              <span className="font-mono font-medium text-foreground">${stats.total_volume_24h?.toLocaleString()}</span>
+              <span className="font-mono font-medium text-foreground">{stats.total_volume_24h?.toLocaleString()}</span>
               <span>24h volume</span>
             </div>
             <div className="flex items-center gap-1.5 text-muted-foreground">
