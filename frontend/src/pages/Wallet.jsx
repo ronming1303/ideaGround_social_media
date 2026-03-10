@@ -7,8 +7,8 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
 import {
-  Wallet as WalletIcon, Plus, ArrowUpRight, ArrowDownLeft,
-  TrendingUp, ShoppingCart, DollarSign, History, RefreshCw, CreditCard, Lock
+  Wallet as WalletIcon, Plus, ArrowDownLeft,
+  TrendingUp, ShoppingCart, DollarSign, History, CreditCard, Lock
 } from "lucide-react";
 import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
 import { loadStripe } from "@stripe/stripe-js";
@@ -26,6 +26,7 @@ const CARD_ELEMENT_OPTIONS = {
     },
     invalid: { color: "#ef4444" },
   },
+  disableLink: true,
 };
 
 function StripeCheckoutForm({ amount, onSuccess, onCancel }) {
@@ -128,7 +129,7 @@ export default function Wallet() {
     fetchWallet();
   }, []);
 
-  const { refresh: manualRefresh, lastUpdated } = useDataSync(
+  useDataSync(
     fetchWallet,
     POLL_INTERVALS.NORMAL,
     !loading
