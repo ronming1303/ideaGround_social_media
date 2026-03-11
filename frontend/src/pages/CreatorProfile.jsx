@@ -8,7 +8,7 @@ import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { 
-  ArrowLeft, Bell, Play, Eye, Heart, Clock, TrendingUp, Users, Video
+  ArrowLeft, Bell, Play, Eye, Heart, Users, Video, DollarSign
 } from "lucide-react";
 
 export default function CreatorProfile() {
@@ -49,7 +49,7 @@ export default function CreatorProfile() {
       if (creator) {
         setCreator({
           ...creator,
-          subscriber_count: creator.subscriber_count + (response.data.subscribed ? 1 : -1)
+          subscriber_count: (creator.subscriber_count || 0) + (response.data.subscribed ? 1 : -1)
         });
       }
     } catch (error) {
@@ -94,9 +94,7 @@ export default function CreatorProfile() {
       {/* Creator header */}
       <div className="relative mb-8">
         {/* Banner */}
-        <div className="h-48 rounded-2xl bg-gradient-to-r from-primary/20 via-secondary/10 to-primary/20 overflow-hidden">
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=1200')] bg-cover bg-center opacity-30"></div>
-        </div>
+        <div className="h-48 rounded-2xl bg-gradient-to-r from-primary/30 via-secondary/20 to-primary/30"></div>
 
         {/* Profile info */}
         <div className="relative px-6 -mt-16">
@@ -107,14 +105,9 @@ export default function CreatorProfile() {
               className="w-32 h-32 rounded-2xl object-cover border-4 border-background shadow-lg"
             />
             <div className="flex-1">
-              <div className="flex flex-wrap items-center gap-3 mb-2">
-                <h1 className="font-heading text-3xl font-bold">{creator.name}</h1>
-                <Badge variant="outline" className="font-mono text-lg px-3">
-                  {creator.stock_symbol}
-                </Badge>
-              </div>
+              <h1 className="font-heading text-3xl font-bold mb-2">{creator.name}</h1>
               <p className="text-muted-foreground mb-4">{creator.category} Creator</p>
-              
+
               {/* Stats */}
               <div className="flex flex-wrap items-center gap-6 text-sm">
                 <div className="flex items-center gap-2">
@@ -131,6 +124,13 @@ export default function CreatorProfile() {
                   <Video className="w-4 h-4 text-muted-foreground" />
                   <span className="font-semibold">{creator.videos?.length || 0}</span>
                   <span className="text-muted-foreground">videos</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <DollarSign className="w-4 h-4 text-muted-foreground" />
+                  <span className="font-semibold text-emerald-600">${formatNumber(creator.total_revenue || 0)}</span>
+                  <Badge variant="outline" className="font-mono px-3">
+                  ${creator.stock_symbol}
+                  </Badge>
                 </div>
               </div>
             </div>
@@ -160,54 +160,42 @@ export default function CreatorProfile() {
           {filteredVideos?.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredVideos.map((video) => (
-                <Link 
+                <Link
                   key={video.video_id}
                   to={`/video/${video.video_id}`}
                   data-testid={`creator-video-${video.video_id}`}
-                  className="group relative overflow-hidden rounded-2xl bg-card border border-border/50 shadow-sm hover:shadow-hover transition-all duration-300"
+                  className="group overflow-hidden rounded-xl bg-card border border-border/50 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
                 >
-                  <div className="relative aspect-video">
-                    <img 
-                      src={video.thumbnail} 
+                  <div className="relative aspect-video overflow-hidden">
+                    <img
+                      src={video.thumbnail}
                       alt={video.title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                    
-                    {/* Duration badge */}
-                    <Badge className="absolute top-3 right-3 bg-black/70 text-white border-0">
-                      <Clock className="w-3 h-3 mr-1" />
-                      {video.duration_minutes}m
-                    </Badge>
-
-                    {/* Stock price badge */}
-                    <div className="absolute top-3 left-3 bg-secondary text-white px-2 py-1 rounded-lg text-sm font-mono font-medium flex items-center gap-1">
-                      <TrendingUp className="w-3 h-3" />
-                      ${video.share_price.toFixed(2)}
-                    </div>
-
-                    {/* Play overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                      <div className="w-16 h-16 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
-                        <Play className="w-6 h-6 text-primary fill-primary ml-1" />
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20">
+                      <div className="w-14 h-14 rounded-full bg-black/70 flex items-center justify-center">
+                        <Play className="w-6 h-6 text-white fill-white ml-0.5" />
                       </div>
                     </div>
-
-                    {/* Content overlay */}
-                    <div className="absolute bottom-0 left-0 right-0 p-4">
-                      <h3 className="font-heading font-semibold text-white mb-2 line-clamp-2">
+                  </div>
+                  <div className="p-3">
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <h3 className="font-medium text-sm line-clamp-2 leading-snug flex-1">
                         {video.title}
                       </h3>
-                      <div className="flex items-center gap-3 text-sm text-white/60">
-                        <span className="flex items-center gap-1">
-                          <Eye className="w-3 h-3" />
-                          {formatNumber(video.views)}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Heart className="w-3 h-3" />
-                          {formatNumber(video.likes)}
-                        </span>
+                      <div className="flex-shrink-0 px-2 py-1 rounded-md text-xs font-mono font-bold bg-emerald-500/10 text-emerald-600">
+                        ${video.share_price.toFixed(2)}
                       </div>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                      <span className="flex items-center gap-1">
+                        <Eye className="w-3.5 h-3.5" />
+                        {formatNumber(video.views)} views
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Heart className="w-3.5 h-3.5" />
+                        {formatNumber(video.likes)}
+                      </span>
                     </div>
                   </div>
                 </Link>

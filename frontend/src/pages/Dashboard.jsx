@@ -86,12 +86,6 @@ export default function Dashboard() {
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
         
-        {/* Duration badge - bottom right */}
-        <div className="absolute bottom-2 right-2">
-          <Badge className="bg-black/80 text-white border-0 text-xs px-1.5 py-0.5">
-            {video.duration_minutes}:00
-          </Badge>
-        </div>
 
         {/* Play overlay on hover */}
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20">
@@ -157,7 +151,7 @@ export default function Dashboard() {
         <p className="text-sm text-muted-foreground">{creator.category}</p>
       </div>
       <div className="text-right">
-        <p className="font-mono font-semibold text-secondary">{creator.stock_symbol}</p>
+        <p className="font-mono font-semibold text-secondary">${creator.stock_symbol}</p>
         <p className="text-xs text-muted-foreground">{formatViews(creator.subscriber_count)} subs</p>
       </div>
     </Link>

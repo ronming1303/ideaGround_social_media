@@ -204,16 +204,7 @@ export default function Explore() {
                         {video.title}
                       </h3>
                       {/* Price badge */}
-                      <div className={`flex-shrink-0 px-2 py-1 rounded-md text-xs font-mono font-bold flex items-center gap-1 ${
-                        (video.last_price_change_percent || 0) >= 0 
-                          ? 'bg-emerald-500/10 text-emerald-600' 
-                          : 'bg-red-500/10 text-red-500'
-                      }`}>
-                        {(video.last_price_change_percent || 0) >= 0 ? (
-                          <TrendingUp className="w-3 h-3" />
-                        ) : (
-                          <TrendingDown className="w-3 h-3" />
-                        )}
+                      <div className="flex-shrink-0 px-2 py-1 rounded-md text-xs font-mono font-bold bg-emerald-500/10 text-emerald-600">
                         ${video.share_price.toFixed(2)}
                       </div>
                     </div>
@@ -288,7 +279,7 @@ export default function Explore() {
                           </div>
                         </div>
                         <Badge variant="outline" className="font-mono">
-                          {creator.stock_symbol}
+                          ${creator.stock_symbol}
                         </Badge>
                       </div>
                     </CardContent>

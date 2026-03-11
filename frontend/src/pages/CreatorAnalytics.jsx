@@ -98,7 +98,7 @@ export default function CreatorAnalytics() {
           <h1 className="font-heading text-3xl font-bold">Analytics Dashboard</h1>
         </div>
         <Badge variant="outline" className="font-mono text-lg px-3 py-1">
-          {overview.creator?.stock_symbol}
+          ${overview.creator?.stock_symbol}
         </Badge>
       </div>
 

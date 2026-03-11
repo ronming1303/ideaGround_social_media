@@ -208,10 +208,11 @@ class CreateVideoRequest(BaseModel):
     title: str
     description: str
     thumbnail: str
-    video_url: str = "https://www.youtube.com/embed/dQw4w9WgXcQ"  # Default placeholder
-    duration_minutes: int
-    video_type: str  # "short" or "full"
+    video_url: str = "https://www.youtube.com/embed/dQw4w9WgXcQ"
+    duration_minutes: Optional[int] = None
+    video_type: str = "full"
     category: str
+    share_price: Optional[float] = None
 
 class BecomeCreatorRequest(BaseModel):
     name: str
@@ -1038,7 +1039,15 @@ async def get_creator(creator_id: str, request: Request):
     
     videos = await db.videos.find({"creator_id": creator_id}, {"_id": 0}).to_list(50)
     creator["videos"] = videos
-    
+
+    # Calculate total trading volume across all creator's videos
+    video_ids = [v["video_id"] for v in videos]
+    transactions = await db.transactions.find(
+        {"video_id": {"$in": video_ids}, "transaction_type": "buy_share"},
+        {"_id": 0, "amount": 1}
+    ).to_list(10000)
+    creator["total_revenue"] = round(sum(abs(t.get("amount", 0)) for t in transactions), 2)
+
     # Check if user is subscribed
     user = await get_optional_user(request)
     if user:
@@ -2617,12 +2626,12 @@ async def become_creator(req: BecomeCreatorRequest, user: User = Depends(get_cur
     
     # Generate stock symbol from name
     name_parts = req.name.upper().split()
-    stock_symbol = f"${name_parts[0][:4]}" if name_parts else f"$USER"
-    
+    stock_symbol = f"{name_parts[0][:4]}" if name_parts else "USER"
+
     # Check for symbol collision
     existing_symbol = await db.creators.find_one({"stock_symbol": stock_symbol})
     if existing_symbol:
-        stock_symbol = f"${name_parts[0][:3]}{random.randint(1, 99)}"
+        stock_symbol = f"{name_parts[0][:3]}{random.randint(1, 99)}"
     
     creator_doc = {
         "creator_id": f"creator_{uuid.uuid4().hex[:12]}",
@@ -2651,20 +2660,13 @@ async def upload_video(req: CreateVideoRequest, user: User = Depends(get_current
     if not creator:
         raise HTTPException(status_code=403, detail="You must be a creator to upload videos. Please register as a creator first.")
     
-    # Validate video type
-    if req.video_type not in ["short", "full"]:
-        raise HTTPException(status_code=400, detail="video_type must be 'short' or 'full'")
-    
-    # Validate duration based on type
-    if req.video_type == "short" and req.duration_minutes > 3:
-        raise HTTPException(status_code=400, detail="Shorts must be 3 minutes or less")
-    if req.video_type == "full" and (req.duration_minutes < 10 or req.duration_minutes > 30):
-        raise HTTPException(status_code=400, detail="Full videos must be between 10 and 30 minutes")
-    
     video_id = f"vid_{uuid.uuid4().hex[:12]}"
     
-    # Initial price based on creator's popularity
-    base_price = 10.0 + (creator.get("subscriber_count", 0) / 100000)  # +$1 per 100k subs
+    # Initial price: use custom price if provided, otherwise calculate from subscriber count
+    if req.share_price and req.share_price > 0:
+        base_price = req.share_price
+    else:
+        base_price = 10.0 + (creator.get("subscriber_count", 0) / 100000)  # +$1 per 100k subs
     
     video_doc = {
         "video_id": video_id,

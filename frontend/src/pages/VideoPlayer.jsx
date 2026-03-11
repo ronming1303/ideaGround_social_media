@@ -11,7 +11,7 @@ import { Slider } from "../components/ui/slider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
 import {
   Heart, Share2, Bell, TrendingUp,
-  Eye, Clock, ArrowLeft, ShoppingCart,
+  Eye, ArrowLeft, ShoppingCart,
   Award, Users, PieChart, EyeOff
 } from "lucide-react";
 import { XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
@@ -231,10 +231,6 @@ export default function VideoPlayer() {
               <span className="flex items-center gap-1">
                 <Eye className="w-4 h-4" />
                 {formatViews(video.views)} views
-              </span>
-              <span className="flex items-center gap-1">
-                <Clock className="w-4 h-4" />
-                {video.duration_minutes} min
               </span>
             </div>
 

@@ -70,7 +70,7 @@ export default function TrendingStocks({ onRefresh }) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="font-mono text-xs px-1.5">
-              {video.creator?.stock_symbol}
+              ${video.creator?.stock_symbol}
             </Badge>
             <span className="text-xs text-muted-foreground truncate">
               {video.creator?.name}
@@ -183,7 +183,7 @@ export default function TrendingStocks({ onRefresh }) {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <Badge variant="outline" className="font-mono text-xs px-1.5">
-                        {video.creator?.stock_symbol}
+                        ${video.creator?.stock_symbol}
                       </Badge>
                     </div>
                     <p className="text-sm font-medium truncate">{video.title}</p>
@@ -215,7 +215,7 @@ export default function TrendingStocks({ onRefresh }) {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <Badge variant="outline" className="font-mono text-xs px-1.5">
-                      {video.creator?.stock_symbol}
+                      ${video.creator?.stock_symbol}
                     </Badge>
                   </div>
                   <p className="text-sm font-medium truncate">{video.title}</p>
