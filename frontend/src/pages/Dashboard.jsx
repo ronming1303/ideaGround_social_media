@@ -286,50 +286,45 @@ export default function Dashboard() {
 
       {/* Quick stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <Card className="border-border/50">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-accent-foreground" />
+        <Link to="/wallet">
+          <Card className="border-border/50 hover:border-primary/50 hover:shadow-md transition-all cursor-pointer">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center">
+                  <Sparkles className="w-5 h-5 text-accent-foreground" />
+                </div>
               </div>
-            </div>
-            <p className="text-2xl font-heading font-bold">${user?.wallet_balance?.toFixed(2) || '500.00'}</p>
-            <p className="text-sm text-muted-foreground">Wallet Balance</p>
-          </CardContent>
-        </Card>
-        <Card className="border-border/50">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-secondary" />
+              <p className="text-2xl font-heading font-bold">${user?.wallet_balance?.toFixed(2) || '500.00'}</p>
+              <p className="text-sm text-muted-foreground">Wallet Balance</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link to="/portfolio">
+          <Card className="border-border/50 hover:border-primary/50 hover:shadow-md transition-all cursor-pointer">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center">
+                  <TrendingUp className="w-5 h-5 text-secondary" />
+                </div>
               </div>
-            </div>
-            <p className="text-2xl font-heading font-bold">${portfolioPerformance?.total_value?.toFixed(2) ?? '0.00'}</p>
-            <p className="text-sm text-muted-foreground">Portfolio Value</p>
-          </CardContent>
-        </Card>
-        <Card className="border-border/50">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-chart-4/20 flex items-center justify-center">
-                <Play className="w-5 h-5 text-chart-4" />
+              <p className="text-2xl font-heading font-bold">${portfolioPerformance?.total_value?.toFixed(2) ?? '0.00'}</p>
+              <p className="text-sm text-muted-foreground">Portfolio Value</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link to="/watchlist">
+          <Card className="border-border/50 hover:border-primary/50 hover:shadow-md transition-all cursor-pointer">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 rounded-xl bg-chart-4/20 flex items-center justify-center">
+                  <Play className="w-5 h-5 text-chart-4" />
+                </div>
               </div>
-            </div>
-            <p className="text-2xl font-heading font-bold">{watchlistCount || 0}</p>
-            <p className="text-sm text-muted-foreground">Watch List</p>
-          </CardContent>
-        </Card>
-        <Card className="border-border/50">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-10 h-10 rounded-xl bg-chart-5/20 flex items-center justify-center">
-                <Heart className="w-5 h-5 text-chart-5" />
-              </div>
-            </div>
-            <p className="text-2xl font-heading font-bold">{user?.subscriptions?.length || 0}</p>
-            <p className="text-sm text-muted-foreground">Subscriptions</p>
-          </CardContent>
-        </Card>
+              <p className="text-2xl font-heading font-bold">{watchlistCount || 0}</p>
+              <p className="text-sm text-muted-foreground">Watch List</p>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
 
       {/* Content tabs */}
