@@ -17,7 +17,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart,
 import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
 
 export default function Portfolio() {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const [portfolio, setPortfolio] = useState(null);
   const [portfolioHistory, setPortfolioHistory] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -89,7 +89,10 @@ export default function Portfolio() {
       
       setSellDialogOpen(false);
       setSelectedItem(null);
-      fetchPortfolio(); // Refresh
+      fetchPortfolio();
+      // Refresh user context so Dashboard wallet balance stays in sync
+      const meRes = await axios.get(`${API}/auth/me`, { withCredentials: true });
+      setUser(meRes.data);
     } catch (error) {
       toast.error(error.response?.data?.detail || "Failed to sell shares");
     } finally {
