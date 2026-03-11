@@ -561,49 +561,7 @@ export default function VideoPlayer() {
             </CardContent>
           </Card>
 
-          {/* Revenue Split Card - Transparent Distribution */}
-          <Card className="border-border/50">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 mb-4">
-                <PieChart className="w-5 h-5 text-primary" />
-                <h4 className="font-medium">Revenue Distribution</h4>
-              </div>
-              <p className="text-xs text-muted-foreground mb-3">
-                How earnings from this video are shared
-              </p>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-primary" />
-                    <span className="text-sm">Creator</span>
-                  </div>
-                  <span className="font-mono text-sm font-medium">80%</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-secondary" />
-                    <span className="text-sm">Shareholders</span>
-                  </div>
-                  <span className="font-mono text-sm font-medium">10%</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-muted-foreground" />
-                    <span className="text-sm">Supporters</span>
-                  </div>
-                  <span className="font-mono text-sm font-medium">10%</span>
-                </div>
-              </div>
-              {/* Visual bar */}
-              <div className="flex h-2 rounded-full overflow-hidden mt-3">
-                <div className="bg-primary" style={{ width: '80%' }} />
-                <div className="bg-secondary" style={{ width: '10%' }} />
-                <div className="bg-muted-foreground" style={{ width: '10%' }} />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Top Earners Leaderboard */}
+          {/* Top Investors Leaderboard */}
           {topEarners && topEarners.total_investors > 0 && (
             <Card className="border-border/50" data-testid="top-earners-card">
               <CardContent className="p-4">
@@ -613,7 +571,7 @@ export default function VideoPlayer() {
                       <Award className="w-4 h-4 text-white" />
                     </div>
                     <div>
-                      <h4 className="font-medium">Top Earners</h4>
+                      <h4 className="font-medium">Top Shareholders</h4>
                       <p className="text-xs text-muted-foreground">{topEarners.total_investors} investor{topEarners.total_investors !== 1 ? 's' : ''}</p>
                     </div>
                   </div>
@@ -685,6 +643,48 @@ export default function VideoPlayer() {
               </CardContent>
             </Card>
           )}
+
+          {/* Revenue Split Card - Transparent Distribution */}
+          <Card className="border-border/50">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 mb-4">
+                <PieChart className="w-5 h-5 text-primary" />
+                <h4 className="font-medium">Revenue Distribution</h4>
+              </div>
+              <p className="text-xs text-muted-foreground mb-3">
+                How earnings from this video are shared
+              </p>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-primary" />
+                    <span className="text-sm">Creator</span>
+                  </div>
+                  <span className="font-mono text-sm font-medium">80%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-secondary" />
+                    <span className="text-sm">Shareholders</span>
+                  </div>
+                  <span className="font-mono text-sm font-medium">10%</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-muted-foreground" />
+                    <span className="text-sm">Supporters</span>
+                  </div>
+                  <span className="font-mono text-sm font-medium">10%</span>
+                </div>
+              </div>
+              {/* Visual bar */}
+              <div className="flex h-2 rounded-full overflow-hidden mt-3">
+                <div className="bg-primary" style={{ width: '80%' }} />
+                <div className="bg-secondary" style={{ width: '10%' }} />
+                <div className="bg-muted-foreground" style={{ width: '10%' }} />
+              </div>
+            </CardContent>
+          </Card>
 
           {/* Investment tip */}
           <Card className="border-border/50 bg-gradient-to-br from-secondary/5 to-transparent">

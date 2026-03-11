@@ -78,6 +78,7 @@ const videos = [
   {
     video_id: "vid_dance_viral",
     title: "Viral Dance Challenge 2026",
+    description: "Learn the hottest dance challenge taking over the internet! Follow along step by step and tag us in your version.",
     thumbnail: "https://img.youtube.com/vi/EmHytNT3rMw/hqdefault.jpg",
     video_url: "https://www.youtube.com/embed/EmHytNT3rMw",
     creator_id: "creator_emma",
@@ -102,6 +103,7 @@ const videos = [
   {
     video_id: "vid_tech_review",
     title: "iPhone 16 Pro Max - Complete Review",
+    description: "The truth about Apple's latest flagship. After 30 days of testing, here's my honest take on whether it's worth the upgrade.",
     thumbnail: "https://img.youtube.com/vi/G1MpUlIEqA0/hqdefault.jpg",
     video_url: "https://www.youtube.com/embed/G1MpUlIEqA0",
     creator_id: "creator_techguru",
@@ -126,6 +128,7 @@ const videos = [
   {
     video_id: "vid_recipe",
     title: "5-Minute Pasta That Will Blow Your Mind",
+    description: "Just 3 ingredients and 5 minutes — this pasta recipe is embarrassingly easy and absolutely delicious. A weeknight game-changer.",
     thumbnail: "https://img.youtube.com/vi/VmRIBe4OYpg/hqdefault.jpg",
     video_url: "https://www.youtube.com/embed/VmRIBe4OYpg",
     creator_id: "creator_foodie",
@@ -150,6 +153,7 @@ const videos = [
   {
     video_id: "vid_travel_japan",
     title: "Hidden Gems of Tokyo - Travel Guide",
+    description: "Skip the tourist traps. These are the secret neighborhoods, local izakayas, and off-the-beaten-path spots that make Tokyo magical.",
     thumbnail: "https://img.youtube.com/vi/NM21dSDGtaQ/hqdefault.jpg",
     video_url: "https://www.youtube.com/embed/NM21dSDGtaQ",
     creator_id: "creator_travel",
@@ -174,6 +178,7 @@ const videos = [
   {
     video_id: "vid_podcast_ai",
     title: "The Future of AI - Expert Panel Discussion",
+    description: "Leading AI researchers, ethicists, and entrepreneurs debate where artificial intelligence is headed and what it means for humanity.",
     thumbnail: "https://img.youtube.com/vi/CRraHg4Ks_g/hqdefault.jpg",
     video_url: "https://www.youtube.com/embed/CRraHg4Ks_g",
     creator_id: "creator_podcast",
@@ -198,6 +203,7 @@ const videos = [
   {
     video_id: "vid_dance_tutorial",
     title: "Learn This Trending Dance in 60 Seconds",
+    description: "Break down every move of the dance everyone's doing right now. Perfect for beginners — you'll have it down in under a minute.",
     thumbnail: "https://img.youtube.com/vi/75AVRfx1AFI/hqdefault.jpg",
     video_url: "https://www.youtube.com/embed/75AVRfx1AFI",
     creator_id: "creator_emma",
@@ -222,6 +228,7 @@ const videos = [
   {
     video_id: "vid_tech_ai",
     title: "This AI Tool Changed Everything",
+    description: "I've tried every AI productivity tool out there. This one actually delivered. Here's an honest deep-dive into what it can and can't do.",
     thumbnail: "https://img.youtube.com/vi/mm6UJ6HjwXg/hqdefault.jpg",
     video_url: "https://www.youtube.com/embed/mm6UJ6HjwXg",
     creator_id: "creator_techguru",
@@ -246,6 +253,7 @@ const videos = [
   {
     video_id: "vid_food_dessert",
     title: "World's Best Chocolate Cake Recipe",
+    description: "Rich, fudgy, and absolutely indulgent — this chocolate cake recipe has been perfected over 10 years. Step-by-step guide included.",
     thumbnail: "https://img.youtube.com/vi/Oz3jorq9QKY/hqdefault.jpg",
     video_url: "https://www.youtube.com/embed/Oz3jorq9QKY",
     creator_id: "creator_foodie",
@@ -270,6 +278,7 @@ const videos = [
   {
     video_id: "vid_travel_bali",
     title: "Bali on a Budget - Complete Guide",
+    description: "Everything you need to know about visiting Bali without breaking the bank — from hidden beaches to the best cheap eats and affordable stays.",
     thumbnail: "https://img.youtube.com/vi/kZ06nOhdr6Q/hqdefault.jpg",
     video_url: "https://www.youtube.com/embed/kZ06nOhdr6Q",
     creator_id: "creator_travel",
@@ -294,6 +303,7 @@ const videos = [
   {
     video_id: "vid_tech_tutorial",
     title: "Build Your First App in 30 Minutes",
+    description: "No prior coding experience needed. Follow along and you'll have a working app deployed to the web by the end of this video.",
     thumbnail: "https://img.youtube.com/vi/LGLpO1ci2tY/hqdefault.jpg",
     video_url: "https://www.youtube.com/embed/LGLpO1ci2tY",
     creator_id: "creator_techguru",
@@ -318,6 +328,7 @@ const videos = [
   {
     video_id: "vid_podcast_economy",
     title: "How The Economic Machine Works - Ray Dalio",
+    description: "Ray Dalio's landmark explanation of how economies function — credit cycles, deleveraging, and why economies rise and fall. Essential watching.",
     thumbnail: "https://img.youtube.com/vi/PHe0bXAIuk0/hqdefault.jpg",
     video_url: "https://www.youtube.com/embed/PHe0bXAIuk0",
     creator_id: "creator_podcast",
@@ -342,6 +353,7 @@ const videos = [
   {
     video_id: "vid_food_ramen",
     title: "How to Make Perfect Ramen from Scratch",
+    description: "Forget instant noodles. Learn to make authentic tonkotsu ramen with a rich 12-hour broth, homemade noodles, and perfectly marinated chashu.",
     thumbnail: "https://img.youtube.com/vi/7z1Ygygfquw/hqdefault.jpg",
     video_url: "https://www.youtube.com/embed/7z1Ygygfquw",
     creator_id: "creator_foodie",
@@ -366,6 +378,7 @@ const videos = [
   {
     video_id: "vid_tech_short01",
     title: "This One Keyboard Shortcut Saves Hours",
+    description: "The single most underrated keyboard shortcut that power users swear by. Once you know it, you'll wonder how you ever lived without it.",
     thumbnail: "https://img.youtube.com/vi/2PZobQd9cMI/hqdefault.jpg",
     video_url: "https://www.youtube.com/embed/2PZobQd9cMI",
     creator_id: "creator_techguru",
@@ -390,6 +403,7 @@ const videos = [
   {
     video_id: "vid_food_short01",
     title: "3-Ingredient Dessert You Need to Try",
+    description: "Only 3 ingredients, no baking, and ready in 10 minutes. This no-fail dessert will impress everyone at the table.",
     thumbnail: "https://img.youtube.com/vi/jl38HGupIeQ/hqdefault.jpg",
     video_url: "https://www.youtube.com/embed/jl38HGupIeQ",
     creator_id: "creator_foodie",
@@ -585,6 +599,70 @@ const seedTransactions = [
   { transaction_id: "txn_seed_030", user_id: "user_seed_david", transaction_type: "buy_share", amount: -24,  video_id: "vid_food_short01", shares: 4, price_at_trade: 6, created_at: "2026-02-18T13:30:00Z" },
 ];
 db.transactions.insertMany(seedTransactions);
+
+// Seed comments
+db.createCollection('comments');
+db.comments.insertMany([
+  // vid_dance_viral
+  { comment_id: "cmt_seed_001", video_id: "vid_dance_viral", user_id: "user_seed_alice", user_name: "Alice Chen", user_picture: null, content: "I've been trying this for 20 minutes and I finally got it 😂 worth it!", upvotes: 34, downvotes: 0, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-01-06T08:30:00Z" },
+  { comment_id: "cmt_seed_002", video_id: "vid_dance_viral", user_id: "user_seed_bob", user_name: "Bob Martinez", user_picture: null, content: "My whole family is doing this now, you started something 😭", upvotes: 21, downvotes: 1, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-01-07T14:15:00Z" },
+  { comment_id: "cmt_seed_003", video_id: "vid_dance_viral", user_id: "user_seed_carol", user_name: "Carol White", user_picture: null, content: "The breakdown at 0:45 is the tricky part. Once you get that the rest flows naturally.", upvotes: 18, downvotes: 0, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-01-09T19:00:00Z" },
+
+  // vid_tech_review
+  { comment_id: "cmt_seed_004", video_id: "vid_tech_review", user_id: "user_seed_david", user_name: "David Kim", user_picture: null, content: "Finally an honest review that doesn't feel sponsored. Subscribed.", upvotes: 55, downvotes: 2, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-01-09T10:00:00Z" },
+  { comment_id: "cmt_seed_005", video_id: "vid_tech_review", user_id: "user_seed_alice", user_name: "Alice Chen", user_picture: null, content: "The camera comparison at 12:30 sold me. The low-light shots are insane.", upvotes: 42, downvotes: 0, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-01-11T17:30:00Z" },
+  { comment_id: "cmt_seed_006", video_id: "vid_tech_review", user_id: "user_seed_bob", user_name: "Bob Martinez", user_picture: null, content: "Still on the 14 Pro and watching this isn't making me want to upgrade tbh 😅", upvotes: 29, downvotes: 3, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-01-14T09:45:00Z" },
+
+  // vid_recipe
+  { comment_id: "cmt_seed_007", video_id: "vid_recipe", user_id: "user_seed_carol", user_name: "Carol White", user_picture: null, content: "Made this tonight. Added some chili flakes and parmesan. My kids LOVED it.", upvotes: 67, downvotes: 0, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-02-03T20:00:00Z" },
+  { comment_id: "cmt_seed_008", video_id: "vid_recipe", user_id: "user_seed_david", user_name: "David Kim", user_picture: null, content: "5 minutes is generous but it's still the fastest good pasta I've made. 10/10.", upvotes: 38, downvotes: 1, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-02-05T12:00:00Z" },
+
+  // vid_travel_japan
+  { comment_id: "cmt_seed_009", video_id: "vid_travel_japan", user_id: "user_seed_alice", user_name: "Alice Chen", user_picture: null, content: "Went to the Yanaka neighborhood you mentioned and it was perfect. Thank you!!!", upvotes: 44, downvotes: 0, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-01-16T11:00:00Z" },
+  { comment_id: "cmt_seed_010", video_id: "vid_travel_japan", user_id: "user_seed_bob", user_name: "Bob Martinez", user_picture: null, content: "Planning my trip now and this is the most useful Tokyo video I've found.", upvotes: 31, downvotes: 0, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-01-20T15:30:00Z" },
+
+  // vid_podcast_ai
+  { comment_id: "cmt_seed_011", video_id: "vid_podcast_ai", user_id: "user_seed_carol", user_name: "Carol White", user_picture: null, content: "The part about AI alignment at 22:00 is genuinely scary. We need more conversations like this.", upvotes: 78, downvotes: 4, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-01-08T16:00:00Z" },
+  { comment_id: "cmt_seed_012", video_id: "vid_podcast_ai", user_id: "user_seed_david", user_name: "David Kim", user_picture: null, content: "Watched this twice. Different takeaway the second time. Rare for a podcast.", upvotes: 52, downvotes: 1, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-01-10T09:00:00Z" },
+
+  // vid_tech_ai
+  { comment_id: "cmt_seed_013", video_id: "vid_tech_ai", user_id: "user_seed_alice", user_name: "Alice Chen", user_picture: null, content: "I was skeptical but tried it after this video. It actually saves me 2 hours a day.", upvotes: 91, downvotes: 2, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-01-04T10:30:00Z" },
+  { comment_id: "cmt_seed_014", video_id: "vid_tech_ai", user_id: "user_seed_bob", user_name: "Bob Martinez", user_picture: null, content: "The workflow you showed at 8:15 is exactly what I needed. Instant bookmark.", upvotes: 63, downvotes: 0, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-01-06T13:45:00Z" },
+
+  // vid_food_dessert
+  { comment_id: "cmt_seed_015", video_id: "vid_food_dessert", user_id: "user_seed_david", user_name: "David Kim", user_picture: null, content: "Made this for my girlfriend's birthday. She thought I bought it from a bakery 😂", upvotes: 112, downvotes: 0, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-01-12T21:00:00Z" },
+  { comment_id: "cmt_seed_016", video_id: "vid_food_dessert", user_id: "user_seed_carol", user_name: "Carol White", user_picture: null, content: "The ganache tip at the end is a game changer. Never going back to store-bought frosting.", upvotes: 74, downvotes: 1, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-01-15T18:30:00Z" },
+
+  // vid_travel_bali
+  { comment_id: "cmt_seed_017", video_id: "vid_travel_bali", user_id: "user_seed_alice", user_name: "Alice Chen", user_picture: null, content: "Used this guide for my trip last month. Stayed under $50/day thanks to your tips!", upvotes: 88, downvotes: 0, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-01-07T14:00:00Z" },
+  { comment_id: "cmt_seed_018", video_id: "vid_travel_bali", user_id: "user_seed_bob", user_name: "Bob Martinez", user_picture: null, content: "The scooter rental hack saved us so much money. Bali is incredible.", upvotes: 45, downvotes: 0, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-01-12T10:00:00Z" },
+
+  // vid_tech_tutorial
+  { comment_id: "cmt_seed_019", video_id: "vid_tech_tutorial", user_id: "user_seed_carol", user_name: "Carol White", user_picture: null, content: "As someone who has zero coding background, I actually built something that works. Mind blown.", upvotes: 103, downvotes: 0, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-01-10T22:00:00Z" },
+  { comment_id: "cmt_seed_020", video_id: "vid_tech_tutorial", user_id: "user_seed_david", user_name: "David Kim", user_picture: null, content: "I've tried 10 other beginner tutorials. This is the only one that didn't lose me.", upvotes: 59, downvotes: 2, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-01-13T15:30:00Z" },
+
+  // vid_podcast_economy
+  { comment_id: "cmt_seed_021", video_id: "vid_podcast_economy", user_id: "user_seed_alice", user_name: "Alice Chen", user_picture: null, content: "I've watched this 5 times over the years. Still the clearest explanation of economics I've found.", upvotes: 147, downvotes: 1, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-01-05T09:00:00Z" },
+  { comment_id: "cmt_seed_022", video_id: "vid_podcast_economy", user_id: "user_seed_bob", user_name: "Bob Martinez", user_picture: null, content: "Should be required viewing in every high school economics class.", upvotes: 119, downvotes: 3, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-01-09T11:30:00Z" },
+
+  // vid_food_ramen
+  { comment_id: "cmt_seed_023", video_id: "vid_food_ramen", user_id: "user_seed_carol", user_name: "Carol White", user_picture: null, content: "The 12-hour broth is no joke but the result is absolutely worth it. My ramen obsession is real.", upvotes: 56, downvotes: 0, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-02-04T19:30:00Z" },
+  { comment_id: "cmt_seed_024", video_id: "vid_food_ramen", user_id: "user_seed_david", user_name: "David Kim", user_picture: null, content: "Skipped the instant packets forever after this. Thank you for ruining my budget 😂", upvotes: 82, downvotes: 0, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-02-07T12:00:00Z" },
+
+  // vid_dance_tutorial
+  { comment_id: "cmt_seed_025", video_id: "vid_dance_tutorial", user_id: "user_seed_alice", user_name: "Alice Chen", user_picture: null, content: "Got it on the first try!! You explain the timing so well 🔥", upvotes: 27, downvotes: 0, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-01-17T16:00:00Z" },
+  { comment_id: "cmt_seed_026", video_id: "vid_dance_tutorial", user_id: "user_seed_bob", user_name: "Bob Martinez", user_picture: null, content: "Posted my version and got 50k views. This tutorial is gold.", upvotes: 39, downvotes: 0, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-01-19T20:30:00Z" },
+
+  // vid_tech_short01
+  { comment_id: "cmt_seed_027", video_id: "vid_tech_short01", user_id: "user_seed_carol", user_name: "Carol White", user_picture: null, content: "Been doing this wrong for 5 years. I could cry.", upvotes: 204, downvotes: 0, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-02-07T08:00:00Z" },
+  { comment_id: "cmt_seed_028", video_id: "vid_tech_short01", user_id: "user_seed_david", user_name: "David Kim", user_picture: null, content: "Showed this to my whole team in a meeting. Everyone gasped 😂", upvotes: 98, downvotes: 0, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-02-09T14:00:00Z" },
+
+  // vid_food_short01
+  { comment_id: "cmt_seed_029", video_id: "vid_food_short01", user_id: "user_seed_alice", user_name: "Alice Chen", user_picture: null, content: "Made this at 11pm on a whim. No regrets. Absolutely delicious.", upvotes: 33, downvotes: 0, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-02-09T23:15:00Z" },
+  { comment_id: "cmt_seed_030", video_id: "vid_food_short01", user_id: "user_seed_bob", user_name: "Bob Martinez", user_picture: null, content: "3 ingredients and pure magic. How is this legal 😂", upvotes: 47, downvotes: 0, voters: [], micro_shares_earned: 0, is_rewarded: false, created_at: "2026-02-11T17:00:00Z" }
+]);
+db.comments.createIndex({ "video_id": 1 });
+db.comments.createIndex({ "created_at": -1 });
 
 // Create indexes
 db.users.createIndex({ "user_id": 1 }, { unique: true });
