@@ -223,10 +223,7 @@ export default function VideoPlayer() {
           <div>
             <div className="flex items-start justify-between gap-4 mb-4">
               <div>
-                <Badge className="mb-2" variant={video.video_type === 'short' ? 'default' : 'secondary'}>
-                  {video.video_type === 'short' ? 'Short' : 'Full Video'}
-                </Badge>
-                <h1 className="font-heading text-2xl lg:text-3xl font-bold">{video.title}</h1>
+<h1 className="font-heading text-2xl lg:text-3xl font-bold">{video.title}</h1>
               </div>
             </div>
 

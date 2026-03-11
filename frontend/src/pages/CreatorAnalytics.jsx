@@ -265,9 +265,6 @@ export default function CreatorAnalytics() {
                     <Badge variant="outline" className="font-mono text-xs">
                       {video.ticker_symbol || video.video_id}
                     </Badge>
-                    <Badge variant={video.video_type === 'short' ? 'default' : 'secondary'} className="text-xs">
-                      {video.video_type}
-                    </Badge>
                   </div>
                   <h4 className="font-medium truncate">{video.title}</h4>
                 </div>

@@ -240,12 +240,6 @@ export default function Explore() {
                         <Heart className="w-3.5 h-3.5" />
                         {formatNumber(video.likes)}
                       </span>
-                      {video.video_type === 'short' && (
-                        <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4">
-                          <Sparkles className="w-2.5 h-2.5 mr-0.5" />
-                          Short
-                        </Badge>
-                      )}
                     </div>
                   </div>
                 </Link>
