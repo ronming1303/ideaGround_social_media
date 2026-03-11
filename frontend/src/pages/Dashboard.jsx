@@ -49,7 +49,7 @@ export default function Dashboard() {
   const fetchWatchlistCount = useCallback(async () => {
     try {
       const response = await axios.get(`${API}/watchlist`, { withCredentials: true });
-      setWatchlistCount(response.data.length);
+      setWatchlistCount(response.data.count || 0);
     } catch (error) {
       console.log("Watchlist not available");
     }
