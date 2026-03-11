@@ -154,6 +154,12 @@ export default function CreatorProfile() {
           <TabsTrigger value="all" data-testid="creator-tab-all" className="rounded-full">
             All Videos ({creator.videos?.length || 0})
           </TabsTrigger>
+          <TabsTrigger value="short" data-testid="creator-tab-shorts" className="rounded-full">
+            Shorts ({creator.videos?.filter(v => v.video_type === 'short').length || 0})
+          </TabsTrigger>
+          <TabsTrigger value="full" data-testid="creator-tab-full" className="rounded-full">
+            Full Videos ({creator.videos?.filter(v => v.video_type === 'full').length || 0})
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value={activeTab} className="mt-0">
@@ -166,7 +172,7 @@ export default function CreatorProfile() {
                   data-testid={`creator-video-${video.video_id}`}
                   className="group relative overflow-hidden rounded-2xl bg-card border border-border/50 shadow-sm hover:shadow-hover transition-all duration-300"
                 >
-                  <div className="relative aspect-video">
+                  <div className={`relative ${video.video_type === 'short' ? 'aspect-[9/16]' : 'aspect-video'}`}>
                     <img 
                       src={video.thumbnail} 
                       alt={video.title}
