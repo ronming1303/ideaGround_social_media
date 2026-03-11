@@ -2651,15 +2651,9 @@ async def upload_video(req: CreateVideoRequest, user: User = Depends(get_current
     if not creator:
         raise HTTPException(status_code=403, detail="You must be a creator to upload videos. Please register as a creator first.")
     
-    # Validate video type
-    if req.video_type not in ["short", "full"]:
-        raise HTTPException(status_code=400, detail="video_type must be 'short' or 'full'")
-    
-    # Validate duration based on type
-    if req.video_type == "short" and req.duration_minutes > 3:
-        raise HTTPException(status_code=400, detail="Shorts must be 3 minutes or less")
-    if req.video_type == "full" and (req.duration_minutes < 10 or req.duration_minutes > 30):
-        raise HTTPException(status_code=400, detail="Full videos must be between 10 and 30 minutes")
+    # Validate duration
+    if req.duration_minutes < 1 or req.duration_minutes > 30:
+        raise HTTPException(status_code=400, detail="Duration must be between 1 and 30 minutes")
     
     video_id = f"vid_{uuid.uuid4().hex[:12]}"
     
@@ -2806,7 +2800,7 @@ async def seed_database():
             "thumbnail": "https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800",
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 1,
-            "video_type": "short",
+            "video_type": "full",
             "category": "Dance",
             "ticker_symbol": "EMMA_0126S2",
             "views": 8500000,
@@ -2886,7 +2880,7 @@ async def seed_database():
             "thumbnail": "https://images.unsplash.com/photo-1526392060635-9d6019884377?w=800",
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 2,
-            "video_type": "short",
+            "video_type": "full",
             "category": "Travel",
             "ticker_symbol": "ALEX_0126V2",
             "views": 5600000,
@@ -2939,7 +2933,7 @@ async def seed_database():
             "thumbnail": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800",
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 3,
-            "video_type": "short",
+            "video_type": "full",
             "category": "Tech",
             "ticker_symbol": "TECH_0126S2",
             "views": 12000000,
@@ -2992,7 +2986,7 @@ async def seed_database():
             "thumbnail": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=800",
             "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
             "duration_minutes": 1,
-            "video_type": "short",
+            "video_type": "full",
             "category": "Food",
             "ticker_symbol": "CHEF_0126S2",
             "views": 7200000,

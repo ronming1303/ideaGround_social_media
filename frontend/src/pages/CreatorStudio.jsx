@@ -12,7 +12,7 @@ import { Label } from "../components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
 import { 
-  Video, Upload, Plus, Eye, Heart, TrendingUp, DollarSign, 
+  Video, Upload, Plus, Eye, Heart, DollarSign,
   Users, Play, Sparkles, BarChart3
 } from "lucide-react";
 
@@ -35,7 +35,6 @@ export default function CreatorStudio() {
   const [videoThumbnail, setVideoThumbnail] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
   const [videoDuration, setVideoDuration] = useState("");
-  const [videoType, setVideoType] = useState("full");
   const [videoCategory, setVideoCategory] = useState("");
   const [uploading, setUploading] = useState(false);
 
@@ -102,12 +101,8 @@ export default function CreatorStudio() {
     }
 
     const duration = parseInt(videoDuration);
-    if (videoType === "short" && duration > 3) {
-      toast.error("Shorts must be 3 minutes or less");
-      return;
-    }
-    if (videoType === "full" && (duration < 10 || duration > 30)) {
-      toast.error("Full videos must be between 10 and 30 minutes");
+    if (duration < 1 || duration > 30) {
+      toast.error("Duration must be between 1 and 30 minutes");
       return;
     }
 
@@ -121,7 +116,7 @@ export default function CreatorStudio() {
           thumbnail: videoThumbnail,
           video_url: videoUrl || "https://www.youtube.com/embed/dQw4w9WgXcQ",
           duration_minutes: duration,
-          video_type: videoType,
+          video_type: "full",
           category: videoCategory
         },
         { withCredentials: true }
@@ -133,7 +128,6 @@ export default function CreatorStudio() {
       setVideoThumbnail("");
       setVideoUrl("");
       setVideoDuration("");
-      setVideoType("full");
       setVideoCategory("");
       fetchCreatorData();
     } catch (error) {
@@ -310,27 +304,6 @@ export default function CreatorStudio() {
                   />
                 </div>
                 <div>
-                  <Label>Video Type *</Label>
-                  <div className="flex gap-2 mt-1">
-                    <Button 
-                      type="button"
-                      variant={videoType === "short" ? "default" : "outline"}
-                      onClick={() => setVideoType("short")}
-                      className="flex-1 rounded-full"
-                    >
-                      Short (≤3 min)
-                    </Button>
-                    <Button 
-                      type="button"
-                      variant={videoType === "full" ? "default" : "outline"}
-                      onClick={() => setVideoType("full")}
-                      className="flex-1 rounded-full"
-                    >
-                      Full (10-30 min)
-                    </Button>
-                  </div>
-                </div>
-                <div>
                   <Label htmlFor="video-duration">Duration (minutes) *</Label>
                   <Input
                     id="video-duration"
@@ -338,9 +311,9 @@ export default function CreatorStudio() {
                     type="number"
                     value={videoDuration}
                     onChange={(e) => setVideoDuration(e.target.value)}
-                    placeholder={videoType === "short" ? "1-3" : "10-30"}
-                    min={videoType === "short" ? 1 : 10}
-                    max={videoType === "short" ? 3 : 30}
+                    placeholder="1-30"
+                    min={1}
+                    max={30}
                     className="mt-1"
                   />
                 </div>
