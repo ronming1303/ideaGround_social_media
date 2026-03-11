@@ -1040,13 +1040,15 @@ async def get_creator(creator_id: str, request: Request):
     videos = await db.videos.find({"creator_id": creator_id}, {"_id": 0}).to_list(50)
     creator["videos"] = videos
 
-    # Calculate total trading volume across all creator's videos
+    # Calculate net invested value across all creator's videos (buys - sells)
     video_ids = [v["video_id"] for v in videos]
     transactions = await db.transactions.find(
-        {"video_id": {"$in": video_ids}, "transaction_type": "buy_share"},
-        {"_id": 0, "amount": 1}
+        {"video_id": {"$in": video_ids}, "transaction_type": {"$in": ["buy_share", "sell_share"]}},
+        {"_id": 0, "amount": 1, "transaction_type": 1}
     ).to_list(10000)
-    creator["total_revenue"] = round(sum(abs(t.get("amount", 0)) for t in transactions), 2)
+    buy_total = sum(abs(t.get("amount", 0)) for t in transactions if t["transaction_type"] == "buy_share")
+    sell_total = sum(abs(t.get("amount", 0)) for t in transactions if t["transaction_type"] == "sell_share")
+    creator["total_revenue"] = round(max(buy_total - sell_total, 0), 2)
 
     # Check if user is subscribed
     user = await get_optional_user(request)
