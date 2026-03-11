@@ -297,41 +297,41 @@ export default function VideoPlayer() {
               </Button>
             </div>
 
-            {/* Creator info */}
+            {/* Creator info + Description */}
             {video.creator && (
-              <div className="flex items-center justify-between mt-6 p-4 rounded-2xl bg-muted/50">
-                <Link 
-                  to={`/creator/${video.creator.creator_id}`}
-                  className="flex items-center gap-4 hover:opacity-80 transition-opacity"
-                >
-                  <img 
-                    src={video.creator.image} 
-                    alt={video.creator.name}
-                    className="w-14 h-14 rounded-xl object-cover"
-                  />
-                  <div>
-                    <h3 className="font-medium">{video.creator.name}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {formatViews(video.creator.subscriber_count)} subscribers
-                    </p>
-                  </div>
-                </Link>
-                <Button 
-                  data-testid="subscribe-btn"
-                  onClick={handleSubscribe}
-                  variant={subscribed ? "outline" : "default"}
-                  className={`rounded-full ${!subscribed ? 'bg-primary text-white' : ''}`}
-                >
-                  <Bell className={`w-4 h-4 mr-2 ${subscribed ? 'fill-current' : ''}`} />
-                  {subscribed ? 'Subscribed' : 'Subscribe'}
-                </Button>
+              <div className="mt-6 p-4 rounded-2xl bg-muted/50 space-y-4">
+                <div className="flex items-center justify-between">
+                  <Link
+                    to={`/creator/${video.creator.creator_id}`}
+                    className="flex items-center gap-4 hover:opacity-80 transition-opacity"
+                  >
+                    <img
+                      src={video.creator.image}
+                      alt={video.creator.name}
+                      className="w-14 h-14 rounded-xl object-cover"
+                    />
+                    <div>
+                      <h3 className="font-medium">{video.creator.name}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {formatViews(video.creator.subscriber_count)} subscribers
+                      </p>
+                    </div>
+                  </Link>
+                  <Button
+                    data-testid="subscribe-btn"
+                    onClick={handleSubscribe}
+                    variant={subscribed ? "outline" : "default"}
+                    className={`rounded-full ${!subscribed ? 'bg-primary text-white' : ''}`}
+                  >
+                    <Bell className={`w-4 h-4 mr-2 ${subscribed ? 'fill-current' : ''}`} />
+                    {subscribed ? 'Subscribed' : 'Subscribe'}
+                  </Button>
+                </div>
+                {video.description && (
+                  <p className="text-muted-foreground text-sm border-t border-border/50 pt-3">{video.description}</p>
+                )}
               </div>
             )}
-
-            {/* Description */}
-            <div className="mt-6 p-4 rounded-2xl bg-muted/50">
-              <p className="text-muted-foreground">{video.description}</p>
-            </div>
 
             {/* Comments Section */}
             <div className="mt-6">
