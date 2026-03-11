@@ -22,11 +22,9 @@ export default function Portfolio() {
   const [portfolioHistory, setPortfolioHistory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [sellDialogOpen, setSellDialogOpen] = useState(false);
-  const [redeemDialogOpen, setRedeemDialogOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const [sharesToSell, setSharesToSell] = useState(1);
   const [selling, setSelling] = useState(false);
-  const [redeeming, setRedeeming] = useState(false);
 
   const fetchPortfolio = useCallback(async () => {
     try {
@@ -105,39 +103,6 @@ export default function Portfolio() {
     setSellDialogOpen(true);
   };
 
-  const openRedeemDialog = (item) => {
-    setSelectedItem(item);
-    setRedeemDialogOpen(true);
-  };
-
-  const handleRedeemShares = async () => {
-    if (!selectedItem) return;
-
-    setRedeeming(true);
-    try {
-      const response = await axios.post(
-        `${API}/shares/redeem`,
-        { video_id: selectedItem.video.video_id },
-        { withCredentials: true }
-      );
-      
-      const { shares_redeemed, gross_value, platform_fee, net_value, early_bonus_applied, bonus_earned } = response.data;
-      
-      let message = `Redeemed ${shares_redeemed} shares! Net received: ${formatCurrency(net_value)} (5% fee: ${formatCurrency(platform_fee)})`;
-      if (early_bonus_applied && bonus_earned > 0) {
-        message = `Redeemed ${shares_redeemed} shares with ${formatCurrency(bonus_earned)} early bonus! Net: ${formatCurrency(net_value)} (5% fee: ${formatCurrency(platform_fee)})`;
-      }
-      
-      toast.success(message, { duration: 6000 });
-      setRedeemDialogOpen(false);
-      setSelectedItem(null);
-      fetchPortfolio(); // Refresh
-    } catch (error) {
-      toast.error(error.response?.data?.detail || "Failed to redeem shares");
-    } finally {
-      setRedeeming(false);
-    }
-  };
 
   const formatCurrency = (value) => {
     return new Intl.NumberFormat('en-US', {
@@ -400,16 +365,6 @@ export default function Portfolio() {
                       >
                         Sell
                       </Button>
-                      <Button 
-                        data-testid={`redeem-btn-${item.video.video_id}`}
-                        variant="default" 
-                        size="sm"
-                        onClick={() => openRedeemDialog(item)}
-                        className="rounded-full bg-secondary hover:bg-secondary/90 text-white"
-                      >
-                        <Wallet className="w-3 h-3 mr-1" />
-                        Redeem
-                      </Button>
                     </div>
                   ))}
                 </div>
@@ -573,70 +528,6 @@ export default function Portfolio() {
         </DialogContent>
       </Dialog>
 
-      {/* Redeem Dialog */}
-      <Dialog open={redeemDialogOpen} onOpenChange={setRedeemDialogOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="font-heading flex items-center gap-2">
-              <Wallet className="w-5 h-5 text-secondary" />
-              Redeem All Shares
-            </DialogTitle>
-          </DialogHeader>
-          {selectedItem && (
-            <div className="space-y-6 py-4">
-              <div className="flex items-center gap-4 p-4 rounded-xl bg-muted/50">
-                <img 
-                  src={selectedItem.video.thumbnail} 
-                  alt={selectedItem.video.title}
-                  className="w-20 h-14 rounded-lg object-cover"
-                />
-                <div>
-                  <p className="font-medium line-clamp-1">{selectedItem.video.title}</p>
-                  <p className="text-sm text-muted-foreground">{selectedItem.shares_owned} shares @ ${selectedItem.current_price.toFixed(2)}</p>
-                </div>
-              </div>
-
-              <div className="p-4 rounded-xl bg-accent">
-                <div className="flex justify-between mb-2">
-                  <span className="text-muted-foreground">Total shares</span>
-                  <span className="font-mono">{selectedItem.shares_owned}</span>
-                </div>
-                <div className="flex justify-between mb-2">
-                  <span className="text-muted-foreground">Current value</span>
-                  <span className="font-mono">{formatCurrency(selectedItem.current_value)}</span>
-                </div>
-                <div className="flex justify-between mb-2 text-destructive">
-                  <span>Platform fee (5%)</span>
-                  <span className="font-mono">-{formatCurrency(selectedItem.current_value * 0.05)}</span>
-                </div>
-                <div className="flex justify-between pt-2 border-t border-border">
-                  <span className="font-medium">Net to wallet</span>
-                  <span className="font-heading font-bold text-lg text-secondary">
-                    +{formatCurrency(selectedItem.current_value * 0.95)}
-                  </span>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-2 p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
-                <DollarSign className="w-4 h-4 text-amber-600 mt-0.5" />
-                <div className="text-sm text-amber-700">
-                  <p className="font-medium">Redeem vs Sell</p>
-                  <p className="text-xs mt-1">Redeeming cashes out ALL shares at once with a 5% platform fee. Use "Sell" to sell partial shares without fees.</p>
-                </div>
-              </div>
-
-              <Button 
-                data-testid="confirm-redeem-btn"
-                onClick={handleRedeemShares}
-                disabled={redeeming}
-                className="w-full bg-secondary text-white hover:bg-secondary/90 rounded-full py-6"
-              >
-                {redeeming ? "Processing..." : `Redeem ${selectedItem.shares_owned} Shares to Wallet`}
-              </Button>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
