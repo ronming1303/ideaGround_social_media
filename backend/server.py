@@ -2105,7 +2105,10 @@ async def get_live_activity(limit: int = 20):
     twenty_four_hours_ago = (datetime.now(timezone.utc) - timedelta(hours=24)).isoformat()
     
     recent_txns = await db.transactions.find(
-        {"created_at": {"$gte": twenty_four_hours_ago}},
+        {
+            "created_at": {"$gte": twenty_four_hours_ago},
+            "transaction_type": {"$in": ["buy_share", "sell_share"]}
+        },
         {"_id": 0, "amount": 1, "user_id": 1}
     ).to_list(1000)
     

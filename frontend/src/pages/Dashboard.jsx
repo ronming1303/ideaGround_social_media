@@ -17,6 +17,7 @@ export default function Dashboard() {
   const [creators, setCreators] = useState([]);
   const [loading, setLoading] = useState(true);
   const [portfolioPerformance, setPortfolioPerformance] = useState(null);
+  const [watchlistCount, setWatchlistCount] = useState(0);
 
   const fetchData = useCallback(async () => {
     try {
@@ -45,15 +46,25 @@ export default function Dashboard() {
     }
   }, []);
 
+  const fetchWatchlistCount = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API}/watchlist`, { withCredentials: true });
+      setWatchlistCount(response.data.length);
+    } catch (error) {
+      console.log("Watchlist not available");
+    }
+  }, []);
+
   // Initial fetch
   useEffect(() => {
     fetchData();
     fetchPortfolioPerformance();
+    fetchWatchlistCount();
   }, []);
 
   const manualRefresh = useCallback(async () => {
-    await Promise.all([fetchData(), fetchPortfolioPerformance()]);
-  }, [fetchData, fetchPortfolioPerformance]);
+    await Promise.all([fetchData(), fetchPortfolioPerformance(), fetchWatchlistCount()]);
+  }, [fetchData, fetchPortfolioPerformance, fetchWatchlistCount]);
 
   const formatViews = (views) => {
     if (views >= 1000000) return `${(views / 1000000).toFixed(1)}M`;
@@ -304,7 +315,7 @@ export default function Dashboard() {
                 <Play className="w-5 h-5 text-chart-4" />
               </div>
             </div>
-            <p className="text-2xl font-heading font-bold">{"fix here later"}</p>
+            <p className="text-2xl font-heading font-bold">{watchlistCount || 0}</p>
             <p className="text-sm text-muted-foreground">Watch List</p>
           </CardContent>
         </Card>
