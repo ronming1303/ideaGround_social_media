@@ -28,7 +28,7 @@ services:
     environment:
       - MONGO_URL=mongodb://mongodb:27017
       - DB_NAME=ideaground
-      - LOCAL_AUTH_ENABLED=true
+      - LOCAL_AUTH_ENABLED=false
       - GOOGLE_CLIENT_ID=GOOGLE_CLIENT_ID_REMOVED
       - GOOGLE_CLIENT_SECRET=GOOGLE_CLIENT_SECRET_REMOVED
       - GOOGLE_REDIRECT_URI=https://ideaground.net/api/auth/google/callback
@@ -56,7 +56,7 @@ services:
       dockerfile: docker-local/Dockerfile.frontend
       args:
         REACT_APP_BACKEND_URL: ""
-        REACT_APP_LOCAL_AUTH: "true"
+        REACT_APP_LOCAL_AUTH: "false"
         REACT_APP_STRIPE_PUBLISHABLE_KEY: "STRIPE_PUBLISHABLE_KEY_REMOVED"
     container_name: ideaground-frontend
     restart: unless-stopped
