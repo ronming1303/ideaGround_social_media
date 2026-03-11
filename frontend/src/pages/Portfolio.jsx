@@ -374,9 +374,9 @@ export default function Portfolio() {
                           className="w-20 h-14 rounded-lg object-cover"
                         />
                       </Link>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <Link to={`/video/${item.video.video_id}`}>
+                      <div className="flex-1 min-w-0 overflow-hidden">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <Link to={`/video/${item.video.video_id}`} className="block min-w-0">
                             <h4 className="font-medium truncate hover:text-primary transition-colors">{item.video.title}</h4>
                           </Link>
                         </div>
