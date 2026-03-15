@@ -179,6 +179,8 @@ export default function Wallet() {
         return <TrendingUp className="w-4 h-4" />;
       case 'deposit':
         return <ArrowDownLeft className="w-4 h-4" />;
+      case 'creator_share_income':
+        return <DollarSign className="w-4 h-4" />;
       default:
         return <DollarSign className="w-4 h-4" />;
     }
@@ -192,6 +194,8 @@ export default function Wallet() {
         return 'Sold Shares';
       case 'deposit':
         return 'Deposit';
+      case 'creator_share_income':
+        return 'Share Sale Income';
       default:
         return 'Transaction';
     }
@@ -346,6 +350,9 @@ export default function Wallet() {
                     </div>
                     {txn.video && (
                       <p className="text-sm text-muted-foreground truncate">{txn.video.title}</p>
+                    )}
+                    {txn.transaction_type === 'creator_share_income' && txn.buyer_name && (
+                      <p className="text-sm text-muted-foreground">Bought by {txn.buyer_name}</p>
                     )}
                     <p className="text-xs text-muted-foreground">{formatDate(txn.created_at)}</p>
                   </div>

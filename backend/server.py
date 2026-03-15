@@ -43,8 +43,10 @@ FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:8080')
 ALLOWED_EMAILS = [
     "kshitiz.dadhich2015@gmail.com",
     "rumingliu1303@gmail.com",
+    "ruming.liu@ideaground.net",
     "junyuehan@gmail.com",
     "glf9871@gmail.com",
+    "dadhich.suneha@gmail.com",
 ]
 
 # Admin emails - These users get admin privileges
@@ -1158,8 +1160,9 @@ async def buy_shares(req: BuyShareRequest, user: User = Depends(get_current_user
         }
         await db.share_ownerships.insert_one(ownership_doc)
 
+    buy_transaction_id = f"txn_{uuid.uuid4().hex[:12]}"
     transaction_doc = {
-        "transaction_id": f"txn_{uuid.uuid4().hex[:12]}",
+        "transaction_id": buy_transaction_id,
         "user_id": user.user_id,
         "transaction_type": "buy_share",
         "amount": -total_cost,
@@ -1169,6 +1172,26 @@ async def buy_shares(req: BuyShareRequest, user: User = Depends(get_current_user
         "created_at": datetime.now(timezone.utc).isoformat()
     }
     await db.transactions.insert_one(transaction_doc)
+
+    # Pay the creator
+    creator = await db.creators.find_one({"creator_id": video["creator_id"]})
+    if creator and creator.get("user_id"):
+        await db.users.update_one(
+            {"user_id": creator["user_id"]},
+            {"$inc": {"wallet_balance": total_cost}}
+        )
+        creator_income_doc = {
+            "transaction_id": f"txn_{uuid.uuid4().hex[:12]}",
+            "user_id": creator["user_id"],
+            "transaction_type": "creator_share_income",
+            "amount": total_cost,
+            "video_id": req.video_id,
+            "shares": req.shares,
+            "price_at_trade": share_price,
+            "buy_transaction_id": buy_transaction_id,
+            "created_at": datetime.now(timezone.utc).isoformat()
+        }
+        await db.transactions.insert_one(creator_income_doc)
 
     new_balance = user_doc["wallet_balance"] - total_cost
     return {"success": True, "shares_bought": req.shares, "total_cost": total_cost, "new_wallet_balance": new_balance}
@@ -1627,12 +1650,28 @@ async def get_wallet(user: User = Depends(get_current_user)):
         video_map = {v["video_id"]: v for v in videos}
     else:
         video_map = {}
-    
-    # Enrich transactions with video data
+
+    # For creator_share_income: look up buyer name via buy_transaction_id
+    buy_txn_ids = list(set(t["buy_transaction_id"] for t in transactions if t.get("buy_transaction_id")))
+    buyer_map = {}
+    if buy_txn_ids:
+        buy_txns = await db.transactions.find(
+            {"transaction_id": {"$in": buy_txn_ids}}, {"_id": 0, "transaction_id": 1, "user_id": 1}
+        ).to_list(len(buy_txn_ids))
+        buyer_user_ids = list(set(t["user_id"] for t in buy_txns))
+        buyers = await db.users.find(
+            {"user_id": {"$in": buyer_user_ids}}, {"_id": 0, "user_id": 1, "name": 1}
+        ).to_list(len(buyer_user_ids))
+        user_name_map = {u["user_id"]: u["name"] for u in buyers}
+        buyer_map = {t["transaction_id"]: user_name_map.get(t["user_id"]) for t in buy_txns}
+
+    # Enrich transactions with video and buyer data
     for txn in transactions:
         if txn.get("video_id"):
             txn["video"] = video_map.get(txn["video_id"])
-    
+        if txn.get("buy_transaction_id"):
+            txn["buyer_name"] = buyer_map.get(txn["buy_transaction_id"])
+
     return {
         "balance": user.wallet_balance,
         "transactions": transactions
@@ -2666,6 +2705,8 @@ async def upload_video(req: CreateVideoRequest, user: User = Depends(get_current
     
     # Initial price: use custom price if provided, otherwise calculate from subscriber count
     if req.share_price and req.share_price > 0:
+        if req.share_price < SHARE_PRICE_MIN or req.share_price > SHARE_PRICE_MAX:
+            raise HTTPException(status_code=400, detail=f"Share price must be between ${SHARE_PRICE_MIN} and ${SHARE_PRICE_MAX}")
         base_price = req.share_price
     else:
         base_price = 10.0 + (creator.get("subscriber_count", 0) / 100000)  # +$1 per 100k subs

@@ -230,7 +230,7 @@ export default function WhyIdeaGround() {
                 </div>
                 <div className="flex items-center gap-3">
                   <div className="w-4 h-4 rounded bg-gradient-to-r from-slate-500 to-slate-600"></div>
-                  <span className="font-medium">Community - Protocol stewards</span>
+                  <span className="font-medium">Supporters - Protocol stewards</span>
                 </div>
               </div>
             </div>
