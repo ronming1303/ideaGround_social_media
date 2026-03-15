@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
 import { loadStripe } from "@stripe/stripe-js";
-import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import { Elements, CardElement, PaymentRequestButtonElement, useStripe, useElements } from "@stripe/react-stripe-js";
 
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY || "");
 
@@ -33,6 +33,50 @@ function StripeCheckoutForm({ amount, onSuccess, onCancel }) {
   const stripe = useStripe();
   const elements = useElements();
   const [processing, setProcessing] = useState(false);
+  const [paymentRequest, setPaymentRequest] = useState(null);
+
+  useEffect(() => {
+    if (!stripe) return;
+    const pr = stripe.paymentRequest({
+      country: "US",
+      currency: "usd",
+      total: { label: "IdeaGround Wallet Deposit", amount: Math.round(amount * 100) },
+      requestPayerName: false,
+      requestPayerEmail: false,
+    });
+    pr.canMakePayment().then((result) => {
+      if (result) setPaymentRequest(pr);
+    });
+    pr.on("paymentmethod", async (e) => {
+      try {
+        const { data } = await axios.post(
+          `${API}/wallet/create-payment-intent`,
+          { amount },
+          { withCredentials: true }
+        );
+        const { error, paymentIntent } = await stripe.confirmCardPayment(
+          data.client_secret,
+          { payment_method: e.paymentMethod.id },
+          { handleActions: false }
+        );
+        if (error) {
+          e.complete("fail");
+          toast.error(error.message);
+          return;
+        }
+        e.complete("success");
+        const confirm = await axios.post(
+          `${API}/wallet/confirm-payment`,
+          { payment_intent_id: paymentIntent.id },
+          { withCredentials: true }
+        );
+        onSuccess(confirm.data.new_balance, amount);
+      } catch (err) {
+        e.complete("fail");
+        toast.error(err.response?.data?.detail || "Payment failed");
+      }
+    });
+  }, [stripe, amount]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -40,30 +84,23 @@ function StripeCheckoutForm({ amount, onSuccess, onCancel }) {
 
     setProcessing(true);
     try {
-      // Step 1: Create PaymentIntent on backend
       const { data } = await axios.post(
         `${API}/wallet/create-payment-intent`,
         { amount },
         { withCredentials: true }
       );
-
-      // Step 2: Confirm card payment with Stripe
       const result = await stripe.confirmCardPayment(data.client_secret, {
         payment_method: { card: elements.getElement(CardElement) },
       });
-
       if (result.error) {
         toast.error(result.error.message);
         return;
       }
-
-      // Step 3: Verify with backend and credit wallet
       const confirm = await axios.post(
         `${API}/wallet/confirm-payment`,
         { payment_intent_id: result.paymentIntent.id },
         { withCredentials: true }
       );
-
       onSuccess(confirm.data.new_balance, amount);
     } catch (error) {
       toast.error(error.response?.data?.detail || "Payment failed");
@@ -74,6 +111,19 @@ function StripeCheckoutForm({ amount, onSuccess, onCancel }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
+      {paymentRequest && (
+        <div>
+          <PaymentRequestButtonElement
+            options={{ paymentRequest, style: { paymentRequestButton: { height: "48px", borderRadius: "24px" } } }}
+          />
+          <div className="flex items-center gap-3 my-4">
+            <div className="flex-1 h-px bg-border" />
+            <span className="text-xs text-muted-foreground">or pay with card</span>
+            <div className="flex-1 h-px bg-border" />
+          </div>
+        </div>
+      )}
+
       <div>
         <label className="text-sm font-medium mb-2 block">Card Details</label>
         <div className="border border-primary/20 rounded-xl p-4 focus-within:border-primary transition-colors bg-white">
