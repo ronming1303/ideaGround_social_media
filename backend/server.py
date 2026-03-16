@@ -1,5 +1,5 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, Depends
-from fastapi.responses import JSONResponse
+from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, Depends, UploadFile, File
+from fastapi.responses import JSONResponse, FileResponse, StreamingResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -15,6 +15,7 @@ import random
 import hashlib
 import secrets
 import stripe
+import subprocess
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -206,8 +207,10 @@ class LikeRequest(BaseModel):
 class CreateVideoRequest(BaseModel):
     title: str
     description: str
-    thumbnail: str
-    video_url: str = "https://www.youtube.com/embed/dQw4w9WgXcQ"
+    thumbnail: Optional[str] = None
+    thumbnail_path: Optional[str] = None
+    video_url: Optional[str] = None
+    video_file_path: Optional[str] = None
     duration_minutes: Optional[int] = None
     video_type: str = "full"
     category: str
@@ -2638,6 +2641,110 @@ async def become_creator(req: BecomeCreatorRequest, user: User = Depends(get_cur
     
     return {"success": True, "creator": creator_doc}
 
+VIDEO_UPLOAD_DIR = Path("/data/videos")
+ALLOWED_VIDEO_TYPES = {"video/mp4", "video/quicktime", "video/webm"}
+
+@api_router.post("/videos/upload-file")
+async def upload_video_file(file: UploadFile = File(...), user: User = Depends(get_current_user)):
+    """Upload a video file and return the file path for use in create video"""
+    if file.content_type not in ALLOWED_VIDEO_TYPES:
+        raise HTTPException(status_code=400, detail="Only MP4, MOV, and WebM videos are supported")
+    ext = file.filename.rsplit(".", 1)[-1].lower() if "." in file.filename else "mp4"
+    file_id = f"vid_{uuid.uuid4().hex[:12]}"
+    VIDEO_UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
+    dest = VIDEO_UPLOAD_DIR / f"{file_id}.{ext}"
+    with open(dest, "wb") as f:
+        content = await file.read()
+        f.write(content)
+
+    # Extract first frame as thumbnail
+    thumb_path = VIDEO_UPLOAD_DIR / f"{file_id}_thumb.jpg"
+    try:
+        subprocess.run(
+            ["ffmpeg", "-y", "-i", str(dest), "-ss", "00:00:01", "-vframes", "1", "-q:v", "2", str(thumb_path)],
+            capture_output=True, timeout=30
+        )
+    except Exception:
+        thumb_path = None
+
+    return {
+        "video_file_path": str(dest),
+        "file_id": file_id,
+        "thumbnail_path": str(thumb_path) if thumb_path and thumb_path.exists() else None
+    }
+
+@api_router.get("/videos/{video_id}/thumbnail")
+async def get_video_thumbnail(video_id: str):
+    """Serve the auto-generated video thumbnail"""
+    video = await db.videos.find_one({"video_id": video_id}, {"_id": 0, "thumbnail_path": 1})
+    if not video or not video.get("thumbnail_path"):
+        raise HTTPException(status_code=404, detail="Thumbnail not found")
+    path = Path(video["thumbnail_path"])
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="Thumbnail not found on disk")
+    return FileResponse(path, media_type="image/jpeg")
+
+@api_router.get("/videos/{video_id}/stream")
+async def stream_video(video_id: str, request: Request):
+    """Stream a locally stored video file with Range request support"""
+    video = await db.videos.find_one({"video_id": video_id}, {"_id": 0, "video_file_path": 1})
+    if not video or not video.get("video_file_path"):
+        raise HTTPException(status_code=404, detail="Video file not found")
+    path = Path(video["video_file_path"])
+    if not path.exists():
+        raise HTTPException(status_code=404, detail="Video file not found on disk")
+
+    ext = path.suffix.lower().lstrip(".")
+    media_type = {"mp4": "video/mp4", "mov": "video/quicktime", "webm": "video/webm"}.get(ext, "video/mp4")
+    file_size = path.stat().st_size
+
+    range_header = request.headers.get("range")
+    if range_header:
+        start, end = 0, file_size - 1
+        range_match = range_header.replace("bytes=", "").split("-")
+        if range_match[0]:
+            start = int(range_match[0])
+        if range_match[1]:
+            end = int(range_match[1])
+        chunk_size = end - start + 1
+
+        def iter_chunk():
+            with open(path, "rb") as f:
+                f.seek(start)
+                remaining = chunk_size
+                while remaining > 0:
+                    data = f.read(min(65536, remaining))
+                    if not data:
+                        break
+                    remaining -= len(data)
+                    yield data
+
+        return StreamingResponse(
+            iter_chunk(),
+            status_code=206,
+            media_type=media_type,
+            headers={
+                "Content-Range": f"bytes {start}-{end}/{file_size}",
+                "Accept-Ranges": "bytes",
+                "Content-Length": str(chunk_size),
+            },
+        )
+
+    def iter_full():
+        with open(path, "rb") as f:
+            while chunk := f.read(65536):
+                yield chunk
+
+    return StreamingResponse(
+        iter_full(),
+        media_type=media_type,
+        headers={
+            "Accept-Ranges": "bytes",
+            "Content-Length": str(file_size),
+        },
+    )
+
+
 @api_router.post("/videos/upload")
 async def upload_video(req: CreateVideoRequest, user: User = Depends(get_current_user)):
     """Upload a new video (creator only)"""
@@ -2661,8 +2768,10 @@ async def upload_video(req: CreateVideoRequest, user: User = Depends(get_current
         "creator_id": creator["creator_id"],
         "title": req.title,
         "description": req.description,
-        "thumbnail": req.thumbnail,
+        "thumbnail_path": req.thumbnail_path,
+        "thumbnail": f"/api/videos/{video_id}/thumbnail" if req.thumbnail_path else (req.thumbnail or "https://placehold.co/640x360/1a1a1a/ffffff?text=Video"),
         "video_url": req.video_url,
+        "video_file_path": req.video_file_path,
         "duration_minutes": req.duration_minutes,
         "video_type": req.video_type,
         "category": req.category,

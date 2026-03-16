@@ -36,6 +36,8 @@ services:
       - CORS_ORIGINS=https://ideaground.net,http://localhost:3000,http://localhost:8080
       - STRIPE_SECRET_KEY=STRIPE_SECRET_KEY_REMOVED
       - STRIPE_PUBLISHABLE_KEY=STRIPE_PUBLISHABLE_KEY_REMOVED
+    volumes:
+      - video_data:/data/videos
     ports:
       - "127.0.0.1:8001:8001"
     depends_on:
@@ -71,6 +73,8 @@ services:
 volumes:
   mongodb_data:
     name: ideaground_mongodb_data
+  video_data:
+    name: ideaground_video_data
 
 networks:
   ideaground-network:

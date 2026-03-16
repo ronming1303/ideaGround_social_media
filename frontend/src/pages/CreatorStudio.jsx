@@ -30,15 +30,16 @@ export default function CreatorStudio() {
   
   // Upload video form
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
-  const [youtubeUrl, setYoutubeUrl] = useState("");
+  const [videoFile, setVideoFile] = useState(null);
+  const [videoFilePath, setVideoFilePath] = useState("");
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [videoTitle, setVideoTitle] = useState("");
   const [videoDescription, setVideoDescription] = useState("");
   const [videoThumbnail, setVideoThumbnail] = useState("");
-  const [videoUrl, setVideoUrl] = useState("");
   const [videoCategory, setVideoCategory] = useState("");
   const [sharePrice, setSharePrice] = useState("");
   const [uploading, setUploading] = useState(false);
-  const [fetchingMeta, setFetchingMeta] = useState(false);
+  const [uploadingFile, setUploadingFile] = useState(false);
 
   const categories = [
     "Dance", "Podcast", "Travel", "Tech", "Food", "Gaming", 
@@ -91,34 +92,38 @@ export default function CreatorStudio() {
     }
   };
 
-  const extractYouTubeId = (url) => {
-    const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/);
-    return match ? match[1] : null;
-  };
-
-  const fetchYouTubeMeta = async (url) => {
-    const videoId = extractYouTubeId(url);
-    if (!videoId) return;
-    setFetchingMeta(true);
+  const handleFileSelect = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setVideoFile(file);
+    setUploadingFile(true);
+    setUploadProgress(0);
     try {
-      const oembedUrl = `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`;
-      const res = await fetch(oembedUrl);
-      if (!res.ok) throw new Error();
-      const data = await res.json();
-      setVideoTitle(data.title || "");
-      setVideoThumbnail(`https://img.youtube.com/vi/${videoId}/hqdefault.jpg`);
-      setVideoUrl(`https://www.youtube.com/embed/${videoId}`);
-      toast.success("Video info fetched!");
-    } catch {
-      toast.error("Could not fetch video info. Please check the URL.");
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await axios.post(`${API}/videos/upload-file`, formData, {
+        withCredentials: true,
+        headers: { "Content-Type": "multipart/form-data" },
+        onUploadProgress: (e) => {
+          if (e.total) setUploadProgress(Math.round((e.loaded / e.total) * 100));
+        },
+      });
+      setVideoFilePath(response.data.video_file_path);
+      if (response.data.thumbnail_path) {
+        setVideoThumbnail(response.data.thumbnail_path);
+      }
+      toast.success("Video uploaded!");
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "File upload failed");
+      setVideoFile(null);
     } finally {
-      setFetchingMeta(false);
+      setUploadingFile(false);
     }
   };
 
   const handleUploadVideo = async () => {
-    if (!videoTitle.trim() || !videoDescription.trim() || !videoThumbnail || !videoUrl || !videoCategory) {
-      toast.error("Please fill in all required fields");
+    if (!videoTitle.trim() || !videoDescription.trim() || !videoFilePath || !videoCategory) {
+      toast.error("Please fill in all required fields and upload a video file");
       return;
     }
 
@@ -129,30 +134,33 @@ export default function CreatorStudio() {
         {
           title: videoTitle,
           description: videoDescription,
-          thumbnail: videoThumbnail,
-          video_url: videoUrl,
+          thumbnail: videoThumbnail || undefined,
+          thumbnail_path: videoThumbnail?.startsWith("/data/") ? videoThumbnail : undefined,
+          video_file_path: videoFilePath,
           video_type: "full",
           category: videoCategory,
           ...(sharePrice ? { share_price: parseFloat(sharePrice) } : {})
         },
         { withCredentials: true }
       );
-      toast.success(`Video uploaded! Ticker: ${response.data.video.ticker_symbol} | Price: $${response.data.video.share_price.toFixed(2)}`);
+      toast.success(`Video published! Ticker: ${response.data.video.ticker_symbol} | Price: $${response.data.video.share_price.toFixed(2)}`);
       setUploadDialogOpen(false);
-      setYoutubeUrl("");
+      setVideoFile(null);
+      setVideoFilePath("");
+      setUploadProgress(0);
       setVideoTitle("");
       setVideoDescription("");
       setVideoThumbnail("");
-      setVideoUrl("");
       setVideoCategory("");
       setSharePrice("");
       fetchCreatorData();
     } catch (error) {
-      toast.error(error.response?.data?.detail || "Failed to upload video");
+      toast.error(error.response?.data?.detail || "Failed to publish video");
     } finally {
       setUploading(false);
     }
   };
+
 
   const formatNumber = (num) => {
     if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
@@ -298,27 +306,37 @@ export default function CreatorStudio() {
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <div>
-                  <Label htmlFor="youtube-url">YouTube URL *</Label>
-                  <div className="flex gap-2 mt-1">
-                    <Input
-                      id="youtube-url"
-                      data-testid="youtube-url-input"
-                      value={youtubeUrl}
-                      onChange={(e) => setYoutubeUrl(e.target.value)}
-                      placeholder="https://www.youtube.com/watch?v=..."
+                  <Label>Video File *</Label>
+                  <div className="mt-1 border-2 border-dashed border-border rounded-xl p-6 text-center">
+                    {videoFile ? (
+                      <div className="space-y-2">
+                        <p className="text-sm font-medium truncate">{videoFile.name}</p>
+                        {uploadingFile ? (
+                          <div className="space-y-1">
+                            <div className="w-full bg-muted rounded-full h-2">
+                              <div className="bg-primary h-2 rounded-full transition-all" style={{ width: `${uploadProgress}%` }} />
+                            </div>
+                            <p className="text-xs text-muted-foreground">{uploadProgress}%</p>
+                          </div>
+                        ) : (
+                          <p className="text-xs text-secondary">✓ Ready</p>
+                        )}
+                      </div>
+                    ) : (
+                      <div>
+                        <Upload className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
+                        <p className="text-sm text-muted-foreground">Click to select a video file</p>
+                        <p className="text-xs text-muted-foreground mt-1">MP4, MOV, WebM supported</p>
+                      </div>
+                    )}
+                    <input
+                      type="file"
+                      accept="video/mp4,video/quicktime,video/webm"
+                      onChange={handleFileSelect}
+                      className="absolute inset-0 opacity-0 cursor-pointer"
+                      style={{ position: "relative", display: "block", marginTop: "8px" }}
                     />
-                    <Button
-                      type="button"
-                      variant="outline"
-                      onClick={() => fetchYouTubeMeta(youtubeUrl)}
-                      disabled={fetchingMeta || !youtubeUrl}
-                    >
-                      {fetchingMeta ? "..." : "Fetch"}
-                    </Button>
                   </div>
-                  {videoThumbnail && (
-                    <img src={videoThumbnail} alt="thumbnail preview" className="mt-2 w-full rounded-lg object-cover aspect-video" />
-                  )}
                 </div>
                 <div>
                   <Label htmlFor="video-title">Title *</Label>
@@ -327,7 +345,7 @@ export default function CreatorStudio() {
                     data-testid="video-title-input"
                     value={videoTitle}
                     onChange={(e) => setVideoTitle(e.target.value)}
-                    placeholder="Auto-filled from YouTube"
+                    placeholder="Video title"
                     className="mt-1"
                   />
                 </div>
@@ -441,11 +459,10 @@ export default function CreatorStudio() {
           {videos.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {videos.map((video) => (
-                <Link 
-                  key={video.video_id}
+                <div key={video.video_id} className="group relative overflow-hidden rounded-xl bg-muted/50 hover:bg-muted transition-colors">
+                <Link
                   to={`/video/${video.video_id}`}
                   data-testid={`my-video-${video.video_id}`}
-                  className="group relative overflow-hidden rounded-xl bg-muted/50 hover:bg-muted transition-colors"
                 >
                   <div className="aspect-video relative">
                     <img 
@@ -478,6 +495,7 @@ export default function CreatorStudio() {
                     </div>
                   </div>
                 </Link>
+                </div>
               ))}
             </div>
           ) : (

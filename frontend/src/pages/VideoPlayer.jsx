@@ -204,16 +204,25 @@ export default function VideoPlayer() {
       </Link>
 
       <div className="grid lg:grid-cols-3 gap-8">
-        {/* Video embed */}
+        {/* Video player */}
         <div className="lg:col-span-2 order-1">
           <div className="aspect-video rounded-2xl overflow-hidden bg-black">
-            <iframe
-              src={video.video_url}
-              title={video.title}
-              className="w-full h-full"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
+            {video.video_file_path ? (
+              <video
+                src={`${API}/videos/${videoId}/stream`}
+                controls
+                className="w-full h-full"
+                poster={video.thumbnail}
+              />
+            ) : (
+              <iframe
+                src={video.video_url}
+                title={video.title}
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            )}
           </div>
         </div>
 
