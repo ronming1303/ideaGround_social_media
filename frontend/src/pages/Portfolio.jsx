@@ -1,30 +1,22 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { API, useAuth } from "../App";
+import { API } from "../App";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Button } from "../components/ui/button";
-import { Badge } from "../components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
-import { Input } from "../components/ui/input";
-import { Slider } from "../components/ui/slider";
-import { 
-  TrendingUp, TrendingDown, DollarSign, Briefcase, 
-  ArrowUpRight, ArrowDownRight, ChevronUp, ChevronDown, Minus, Sparkles, Wallet, RefreshCw
+import {
+  TrendingUp, TrendingDown, DollarSign, Briefcase,
+  ArrowUpRight, ArrowDownRight, ChevronUp, ChevronDown
 } from "lucide-react";
-import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell, CartesianGrid, Legend } from "recharts";
+import { XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell, CartesianGrid, Legend } from "recharts";
 import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
 
 export default function Portfolio() {
-  const { user, setUser } = useAuth();
   const [portfolio, setPortfolio] = useState(null);
   const [portfolioHistory, setPortfolioHistory] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [sellDialogOpen, setSellDialogOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [sharesToSell, setSharesToSell] = useState(1);
-  const [selling, setSelling] = useState(false);
+
 
   const fetchPortfolio = useCallback(async () => {
     try {
@@ -55,7 +47,7 @@ export default function Portfolio() {
 
   // Auto-refresh polling (every 10 seconds for portfolio - shows real-time value)
   // TODO: Replace with WebSocket for real-time updates
-  const { refresh: manualRefresh, lastUpdated } = useDataSync(
+  useDataSync(
     useCallback(async () => {
       await Promise.all([fetchPortfolio(), fetchPortfolioHistory()]);
     }, [fetchPortfolio, fetchPortfolioHistory]),
@@ -63,48 +55,6 @@ export default function Portfolio() {
     !loading
   );
 
-  const handleSellShares = async () => {
-    if (!selectedItem || sharesToSell <= 0 || sharesToSell > selectedItem.shares_owned) {
-      toast.error("Invalid share amount");
-      return;
-    }
-
-    setSelling(true);
-    try {
-      const response = await axios.post(
-        `${API}/shares/sell`,
-        { video_id: selectedItem.video.video_id, shares: sharesToSell },
-        { withCredentials: true }
-      );
-      
-      // Show bonus info if applicable
-      if (response.data.early_bonus_applied && response.data.bonus_earned > 0) {
-        toast.success(
-          `Sold ${sharesToSell} shares for ${formatCurrency(response.data.total_value)} (includes ${formatCurrency(response.data.bonus_earned)} early investor bonus!)`,
-          { duration: 5000 }
-        );
-      } else {
-        toast.success(`Successfully sold ${sharesToSell} shares for ${formatCurrency(response.data.total_value)}`);
-      }
-      
-      setSellDialogOpen(false);
-      setSelectedItem(null);
-      fetchPortfolio();
-      // Refresh user context so Dashboard wallet balance stays in sync
-      const meRes = await axios.get(`${API}/auth/me`, { withCredentials: true });
-      setUser(meRes.data);
-    } catch (error) {
-      toast.error(error.response?.data?.detail || "Failed to sell shares");
-    } finally {
-      setSelling(false);
-    }
-  };
-
-  const openSellDialog = (item) => {
-    setSelectedItem(item);
-    setSharesToSell(1);
-    setSellDialogOpen(true);
-  };
 
 
   const formatCurrency = (value) => {
@@ -359,15 +309,6 @@ export default function Portfolio() {
                           {item.gain >= 0 ? '+' : ''}{item.gain_percent.toFixed(1)}%
                         </p>
                       </div>
-                      <Button 
-                        data-testid={`sell-btn-${item.video.video_id}`}
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => openSellDialog(item)}
-                        className="rounded-full"
-                      >
-                        Sell
-                      </Button>
                     </div>
                   ))}
                 </div>
@@ -409,7 +350,7 @@ export default function Portfolio() {
                           outerRadius={80}
                           paddingAngle={2}
                         >
-                          {portfolio.items.map((entry, index) => (
+                          {portfolio.items.map((_, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </Pie>
@@ -454,82 +395,6 @@ export default function Portfolio() {
         </div>
       </div>
 
-      {/* Sell Dialog */}
-      <Dialog open={sellDialogOpen} onOpenChange={setSellDialogOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="font-heading">Sell Shares</DialogTitle>
-          </DialogHeader>
-          {selectedItem && (
-            <div className="space-y-6 py-4">
-              <div className="flex items-center gap-4 p-4 rounded-xl bg-muted/50">
-                <img 
-                  src={selectedItem.video.thumbnail} 
-                  alt={selectedItem.video.title}
-                  className="w-20 h-14 rounded-lg object-cover"
-                />
-                <div>
-                  <p className="font-medium line-clamp-1">{selectedItem.video.title}</p>
-                  <p className="text-sm text-muted-foreground">${selectedItem.current_price.toFixed(2)} per share</p>
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium mb-2 block">Shares to Sell</label>
-                <div className="flex items-center gap-4">
-                  <Slider
-                    data-testid="sell-shares-slider"
-                    value={[sharesToSell]}
-                    onValueChange={(value) => setSharesToSell(value[0])}
-                    max={selectedItem.shares_owned}
-                    min={1}
-                    step={1}
-                    className="flex-1"
-                  />
-                  <Input
-                    data-testid="sell-shares-input"
-                    type="number"
-                    value={sharesToSell}
-                    onChange={(e) => setSharesToSell(Math.min(Math.max(1, Number(e.target.value)), selectedItem.shares_owned))}
-                    className="w-20 text-center font-mono"
-                  />
-                </div>
-                <p className="text-xs text-muted-foreground mt-2">You own {selectedItem.shares_owned} shares</p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-accent">
-                <div className="flex justify-between mb-2">
-                  <span className="text-muted-foreground">Price per share</span>
-                  <span className="font-mono">${selectedItem.current_price.toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between mb-2">
-                  <span className="text-muted-foreground">Shares</span>
-                  <span className="font-mono">x{sharesToSell}</span>
-                </div>
-                <div className="flex justify-between mb-2">
-                  <span className="text-muted-foreground">Base value</span>
-                  <span className="font-mono">{formatCurrency(selectedItem.current_price * sharesToSell)}</span>
-                </div>
-                <div className="flex justify-between pt-2 border-t border-border">
-                  <span className="font-medium">You&apos;ll receive</span>
-                  <span className="font-heading font-bold text-lg text-secondary">
-                    +{formatCurrency(selectedItem.current_price * sharesToSell)}
-                  </span>
-                </div>
-              </div>
-
-              <Button 
-                data-testid="confirm-sell-btn"
-                onClick={handleSellShares}
-                disabled={selling}
-                className="w-full bg-destructive text-white hover:bg-destructive/90 rounded-full py-6"
-              >
-                {selling ? "Processing..." : `Sell ${sharesToSell} Shares`}
-              </Button>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
 
     </div>
   );

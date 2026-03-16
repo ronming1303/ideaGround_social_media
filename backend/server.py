@@ -187,9 +187,6 @@ class BuyShareRequest(BaseModel):
     video_id: str
     shares: float
 
-class SellShareRequest(BaseModel):
-    video_id: str
-    shares: float
 
 class RedeemRequest(BaseModel):
     video_id: str
@@ -1196,58 +1193,6 @@ async def buy_shares(req: BuyShareRequest, user: User = Depends(get_current_user
     new_balance = user_doc["wallet_balance"] - total_cost
     return {"success": True, "shares_bought": req.shares, "total_cost": total_cost, "new_wallet_balance": new_balance}
 
-@api_router.post("/shares/sell")
-async def sell_shares(req: SellShareRequest, user: User = Depends(get_current_user)):
-    """Sell shares of a video at fixed price"""
-    video = await db.videos.find_one({"video_id": req.video_id}, {"_id": 0})
-    if not video:
-        raise HTTPException(status_code=404, detail="Video not found")
-
-    ownership = await db.share_ownerships.find_one(
-        {"user_id": user.user_id, "video_id": req.video_id}, {"_id": 0}
-    )
-
-    if not ownership or ownership["shares_owned"] < req.shares:
-        raise HTTPException(status_code=400, detail="Not enough shares to sell")
-
-    share_price = video.get("share_price", SHARE_PRICE_MIN)
-    total_value = req.shares * share_price
-
-    # Update user balance
-    await db.users.update_one(
-        {"user_id": user.user_id},
-        {"$inc": {"wallet_balance": total_value}}
-    )
-
-    # Update video available shares
-    await db.videos.update_one(
-        {"video_id": req.video_id},
-        {"$inc": {"available_shares": req.shares}}
-    )
-
-    # Update ownership
-    new_shares = ownership["shares_owned"] - req.shares
-    if new_shares <= 0:
-        await db.share_ownerships.delete_one({"user_id": user.user_id, "video_id": req.video_id})
-    else:
-        await db.share_ownerships.update_one(
-            {"user_id": user.user_id, "video_id": req.video_id},
-            {"$set": {"shares_owned": new_shares}}
-        )
-
-    transaction_doc = {
-        "transaction_id": f"txn_{uuid.uuid4().hex[:12]}",
-        "user_id": user.user_id,
-        "transaction_type": "sell_share",
-        "amount": total_value,
-        "video_id": req.video_id,
-        "shares": req.shares,
-        "price_at_trade": share_price,
-        "created_at": datetime.now(timezone.utc).isoformat()
-    }
-    await db.transactions.insert_one(transaction_doc)
-
-    return {"success": True, "shares_sold": req.shares, "total_value": total_value}
 
 PLATFORM_FEE_PERCENT = 5.0  # 5% platform fee on redemptions
 

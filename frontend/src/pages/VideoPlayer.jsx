@@ -30,9 +30,7 @@ export default function VideoPlayer() {
   const [buyDialogOpen, setBuyDialogOpen] = useState(false);
   const [sharesToBuy, setSharesToBuy] = useState(1);
   const [buying, setBuying] = useState(false);
-  const [sellDialogOpen, setSellDialogOpen] = useState(false);
-  const [sharesToSell, setSharesToSell] = useState(1);
-  const [selling, setSelling] = useState(false);
+
   const [topEarners, setTopEarners] = useState(null);
   const [volumeHistory, setVolumeHistory] = useState([]);
 
@@ -173,30 +171,6 @@ export default function VideoPlayer() {
     }
   };
 
-  const handleSellShares = async () => {
-    if (sharesToSell <= 0 || sharesToSell > (video.user_shares || 0)) {
-      toast.error("Invalid share amount");
-      return;
-    }
-    setSelling(true);
-    try {
-      const response = await axios.post(
-        `${API}/shares/sell`,
-        { video_id: videoId, shares: sharesToSell },
-        { withCredentials: true }
-      );
-      toast.success(`Sold ${sharesToSell} shares for $${response.data.total_value.toFixed(2)}`);
-      setSellDialogOpen(false);
-      fetchVideo();
-      fetchTopEarners();
-      const meRes = await axios.get(`${API}/auth/me`, { withCredentials: true });
-      setUser(meRes.data);
-    } catch (error) {
-      toast.error(error.response?.data?.detail || "Failed to sell shares");
-    } finally {
-      setSelling(false);
-    }
-  };
 
   const formatViews = (views) => {
     if (views >= 1000000) return `${(views / 1000000).toFixed(1)}M`;
@@ -491,73 +465,6 @@ export default function VideoPlayer() {
                 </DialogContent>
               </Dialog>
 
-              {/* SELL BUTTON - only show if user owns shares */}
-              {(video.user_shares || 0) > 0 && (
-                <Dialog open={sellDialogOpen} onOpenChange={setSellDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="w-full mt-3 rounded-xl py-5 text-base font-bold border-destructive/40 text-destructive hover:bg-destructive/10"
-                    >
-                      Sell Shares ({video.user_shares} owned)
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-md">
-                    <DialogHeader>
-                      <DialogTitle className="font-heading text-xl">Sell Shares</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-6 py-4">
-                      <div className="flex items-center gap-4 p-4 rounded-xl bg-muted/50">
-                        <img src={video.thumbnail} alt={video.title} className="w-20 h-14 rounded-lg object-cover" />
-                        <div>
-                          <p className="font-medium line-clamp-1">{video.title}</p>
-                          <p className="text-sm text-muted-foreground">${video.share_price.toFixed(2)} per share</p>
-                        </div>
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium mb-2 block">Shares to Sell</label>
-                        <div className="flex items-center gap-4">
-                          <Slider
-                            value={[sharesToSell]}
-                            onValueChange={(value) => setSharesToSell(value[0])}
-                            max={video.user_shares}
-                            min={1}
-                            step={1}
-                            className="flex-1"
-                          />
-                          <Input
-                            type="number"
-                            value={sharesToSell}
-                            onChange={(e) => setSharesToSell(Math.min(Math.max(1, Number(e.target.value)), video.user_shares))}
-                            className="w-20 text-center font-mono"
-                          />
-                        </div>
-                      </div>
-                      <div className="p-4 rounded-xl bg-muted/50">
-                        <div className="flex justify-between mb-2">
-                          <span className="text-muted-foreground">Price per share</span>
-                          <span className="font-mono">${video.share_price.toFixed(2)}</span>
-                        </div>
-                        <div className="flex justify-between mb-2">
-                          <span className="text-muted-foreground">Shares</span>
-                          <span className="font-mono">× {sharesToSell}</span>
-                        </div>
-                        <div className="flex justify-between pt-2 border-t border-border">
-                          <span className="font-medium">You receive</span>
-                          <span className="font-heading font-bold text-xl text-emerald-600">+${(video.share_price * sharesToSell).toFixed(2)}</span>
-                        </div>
-                      </div>
-                      <Button
-                        onClick={handleSellShares}
-                        disabled={selling}
-                        className="w-full bg-destructive hover:bg-destructive/90 text-white rounded-full py-6"
-                      >
-                        {selling ? "Processing..." : `Sell ${sharesToSell} Shares`}
-                      </Button>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              )}
             </CardContent>
           </Card>
 

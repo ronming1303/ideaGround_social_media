@@ -225,8 +225,6 @@ export default function Wallet() {
     switch (type) {
       case 'buy_share':
         return <ShoppingCart className="w-4 h-4" />;
-      case 'sell_share':
-        return <TrendingUp className="w-4 h-4" />;
       case 'deposit':
         return <ArrowDownLeft className="w-4 h-4" />;
       case 'creator_share_income':
@@ -240,8 +238,6 @@ export default function Wallet() {
     switch (type) {
       case 'buy_share':
         return 'Bought Shares';
-      case 'sell_share':
-        return 'Sold Shares';
       case 'deposit':
         return 'Deposit';
       case 'creator_share_income':
