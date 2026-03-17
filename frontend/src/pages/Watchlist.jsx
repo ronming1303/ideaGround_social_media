@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { API } from "../App";
+import { API, useAuth } from "../App";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Button } from "../components/ui/button";
@@ -14,7 +14,7 @@ import {
 import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
 
 export default function Watchlist() {
-  const { user } = useAuth();
+  useAuth();
   const [watchlist, setWatchlist] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState(null);
