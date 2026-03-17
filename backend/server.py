@@ -1029,7 +1029,8 @@ async def get_my_creator_profile(user: User = Depends(get_current_user)):
     # Get creator's videos
     videos = await db.videos.find({"creator_id": creator["creator_id"]}, {"_id": 0}).to_list(50)
     creator["videos"] = videos
-    
+    creator["total_views"] = sum(v.get("views", 0) for v in videos)
+
     return {"is_creator": True, "creator": creator}
 
 @api_router.get("/creators/{creator_id}")
@@ -2667,10 +2668,27 @@ async def upload_video_file(file: UploadFile = File(...), user: User = Depends(g
     except Exception:
         thumb_path = None
 
+    # Detect aspect ratio to suggest video type
+    suggested_video_type = "full"
+    try:
+        probe = subprocess.run(
+            ["ffprobe", "-v", "error", "-select_streams", "v:0",
+             "-show_entries", "stream=width,height", "-of", "csv=p=0", str(dest)],
+            capture_output=True, text=True, timeout=15
+        )
+        parts = probe.stdout.strip().split(",")
+        if len(parts) == 2:
+            width, height = int(parts[0]), int(parts[1])
+            if height > width:
+                suggested_video_type = "short"
+    except Exception:
+        pass
+
     return {
         "video_file_path": str(dest),
         "file_id": file_id,
-        "thumbnail_path": str(thumb_path) if thumb_path and thumb_path.exists() else None
+        "thumbnail_path": str(thumb_path) if thumb_path and thumb_path.exists() else None,
+        "suggested_video_type": suggested_video_type
     }
 
 @api_router.get("/videos/{video_id}/thumbnail")

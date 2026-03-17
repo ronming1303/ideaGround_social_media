@@ -38,6 +38,7 @@ export default function CreatorStudio() {
   const [videoThumbnail, setVideoThumbnail] = useState("");
   const [videoCategory, setVideoCategory] = useState("");
   const [sharePrice, setSharePrice] = useState("");
+  const [videoType, setVideoType] = useState("full");
   const [uploading, setUploading] = useState(false);
   const [uploadingFile, setUploadingFile] = useState(false);
 
@@ -112,6 +113,9 @@ export default function CreatorStudio() {
       if (response.data.thumbnail_path) {
         setVideoThumbnail(response.data.thumbnail_path);
       }
+      if (response.data.suggested_video_type) {
+        setVideoType(response.data.suggested_video_type);
+      }
       toast.success("Video uploaded!");
     } catch (error) {
       toast.error(error.response?.data?.detail || "File upload failed");
@@ -137,7 +141,7 @@ export default function CreatorStudio() {
           thumbnail: videoThumbnail || undefined,
           thumbnail_path: videoThumbnail?.startsWith("/data/") ? videoThumbnail : undefined,
           video_file_path: videoFilePath,
-          video_type: "full",
+          video_type: videoType,
           category: videoCategory,
           ...(sharePrice ? { share_price: parseFloat(sharePrice) } : {})
         },
@@ -305,6 +309,17 @@ export default function CreatorStudio() {
                 <DialogTitle className="font-heading">Upload New Video</DialogTitle>
               </DialogHeader>
               <div className="space-y-4 py-4">
+                <div>
+                  <Label>Video Type *</Label>
+                  <div className="flex gap-2 mt-1">
+                    <Button type="button" variant={videoType === "short" ? "default" : "outline"} onClick={() => setVideoType("short")} className="flex-1 rounded-full">
+                      Short (≤3 min)
+                    </Button>
+                    <Button type="button" variant={videoType === "full" ? "default" : "outline"} onClick={() => setVideoType("full")} className="flex-1 rounded-full">
+                      Full (10-30 min)
+                    </Button>
+                  </div>
+                </div>
                 <div>
                   <Label>Video File *</Label>
                   <div className="mt-1 border-2 border-dashed border-border rounded-xl p-6 text-center">
