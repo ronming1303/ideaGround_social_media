@@ -6,7 +6,7 @@ echo "=========================================="
 echo
 
 cd "$(dirname "$0")/.."
-docker-compose -f docker-local/docker-compose.local.yml down
+docker-compose -f docker-local/docker-compose.prod.yml down
 
 echo
 echo "Containers stopped successfully."

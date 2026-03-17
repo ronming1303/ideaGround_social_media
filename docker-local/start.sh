@@ -17,4 +17,4 @@ echo "This may take a few minutes on first run."
 echo
 
 cd "$(dirname "$0")/.."
-docker-compose -f docker-local/docker-compose.local.yml up --build
+docker-compose -f docker-local/docker-compose.prod.yml up --build
