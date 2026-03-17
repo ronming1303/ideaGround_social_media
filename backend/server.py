@@ -1042,6 +1042,7 @@ async def get_creator(creator_id: str, request: Request):
     
     videos = await db.videos.find({"creator_id": creator_id}, {"_id": 0}).to_list(50)
     creator["videos"] = videos
+    creator["total_views"] = sum(v.get("views", 0) for v in videos)
 
     # Calculate net invested value across all creator's videos (buys - sells)
     video_ids = [v["video_id"] for v in videos]
