@@ -12,6 +12,7 @@ import Wallet from "./pages/Wallet";
 import CreatorProfile from "./pages/CreatorProfile";
 import Explore from "./pages/Explore";
 import CreatorStudio from "./pages/CreatorStudio";
+import Shorts from "./pages/Shorts";
 import CreatorAnalytics from "./pages/CreatorAnalytics";
 import Watchlist from "./pages/Watchlist";
 import Admin from "./pages/Admin";
@@ -191,6 +192,11 @@ function AppRouter() {
       <Route path="/analytics" element={
         <ProtectedRoute>
           <AppLayout><CreatorAnalytics /></AppLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/shorts/:videoId" element={
+        <ProtectedRoute>
+          <AppLayout><Shorts /></AppLayout>
         </ProtectedRoute>
       } />
       <Route path="/admin" element={<Admin />} />

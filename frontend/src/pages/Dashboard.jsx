@@ -342,7 +342,7 @@ export default function Dashboard() {
             </div>
             <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-2 px-2">
               {videos.filter(v => v.video_type === 'short').map((video) => (
-                <Link key={video.video_id} to={`/video/${video.video_id}`} className="flex-shrink-0 group">
+                <Link key={video.video_id} to={`/shorts/${video.video_id}`} className="flex-shrink-0 group">
                   <div className="relative w-40 h-72 rounded-xl overflow-hidden bg-black shadow-lg">
                     <img src={video.thumbnail} alt={video.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
