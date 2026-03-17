@@ -29,13 +29,13 @@ services:
       - MONGO_URL=mongodb://mongodb:27017
       - DB_NAME=ideaground
       - LOCAL_AUTH_ENABLED=false
-      - GOOGLE_CLIENT_ID=GOOGLE_CLIENT_ID_REMOVED
-      - GOOGLE_CLIENT_SECRET=GOOGLE_CLIENT_SECRET_REMOVED
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - GOOGLE_REDIRECT_URI=https://ideaground.net/api/auth/google/callback
       - FRONTEND_URL=https://ideaground.net
       - CORS_ORIGINS=https://ideaground.net,http://localhost:3000,http://localhost:8080
-      - STRIPE_SECRET_KEY=STRIPE_SECRET_KEY_REMOVED
-      - STRIPE_PUBLISHABLE_KEY=STRIPE_PUBLISHABLE_KEY_REMOVED
+      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
+      - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
     volumes:
       - video_data:/data/videos
     ports:
@@ -59,7 +59,7 @@ services:
       args:
         REACT_APP_BACKEND_URL: ""
         REACT_APP_LOCAL_AUTH: "false"
-        REACT_APP_STRIPE_PUBLISHABLE_KEY: "STRIPE_PUBLISHABLE_KEY_REMOVED"
+        REACT_APP_STRIPE_PUBLISHABLE_KEY: "${STRIPE_PUBLISHABLE_KEY}"
     container_name: ideaground-frontend
     restart: unless-stopped
     ports:
