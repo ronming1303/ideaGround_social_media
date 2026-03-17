@@ -25,17 +25,15 @@ services:
       dockerfile: docker-local/Dockerfile.backend
     container_name: ideaground-backend
     restart: unless-stopped
+    env_file:
+      - .env.prod
     environment:
       - MONGO_URL=mongodb://mongodb:27017
       - DB_NAME=ideaground
       - LOCAL_AUTH_ENABLED=false
-      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
       - GOOGLE_REDIRECT_URI=https://ideaground.net/api/auth/google/callback
       - FRONTEND_URL=https://ideaground.net
       - CORS_ORIGINS=https://ideaground.net,http://localhost:3000,http://localhost:8080
-      - STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}
-      - STRIPE_PUBLISHABLE_KEY=${STRIPE_PUBLISHABLE_KEY}
     volumes:
       - video_data:/data/videos
     ports:
@@ -59,7 +57,7 @@ services:
       args:
         REACT_APP_BACKEND_URL: ""
         REACT_APP_LOCAL_AUTH: "false"
-        REACT_APP_STRIPE_PUBLISHABLE_KEY: "${STRIPE_PUBLISHABLE_KEY}"
+        REACT_APP_STRIPE_PUBLISHABLE_KEY: "pk_test_51T9BgeIq7nviYilsVk7AReTms9mqS1tly1pwb8xJcEHYeTtunUEDyFsSPo0cJabMaFnBDIeQR10MFQZfWegUuJJi00X4ADzHs4"
     container_name: ideaground-frontend
     restart: unless-stopped
     ports:
