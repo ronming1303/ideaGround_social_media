@@ -207,12 +207,20 @@ function AppRouter() {
 function App() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCreator, setIsCreator] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
         const response = await axios.get(`${API}/auth/me`, { withCredentials: true });
         setUser(response.data);
+        // Check creator status in parallel
+        try {
+          const creatorResponse = await axios.get(`${API}/creators/me`, { withCredentials: true });
+          setIsCreator(creatorResponse.data?.is_creator === true);
+        } catch {
+          setIsCreator(false);
+        }
       } catch (error) {
         setUser(null);
       } finally {
@@ -238,7 +246,7 @@ function App() {
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, setUser, isLoading, isCreator, setIsCreator, login, logout }}>
       <BrowserRouter>
         <AppRouter />
         <Toaster position="top-right" richColors />
