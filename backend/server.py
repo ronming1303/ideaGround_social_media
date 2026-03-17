@@ -2669,18 +2669,41 @@ async def upload_video_file(file: UploadFile = File(...), user: User = Depends(g
     except Exception:
         thumb_path = None
 
-    # Detect aspect ratio to suggest video type
+    # Detect video type using YouTube Shorts logic:
+    # Short = portrait/square (height >= width) AND duration <= 180 seconds
+    SHORTS_MAX_DURATION = 180  # YouTube's current 3-minute limit
     suggested_video_type = "full"
+    detected_duration = None
     try:
+        import json as _json
         probe = subprocess.run(
-            ["ffprobe", "-v", "error", "-select_streams", "v:0",
-             "-show_entries", "stream=width,height", "-of", "csv=p=0", str(dest)],
+            ["ffprobe", "-v", "error", "-show_streams", "-show_format",
+             "-of", "json", str(dest)],
             capture_output=True, text=True, timeout=15
         )
-        parts = probe.stdout.strip().split(",")
-        if len(parts) == 2:
-            width, height = int(parts[0]), int(parts[1])
-            if height > width:
+        probe_data = _json.loads(probe.stdout)
+        fmt_duration = probe_data.get("format", {}).get("duration")
+        detected_duration = float(fmt_duration) if fmt_duration else None
+        video_stream = next(
+            (s for s in probe_data.get("streams", []) if s.get("codec_type") == "video"),
+            None
+        )
+        if video_stream:
+            width, height = int(video_stream["width"]), int(video_stream["height"])
+            # Check legacy rotate tag
+            rotate = int(video_stream.get("tags", {}).get("rotate", 0))
+            # Check modern Display Matrix side data (used by newer iPhones)
+            if rotate == 0:
+                for sd in video_stream.get("side_data_list", []):
+                    if "rotation" in sd:
+                        rotate = abs(int(sd["rotation"]))
+                        break
+            if rotate in (90, 270):
+                width, height = height, width
+            is_portrait = height >= width
+            duration = detected_duration or float(video_stream.get("duration") or 0)
+            is_short_duration = 0 < duration <= SHORTS_MAX_DURATION
+            if is_portrait and is_short_duration:
                 suggested_video_type = "short"
     except Exception:
         pass
@@ -2689,7 +2712,8 @@ async def upload_video_file(file: UploadFile = File(...), user: User = Depends(g
         "video_file_path": str(dest),
         "file_id": file_id,
         "thumbnail_path": str(thumb_path) if thumb_path and thumb_path.exists() else None,
-        "suggested_video_type": suggested_video_type
+        "suggested_video_type": suggested_video_type,
+        "duration": detected_duration
     }
 
 @api_router.get("/videos/{video_id}/thumbnail")
