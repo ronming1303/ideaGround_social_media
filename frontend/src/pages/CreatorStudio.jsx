@@ -39,6 +39,7 @@ export default function CreatorStudio() {
   const [videoCategory, setVideoCategory] = useState("");
   const [sharePrice, setSharePrice] = useState("");
   const [videoType, setVideoType] = useState("full");
+  const [videoDuration, setVideoDuration] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [uploadingFile, setUploadingFile] = useState(false);
 
@@ -115,6 +116,9 @@ export default function CreatorStudio() {
       }
       if (response.data.suggested_video_type) {
         setVideoType(response.data.suggested_video_type);
+      }
+      if (response.data.duration != null) {
+        setVideoDuration(response.data.duration);
       }
       toast.success("Video uploaded!");
     } catch (error) {
@@ -310,19 +314,14 @@ export default function CreatorStudio() {
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <div>
-                  <Label>Video Type *</Label>
-                  <div className="flex gap-2 mt-1">
-                    <Button type="button" variant={videoType === "short" ? "default" : "outline"} onClick={() => setVideoType("short")} className="flex-1 rounded-full">
-                      Short (≤3 min)
-                    </Button>
-                    <Button type="button" variant={videoType === "full" ? "default" : "outline"} onClick={() => setVideoType("full")} className="flex-1 rounded-full">
-                      Full (10-30 min)
-                    </Button>
-                  </div>
-                </div>
-                <div>
                   <Label>Video File *</Label>
-                  <div className="mt-1 border-2 border-dashed border-border rounded-xl p-6 text-center">
+                  <label className="mt-1 border-2 border-dashed border-border rounded-xl p-6 text-center block cursor-pointer hover:border-primary hover:bg-muted/30 transition-colors">
+                    <input
+                      type="file"
+                      accept="video/mp4,video/quicktime,video/webm"
+                      onChange={handleFileSelect}
+                      className="hidden"
+                    />
                     {videoFile ? (
                       <div className="space-y-2">
                         <p className="text-sm font-medium truncate">{videoFile.name}</p>
@@ -334,7 +333,9 @@ export default function CreatorStudio() {
                             <p className="text-xs text-muted-foreground">{uploadProgress}%</p>
                           </div>
                         ) : (
-                          <p className="text-xs text-secondary">✓ Ready</p>
+                          <>
+                            <p className="text-xs text-secondary">✓ Ready</p>
+                          </>
                         )}
                       </div>
                     ) : (
@@ -344,14 +345,7 @@ export default function CreatorStudio() {
                         <p className="text-xs text-muted-foreground mt-1">MP4, MOV, WebM supported</p>
                       </div>
                     )}
-                    <input
-                      type="file"
-                      accept="video/mp4,video/quicktime,video/webm"
-                      onChange={handleFileSelect}
-                      className="absolute inset-0 opacity-0 cursor-pointer"
-                      style={{ position: "relative", display: "block", marginTop: "8px" }}
-                    />
-                  </div>
+                  </label>
                 </div>
                 <div>
                   <Label htmlFor="video-title">Title *</Label>
@@ -376,6 +370,43 @@ export default function CreatorStudio() {
                     rows={3}
                   />
                 </div>
+                <div>
+                  <Label>Video Type</Label>
+                  <div className="flex gap-2 mt-1">
+                    <button
+                      type="button"
+                      onClick={() => setVideoType("full")}
+                      className={`flex-1 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                        videoType === "full"
+                          ? "bg-primary text-white border-primary"
+                          : "border-border text-muted-foreground hover:border-primary/50"
+                      }`}
+                    >
+                      Full Video
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setVideoType("short")}
+                      className={`flex-1 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                        videoType === "short"
+                          ? "bg-primary text-white border-primary"
+                          : "border-border text-muted-foreground hover:border-primary/50"
+                      }`}
+                    >
+                      Short
+                    </button>
+                  </div>
+                  {videoFilePath && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Auto-detected: <span className="font-medium">{videoType === "short" ? "Short" : "Full Video"}</span>
+                      {videoDuration != null && (
+                        <span> ({Math.round(videoDuration)}s{videoDuration > 180 ? " — over 3 min limit" : ""})</span>
+                      )}
+                      {" "}— tap to change
+                    </p>
+                  )}
+                </div>
+
                 <div>
                   <Label htmlFor="video-category">Category *</Label>
                   <Select value={videoCategory} onValueChange={setVideoCategory}>
