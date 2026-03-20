@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { BrowserRouter, Routes, Route, useLocation, useNavigate, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Toaster, toast } from "sonner";
 
@@ -81,7 +81,7 @@ const AuthCallback = () => {
   );
 };
 
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children, allowedEmails }) => {
   const { user, setUser, isLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -121,7 +121,11 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
-  return user ? children : null;
+  if (!user) return null;
+  if (allowedEmails && !allowedEmails.includes(user.email)) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  return children;
 };
 
 const AppLayout = ({ children }) => {
@@ -202,7 +206,7 @@ function AppRouter() {
       <Route path="/admin" element={<Admin />} />
       <Route path="/investors" element={<InvestorDashboard />} />
       <Route path="/why" element={
-        <ProtectedRoute>
+        <ProtectedRoute allowedEmails={["kshitiz.dadhich2015@gmail.com", "rumingliu1303@gmail.com"]}>
           <AppLayout><WhyIdeaGround /></AppLayout>
         </ProtectedRoute>
       } />
