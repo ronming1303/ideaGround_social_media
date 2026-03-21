@@ -346,11 +346,7 @@ export default function InvestorDashboard() {
                   <p className="text-xs text-muted-foreground mb-1">Avg Share Price</p>
                   <p className="font-mono text-xl font-bold">${metrics.shares.avg_share_price.toFixed(2)}</p>
                 </div>
-                <div className="p-4 rounded-xl bg-gradient-to-br from-amber-500/10 to-amber-500/5 border border-amber-500/20">
-                  <p className="text-xs text-muted-foreground mb-1">Early Investors</p>
-                  <p className="font-mono text-xl font-bold text-amber-600">{metrics.overview.early_investors}</p>
-                </div>
-                <div className="p-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/20">
+                <div className="p-4 rounded-xl bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/20 col-span-2">
                   <p className="text-xs text-muted-foreground mb-1">Unique Investors</p>
                   <p className="font-mono text-xl font-bold text-purple-600">{metrics.overview.unique_investors}</p>
                 </div>

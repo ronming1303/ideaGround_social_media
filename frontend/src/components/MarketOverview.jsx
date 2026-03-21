@@ -43,7 +43,7 @@ export default function MarketOverview({ onRefresh }) {
 
   const allPanelKeys = [
     "top_gainers", "top_losers", "hot_stocks",
-    "early_bonus", "undervalued", "best_roi", "new_listings", "most_traded"
+    "undervalued", "best_roi", "new_listings", "most_traded"
   ];
 
   useEffect(() => {
@@ -148,11 +148,6 @@ export default function MarketOverview({ onRefresh }) {
               <Flame className="w-3 h-3" />
               {item.shares_sold_percent?.toFixed(0)}% sold
             </p>
-          )}
-          {category === "early_bonus" && (
-            <Badge className="text-[10px] bg-amber-500/10 text-amber-600 border-0">
-              {item.early_bonus}x bonus
-            </Badge>
           )}
           {category === "undervalued" && (
             <p className="text-xs text-blue-500 flex items-center justify-end gap-1">
@@ -311,16 +306,11 @@ export default function MarketOverview({ onRefresh }) {
             </span>
             <div className="h-px flex-1 bg-border"></div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
-            <CategorySection 
-              panelKey="early_bonus" 
-              category="early_bonus" 
-              categoryData={data.opportunities.early_bonus} 
-            />
-            <CategorySection 
-              panelKey="undervalued" 
-              category="undervalued" 
-              categoryData={data.opportunities.undervalued} 
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-3">
+            <CategorySection
+              panelKey="undervalued"
+              category="undervalued"
+              categoryData={data.opportunities.undervalued}
             />
             <CategorySection 
               panelKey="best_roi" 

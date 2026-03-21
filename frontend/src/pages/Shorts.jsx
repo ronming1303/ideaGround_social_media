@@ -230,11 +230,7 @@ export default function Shorts() {
     setBuying(true);
     try {
       const r = await axios.post(`${API}/shares/buy`, { video_id: currentVideoId, shares: sharesToBuy }, { withCredentials: true });
-      if (r.data.is_early_investor) {
-        toast.success(`Early Investor Bonus! ${sharesToBuy} shares with ${r.data.early_bonus_multiplier}x bonus!`, { duration: 5000 });
-      } else {
-        toast.success(`Bought ${sharesToBuy} shares for $${r.data.total_cost.toFixed(2)}`);
-      }
+      toast.success(`Bought ${sharesToBuy} shares for $${r.data.total_cost.toFixed(2)}`);
       setBuySheetOpen(false);
       if (user) setUser({ ...user, wallet_balance: r.data.new_wallet_balance });
       setVideoDetails(prev => { const n = { ...prev }; delete n[currentVideoId]; return n; });

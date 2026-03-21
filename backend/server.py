@@ -142,8 +142,6 @@ class ShareOwnership(BaseModel):
     video_id: str
     shares_owned: float
     purchase_price: float
-    is_early_investor: bool = False  # True if bought when <30% shares sold
-    early_bonus_multiplier: float = 1.0  # Bonus for early investors (1.0-2.5x)
     purchased_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class Transaction(BaseModel):
@@ -835,9 +833,6 @@ async def get_video(video_id: str, request: Request):
     shares_sold_percent = (shares_sold / video["total_shares"]) * 100
     video["shares_sold_percent"] = shares_sold_percent
     
-    video["early_investor_tier"] = None
-    video["early_bonus_available"] = 1.0
-    
     # Revenue split info (transparent breakdown)
     video["revenue_split"] = {
         "creator_percent": 50,
@@ -858,12 +853,8 @@ async def get_video(video_id: str, request: Request):
         )
         if ownership:
             video["user_shares"] = ownership["shares_owned"]
-            video["user_is_early_investor"] = ownership.get("is_early_investor", False)
-            video["user_early_bonus"] = ownership.get("early_bonus_multiplier", 1.0)
         else:
             video["user_shares"] = 0
-            video["user_is_early_investor"] = False
-            video["user_early_bonus"] = 1.0
         
         # Check if user is watching this video
         watchlist_item = await db.watchlist.find_one(
@@ -874,8 +865,6 @@ async def get_video(video_id: str, request: Request):
     else:
         video["user_liked"] = False
         video["user_shares"] = 0
-        video["user_is_early_investor"] = False
-        video["user_early_bonus"] = 1.0
         video["user_watching"] = False
         video["watch_price_when_added"] = None
     
@@ -948,15 +937,6 @@ async def get_video_top_earners(video_id: str, limit: int = 5):
         profit = current_value - purchase_value
         profit_percent = (profit / purchase_value * 100) if purchase_value > 0 else 0
         
-        # Calculate potential bonus
-        is_early = ownership.get("is_early_investor", False)
-        bonus_multiplier = ownership.get("early_bonus_multiplier", 1.0)
-        potential_bonus = 0
-        if is_early and profit > 0:
-            potential_bonus = profit * (bonus_multiplier - 1)
-        
-        total_potential_return = profit + potential_bonus
-        
         earners.append({
             "user_id": ownership["user_id"],
             "name": user_doc.get("name", "Anonymous"),
@@ -966,14 +946,10 @@ async def get_video_top_earners(video_id: str, limit: int = 5):
             "current_value": current_value,
             "profit": profit,
             "profit_percent": profit_percent,
-            "is_early_investor": is_early,
-            "bonus_multiplier": bonus_multiplier,
-            "potential_bonus": potential_bonus,
-            "total_potential_return": total_potential_return
         })
-    
-    # Sort by total potential return (profit + early bonus)
-    earners.sort(key=lambda x: x["total_potential_return"], reverse=True)
+
+    # Sort by profit
+    earners.sort(key=lambda x: x["profit"], reverse=True)
     
     # Assign ranks
     for i, earner in enumerate(earners):
@@ -1093,9 +1069,6 @@ async def subscribe_creator(creator_id: str, user: User = Depends(get_current_us
 SHARE_PRICE_MIN = 1
 SHARE_PRICE_MAX = 1
 
-def calculate_early_bonus(shares_sold_percent: float) -> tuple[bool, float]:
-    """Simplified: no early investor bonus."""
-    return False, 1.0
 
 def calculate_price_impact(shares_traded: float, available_shares: float, total_shares: float, is_buy: bool) -> float:
     """Simplified: no price impact from trades."""
@@ -1156,8 +1129,6 @@ async def buy_shares(req: BuyShareRequest, user: User = Depends(get_current_user
             "video_id": req.video_id,
             "shares_owned": req.shares,
             "purchase_price": share_price,
-            "is_early_investor": False,
-            "early_bonus_multiplier": 1.0,
             "purchased_at": datetime.now(timezone.utc).isoformat()
         }
         await db.share_ownerships.insert_one(ownership_doc)
@@ -1301,9 +1272,6 @@ async def get_portfolio(user: User = Depends(get_current_user)):
                 "current_value": current_value,
                 "gain": 0,
                 "gain_percent": 0,
-                "is_early_investor": False,
-                "early_bonus_multiplier": 1.0,
-                "potential_bonus": 0
             })
 
             total_value += current_value
@@ -1312,7 +1280,6 @@ async def get_portfolio(user: User = Depends(get_current_user)):
         "items": portfolio_items,
         "total_value": total_value,
         "total_gain": 0,
-        "total_potential_bonus": 0,
         "wallet_balance": user.wallet_balance
     }
 
@@ -1333,7 +1300,6 @@ async def get_portfolio_performance(user: User = Depends(get_current_user)):
             "total_invested": 0,
             "total_gain": 0,
             "gain_percent": 0,
-            "total_potential_bonus": 0,
             "holdings_count": 0
         }
 
@@ -1351,7 +1317,6 @@ async def get_portfolio_performance(user: User = Depends(get_current_user)):
         "total_invested": total_invested,
         "total_gain": 0,
         "gain_percent": gain_percent,
-        "total_potential_bonus": 0,
         "holdings_count": len(ownerships)
     }
 
@@ -1396,9 +1361,7 @@ async def get_portfolio_history(user: User = Depends(get_current_user)):
         if txn_type == "buy_share":
             cumulative_invested += abs(amount)
         elif txn_type == "sell_share":
-            # Earnings from selling
-            bonus = txn.get("bonus_earned", 0)
-            cumulative_earnings += bonus
+            pass  # No earnings tracked here
         elif txn_type == "deposit":
             pass  # Don't count deposits in investment
         
@@ -1494,21 +1457,6 @@ async def get_watchlist(user: User = Depends(get_current_user)):
                 {"user_id": user.user_id, "video_id": item["video_id"]}, {"_id": 0}
             )
             
-            # Check early investor tier available
-            shares_sold_percent = ((video["total_shares"] - video["available_shares"]) / video["total_shares"]) * 100
-            if shares_sold_percent < 10:
-                early_tier = "platinum"
-                early_bonus = 2.5
-            elif shares_sold_percent < 20:
-                early_tier = "gold"
-                early_bonus = 2.0
-            elif shares_sold_percent < 30:
-                early_tier = "silver"
-                early_bonus = 1.5
-            else:
-                early_tier = None
-                early_bonus = 1.0
-            
             enriched_items.append({
                 "watchlist_id": item["watchlist_id"],
                 "video": video,
@@ -1520,8 +1468,6 @@ async def get_watchlist(user: User = Depends(get_current_user)):
                 "added_at": item.get("created_at"),
                 "user_owns_shares": ownership is not None,
                 "shares_owned": ownership["shares_owned"] if ownership else 0,
-                "early_tier_available": early_tier,
-                "early_bonus_available": early_bonus
             })
     
     # Sort by price change percent (best opportunities first)
@@ -1811,21 +1757,6 @@ async def get_market_overview():
         available = video.get("available_shares", 100)
         video["shares_sold_percent"] = ((total - available) / total) * 100 if total > 0 else 0
         
-        # Calculate early bonus tier
-        sold_pct = video["shares_sold_percent"]
-        if sold_pct < 10:
-            video["early_bonus"] = 2.5
-            video["early_bonus_tier"] = "Diamond"
-        elif sold_pct < 20:
-            video["early_bonus"] = 2.0
-            video["early_bonus_tier"] = "Gold"
-        elif sold_pct < 30:
-            video["early_bonus"] = 1.5
-            video["early_bonus_tier"] = "Silver"
-        else:
-            video["early_bonus"] = None
-            video["early_bonus_tier"] = None
-        
         # Calculate value ratio (views per dollar of share price)
         views = video.get("views", 0)
         price = video.get("share_price", 10)
@@ -1867,12 +1798,7 @@ async def get_market_overview():
     hot_stocks = [format_video(v) for v in by_scarcity[:3]]
     
     # === SECTION 2: INVESTMENT OPPORTUNITIES ===
-    
-    # Early Bonus - videos with bonus still available (< 30% sold)
-    early_bonus_videos = [v for v in videos if v.get("early_bonus") is not None]
-    early_bonus_videos = sorted(early_bonus_videos, key=lambda v: v.get("early_bonus", 0), reverse=True)
-    early_bonus = [format_video(v, {"early_bonus": v["early_bonus"], "early_tier": v["early_bonus_tier"]}) for v in early_bonus_videos[:3]]
-    
+
     # Undervalued - highest views per dollar (value ratio)
     by_value = sorted(videos, key=lambda v: v.get("value_ratio", 0), reverse=True)
     undervalued = [format_video(v, {"value_ratio": v["value_ratio"]}) for v in by_value[:3]]
@@ -1928,12 +1854,6 @@ async def get_market_overview():
             }
         },
         "opportunities": {
-            "early_bonus": {
-                "title": "Early Bonus",
-                "qualifier": "Get 1.5-2.5x on profits",
-                "icon": "star",
-                "items": early_bonus
-            },
             "undervalued": {
                 "title": "Undervalued",
                 "qualifier": "High views, low price",
@@ -2011,8 +1931,6 @@ async def get_live_activity(limit: int = 20):
             "amount": abs(txn.get("amount", 0)),
             "price_at_trade": txn.get("price_at_trade", 0),
             "price_after_trade": txn.get("price_after_trade"),
-            "is_early_investor": txn.get("is_early_investment", False),
-            "bonus_earned": txn.get("bonus_earned", 0),
             "timestamp": txn.get("created_at"),
             "type": txn_type
         }
@@ -2219,7 +2137,6 @@ async def claim_comment_reward(comment_id: str, request: Request):
             video_id=comment["video_id"],
             shares_owned=additional_shares,
             purchase_price=0,  # Free!
-            is_early_investor=False
         )
         await db.share_ownerships.insert_one(ownership.model_dump())
     
@@ -2382,9 +2299,6 @@ async def get_investor_metrics():
     unique_investors = len(set(o.get("user_id") for o in ownerships))
     total_shares_held = sum(o.get("shares_owned", 0) for o in ownerships)
     
-    # Early investors
-    early_investors = len([o for o in ownerships if o.get("is_early_investor", False)])
-    
     # === GROWTH INDICATORS ===
     # Transaction volume by day (last 7 days)
     daily_volumes = []
@@ -2425,7 +2339,6 @@ async def get_investor_metrics():
             "total_market_cap": round(total_market_cap, 2),
             "total_wallet_balances": round(total_wallet_balances, 2),
             "unique_investors": unique_investors,
-            "early_investors": early_investors
         },
         "trading": {
             "total_buy_volume": round(total_buy_volume, 2),
@@ -3089,8 +3002,6 @@ async def get_admin_transactions(request: Request, limit: int = 50):
             "amount": txn.get("amount"),
             "shares": txn.get("shares"),
             "platform_fee": txn.get("platform_fee"),
-            "early_bonus_applied": txn.get("early_bonus_applied"),
-            "bonus_earned": txn.get("bonus_earned"),
             "created_at": txn.get("created_at")
         })
     

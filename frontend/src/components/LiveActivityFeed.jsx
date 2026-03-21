@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { 
   TrendingUp, TrendingDown, Zap, Users, DollarSign, 
-  ArrowUpRight, ArrowDownRight, Sparkles, Activity
+  ArrowUpRight, ArrowDownRight, Activity
 } from "lucide-react";
 import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
 
@@ -144,12 +144,6 @@ export default function LiveActivityFeed() {
                         <span className="text-xs text-muted-foreground truncate max-w-[150px]">
                           {activity.video_title}
                         </span>
-                        {activity.is_early_investor && (
-                          <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[10px] px-1.5 py-0">
-                            <Sparkles className="w-3 h-3 mr-0.5" />
-                            Early
-                          </Badge>
-                        )}
                       </div>
                     </div>
                     
