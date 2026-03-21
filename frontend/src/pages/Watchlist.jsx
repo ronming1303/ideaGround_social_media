@@ -6,15 +6,15 @@ import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
-import { 
-  Eye, EyeOff, TrendingUp, TrendingDown, Clock, 
-  ShoppingCart, Sparkles, ArrowUpRight, PlayCircle, RefreshCw,
-  BarChart3, Users, Target, Zap, ChevronRight, DollarSign
+import {
+  Eye, EyeOff, TrendingUp, TrendingDown,
+  ShoppingCart, Sparkles, ArrowUpRight,
+  BarChart3, Target, Zap, ChevronRight
 } from "lucide-react";
 import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
 
 export default function Watchlist() {
-  const { user } = useAuth();
+  useAuth();
   const [watchlist, setWatchlist] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -166,9 +166,7 @@ export default function Watchlist() {
                           alt={item.video.title}
                           className="w-24 h-16 rounded-lg object-cover"
                         />
-                        <Badge className="absolute bottom-1 right-1 text-[10px] bg-black/70 px-1">
-                          {item.video.duration_minutes}m
-                        </Badge>
+
                       </div>
                       
                       {/* Video Info */}

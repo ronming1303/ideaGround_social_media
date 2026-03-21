@@ -129,9 +129,9 @@ class Video(BaseModel):
     ticker_symbol: Optional[str] = None  # Unique video ticker like EMMA_0126D1
     views: int = 0
     likes: int = 0
-    share_price: float = 10.00
-    available_shares: float = 100.0
-    total_shares: float = 100.0
+    share_price: float = 1.00
+    available_shares: float = 1000.0
+    total_shares: float = 1000.0
     price_history: List[dict] = []
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
@@ -1029,7 +1029,8 @@ async def get_my_creator_profile(user: User = Depends(get_current_user)):
     # Get creator's videos
     videos = await db.videos.find({"creator_id": creator["creator_id"]}, {"_id": 0}).to_list(50)
     creator["videos"] = videos
-    
+    creator["total_views"] = sum(v.get("views", 0) for v in videos)
+
     return {"is_creator": True, "creator": creator}
 
 @api_router.get("/creators/{creator_id}")
@@ -1041,6 +1042,7 @@ async def get_creator(creator_id: str, request: Request):
     
     videos = await db.videos.find({"creator_id": creator_id}, {"_id": 0}).to_list(50)
     creator["videos"] = videos
+    creator["total_views"] = sum(v.get("views", 0) for v in videos)
 
     # Calculate net invested value across all creator's videos (buys - sells)
     video_ids = [v["video_id"] for v in videos]
@@ -1088,8 +1090,8 @@ async def subscribe_creator(creator_id: str, user: User = Depends(get_current_us
 # ==================== SHARE/STOCK ENDPOINTS ====================
 
 # Share price range: $5-$20 (integer), fixed per video, no trading impact
-SHARE_PRICE_MIN = 5
-SHARE_PRICE_MAX = 20
+SHARE_PRICE_MIN = 1
+SHARE_PRICE_MAX = 1
 
 def calculate_early_bonus(shares_sold_percent: float) -> tuple[bool, float]:
     """Simplified: no early investor bonus."""
@@ -2667,10 +2669,51 @@ async def upload_video_file(file: UploadFile = File(...), user: User = Depends(g
     except Exception:
         thumb_path = None
 
+    # Detect video type using YouTube Shorts logic:
+    # Short = portrait/square (height >= width) AND duration <= 180 seconds
+    SHORTS_MAX_DURATION = 180  # YouTube's current 3-minute limit
+    suggested_video_type = "full"
+    detected_duration = None
+    try:
+        import json as _json
+        probe = subprocess.run(
+            ["ffprobe", "-v", "error", "-show_streams", "-show_format",
+             "-of", "json", str(dest)],
+            capture_output=True, text=True, timeout=15
+        )
+        probe_data = _json.loads(probe.stdout)
+        fmt_duration = probe_data.get("format", {}).get("duration")
+        detected_duration = float(fmt_duration) if fmt_duration else None
+        video_stream = next(
+            (s for s in probe_data.get("streams", []) if s.get("codec_type") == "video"),
+            None
+        )
+        if video_stream:
+            width, height = int(video_stream["width"]), int(video_stream["height"])
+            # Check legacy rotate tag
+            rotate = int(video_stream.get("tags", {}).get("rotate", 0))
+            # Check modern Display Matrix side data (used by newer iPhones)
+            if rotate == 0:
+                for sd in video_stream.get("side_data_list", []):
+                    if "rotation" in sd:
+                        rotate = abs(int(sd["rotation"]))
+                        break
+            if rotate in (90, 270):
+                width, height = height, width
+            is_portrait = height >= width
+            duration = detected_duration or float(video_stream.get("duration") or 0)
+            is_short_duration = 0 < duration <= SHORTS_MAX_DURATION
+            if is_portrait and is_short_duration:
+                suggested_video_type = "short"
+    except Exception:
+        pass
+
     return {
         "video_file_path": str(dest),
         "file_id": file_id,
-        "thumbnail_path": str(thumb_path) if thumb_path and thumb_path.exists() else None
+        "thumbnail_path": str(thumb_path) if thumb_path and thumb_path.exists() else None,
+        "suggested_video_type": suggested_video_type,
+        "duration": detected_duration
     }
 
 @api_router.get("/videos/{video_id}/thumbnail")
@@ -2755,13 +2798,8 @@ async def upload_video(req: CreateVideoRequest, user: User = Depends(get_current
     
     video_id = f"vid_{uuid.uuid4().hex[:12]}"
     
-    # Initial price: use custom price if provided, otherwise calculate from subscriber count
-    if req.share_price and req.share_price > 0:
-        if req.share_price < SHARE_PRICE_MIN or req.share_price > SHARE_PRICE_MAX:
-            raise HTTPException(status_code=400, detail=f"Share price must be between ${SHARE_PRICE_MIN} and ${SHARE_PRICE_MAX}")
-        base_price = req.share_price
-    else:
-        base_price = 10.0 + (creator.get("subscriber_count", 0) / 100000)  # +$1 per 100k subs
+    # Share price is fixed at $1 for now
+    base_price = 1.0
     
     video_doc = {
         "video_id": video_id,
@@ -2777,9 +2815,9 @@ async def upload_video(req: CreateVideoRequest, user: User = Depends(get_current
         "category": req.category,
         "views": 0,
         "likes": 0,
-        "share_price": round(base_price, 2),
-        "available_shares": 100.0,
-        "total_shares": 100.0,
+        "share_price": 1.0,
+        "available_shares": 1000.0,
+        "total_shares": 1000.0,
         "price_history": [{"date": datetime.now(timezone.utc).strftime("%Y-%m-%d"), "price": round(base_price, 2)}],
         "last_price_change": 0,
         "last_price_change_percent": 0,
@@ -2808,9 +2846,16 @@ async def upload_video(req: CreateVideoRequest, user: User = Depends(get_current
 @api_router.post("/seed")
 async def seed_database():
     """Seed database with initial data"""
-    # Clear existing data
+    # Clear all existing data
     await db.creators.delete_many({})
     await db.videos.delete_many({})
+    await db.users.delete_many({})
+    await db.share_ownerships.delete_many({})
+    await db.transactions.delete_many({})
+    await db.platform_earnings.delete_many({})
+    await db.comments.delete_many({})
+    await db.watchlist.delete_many({})
+    await db.comment_rewards.delete_many({})
     
     # Creators
     creators_data = [
@@ -2884,9 +2929,9 @@ async def seed_database():
             "ticker_symbol": "EMMA_0126D1",
             "views": 2500000,
             "likes": 185000,
-            "share_price": 15.50,
-            "available_shares": 65.0,
-            "total_shares": 100.0,
+            "share_price": 1.0,
+            "available_shares": 650.0,
+            "total_shares": 1000.0,
             "price_history": [
                 {"date": "2024-01-01", "price": 10.00},
                 {"date": "2024-01-15", "price": 12.00},
@@ -2910,9 +2955,9 @@ async def seed_database():
             "ticker_symbol": "EMMA_0126S2",
             "views": 8500000,
             "likes": 920000,
-            "share_price": 22.00,
-            "available_shares": 45.0,
-            "total_shares": 100.0,
+            "share_price": 1.0,
+            "available_shares": 450.0,
+            "total_shares": 1000.0,
             "price_history": [
                 {"date": "2024-01-01", "price": 10.00},
                 {"date": "2024-01-15", "price": 15.00},
@@ -2937,9 +2982,9 @@ async def seed_database():
             "ticker_symbol": "JOE_0126P1",
             "views": 15000000,
             "likes": 1200000,
-            "share_price": 45.00,
-            "available_shares": 30.0,
-            "total_shares": 100.0,
+            "share_price": 1.0,
+            "available_shares": 300.0,
+            "total_shares": 1000.0,
             "price_history": [
                 {"date": "2024-01-01", "price": 10.00},
                 {"date": "2024-01-15", "price": 20.00},
@@ -2964,9 +3009,9 @@ async def seed_database():
             "ticker_symbol": "ALEX_0126T1",
             "views": 3200000,
             "likes": 245000,
-            "share_price": 18.75,
-            "available_shares": 70.0,
-            "total_shares": 100.0,
+            "share_price": 1.0,
+            "available_shares": 700.0,
+            "total_shares": 1000.0,
             "price_history": [
                 {"date": "2024-01-01", "price": 10.00},
                 {"date": "2024-01-15", "price": 13.00},
@@ -2990,9 +3035,9 @@ async def seed_database():
             "ticker_symbol": "ALEX_0126V2",
             "views": 5600000,
             "likes": 480000,
-            "share_price": 25.00,
-            "available_shares": 55.0,
-            "total_shares": 100.0,
+            "share_price": 1.0,
+            "available_shares": 550.0,
+            "total_shares": 1000.0,
             "price_history": [
                 {"date": "2024-01-01", "price": 10.00},
                 {"date": "2024-01-15", "price": 16.00},
@@ -3017,9 +3062,9 @@ async def seed_database():
             "ticker_symbol": "TECH_0126R1",
             "views": 8900000,
             "likes": 670000,
-            "share_price": 32.50,
-            "available_shares": 40.0,
-            "total_shares": 100.0,
+            "share_price": 1.0,
+            "available_shares": 400.0,
+            "total_shares": 1000.0,
             "price_history": [
                 {"date": "2024-01-01", "price": 10.00},
                 {"date": "2024-01-15", "price": 18.00},
@@ -3043,9 +3088,9 @@ async def seed_database():
             "ticker_symbol": "TECH_0126S2",
             "views": 12000000,
             "likes": 890000,
-            "share_price": 38.00,
-            "available_shares": 25.0,
-            "total_shares": 100.0,
+            "share_price": 1.0,
+            "available_shares": 250.0,
+            "total_shares": 1000.0,
             "price_history": [
                 {"date": "2024-01-01", "price": 10.00},
                 {"date": "2024-01-15", "price": 20.00},
@@ -3070,9 +3115,9 @@ async def seed_database():
             "ticker_symbol": "CHEF_0126F1",
             "views": 4500000,
             "likes": 380000,
-            "share_price": 21.25,
-            "available_shares": 60.0,
-            "total_shares": 100.0,
+            "share_price": 1.0,
+            "available_shares": 600.0,
+            "total_shares": 1000.0,
             "price_history": [
                 {"date": "2024-01-01", "price": 10.00},
                 {"date": "2024-01-15", "price": 14.00},
@@ -3096,9 +3141,9 @@ async def seed_database():
             "ticker_symbol": "CHEF_0126S2",
             "views": 7200000,
             "likes": 620000,
-            "share_price": 28.50,
-            "available_shares": 50.0,
-            "total_shares": 100.0,
+            "share_price": 1.0,
+            "available_shares": 500.0,
+            "total_shares": 1000.0,
             "price_history": [
                 {"date": "2024-01-01", "price": 10.00},
                 {"date": "2024-01-15", "price": 17.00},
@@ -3608,22 +3653,19 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def init_video_prices():
-    """Ensure all video share_prices are integers in [SHARE_PRICE_MIN, SHARE_PRICE_MAX].
-    Rounds floats to int, clamps out-of-range values."""
-    all_videos = await db.videos.find({}, {"_id": 1, "share_price": 1}).to_list(None)
+    """Migrate all videos to share_price=$1 and total_shares=1000."""
+    # Fix all videos: price=$1, scale available_shares proportionally to new total of 1000
+    all_videos = await db.videos.find({}, {"_id": 1, "share_price": 1, "total_shares": 1, "available_shares": 1}).to_list(None)
     for v in all_videos:
-        raw = v.get("share_price", SHARE_PRICE_MIN)
-        clamped = max(SHARE_PRICE_MIN, min(SHARE_PRICE_MAX, int(round(raw))))
-        if clamped != raw:
-            await db.videos.update_one(
-                {"_id": v["_id"]},
-                {"$set": {"share_price": clamped}}
-            )
-    # Assign default for videos missing the field entirely
-    await db.videos.update_many(
-        {"share_price": {"$exists": False}},
-        {"$set": {"share_price": SHARE_PRICE_MIN}}
-    )
+        old_total = v.get("total_shares", 100)
+        old_available = v.get("available_shares", 100)
+        # Scale available shares to new 1000 total, preserving sold ratio
+        sold_ratio = 1 - (old_available / old_total) if old_total > 0 else 0
+        new_available = round(1000 * (1 - sold_ratio), 2)
+        await db.videos.update_one(
+            {"_id": v["_id"]},
+            {"$set": {"share_price": 1.0, "total_shares": 1000.0, "available_shares": new_available}}
+        )
 
 @app.on_event("shutdown")
 async def shutdown_db_client():

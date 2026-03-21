@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { BrowserRouter, Routes, Route, useLocation, useNavigate, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Toaster, toast } from "sonner";
 
@@ -12,6 +12,7 @@ import Wallet from "./pages/Wallet";
 import CreatorProfile from "./pages/CreatorProfile";
 import Explore from "./pages/Explore";
 import CreatorStudio from "./pages/CreatorStudio";
+import Shorts from "./pages/Shorts";
 import CreatorAnalytics from "./pages/CreatorAnalytics";
 import Watchlist from "./pages/Watchlist";
 import Admin from "./pages/Admin";
@@ -80,7 +81,7 @@ const AuthCallback = () => {
   );
 };
 
-const ProtectedRoute = ({ children }) => {
+const ProtectedRoute = ({ children, allowedEmails }) => {
   const { user, setUser, isLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -120,7 +121,11 @@ const ProtectedRoute = ({ children }) => {
     );
   }
 
-  return user ? children : null;
+  if (!user) return null;
+  if (allowedEmails && !allowedEmails.includes(user.email)) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  return children;
 };
 
 const AppLayout = ({ children }) => {
@@ -193,10 +198,15 @@ function AppRouter() {
           <AppLayout><CreatorAnalytics /></AppLayout>
         </ProtectedRoute>
       } />
+      <Route path="/shorts/:videoId" element={
+        <ProtectedRoute>
+          <AppLayout><Shorts /></AppLayout>
+        </ProtectedRoute>
+      } />
       <Route path="/admin" element={<Admin />} />
       <Route path="/investors" element={<InvestorDashboard />} />
       <Route path="/why" element={
-        <ProtectedRoute>
+        <ProtectedRoute allowedEmails={["kshitiz.dadhich2015@gmail.com", "rumingliu1303@gmail.com"]}>
           <AppLayout><WhyIdeaGround /></AppLayout>
         </ProtectedRoute>
       } />
@@ -207,12 +217,20 @@ function AppRouter() {
 function App() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isCreator, setIsCreator] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
         const response = await axios.get(`${API}/auth/me`, { withCredentials: true });
         setUser(response.data);
+        // Check creator status in parallel
+        try {
+          const creatorResponse = await axios.get(`${API}/creators/me`, { withCredentials: true });
+          setIsCreator(creatorResponse.data?.is_creator === true);
+        } catch {
+          setIsCreator(false);
+        }
       } catch (error) {
         setUser(null);
       } finally {
@@ -238,7 +256,7 @@ function App() {
   };
 
   return (
-    <AuthContext.Provider value={{ user, setUser, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ user, setUser, isLoading, isCreator, setIsCreator, login, logout }}>
       <BrowserRouter>
         <AppRouter />
         <Toaster position="top-right" richColors />

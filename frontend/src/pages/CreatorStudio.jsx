@@ -37,7 +37,8 @@ export default function CreatorStudio() {
   const [videoDescription, setVideoDescription] = useState("");
   const [videoThumbnail, setVideoThumbnail] = useState("");
   const [videoCategory, setVideoCategory] = useState("");
-  const [sharePrice, setSharePrice] = useState("");
+  const [videoType, setVideoType] = useState("full");
+  const [videoDuration, setVideoDuration] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [uploadingFile, setUploadingFile] = useState(false);
 
@@ -112,6 +113,12 @@ export default function CreatorStudio() {
       if (response.data.thumbnail_path) {
         setVideoThumbnail(response.data.thumbnail_path);
       }
+      if (response.data.suggested_video_type) {
+        setVideoType(response.data.suggested_video_type);
+      }
+      if (response.data.duration != null) {
+        setVideoDuration(response.data.duration);
+      }
       toast.success("Video uploaded!");
     } catch (error) {
       toast.error(error.response?.data?.detail || "File upload failed");
@@ -137,9 +144,8 @@ export default function CreatorStudio() {
           thumbnail: videoThumbnail || undefined,
           thumbnail_path: videoThumbnail?.startsWith("/data/") ? videoThumbnail : undefined,
           video_file_path: videoFilePath,
-          video_type: "full",
-          category: videoCategory,
-          ...(sharePrice ? { share_price: parseFloat(sharePrice) } : {})
+          video_type: videoType,
+          category: videoCategory
         },
         { withCredentials: true }
       );
@@ -307,7 +313,13 @@ export default function CreatorStudio() {
               <div className="space-y-4 py-4">
                 <div>
                   <Label>Video File *</Label>
-                  <div className="mt-1 border-2 border-dashed border-border rounded-xl p-6 text-center">
+                  <label className="mt-1 border-2 border-dashed border-border rounded-xl p-6 text-center block cursor-pointer hover:border-primary hover:bg-muted/30 transition-colors">
+                    <input
+                      type="file"
+                      accept="video/mp4,video/quicktime,video/webm"
+                      onChange={handleFileSelect}
+                      className="hidden"
+                    />
                     {videoFile ? (
                       <div className="space-y-2">
                         <p className="text-sm font-medium truncate">{videoFile.name}</p>
@@ -319,7 +331,9 @@ export default function CreatorStudio() {
                             <p className="text-xs text-muted-foreground">{uploadProgress}%</p>
                           </div>
                         ) : (
-                          <p className="text-xs text-secondary">✓ Ready</p>
+                          <>
+                            <p className="text-xs text-secondary">✓ Ready</p>
+                          </>
                         )}
                       </div>
                     ) : (
@@ -329,14 +343,7 @@ export default function CreatorStudio() {
                         <p className="text-xs text-muted-foreground mt-1">MP4, MOV, WebM supported</p>
                       </div>
                     )}
-                    <input
-                      type="file"
-                      accept="video/mp4,video/quicktime,video/webm"
-                      onChange={handleFileSelect}
-                      className="absolute inset-0 opacity-0 cursor-pointer"
-                      style={{ position: "relative", display: "block", marginTop: "8px" }}
-                    />
-                  </div>
+                  </label>
                 </div>
                 <div>
                   <Label htmlFor="video-title">Title *</Label>
@@ -362,6 +369,43 @@ export default function CreatorStudio() {
                   />
                 </div>
                 <div>
+                  <Label>Video Type</Label>
+                  <div className="flex gap-2 mt-1">
+                    <button
+                      type="button"
+                      onClick={() => setVideoType("full")}
+                      className={`flex-1 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                        videoType === "full"
+                          ? "bg-primary text-white border-primary"
+                          : "border-border text-muted-foreground hover:border-primary/50"
+                      }`}
+                    >
+                      Full Video
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setVideoType("short")}
+                      className={`flex-1 py-2 rounded-lg border text-sm font-medium transition-colors ${
+                        videoType === "short"
+                          ? "bg-primary text-white border-primary"
+                          : "border-border text-muted-foreground hover:border-primary/50"
+                      }`}
+                    >
+                      Short
+                    </button>
+                  </div>
+                  {videoFilePath && (
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Auto-detected: <span className="font-medium">{videoType === "short" ? "Short" : "Full Video"}</span>
+                      {videoDuration != null && (
+                        <span> ({Math.round(videoDuration)}s{videoDuration > 180 ? " — over 3 min limit" : ""})</span>
+                      )}
+                      {" "}— tap to change
+                    </p>
+                  )}
+                </div>
+
+                <div>
                   <Label htmlFor="video-category">Category *</Label>
                   <Select value={videoCategory} onValueChange={setVideoCategory}>
                     <SelectTrigger data-testid="video-category-select" className="mt-1">
@@ -376,19 +420,10 @@ export default function CreatorStudio() {
                 </div>
                 
                 <div>
-                  <Label htmlFor="share-price">Share Price (USD)</Label>
-                  <Input
-                    id="share-price"
-                    type="number"
-                    min="1"
-                    step="0.01"
-                    value={sharePrice}
-                    onChange={(e) => setSharePrice(e.target.value)}
-                    placeholder="Leave blank to auto-calculate"
-                    className="mt-1"
-                  />
+                  <Label>Share Price (USD)</Label>
+                  <Input value="$1.00" disabled className="mt-1 text-muted-foreground" />
                   <p className="text-xs text-muted-foreground mt-1">
-                    Leave blank to auto-calculate based on your subscriber count.
+                    All shares are currently priced at $1.00.
                   </p>
                 </div>
 

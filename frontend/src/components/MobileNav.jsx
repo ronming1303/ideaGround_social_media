@@ -1,11 +1,11 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Compass, Briefcase, Wallet, Eye, LogOut } from "lucide-react";
+import { Home, Compass, Briefcase, Wallet, Eye, LogOut, Video } from "lucide-react";
 import { cn } from "../lib/utils";
 import { useAuth } from "../App";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "./ui/dropdown-menu";
 
-const navItems = [
+const baseNavItems = [
   { path: "/dashboard", label: "Home", icon: Home },
   { path: "/explore", label: "Explore", icon: Compass },
   { path: "/watchlist", label: "Watch", icon: Eye },
@@ -15,7 +15,11 @@ const navItems = [
 
 export default function MobileNav({ className }) {
   const location = useLocation();
-  const { user, logout } = useAuth();
+  const { user, logout, isCreator } = useAuth();
+
+  const navItems = isCreator
+    ? [...baseNavItems, { path: "/studio", label: "Studio", icon: Video }]
+    : baseNavItems;
 
   return (
     <nav className={cn(
