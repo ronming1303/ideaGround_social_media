@@ -80,18 +80,6 @@ export default function MarketOverview({ onRefresh }) {
     }
   };
 
-  const simulatePrices = async () => {
-    setRefreshing(true);
-    try {
-      await axios.post(`${API}/simulate-prices`, {}, { withCredentials: true });
-      await fetchData();
-      if (onRefresh) onRefresh();
-    } catch (error) {
-      console.error("Error simulating prices:", error);
-    } finally {
-      setRefreshing(false);
-    }
-  };
 
   const togglePanel = (key) => {
     setExpandedPanels(prev => ({
@@ -280,17 +268,6 @@ export default function MarketOverview({ onRefresh }) {
                   Expand All
                 </>
               )}
-            </Button>
-            <Button 
-              data-testid="simulate-prices-btn"
-              variant="outline" 
-              size="sm"
-              onClick={simulatePrices}
-              disabled={refreshing}
-              className="rounded-full"
-            >
-              <RefreshCw className={cn("w-4 h-4 mr-1", refreshing && "animate-spin")} />
-              {refreshing ? "Updating..." : "Simulate"}
             </Button>
           </div>
         </div>
