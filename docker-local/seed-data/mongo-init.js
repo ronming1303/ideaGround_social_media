@@ -1,7 +1,13 @@
 // MongoDB Seed Data for ideaGround Local
 // This file initializes the database with sample data
+// Set MONGO_SEED_DATA=false to skip seed data and start with an empty database
 
 db = db.getSiblingDB('ideaground');
+
+if (process.env.MONGO_SEED_DATA === 'false') {
+  print("⏭️  MONGO_SEED_DATA=false — skipping seed data, empty database initialized.");
+  quit();
+}
 
 // Create collections
 db.createCollection('users');

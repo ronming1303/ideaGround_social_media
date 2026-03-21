@@ -5,6 +5,7 @@ services:
     restart: unless-stopped
     environment:
       MONGO_INITDB_DATABASE: ideaground
+      MONGO_SEED_DATA: ${MONGO_SEED_DATA:-true}
     volumes:
       - mongodb_data:/data/db
       - ./seed-data:/docker-entrypoint-initdb.d:ro
