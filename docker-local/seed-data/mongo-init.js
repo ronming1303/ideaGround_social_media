@@ -85,19 +85,15 @@ const videos = [
     category: "Dance",
     video_type: "short",
     duration_minutes: 1,
-    share_price: 15,
-    total_shares: 100,
-    available_shares: 65,
+    share_price: 1,
+    total_shares: 1000,
+    available_shares: 965,
     views: 2500000,
     likes: 180000,
     ticker_symbol: "EMMA_DANCE01",
-    last_price_change: 1.25,
-    last_price_change_percent: 8.8,
-    price_history: [
-      {"date": "2025-10-01", "price": 8.00}, {"date": "2025-11-01", "price": 10.50},
-      {"date": "2025-12-01", "price": 12.00}, {"date": "2026-01-01", "price": 13.50},
-      {"date": "2026-01-15", "price": 14.25}, {"date": "2026-02-01", "price": 15.50}
-    ],
+    last_price_change: 0,
+    last_price_change_percent: 0,
+    price_history: [{"date": "2026-03-20", "price": 1.0}],
     created_at: new Date().toISOString()
   },
   {
@@ -110,19 +106,15 @@ const videos = [
     category: "Tech",
     video_type: "full",
     duration_minutes: 25,
-    share_price: 20,
-    total_shares: 100,
-    available_shares: 45,
+    share_price: 1,
+    total_shares: 1000,
+    available_shares: 945,
     views: 1800000,
     likes: 95000,
     ticker_symbol: "TECH_REVIEW01",
-    last_price_change: 2.50,
-    last_price_change_percent: 12.8,
-    price_history: [
-      {"date": "2025-10-01", "price": 11.00}, {"date": "2025-11-01", "price": 14.00},
-      {"date": "2025-12-01", "price": 17.00}, {"date": "2026-01-01", "price": 19.50},
-      {"date": "2026-01-15", "price": 21.00}, {"date": "2026-02-01", "price": 22.00}
-    ],
+    last_price_change: 0,
+    last_price_change_percent: 0,
+    price_history: [{"date": "2026-03-20", "price": 1.0}],
     created_at: new Date().toISOString()
   },
   {
@@ -135,19 +127,15 @@ const videos = [
     category: "Food",
     video_type: "short",
     duration_minutes: 5,
-    share_price: 9,
-    total_shares: 100,
-    available_shares: 80,
+    share_price: 1,
+    total_shares: 1000,
+    available_shares: 980,
     views: 950000,
     likes: 72000,
     ticker_symbol: "FOOD_PASTA01",
-    last_price_change: -0.50,
-    last_price_change_percent: -5.4,
-    price_history: [
-      {"date": "2025-10-01", "price": 4.50}, {"date": "2025-11-01", "price": 5.50},
-      {"date": "2025-12-01", "price": 6.75}, {"date": "2026-01-01", "price": 7.50},
-      {"date": "2026-01-15", "price": 8.25}, {"date": "2026-02-01", "price": 8.75}
-    ],
+    last_price_change: 0,
+    last_price_change_percent: 0,
+    price_history: [{"date": "2026-03-20", "price": 1.0}],
     created_at: new Date().toISOString()
   },
   {
@@ -160,19 +148,15 @@ const videos = [
     category: "Travel",
     video_type: "full",
     duration_minutes: 18,
-    share_price: 12,
-    total_shares: 100,
-    available_shares: 70,
+    share_price: 1,
+    total_shares: 1000,
+    available_shares: 970,
     views: 680000,
     likes: 45000,
     ticker_symbol: "TRVL_TOKYO01",
-    last_price_change: 0.75,
-    last_price_change_percent: 6.5,
-    price_history: [
-      {"date": "2025-10-01", "price": 6.00}, {"date": "2025-11-01", "price": 7.50},
-      {"date": "2025-12-01", "price": 9.00}, {"date": "2026-01-01", "price": 10.50},
-      {"date": "2026-01-15", "price": 11.50}, {"date": "2026-02-01", "price": 12.25}
-    ],
+    last_price_change: 0,
+    last_price_change_percent: 0,
+    price_history: [{"date": "2026-03-20", "price": 1.0}],
     created_at: new Date().toISOString()
   },
   {
@@ -185,19 +169,15 @@ const videos = [
     category: "Podcast",
     video_type: "full",
     duration_minutes: 45,
-    share_price: 18.00,
-    total_shares: 100,
-    available_shares: 55,
+    share_price: 1,
+    total_shares: 1000,
+    available_shares: 955,
     views: 420000,
     likes: 28000,
     ticker_symbol: "TALK_AI01",
-    last_price_change: 1.00,
-    last_price_change_percent: 5.9,
-    price_history: [
-      {"date": "2025-10-01", "price": 9.00}, {"date": "2025-11-01", "price": 11.50},
-      {"date": "2025-12-01", "price": 13.50}, {"date": "2026-01-01", "price": 15.50},
-      {"date": "2026-01-15", "price": 17.00}, {"date": "2026-02-01", "price": 18.00}
-    ],
+    last_price_change: 0,
+    last_price_change_percent: 0,
+    price_history: [{"date": "2026-03-20", "price": 1.0}],
     created_at: new Date().toISOString()
   },
   {
@@ -210,19 +190,15 @@ const videos = [
     category: "Dance",
     video_type: "short",
     duration_minutes: 1,
-    share_price: 11,
-    total_shares: 100,
-    available_shares: 72,
+    share_price: 1,
+    total_shares: 1000,
+    available_shares: 972,
     views: 1500000,
     likes: 120000,
     ticker_symbol: "EMMA_DANCE02",
-    last_price_change: 0.25,
-    last_price_change_percent: 2.3,
-    price_history: [
-      {"date": "2025-10-01", "price": 5.50}, {"date": "2025-11-01", "price": 7.00},
-      {"date": "2025-12-01", "price": 8.50}, {"date": "2026-01-01", "price": 9.75},
-      {"date": "2026-01-15", "price": 10.50}, {"date": "2026-02-01", "price": 11.25}
-    ],
+    last_price_change: 0,
+    last_price_change_percent: 0,
+    price_history: [{"date": "2026-03-20", "price": 1.0}],
     created_at: new Date().toISOString()
   },
   {
@@ -235,19 +211,15 @@ const videos = [
     category: "Tech",
     video_type: "full",
     duration_minutes: 15,
-    share_price: 20,
-    total_shares: 100,
-    available_shares: 30,
+    share_price: 1,
+    total_shares: 1000,
+    available_shares: 930,
     views: 3200000,
     likes: 210000,
     ticker_symbol: "TECH_AI01",
-    last_price_change: 4.50,
-    last_price_change_percent: 18.8,
-    price_history: [
-      {"date": "2025-10-01", "price": 14.00}, {"date": "2025-11-01", "price": 18.00},
-      {"date": "2025-12-01", "price": 22.00}, {"date": "2026-01-01", "price": 25.00},
-      {"date": "2026-01-15", "price": 27.00}, {"date": "2026-02-01", "price": 28.50}
-    ],
+    last_price_change: 0,
+    last_price_change_percent: 0,
+    price_history: [{"date": "2026-03-20", "price": 1.0}],
     created_at: new Date().toISOString()
   },
   {
@@ -260,19 +232,15 @@ const videos = [
     category: "Food",
     video_type: "full",
     duration_minutes: 12,
-    share_price: 14.00,
-    total_shares: 100,
-    available_shares: 60,
+    share_price: 1,
+    total_shares: 1000,
+    available_shares: 960,
     views: 780000,
     likes: 65000,
     ticker_symbol: "FOOD_CAKE01",
-    last_price_change: 1.00,
-    last_price_change_percent: 7.7,
-    price_history: [
-      {"date": "2025-10-01", "price": 7.00}, {"date": "2025-11-01", "price": 9.00},
-      {"date": "2025-12-01", "price": 11.00}, {"date": "2026-01-01", "price": 12.50},
-      {"date": "2026-01-15", "price": 13.25}, {"date": "2026-02-01", "price": 14.00}
-    ],
+    last_price_change: 0,
+    last_price_change_percent: 0,
+    price_history: [{"date": "2026-03-20", "price": 1.0}],
     created_at: new Date().toISOString()
   },
   {
@@ -285,19 +253,15 @@ const videos = [
     category: "Travel",
     video_type: "full",
     duration_minutes: 22,
-    share_price: 17,
-    total_shares: 100,
-    available_shares: 50,
+    share_price: 1,
+    total_shares: 1000,
+    available_shares: 950,
     views: 920000,
     likes: 58000,
     ticker_symbol: "TRVL_BALI01",
-    last_price_change: 2.25,
-    last_price_change_percent: 15.5,
-    price_history: [
-      {"date": "2025-10-01", "price": 8.50}, {"date": "2025-11-01", "price": 10.50},
-      {"date": "2025-12-01", "price": 13.00}, {"date": "2026-01-01", "price": 15.00},
-      {"date": "2026-01-15", "price": 16.00}, {"date": "2026-02-01", "price": 16.75}
-    ],
+    last_price_change: 0,
+    last_price_change_percent: 0,
+    price_history: [{"date": "2026-03-20", "price": 1.0}],
     created_at: new Date().toISOString()
   },
   {
@@ -310,19 +274,15 @@ const videos = [
     category: "Tech",
     video_type: "full",
     duration_minutes: 30,
-    share_price: 19,
-    total_shares: 100,
-    available_shares: 58,
+    share_price: 1,
+    total_shares: 1000,
+    available_shares: 958,
     views: 1100000,
     likes: 82000,
     ticker_symbol: "TECH_TUT01",
-    last_price_change: -1.25,
-    last_price_change_percent: -6.1,
-    price_history: [
-      {"date": "2025-10-01", "price": 9.50}, {"date": "2025-11-01", "price": 12.50},
-      {"date": "2025-12-01", "price": 15.00}, {"date": "2026-01-01", "price": 17.00},
-      {"date": "2026-01-15", "price": 18.50}, {"date": "2026-02-01", "price": 19.25}
-    ],
+    last_price_change: 0,
+    last_price_change_percent: 0,
+    price_history: [{"date": "2026-03-20", "price": 1.0}],
     created_at: new Date().toISOString()
   },
   {
@@ -335,19 +295,15 @@ const videos = [
     category: "Podcast",
     video_type: "full",
     duration_minutes: 31,
-    share_price: 20,
-    total_shares: 100,
-    available_shares: 38,
+    share_price: 1,
+    total_shares: 1000,
+    available_shares: 938,
     views: 2100000,
     likes: 145000,
     ticker_symbol: "TALK_ECON01",
-    last_price_change: 3.00,
-    last_price_change_percent: 13.9,
-    price_history: [
-      {"date": "2025-10-01", "price": 12.00}, {"date": "2025-11-01", "price": 15.50},
-      {"date": "2025-12-01", "price": 18.50}, {"date": "2026-01-01", "price": 21.00},
-      {"date": "2026-01-15", "price": 23.00}, {"date": "2026-02-01", "price": 24.50}
-    ],
+    last_price_change: 0,
+    last_price_change_percent: 0,
+    price_history: [{"date": "2026-03-20", "price": 1.0}],
     created_at: new Date().toISOString()
   },
   {
@@ -360,19 +316,15 @@ const videos = [
     category: "Food",
     video_type: "full",
     duration_minutes: 20,
-    share_price: 11,
-    total_shares: 100,
-    available_shares: 66,
+    share_price: 1,
+    total_shares: 1000,
+    available_shares: 966,
     views: 860000,
     likes: 71000,
     ticker_symbol: "FOOD_RAMEN01",
-    last_price_change: 0.50,
-    last_price_change_percent: 4.9,
-    price_history: [
-      {"date": "2025-10-01", "price": 5.50}, {"date": "2025-11-01", "price": 7.00},
-      {"date": "2025-12-01", "price": 8.25}, {"date": "2026-01-01", "price": 9.50},
-      {"date": "2026-01-15", "price": 10.25}, {"date": "2026-02-01", "price": 10.75}
-    ],
+    last_price_change: 0,
+    last_price_change_percent: 0,
+    price_history: [{"date": "2026-03-20", "price": 1.0}],
     created_at: new Date().toISOString()
   },
   {
@@ -385,19 +337,15 @@ const videos = [
     category: "Tech",
     video_type: "short",
     duration_minutes: 1,
-    share_price: 7,
-    total_shares: 100,
-    available_shares: 85,
+    share_price: 1,
+    total_shares: 1000,
+    available_shares: 985,
     views: 2200000,
     likes: 175000,
     ticker_symbol: "TECH_SHORT01",
-    last_price_change: 0.75,
-    last_price_change_percent: 11.5,
-    price_history: [
-      {"date": "2025-10-01", "price": 3.50}, {"date": "2025-11-01", "price": 4.50},
-      {"date": "2025-12-01", "price": 5.50}, {"date": "2026-01-01", "price": 6.25},
-      {"date": "2026-01-15", "price": 6.75}, {"date": "2026-02-01", "price": 7.25}
-    ],
+    last_price_change: 0,
+    last_price_change_percent: 0,
+    price_history: [{"date": "2026-03-20", "price": 1.0}],
     created_at: new Date().toISOString()
   },
   {
@@ -410,19 +358,15 @@ const videos = [
     category: "Food",
     video_type: "short",
     duration_minutes: 1,
-    share_price: 6.00,
-    total_shares: 100,
-    available_shares: 90,
+    share_price: 1,
+    total_shares: 1000,
+    available_shares: 990,
     views: 1600000,
     likes: 130000,
     ticker_symbol: "FOOD_SHORT01",
-    last_price_change: -0.25,
-    last_price_change_percent: -4.0,
-    price_history: [
-      {"date": "2025-10-01", "price": 3.00}, {"date": "2025-11-01", "price": 3.75},
-      {"date": "2025-12-01", "price": 4.50}, {"date": "2026-01-01", "price": 5.25},
-      {"date": "2026-01-15", "price": 5.75}, {"date": "2026-02-01", "price": 6.00}
-    ],
+    last_price_change: 0,
+    last_price_change_percent: 0,
+    price_history: [{"date": "2026-03-20", "price": 1.0}],
     created_at: new Date().toISOString()
   }
 ];
@@ -478,125 +422,125 @@ db.users.insertMany(seedUsers);
 // Seed Share Ownerships
 const shareOwnerships = [
   // vid_dance_viral share_price=15
-  { ownership_id: "own_seed_001", user_id: "user_seed_alice", video_id: "vid_dance_viral", shares_owned: 20, purchase_price: 15, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_002", user_id: "user_seed_bob", video_id: "vid_dance_viral", shares_owned: 15, purchase_price: 15, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_001", user_id: "user_seed_alice", video_id: "vid_dance_viral", shares_owned: 20, purchase_price: 1, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_002", user_id: "user_seed_bob", video_id: "vid_dance_viral", shares_owned: 15, purchase_price: 1, purchased_at: new Date().toISOString() },
 
   // vid_tech_review share_price=20
-  { ownership_id: "own_seed_003", user_id: "user_seed_carol", video_id: "vid_tech_review", shares_owned: 30, purchase_price: 20, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_004", user_id: "user_seed_alice", video_id: "vid_tech_review", shares_owned: 15, purchase_price: 20, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_005", user_id: "user_seed_david", video_id: "vid_tech_review", shares_owned: 10, purchase_price: 20, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_003", user_id: "user_seed_carol", video_id: "vid_tech_review", shares_owned: 30, purchase_price: 1, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_004", user_id: "user_seed_alice", video_id: "vid_tech_review", shares_owned: 15, purchase_price: 1, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_005", user_id: "user_seed_david", video_id: "vid_tech_review", shares_owned: 10, purchase_price: 1, purchased_at: new Date().toISOString() },
 
   // vid_tech_ai share_price=20
-  { ownership_id: "own_seed_006", user_id: "user_seed_carol", video_id: "vid_tech_ai", shares_owned: 40, purchase_price: 20, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_007", user_id: "user_seed_alice", video_id: "vid_tech_ai", shares_owned: 20, purchase_price: 20, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_008", user_id: "user_seed_bob", video_id: "vid_tech_ai", shares_owned: 10, purchase_price: 20, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_006", user_id: "user_seed_carol", video_id: "vid_tech_ai", shares_owned: 40, purchase_price: 1, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_007", user_id: "user_seed_alice", video_id: "vid_tech_ai", shares_owned: 20, purchase_price: 1, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_008", user_id: "user_seed_bob", video_id: "vid_tech_ai", shares_owned: 10, purchase_price: 1, purchased_at: new Date().toISOString() },
 
   // vid_podcast_ai share_price=18
-  { ownership_id: "own_seed_009", user_id: "user_seed_bob", video_id: "vid_podcast_ai", shares_owned: 25, purchase_price: 18, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_010", user_id: "user_seed_david", video_id: "vid_podcast_ai", shares_owned: 20, purchase_price: 18, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_009", user_id: "user_seed_bob", video_id: "vid_podcast_ai", shares_owned: 25, purchase_price: 1, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_010", user_id: "user_seed_david", video_id: "vid_podcast_ai", shares_owned: 20, purchase_price: 1, purchased_at: new Date().toISOString() },
 
   // vid_travel_bali share_price=17
-  { ownership_id: "own_seed_011", user_id: "user_seed_david", video_id: "vid_travel_bali", shares_owned: 30, purchase_price: 17, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_012", user_id: "user_seed_alice", video_id: "vid_travel_bali", shares_owned: 20, purchase_price: 17, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_011", user_id: "user_seed_david", video_id: "vid_travel_bali", shares_owned: 30, purchase_price: 1, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_012", user_id: "user_seed_alice", video_id: "vid_travel_bali", shares_owned: 20, purchase_price: 1, purchased_at: new Date().toISOString() },
 
   // vid_podcast_economy share_price=20
-  { ownership_id: "own_seed_013", user_id: "user_seed_carol", video_id: "vid_podcast_economy", shares_owned: 35, purchase_price: 20, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_014", user_id: "user_seed_bob", video_id: "vid_podcast_economy", shares_owned: 27, purchase_price: 20, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_013", user_id: "user_seed_carol", video_id: "vid_podcast_economy", shares_owned: 35, purchase_price: 1, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_014", user_id: "user_seed_bob", video_id: "vid_podcast_economy", shares_owned: 27, purchase_price: 1, purchased_at: new Date().toISOString() },
 
   // vid_recipe share_price=9
-  { ownership_id: "own_seed_015", user_id: "user_seed_alice", video_id: "vid_recipe", shares_owned: 12, purchase_price: 9, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_016", user_id: "user_seed_david", video_id: "vid_recipe", shares_owned: 8, purchase_price: 9, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_015", user_id: "user_seed_alice", video_id: "vid_recipe", shares_owned: 12, purchase_price: 1, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_016", user_id: "user_seed_david", video_id: "vid_recipe", shares_owned: 8, purchase_price: 1, purchased_at: new Date().toISOString() },
 
   // vid_travel_japan share_price=12
-  { ownership_id: "own_seed_017", user_id: "user_seed_david", video_id: "vid_travel_japan", shares_owned: 18, purchase_price: 12, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_018", user_id: "user_seed_carol", video_id: "vid_travel_japan", shares_owned: 12, purchase_price: 12, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_017", user_id: "user_seed_david", video_id: "vid_travel_japan", shares_owned: 18, purchase_price: 1, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_018", user_id: "user_seed_carol", video_id: "vid_travel_japan", shares_owned: 12, purchase_price: 1, purchased_at: new Date().toISOString() },
 
   // vid_dance_tutorial share_price=11
-  { ownership_id: "own_seed_019", user_id: "user_seed_bob", video_id: "vid_dance_tutorial", shares_owned: 16, purchase_price: 11, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_020", user_id: "user_seed_alice", video_id: "vid_dance_tutorial", shares_owned: 12, purchase_price: 11, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_019", user_id: "user_seed_bob", video_id: "vid_dance_tutorial", shares_owned: 16, purchase_price: 1, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_020", user_id: "user_seed_alice", video_id: "vid_dance_tutorial", shares_owned: 12, purchase_price: 1, purchased_at: new Date().toISOString() },
 
   // vid_food_dessert share_price=14
-  { ownership_id: "own_seed_021", user_id: "user_seed_carol", video_id: "vid_food_dessert", shares_owned: 22, purchase_price: 14, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_022", user_id: "user_seed_david", video_id: "vid_food_dessert", shares_owned: 18, purchase_price: 14, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_021", user_id: "user_seed_carol", video_id: "vid_food_dessert", shares_owned: 22, purchase_price: 1, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_022", user_id: "user_seed_david", video_id: "vid_food_dessert", shares_owned: 18, purchase_price: 1, purchased_at: new Date().toISOString() },
 
   // vid_tech_tutorial share_price=19
-  { ownership_id: "own_seed_023", user_id: "user_seed_alice", video_id: "vid_tech_tutorial", shares_owned: 25, purchase_price: 19, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_024", user_id: "user_seed_bob", video_id: "vid_tech_tutorial", shares_owned: 17, purchase_price: 19, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_023", user_id: "user_seed_alice", video_id: "vid_tech_tutorial", shares_owned: 25, purchase_price: 1, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_024", user_id: "user_seed_bob", video_id: "vid_tech_tutorial", shares_owned: 17, purchase_price: 1, purchased_at: new Date().toISOString() },
 
   // vid_food_ramen share_price=11
-  { ownership_id: "own_seed_025", user_id: "user_seed_david", video_id: "vid_food_ramen", shares_owned: 20, purchase_price: 11, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_026", user_id: "user_seed_carol", video_id: "vid_food_ramen", shares_owned: 14, purchase_price: 11, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_025", user_id: "user_seed_david", video_id: "vid_food_ramen", shares_owned: 20, purchase_price: 1, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_026", user_id: "user_seed_carol", video_id: "vid_food_ramen", shares_owned: 14, purchase_price: 1, purchased_at: new Date().toISOString() },
 
   // vid_tech_short01 share_price=7
-  { ownership_id: "own_seed_027", user_id: "user_seed_bob", video_id: "vid_tech_short01", shares_owned: 10, purchase_price: 7, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_028", user_id: "user_seed_alice", video_id: "vid_tech_short01", shares_owned: 5, purchase_price: 7, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_027", user_id: "user_seed_bob", video_id: "vid_tech_short01", shares_owned: 10, purchase_price: 1, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_028", user_id: "user_seed_alice", video_id: "vid_tech_short01", shares_owned: 5, purchase_price: 1, purchased_at: new Date().toISOString() },
 
   // vid_food_short01 share_price=6
-  { ownership_id: "own_seed_029", user_id: "user_seed_carol", video_id: "vid_food_short01", shares_owned: 6, purchase_price: 6, is_early_investor: true, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() },
-  { ownership_id: "own_seed_030", user_id: "user_seed_david", video_id: "vid_food_short01", shares_owned: 4, purchase_price: 6, is_early_investor: false, early_bonus_multiplier: 1.0, purchased_at: new Date().toISOString() }
+  { ownership_id: "own_seed_029", user_id: "user_seed_carol", video_id: "vid_food_short01", shares_owned: 6, purchase_price: 1, purchased_at: new Date().toISOString() },
+  { ownership_id: "own_seed_030", user_id: "user_seed_david", video_id: "vid_food_short01", shares_owned: 4, purchase_price: 1, purchased_at: new Date().toISOString() }
 ];
 
 db.share_ownerships.insertMany(shareOwnerships);
 
 // Seed transactions (buy records for all initial ownerships, spread over Jan-Feb 2026)
 const seedTransactions = [
-  // vid_dance_viral (share_price=15)
-  { transaction_id: "txn_seed_001", user_id: "user_seed_alice", transaction_type: "buy_share", amount: -300, video_id: "vid_dance_viral", shares: 20, price_at_trade: 15, created_at: "2026-01-05T10:23:00Z" },
-  { transaction_id: "txn_seed_002", user_id: "user_seed_bob",   transaction_type: "buy_share", amount: -225, video_id: "vid_dance_viral", shares: 15, price_at_trade: 15, created_at: "2026-01-12T14:45:00Z" },
+  // vid_dance_viral (share_price=1)
+  { transaction_id: "txn_seed_001", user_id: "user_seed_alice", transaction_type: "buy_share", amount: -20, video_id: "vid_dance_viral", shares: 20, price_at_trade: 1, created_at: "2026-01-05T10:23:00Z" },
+  { transaction_id: "txn_seed_002", user_id: "user_seed_bob",   transaction_type: "buy_share", amount: -15, video_id: "vid_dance_viral", shares: 15, price_at_trade: 1, created_at: "2026-01-12T14:45:00Z" },
 
-  // vid_tech_review (share_price=20)
-  { transaction_id: "txn_seed_003", user_id: "user_seed_carol", transaction_type: "buy_share", amount: -600, video_id: "vid_tech_review", shares: 30, price_at_trade: 20, created_at: "2026-01-08T09:10:00Z" },
-  { transaction_id: "txn_seed_004", user_id: "user_seed_alice", transaction_type: "buy_share", amount: -300, video_id: "vid_tech_review", shares: 15, price_at_trade: 20, created_at: "2026-01-15T11:30:00Z" },
-  { transaction_id: "txn_seed_005", user_id: "user_seed_david", transaction_type: "buy_share", amount: -200, video_id: "vid_tech_review", shares: 10, price_at_trade: 20, created_at: "2026-01-22T16:00:00Z" },
+  // vid_tech_review (share_price=1)
+  { transaction_id: "txn_seed_003", user_id: "user_seed_carol", transaction_type: "buy_share", amount: -30, video_id: "vid_tech_review", shares: 30, price_at_trade: 1, created_at: "2026-01-08T09:10:00Z" },
+  { transaction_id: "txn_seed_004", user_id: "user_seed_alice", transaction_type: "buy_share", amount: -15, video_id: "vid_tech_review", shares: 15, price_at_trade: 1, created_at: "2026-01-15T11:30:00Z" },
+  { transaction_id: "txn_seed_005", user_id: "user_seed_david", transaction_type: "buy_share", amount: -10, video_id: "vid_tech_review", shares: 10, price_at_trade: 1, created_at: "2026-01-22T16:00:00Z" },
 
-  // vid_tech_ai (share_price=20)
-  { transaction_id: "txn_seed_006", user_id: "user_seed_carol", transaction_type: "buy_share", amount: -800, video_id: "vid_tech_ai", shares: 40, price_at_trade: 20, created_at: "2026-01-03T08:00:00Z" },
-  { transaction_id: "txn_seed_007", user_id: "user_seed_alice", transaction_type: "buy_share", amount: -400, video_id: "vid_tech_ai", shares: 20, price_at_trade: 20, created_at: "2026-01-10T13:20:00Z" },
-  { transaction_id: "txn_seed_008", user_id: "user_seed_bob",   transaction_type: "buy_share", amount: -200, video_id: "vid_tech_ai", shares: 10, price_at_trade: 20, created_at: "2026-01-18T15:45:00Z" },
+  // vid_tech_ai (share_price=1)
+  { transaction_id: "txn_seed_006", user_id: "user_seed_carol", transaction_type: "buy_share", amount: -40, video_id: "vid_tech_ai", shares: 40, price_at_trade: 1, created_at: "2026-01-03T08:00:00Z" },
+  { transaction_id: "txn_seed_007", user_id: "user_seed_alice", transaction_type: "buy_share", amount: -20, video_id: "vid_tech_ai", shares: 20, price_at_trade: 1, created_at: "2026-01-10T13:20:00Z" },
+  { transaction_id: "txn_seed_008", user_id: "user_seed_bob",   transaction_type: "buy_share", amount: -10, video_id: "vid_tech_ai", shares: 10, price_at_trade: 1, created_at: "2026-01-18T15:45:00Z" },
 
-  // vid_podcast_ai (share_price=18)
-  { transaction_id: "txn_seed_009", user_id: "user_seed_bob",   transaction_type: "buy_share", amount: -450, video_id: "vid_podcast_ai", shares: 25, price_at_trade: 18, created_at: "2026-01-07T10:00:00Z" },
-  { transaction_id: "txn_seed_010", user_id: "user_seed_david", transaction_type: "buy_share", amount: -360, video_id: "vid_podcast_ai", shares: 20, price_at_trade: 18, created_at: "2026-01-20T12:30:00Z" },
+  // vid_podcast_ai (share_price=1)
+  { transaction_id: "txn_seed_009", user_id: "user_seed_bob",   transaction_type: "buy_share", amount: -25, video_id: "vid_podcast_ai", shares: 25, price_at_trade: 1, created_at: "2026-01-07T10:00:00Z" },
+  { transaction_id: "txn_seed_010", user_id: "user_seed_david", transaction_type: "buy_share", amount: -20, video_id: "vid_podcast_ai", shares: 20, price_at_trade: 1, created_at: "2026-01-20T12:30:00Z" },
 
-  // vid_travel_bali (share_price=17)
-  { transaction_id: "txn_seed_011", user_id: "user_seed_david", transaction_type: "buy_share", amount: -510, video_id: "vid_travel_bali", shares: 30, price_at_trade: 17, created_at: "2026-01-06T09:30:00Z" },
-  { transaction_id: "txn_seed_012", user_id: "user_seed_alice", transaction_type: "buy_share", amount: -340, video_id: "vid_travel_bali", shares: 20, price_at_trade: 17, created_at: "2026-01-25T14:00:00Z" },
+  // vid_travel_bali (share_price=1)
+  { transaction_id: "txn_seed_011", user_id: "user_seed_david", transaction_type: "buy_share", amount: -30, video_id: "vid_travel_bali", shares: 30, price_at_trade: 1, created_at: "2026-01-06T09:30:00Z" },
+  { transaction_id: "txn_seed_012", user_id: "user_seed_alice", transaction_type: "buy_share", amount: -20, video_id: "vid_travel_bali", shares: 20, price_at_trade: 1, created_at: "2026-01-25T14:00:00Z" },
 
-  // vid_podcast_economy (share_price=20)
-  { transaction_id: "txn_seed_013", user_id: "user_seed_carol", transaction_type: "buy_share", amount: -700, video_id: "vid_podcast_economy", shares: 35, price_at_trade: 20, created_at: "2026-01-04T11:00:00Z" },
-  { transaction_id: "txn_seed_014", user_id: "user_seed_bob",   transaction_type: "buy_share", amount: -540, video_id: "vid_podcast_economy", shares: 27, price_at_trade: 20, created_at: "2026-01-28T16:30:00Z" },
+  // vid_podcast_economy (share_price=1)
+  { transaction_id: "txn_seed_013", user_id: "user_seed_carol", transaction_type: "buy_share", amount: -35, video_id: "vid_podcast_economy", shares: 35, price_at_trade: 1, created_at: "2026-01-04T11:00:00Z" },
+  { transaction_id: "txn_seed_014", user_id: "user_seed_bob",   transaction_type: "buy_share", amount: -27, video_id: "vid_podcast_economy", shares: 27, price_at_trade: 1, created_at: "2026-01-28T16:30:00Z" },
 
-  // vid_recipe (share_price=9)
-  { transaction_id: "txn_seed_015", user_id: "user_seed_alice", transaction_type: "buy_share", amount: -108, video_id: "vid_recipe", shares: 12, price_at_trade: 9, created_at: "2026-02-02T10:00:00Z" },
-  { transaction_id: "txn_seed_016", user_id: "user_seed_david", transaction_type: "buy_share", amount: -72,  video_id: "vid_recipe", shares: 8,  price_at_trade: 9, created_at: "2026-02-10T14:00:00Z" },
+  // vid_recipe (share_price=1)
+  { transaction_id: "txn_seed_015", user_id: "user_seed_alice", transaction_type: "buy_share", amount: -12, video_id: "vid_recipe", shares: 12, price_at_trade: 1, created_at: "2026-02-02T10:00:00Z" },
+  { transaction_id: "txn_seed_016", user_id: "user_seed_david", transaction_type: "buy_share", amount: -8,  video_id: "vid_recipe", shares: 8,  price_at_trade: 1, created_at: "2026-02-10T14:00:00Z" },
 
-  // vid_travel_japan (share_price=12)
-  { transaction_id: "txn_seed_017", user_id: "user_seed_david", transaction_type: "buy_share", amount: -216, video_id: "vid_travel_japan", shares: 18, price_at_trade: 12, created_at: "2026-01-14T09:00:00Z" },
-  { transaction_id: "txn_seed_018", user_id: "user_seed_carol", transaction_type: "buy_share", amount: -144, video_id: "vid_travel_japan", shares: 12, price_at_trade: 12, created_at: "2026-01-29T15:00:00Z" },
+  // vid_travel_japan (share_price=1)
+  { transaction_id: "txn_seed_017", user_id: "user_seed_david", transaction_type: "buy_share", amount: -18, video_id: "vid_travel_japan", shares: 18, price_at_trade: 1, created_at: "2026-01-14T09:00:00Z" },
+  { transaction_id: "txn_seed_018", user_id: "user_seed_carol", transaction_type: "buy_share", amount: -12, video_id: "vid_travel_japan", shares: 12, price_at_trade: 1, created_at: "2026-01-29T15:00:00Z" },
 
-  // vid_dance_tutorial (share_price=11)
-  { transaction_id: "txn_seed_019", user_id: "user_seed_bob",   transaction_type: "buy_share", amount: -176, video_id: "vid_dance_tutorial", shares: 16, price_at_trade: 11, created_at: "2026-01-16T11:00:00Z" },
-  { transaction_id: "txn_seed_020", user_id: "user_seed_alice", transaction_type: "buy_share", amount: -132, video_id: "vid_dance_tutorial", shares: 12, price_at_trade: 11, created_at: "2026-02-05T13:00:00Z" },
+  // vid_dance_tutorial (share_price=1)
+  { transaction_id: "txn_seed_019", user_id: "user_seed_bob",   transaction_type: "buy_share", amount: -16, video_id: "vid_dance_tutorial", shares: 16, price_at_trade: 1, created_at: "2026-01-16T11:00:00Z" },
+  { transaction_id: "txn_seed_020", user_id: "user_seed_alice", transaction_type: "buy_share", amount: -12, video_id: "vid_dance_tutorial", shares: 12, price_at_trade: 1, created_at: "2026-02-05T13:00:00Z" },
 
-  // vid_food_dessert (share_price=14)
-  { transaction_id: "txn_seed_021", user_id: "user_seed_carol", transaction_type: "buy_share", amount: -308, video_id: "vid_food_dessert", shares: 22, price_at_trade: 14, created_at: "2026-01-11T10:00:00Z" },
-  { transaction_id: "txn_seed_022", user_id: "user_seed_david", transaction_type: "buy_share", amount: -252, video_id: "vid_food_dessert", shares: 18, price_at_trade: 14, created_at: "2026-01-24T14:30:00Z" },
+  // vid_food_dessert (share_price=1)
+  { transaction_id: "txn_seed_021", user_id: "user_seed_carol", transaction_type: "buy_share", amount: -22, video_id: "vid_food_dessert", shares: 22, price_at_trade: 1, created_at: "2026-01-11T10:00:00Z" },
+  { transaction_id: "txn_seed_022", user_id: "user_seed_david", transaction_type: "buy_share", amount: -18, video_id: "vid_food_dessert", shares: 18, price_at_trade: 1, created_at: "2026-01-24T14:30:00Z" },
 
-  // vid_tech_tutorial (share_price=19)
-  { transaction_id: "txn_seed_023", user_id: "user_seed_alice", transaction_type: "buy_share", amount: -475, video_id: "vid_tech_tutorial", shares: 25, price_at_trade: 19, created_at: "2026-01-09T09:00:00Z" },
-  { transaction_id: "txn_seed_024", user_id: "user_seed_bob",   transaction_type: "buy_share", amount: -323, video_id: "vid_tech_tutorial", shares: 17, price_at_trade: 19, created_at: "2026-01-30T16:00:00Z" },
+  // vid_tech_tutorial (share_price=1)
+  { transaction_id: "txn_seed_023", user_id: "user_seed_alice", transaction_type: "buy_share", amount: -25, video_id: "vid_tech_tutorial", shares: 25, price_at_trade: 1, created_at: "2026-01-09T09:00:00Z" },
+  { transaction_id: "txn_seed_024", user_id: "user_seed_bob",   transaction_type: "buy_share", amount: -17, video_id: "vid_tech_tutorial", shares: 17, price_at_trade: 1, created_at: "2026-01-30T16:00:00Z" },
 
-  // vid_food_ramen (share_price=11)
-  { transaction_id: "txn_seed_025", user_id: "user_seed_david", transaction_type: "buy_share", amount: -220, video_id: "vid_food_ramen", shares: 20, price_at_trade: 11, created_at: "2026-02-03T10:30:00Z" },
-  { transaction_id: "txn_seed_026", user_id: "user_seed_carol", transaction_type: "buy_share", amount: -154, video_id: "vid_food_ramen", shares: 14, price_at_trade: 11, created_at: "2026-02-12T14:00:00Z" },
+  // vid_food_ramen (share_price=1)
+  { transaction_id: "txn_seed_025", user_id: "user_seed_david", transaction_type: "buy_share", amount: -20, video_id: "vid_food_ramen", shares: 20, price_at_trade: 1, created_at: "2026-02-03T10:30:00Z" },
+  { transaction_id: "txn_seed_026", user_id: "user_seed_carol", transaction_type: "buy_share", amount: -14, video_id: "vid_food_ramen", shares: 14, price_at_trade: 1, created_at: "2026-02-12T14:00:00Z" },
 
-  // vid_tech_short01 (share_price=7)
-  { transaction_id: "txn_seed_027", user_id: "user_seed_bob",   transaction_type: "buy_share", amount: -70,  video_id: "vid_tech_short01", shares: 10, price_at_trade: 7, created_at: "2026-02-06T11:00:00Z" },
-  { transaction_id: "txn_seed_028", user_id: "user_seed_alice", transaction_type: "buy_share", amount: -35,  video_id: "vid_tech_short01", shares: 5,  price_at_trade: 7, created_at: "2026-02-14T15:00:00Z" },
+  // vid_tech_short01 (share_price=1)
+  { transaction_id: "txn_seed_027", user_id: "user_seed_bob",   transaction_type: "buy_share", amount: -10, video_id: "vid_tech_short01", shares: 10, price_at_trade: 1, created_at: "2026-02-06T11:00:00Z" },
+  { transaction_id: "txn_seed_028", user_id: "user_seed_alice", transaction_type: "buy_share", amount: -5,  video_id: "vid_tech_short01", shares: 5,  price_at_trade: 1, created_at: "2026-02-14T15:00:00Z" },
 
-  // vid_food_short01 (share_price=6)
-  { transaction_id: "txn_seed_029", user_id: "user_seed_carol", transaction_type: "buy_share", amount: -36,  video_id: "vid_food_short01", shares: 6, price_at_trade: 6, created_at: "2026-02-08T09:00:00Z" },
-  { transaction_id: "txn_seed_030", user_id: "user_seed_david", transaction_type: "buy_share", amount: -24,  video_id: "vid_food_short01", shares: 4, price_at_trade: 6, created_at: "2026-02-18T13:30:00Z" },
+  // vid_food_short01 (share_price=1)
+  { transaction_id: "txn_seed_029", user_id: "user_seed_carol", transaction_type: "buy_share", amount: -6,  video_id: "vid_food_short01", shares: 6, price_at_trade: 1, created_at: "2026-02-08T09:00:00Z" },
+  { transaction_id: "txn_seed_030", user_id: "user_seed_david", transaction_type: "buy_share", amount: -4,  video_id: "vid_food_short01", shares: 4, price_at_trade: 1, created_at: "2026-02-18T13:30:00Z" },
 ];
 db.transactions.insertMany(seedTransactions);
 

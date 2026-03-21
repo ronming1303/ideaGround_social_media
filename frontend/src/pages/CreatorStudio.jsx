@@ -37,7 +37,6 @@ export default function CreatorStudio() {
   const [videoDescription, setVideoDescription] = useState("");
   const [videoThumbnail, setVideoThumbnail] = useState("");
   const [videoCategory, setVideoCategory] = useState("");
-  const [sharePrice, setSharePrice] = useState("");
   const [videoType, setVideoType] = useState("full");
   const [videoDuration, setVideoDuration] = useState(null);
   const [uploading, setUploading] = useState(false);
@@ -146,8 +145,7 @@ export default function CreatorStudio() {
           thumbnail_path: videoThumbnail?.startsWith("/data/") ? videoThumbnail : undefined,
           video_file_path: videoFilePath,
           video_type: videoType,
-          category: videoCategory,
-          ...(sharePrice ? { share_price: parseFloat(sharePrice) } : {})
+          category: videoCategory
         },
         { withCredentials: true }
       );
@@ -422,19 +420,10 @@ export default function CreatorStudio() {
                 </div>
                 
                 <div>
-                  <Label htmlFor="share-price">Share Price (USD)</Label>
-                  <Input
-                    id="share-price"
-                    type="number"
-                    min="1"
-                    step="0.01"
-                    value={sharePrice}
-                    onChange={(e) => setSharePrice(e.target.value)}
-                    placeholder="Leave blank to auto-calculate"
-                    className="mt-1"
-                  />
+                  <Label>Share Price (USD)</Label>
+                  <Input value="$1.00" disabled className="mt-1 text-muted-foreground" />
                   <p className="text-xs text-muted-foreground mt-1">
-                    Leave blank to auto-calculate based on your subscriber count.
+                    All shares are currently priced at $1.00.
                   </p>
                 </div>
 
