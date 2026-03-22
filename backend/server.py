@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse, FileResponse, StreamingResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
+from pymongo import ReturnDocument
 import os
 import logging
 from pathlib import Path
@@ -1094,26 +1095,61 @@ async def buy_shares(req: BuyShareRequest, user: User = Depends(get_current_user
     if req.shares > video["available_shares"]:
         raise HTTPException(status_code=400, detail="Not enough shares available")
 
-    # Enforce per-user ownership cap
     total_shares = video.get("total_shares", 1000)
     max_allowed = total_shares * MAX_OWNERSHIP_FRACTION
-    existing_ownership = await db.share_ownerships.find_one(
-        {"user_id": user.user_id, "video_id": req.video_id}
-    )
-    already_owned = existing_ownership["shares_owned"] if existing_ownership else 0
-    if already_owned + req.shares > max_allowed:
-        remaining = max(max_allowed - already_owned, 0)
-        raise HTTPException(
-            status_code=400,
-            detail=f"Exceeds ownership limit: you may only own up to {int(MAX_OWNERSHIP_FRACTION * 100)}% of a video's shares ({int(max_allowed)} shares). You already own {int(already_owned)}, can buy {int(remaining)} more."
-        )
-
     share_price = video.get("share_price", SHARE_PRICE_MIN)
     total_cost = req.shares * share_price
+
+    # --- Atomic ownership cap enforcement (prevents race condition) ---
+    # Try to atomically increment an existing ownership record only if the
+    # resulting total would not exceed max_allowed.
+    updated_ownership = await db.share_ownerships.find_one_and_update(
+        {
+            "user_id": user.user_id,
+            "video_id": req.video_id,
+            "$expr": {"$lte": [{"$add": ["$shares_owned", req.shares]}, max_allowed]}
+        },
+        {
+            "$inc": {"shares_owned": req.shares},
+            "$set": {"purchase_price": share_price}
+        },
+        return_document=ReturnDocument.AFTER
+    )
+
+    is_new_ownership = False
+    if updated_ownership is None:
+        # No record was updated — either no existing record or cap would be exceeded.
+        existing_check = await db.share_ownerships.find_one(
+            {"user_id": user.user_id, "video_id": req.video_id}
+        )
+        if existing_check is not None:
+            # Record exists but cap condition failed → reject
+            already_owned = existing_check["shares_owned"]
+            remaining = max(int(max_allowed - already_owned), 0)
+            raise HTTPException(
+                status_code=400,
+                detail=f"Exceeds ownership limit: max {int(MAX_OWNERSHIP_FRACTION * 100)}% "
+                       f"({int(max_allowed)} shares). You own {int(already_owned)}, "
+                       f"can buy {remaining} more."
+            )
+        # No existing record — first purchase. Check cap on req.shares alone.
+        if req.shares > max_allowed:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Exceeds ownership limit: max {int(max_allowed)} shares per user."
+            )
+        is_new_ownership = True
+    # -----------------------------------------------------------------
 
     # Re-fetch user for latest balance
     user_doc = await db.users.find_one({"user_id": user.user_id}, {"_id": 0})
     if user_doc["wallet_balance"] < total_cost:
+        # Roll back ownership increment if we already applied it
+        if not is_new_ownership:
+            await db.share_ownerships.update_one(
+                {"user_id": user.user_id, "video_id": req.video_id},
+                {"$inc": {"shares_owned": -req.shares}}
+            )
         raise HTTPException(status_code=400, detail="Insufficient balance")
 
     # Update user balance
@@ -1128,13 +1164,7 @@ async def buy_shares(req: BuyShareRequest, user: User = Depends(get_current_user
         {"$inc": {"available_shares": -req.shares}}
     )
 
-    if existing_ownership:
-        new_shares = existing_ownership["shares_owned"] + req.shares
-        await db.share_ownerships.update_one(
-            {"user_id": user.user_id, "video_id": req.video_id},
-            {"$set": {"shares_owned": new_shares, "purchase_price": share_price}}
-        )
-    else:
+    if is_new_ownership:
         ownership_doc = {
             "ownership_id": f"own_{uuid.uuid4().hex[:12]}",
             "user_id": user.user_id,
