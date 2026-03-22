@@ -407,6 +407,11 @@ export default function Dashboard() {
             </div>
           </div>
         </section>
+
+        {/* Market Overview - bottom of page */}
+        <section className="mt-8">
+          <MarketOverview />
+        </section>
       </div>
 
       </div>

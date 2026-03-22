@@ -104,34 +104,51 @@ function InvestmentPanel({ details, sharesToBuy, setSharesToBuy, onBuy, buying, 
               </div>
             </div>
 
-            <div className="space-y-3">
-              <p className="text-sm font-medium">Shares to buy</p>
-              <div className="flex items-center gap-3">
-                <Slider
-                  value={[sharesToBuy]}
-                  onValueChange={v => setSharesToBuy(v[0])}
-                  max={Math.min(details.available_shares || 1, 20)}
-                  min={1} step={1} className="flex-1"
-                />
-                <Input
-                  type="number" value={sharesToBuy}
-                  onChange={e => setSharesToBuy(Math.min(Math.max(1, Number(e.target.value)), details.available_shares))}
-                  className="w-16 text-center font-mono"
-                />
-              </div>
-              <div className="flex justify-between text-sm p-3 bg-muted/50 rounded-xl">
-                <span className="text-muted-foreground">Total</span>
-                <span className="font-bold">${(details.share_price * sharesToBuy).toFixed(2)}</span>
-              </div>
-              <Button
-                onClick={onBuy}
-                disabled={buying || details.available_shares <= 0 || (walletBalance < details.share_price * sharesToBuy)}
-                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl py-6 text-base font-bold shadow-lg shadow-orange-500/25"
-              >
-                {buying ? "Processing..." : details.available_shares <= 0 ? "SOLD OUT" : `Buy ${sharesToBuy} Share${sharesToBuy > 1 ? "s" : ""}`}
-              </Button>
-              <p className="text-xs text-muted-foreground text-center">Balance: ${walletBalance?.toFixed(2) || "0.00"}</p>
-            </div>
+            {(() => {
+              const maxPerUser = Math.floor((details.total_shares || 1000) * 0.1);
+              const canBuyMore = Math.max(0, maxPerUser - (details.user_shares || 0));
+              const sliderMax = Math.min(details.available_shares || 0, canBuyMore);
+              const effectiveShares = Math.min(sharesToBuy, sliderMax);
+
+              if (canBuyMore <= 0) {
+                return (
+                  <div className="p-4 rounded-xl bg-muted/50 text-center text-sm text-muted-foreground">
+                    You've reached the ownership limit for this video ({Math.round(maxPerUser / (details.total_shares || 1000) * 100)}% max).
+                  </div>
+                );
+              }
+
+              return (
+                <div className="space-y-3">
+                  <p className="text-sm font-medium">Shares to buy</p>
+                  <div className="flex items-center gap-3">
+                    <Slider
+                      value={[effectiveShares]}
+                      onValueChange={v => setSharesToBuy(v[0])}
+                      max={sliderMax}
+                      min={1} step={1} className="flex-1"
+                    />
+                    <Input
+                      type="number" value={effectiveShares}
+                      onChange={e => setSharesToBuy(Math.min(Math.max(1, Number(e.target.value)), sliderMax))}
+                      className="w-16 text-center font-mono"
+                    />
+                  </div>
+                  <div className="flex justify-between text-sm p-3 bg-muted/50 rounded-xl">
+                    <span className="text-muted-foreground">Total</span>
+                    <span className="font-bold">${(details.share_price * effectiveShares).toFixed(2)}</span>
+                  </div>
+                  <Button
+                    onClick={onBuy}
+                    disabled={buying || sliderMax <= 0 || (walletBalance < details.share_price * effectiveShares)}
+                    className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl py-6 text-base font-bold shadow-lg shadow-orange-500/25"
+                  >
+                    {buying ? "Processing..." : sliderMax <= 0 ? "SOLD OUT" : `Buy ${effectiveShares} Share${effectiveShares > 1 ? "s" : ""}`}
+                  </Button>
+                  <p className="text-xs text-muted-foreground text-center">Balance: ${walletBalance?.toFixed(2) || "0.00"}</p>
+                </div>
+              );
+            })()}
           </>
         )}
       </div>
@@ -230,11 +247,7 @@ export default function Shorts() {
     setBuying(true);
     try {
       const r = await axios.post(`${API}/shares/buy`, { video_id: currentVideoId, shares: sharesToBuy }, { withCredentials: true });
-      if (r.data.is_early_investor) {
-        toast.success(`Early Investor Bonus! ${sharesToBuy} shares with ${r.data.early_bonus_multiplier}x bonus!`, { duration: 5000 });
-      } else {
-        toast.success(`Bought ${sharesToBuy} shares for $${r.data.total_cost.toFixed(2)}`);
-      }
+      toast.success(`Bought ${sharesToBuy} shares for $${r.data.total_cost.toFixed(2)}`);
       setBuySheetOpen(false);
       if (user) setUser({ ...user, wallet_balance: r.data.new_wallet_balance });
       setVideoDetails(prev => { const n = { ...prev }; delete n[currentVideoId]; return n; });

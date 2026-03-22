@@ -8,7 +8,7 @@ import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import {
   Eye, EyeOff, TrendingUp, TrendingDown,
-  ShoppingCart, Sparkles, ArrowUpRight,
+  ShoppingCart, ArrowUpRight,
   BarChart3, Target, Zap, ChevronRight
 } from "lucide-react";
 import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
@@ -77,10 +77,7 @@ export default function Watchlist() {
     // Price momentum (negative is good for buying)
     if (item.price_change < 0) score += 15;
     else if (item.price_change > 10) score -= 10;
-    
-    // Early bonus available
-    if (item.early_tier_available) score += 20;
-    
+
     // Scarcity (more shares sold = more proven)
     const sharesSold = ((item.video.total_shares - item.video.available_shares) / item.video.total_shares) * 100;
     if (sharesSold > 30 && sharesSold < 70) score += 10;
@@ -178,12 +175,6 @@ export default function Watchlist() {
                           {item.creator?.name}
                         </p>
                         <div className="flex items-center gap-2 mt-1">
-                          {item.early_tier_available && (
-                            <Badge variant="outline" className="text-[10px] bg-amber-500/10 text-amber-700 border-amber-500/30 px-1.5 py-0">
-                              <Sparkles className="w-2.5 h-2.5 mr-0.5" />
-                              {item.early_bonus_available}x
-                            </Badge>
-                          )}
                         </div>
                       </div>
                       
@@ -278,18 +269,6 @@ export default function Watchlist() {
                           </span>
                         </div>
 
-                        {/* Early Bonus */}
-                        {selectedItem.early_tier_available && (
-                          <div className="flex items-center justify-between p-3 rounded-lg bg-amber-500/10 border border-amber-500/20">
-                            <div className="flex items-center gap-2">
-                              <Sparkles className="w-4 h-4 text-amber-500" />
-                              <span className="text-sm font-medium text-amber-700">Early Bonus</span>
-                            </div>
-                            <span className="font-mono text-sm font-bold text-amber-600">
-                              {selectedItem.early_bonus_available}x
-                            </span>
-                          </div>
-                        )}
                       </div>
 
                       {/* Investment Thesis */}
@@ -303,12 +282,6 @@ export default function Watchlist() {
                             <p className="flex items-start gap-2">
                               <span className="text-emerald-500">✓</span>
                               Price is down {Math.abs(selectedItem.price_change_percent).toFixed(1)}% - potential buying opportunity
-                            </p>
-                          )}
-                          {selectedItem.early_tier_available && (
-                            <p className="flex items-start gap-2">
-                              <span className="text-emerald-500">✓</span>
-                              Early investor bonus still available ({selectedItem.early_bonus_available}x on profits)
                             </p>
                           )}
                           {selectedItem.video.views > 10000 && (

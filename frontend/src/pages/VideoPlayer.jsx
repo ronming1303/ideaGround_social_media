@@ -150,15 +150,7 @@ export default function VideoPlayer() {
         { withCredentials: true }
       );
       
-      // Show different message based on early investor status
-      if (response.data.is_early_investor) {
-        toast.success(
-          `Early Investor Bonus! Bought ${sharesToBuy} shares with ${response.data.early_bonus_multiplier}x bonus multiplier!`,
-          { duration: 5000 }
-        );
-      } else {
-        toast.success(`Successfully bought ${sharesToBuy} shares for $${response.data.total_cost.toFixed(2)}`);
-      }
+      toast.success(`Successfully bought ${sharesToBuy} shares for $${response.data.total_cost.toFixed(2)}`);
       
       setBuyDialogOpen(false);
       fetchVideo();
@@ -422,53 +414,71 @@ export default function VideoPlayer() {
                     </div>
 
                     {/* Share selection */}
-                    <div>
-                      <label className="text-sm font-medium mb-2 block">Number of Shares</label>
-                      <div className="flex items-center gap-4">
-                        <Slider
-                          data-testid="shares-slider"
-                          value={[sharesToBuy]}
-                          onValueChange={(value) => setSharesToBuy(value[0])}
-                          max={Math.min(video.available_shares, 20)}
-                          min={1}
-                          step={1}
-                          className="flex-1"
-                        />
-                        <Input
-                          data-testid="shares-input"
-                          type="number"
-                          value={sharesToBuy}
-                          onChange={(e) => setSharesToBuy(Math.min(Math.max(1, Number(e.target.value)), video.available_shares))}
-                          className="w-20 text-center font-mono"
-                        />
-                      </div>
-                    </div>
+                    {(() => {
+                      const maxPerUser = Math.floor((video.total_shares || 1000) * 0.1);
+                      const canBuyMore = Math.max(0, maxPerUser - (video.user_shares || 0));
+                      const sliderMax = Math.min(video.available_shares, canBuyMore);
 
-                    {/* Order Summary */}
-                    <div className="p-4 rounded-xl bg-muted/50">
-                      <div className="flex justify-between mb-2">
-                        <span className="text-muted-foreground">Price per share</span>
-                        <span className="font-mono">${video.share_price.toFixed(2)}</span>
-                      </div>
-                      <div className="flex justify-between mb-2">
-                        <span className="text-muted-foreground">Shares</span>
-                        <span className="font-mono">× {sharesToBuy}</span>
-                      </div>
-                      <div className="flex justify-between pt-2 border-t border-border">
-                        <span className="font-medium">Total</span>
-                        <span className="font-heading font-bold text-xl">${(video.share_price * sharesToBuy).toFixed(2)}</span>
-                      </div>
-                    </div>
+                      if (canBuyMore <= 0) {
+                        return (
+                          <div className="p-4 rounded-xl bg-muted/50 text-center text-sm text-muted-foreground">
+                            You've reached the ownership limit for this video ({Math.floor(maxPerUser / (video.total_shares || 1000) * 100)}% max).
+                          </div>
+                        );
+                      }
 
-                    {/* Confirm Button */}
-                    <Button 
-                      data-testid="confirm-buy-btn"
-                      onClick={handleBuyShares}
-                      disabled={buying || (user?.wallet_balance < video.share_price * sharesToBuy)}
-                      className="w-full bg-primary hover:bg-primary/90 text-white rounded-full py-6"
-                    >
-                      {buying ? "Processing..." : `Buy ${sharesToBuy} Shares`}
-                    </Button>
+                      return (
+                        <>
+                          <div>
+                            <label className="text-sm font-medium mb-2 block">Number of Shares</label>
+                            <div className="flex items-center gap-4">
+                              <Slider
+                                data-testid="shares-slider"
+                                value={[Math.min(sharesToBuy, sliderMax)]}
+                                onValueChange={(value) => setSharesToBuy(value[0])}
+                                max={sliderMax}
+                                min={1}
+                                step={1}
+                                className="flex-1"
+                              />
+                              <Input
+                                data-testid="shares-input"
+                                type="number"
+                                value={Math.min(sharesToBuy, sliderMax)}
+                                onChange={(e) => setSharesToBuy(Math.min(Math.max(1, Number(e.target.value)), sliderMax))}
+                                className="w-20 text-center font-mono"
+                              />
+                            </div>
+                          </div>
+
+                          {/* Order Summary */}
+                          <div className="p-4 rounded-xl bg-muted/50">
+                            <div className="flex justify-between mb-2">
+                              <span className="text-muted-foreground">Price per share</span>
+                              <span className="font-mono">${video.share_price.toFixed(2)}</span>
+                            </div>
+                            <div className="flex justify-between mb-2">
+                              <span className="text-muted-foreground">Shares</span>
+                              <span className="font-mono">× {Math.min(sharesToBuy, sliderMax)}</span>
+                            </div>
+                            <div className="flex justify-between pt-2 border-t border-border">
+                              <span className="font-medium">Total</span>
+                              <span className="font-heading font-bold text-xl">${(video.share_price * Math.min(sharesToBuy, sliderMax)).toFixed(2)}</span>
+                            </div>
+                          </div>
+
+                          {/* Confirm Button */}
+                          <Button
+                            data-testid="confirm-buy-btn"
+                            onClick={handleBuyShares}
+                            disabled={buying || (user?.wallet_balance < video.share_price * Math.min(sharesToBuy, sliderMax))}
+                            className="w-full bg-primary hover:bg-primary/90 text-white rounded-full py-6"
+                          >
+                            {buying ? "Processing..." : `Buy ${Math.min(sharesToBuy, sliderMax)} Shares`}
+                          </Button>
+                        </>
+                      );
+                    })()}
 
                     <p className="text-xs text-muted-foreground text-center">
                       Your balance: ${user?.wallet_balance?.toFixed(2) || '0.00'}

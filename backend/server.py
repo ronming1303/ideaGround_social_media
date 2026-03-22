@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse, FileResponse, StreamingResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
+from pymongo import ReturnDocument
 import os
 import logging
 from pathlib import Path
@@ -142,8 +143,6 @@ class ShareOwnership(BaseModel):
     video_id: str
     shares_owned: float
     purchase_price: float
-    is_early_investor: bool = False  # True if bought when <30% shares sold
-    early_bonus_multiplier: float = 1.0  # Bonus for early investors (1.0-2.5x)
     purchased_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class Transaction(BaseModel):
@@ -835,9 +834,6 @@ async def get_video(video_id: str, request: Request):
     shares_sold_percent = (shares_sold / video["total_shares"]) * 100
     video["shares_sold_percent"] = shares_sold_percent
     
-    video["early_investor_tier"] = None
-    video["early_bonus_available"] = 1.0
-    
     # Revenue split info (transparent breakdown)
     video["revenue_split"] = {
         "creator_percent": 50,
@@ -858,12 +854,8 @@ async def get_video(video_id: str, request: Request):
         )
         if ownership:
             video["user_shares"] = ownership["shares_owned"]
-            video["user_is_early_investor"] = ownership.get("is_early_investor", False)
-            video["user_early_bonus"] = ownership.get("early_bonus_multiplier", 1.0)
         else:
             video["user_shares"] = 0
-            video["user_is_early_investor"] = False
-            video["user_early_bonus"] = 1.0
         
         # Check if user is watching this video
         watchlist_item = await db.watchlist.find_one(
@@ -874,8 +866,6 @@ async def get_video(video_id: str, request: Request):
     else:
         video["user_liked"] = False
         video["user_shares"] = 0
-        video["user_is_early_investor"] = False
-        video["user_early_bonus"] = 1.0
         video["user_watching"] = False
         video["watch_price_when_added"] = None
     
@@ -948,15 +938,6 @@ async def get_video_top_earners(video_id: str, limit: int = 5):
         profit = current_value - purchase_value
         profit_percent = (profit / purchase_value * 100) if purchase_value > 0 else 0
         
-        # Calculate potential bonus
-        is_early = ownership.get("is_early_investor", False)
-        bonus_multiplier = ownership.get("early_bonus_multiplier", 1.0)
-        potential_bonus = 0
-        if is_early and profit > 0:
-            potential_bonus = profit * (bonus_multiplier - 1)
-        
-        total_potential_return = profit + potential_bonus
-        
         earners.append({
             "user_id": ownership["user_id"],
             "name": user_doc.get("name", "Anonymous"),
@@ -966,14 +947,10 @@ async def get_video_top_earners(video_id: str, limit: int = 5):
             "current_value": current_value,
             "profit": profit,
             "profit_percent": profit_percent,
-            "is_early_investor": is_early,
-            "bonus_multiplier": bonus_multiplier,
-            "potential_bonus": potential_bonus,
-            "total_potential_return": total_potential_return
         })
-    
-    # Sort by total potential return (profit + early bonus)
-    earners.sort(key=lambda x: x["total_potential_return"], reverse=True)
+
+    # Sort by profit
+    earners.sort(key=lambda x: x["profit"], reverse=True)
     
     # Assign ranks
     for i, earner in enumerate(earners):
@@ -1093,9 +1070,9 @@ async def subscribe_creator(creator_id: str, user: User = Depends(get_current_us
 SHARE_PRICE_MIN = 1
 SHARE_PRICE_MAX = 1
 
-def calculate_early_bonus(shares_sold_percent: float) -> tuple[bool, float]:
-    """Simplified: no early investor bonus."""
-    return False, 1.0
+# Maximum fraction of a video's total shares any single user may own (e.g. 0.1 = 10%)
+MAX_OWNERSHIP_FRACTION = 0.1
+
 
 def calculate_price_impact(shares_traded: float, available_shares: float, total_shares: float, is_buy: bool) -> float:
     """Simplified: no price impact from trades."""
@@ -1118,12 +1095,61 @@ async def buy_shares(req: BuyShareRequest, user: User = Depends(get_current_user
     if req.shares > video["available_shares"]:
         raise HTTPException(status_code=400, detail="Not enough shares available")
 
+    total_shares = video.get("total_shares", 1000)
+    max_allowed = total_shares * MAX_OWNERSHIP_FRACTION
     share_price = video.get("share_price", SHARE_PRICE_MIN)
     total_cost = req.shares * share_price
+
+    # --- Atomic ownership cap enforcement (prevents race condition) ---
+    # Try to atomically increment an existing ownership record only if the
+    # resulting total would not exceed max_allowed.
+    updated_ownership = await db.share_ownerships.find_one_and_update(
+        {
+            "user_id": user.user_id,
+            "video_id": req.video_id,
+            "$expr": {"$lte": [{"$add": ["$shares_owned", req.shares]}, max_allowed]}
+        },
+        {
+            "$inc": {"shares_owned": req.shares},
+            "$set": {"purchase_price": share_price}
+        },
+        return_document=ReturnDocument.AFTER
+    )
+
+    is_new_ownership = False
+    if updated_ownership is None:
+        # No record was updated — either no existing record or cap would be exceeded.
+        existing_check = await db.share_ownerships.find_one(
+            {"user_id": user.user_id, "video_id": req.video_id}
+        )
+        if existing_check is not None:
+            # Record exists but cap condition failed → reject
+            already_owned = existing_check["shares_owned"]
+            remaining = max(int(max_allowed - already_owned), 0)
+            raise HTTPException(
+                status_code=400,
+                detail=f"Exceeds ownership limit: max {int(MAX_OWNERSHIP_FRACTION * 100)}% "
+                       f"({int(max_allowed)} shares). You own {int(already_owned)}, "
+                       f"can buy {remaining} more."
+            )
+        # No existing record — first purchase. Check cap on req.shares alone.
+        if req.shares > max_allowed:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Exceeds ownership limit: max {int(max_allowed)} shares per user."
+            )
+        is_new_ownership = True
+    # -----------------------------------------------------------------
 
     # Re-fetch user for latest balance
     user_doc = await db.users.find_one({"user_id": user.user_id}, {"_id": 0})
     if user_doc["wallet_balance"] < total_cost:
+        # Roll back ownership increment if we already applied it
+        if not is_new_ownership:
+            await db.share_ownerships.update_one(
+                {"user_id": user.user_id, "video_id": req.video_id},
+                {"$inc": {"shares_owned": -req.shares}}
+            )
         raise HTTPException(status_code=400, detail="Insufficient balance")
 
     # Update user balance
@@ -1138,26 +1164,13 @@ async def buy_shares(req: BuyShareRequest, user: User = Depends(get_current_user
         {"$inc": {"available_shares": -req.shares}}
     )
 
-    # Check existing ownership
-    existing = await db.share_ownerships.find_one(
-        {"user_id": user.user_id, "video_id": req.video_id}
-    )
-
-    if existing:
-        new_shares = existing["shares_owned"] + req.shares
-        await db.share_ownerships.update_one(
-            {"user_id": user.user_id, "video_id": req.video_id},
-            {"$set": {"shares_owned": new_shares, "purchase_price": share_price}}
-        )
-    else:
+    if is_new_ownership:
         ownership_doc = {
             "ownership_id": f"own_{uuid.uuid4().hex[:12]}",
             "user_id": user.user_id,
             "video_id": req.video_id,
             "shares_owned": req.shares,
             "purchase_price": share_price,
-            "is_early_investor": False,
-            "early_bonus_multiplier": 1.0,
             "purchased_at": datetime.now(timezone.utc).isoformat()
         }
         await db.share_ownerships.insert_one(ownership_doc)
@@ -1301,9 +1314,6 @@ async def get_portfolio(user: User = Depends(get_current_user)):
                 "current_value": current_value,
                 "gain": 0,
                 "gain_percent": 0,
-                "is_early_investor": False,
-                "early_bonus_multiplier": 1.0,
-                "potential_bonus": 0
             })
 
             total_value += current_value
@@ -1312,7 +1322,6 @@ async def get_portfolio(user: User = Depends(get_current_user)):
         "items": portfolio_items,
         "total_value": total_value,
         "total_gain": 0,
-        "total_potential_bonus": 0,
         "wallet_balance": user.wallet_balance
     }
 
@@ -1333,7 +1342,6 @@ async def get_portfolio_performance(user: User = Depends(get_current_user)):
             "total_invested": 0,
             "total_gain": 0,
             "gain_percent": 0,
-            "total_potential_bonus": 0,
             "holdings_count": 0
         }
 
@@ -1351,7 +1359,6 @@ async def get_portfolio_performance(user: User = Depends(get_current_user)):
         "total_invested": total_invested,
         "total_gain": 0,
         "gain_percent": gain_percent,
-        "total_potential_bonus": 0,
         "holdings_count": len(ownerships)
     }
 
@@ -1396,9 +1403,7 @@ async def get_portfolio_history(user: User = Depends(get_current_user)):
         if txn_type == "buy_share":
             cumulative_invested += abs(amount)
         elif txn_type == "sell_share":
-            # Earnings from selling
-            bonus = txn.get("bonus_earned", 0)
-            cumulative_earnings += bonus
+            pass  # No earnings tracked here
         elif txn_type == "deposit":
             pass  # Don't count deposits in investment
         
@@ -1494,21 +1499,6 @@ async def get_watchlist(user: User = Depends(get_current_user)):
                 {"user_id": user.user_id, "video_id": item["video_id"]}, {"_id": 0}
             )
             
-            # Check early investor tier available
-            shares_sold_percent = ((video["total_shares"] - video["available_shares"]) / video["total_shares"]) * 100
-            if shares_sold_percent < 10:
-                early_tier = "platinum"
-                early_bonus = 2.5
-            elif shares_sold_percent < 20:
-                early_tier = "gold"
-                early_bonus = 2.0
-            elif shares_sold_percent < 30:
-                early_tier = "silver"
-                early_bonus = 1.5
-            else:
-                early_tier = None
-                early_bonus = 1.0
-            
             enriched_items.append({
                 "watchlist_id": item["watchlist_id"],
                 "video": video,
@@ -1520,8 +1510,6 @@ async def get_watchlist(user: User = Depends(get_current_user)):
                 "added_at": item.get("created_at"),
                 "user_owns_shares": ownership is not None,
                 "shares_owned": ownership["shares_owned"] if ownership else 0,
-                "early_tier_available": early_tier,
-                "early_bonus_available": early_bonus
             })
     
     # Sort by price change percent (best opportunities first)
@@ -1627,27 +1615,6 @@ async def get_wallet(user: User = Depends(get_current_user)):
         "transactions": transactions
     }
 
-@api_router.post("/wallet/deposit")
-async def deposit(req: DepositRequest, user: User = Depends(get_current_user)):
-    """Add funds to wallet (simulated)"""
-    if req.amount <= 0:
-        raise HTTPException(status_code=400, detail="Invalid amount")
-    
-    await db.users.update_one(
-        {"user_id": user.user_id},
-        {"$inc": {"wallet_balance": req.amount}}
-    )
-    
-    transaction_doc = {
-        "transaction_id": f"txn_{uuid.uuid4().hex[:12]}",
-        "user_id": user.user_id,
-        "transaction_type": "deposit",
-        "amount": req.amount,
-        "created_at": datetime.now(timezone.utc).isoformat()
-    }
-    await db.transactions.insert_one(transaction_doc)
-    
-    return {"success": True, "new_balance": user.wallet_balance + req.amount}
 
 @api_router.post("/wallet/create-payment-intent")
 async def create_payment_intent(req: DepositRequest, user: User = Depends(get_current_user)):
@@ -1738,67 +1705,6 @@ async def get_recommendations(request: Request):
     
     return recommended[:10]
 
-# ==================== REAL-TIME PRICE SIMULATION ====================
-
-@api_router.post("/simulate-prices")
-async def simulate_price_changes():
-    """Simulate real-time price changes for all videos based on activity"""
-    videos = await db.videos.find({}, {"_id": 0}).to_list(100)
-    updated_videos = []
-    
-    for video in videos:
-        # Calculate price change based on various factors
-        base_change = random.uniform(-0.05, 0.08)  # -5% to +8% base volatility
-        
-        # Boost for high engagement
-        engagement_factor = min(video.get("views", 0) / 10000000, 0.5)  # Max 50% boost
-        like_factor = min(video.get("likes", 0) / 1000000, 0.3)  # Max 30% boost
-        
-        # Scarcity premium (fewer available shares = higher price pressure)
-        scarcity = 1 - (video.get("available_shares", 100) / video.get("total_shares", 100))
-        scarcity_factor = scarcity * 0.1  # Up to 10% boost
-        
-        # Calculate total change
-        total_change = base_change + engagement_factor * 0.02 + like_factor * 0.02 + scarcity_factor
-        
-        # Apply change to current price
-        current_price = video.get("share_price", 10.0)
-        new_price = max(1.0, current_price * (1 + total_change))  # Minimum $1
-        new_price = round(new_price, 2)
-        
-        price_change = new_price - current_price
-        price_change_percent = (price_change / current_price) * 100 if current_price > 0 else 0
-        
-        # Update price history
-        price_history = video.get("price_history", [])
-        today = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")
-        price_history.append({"date": today, "price": new_price})
-        
-        # Keep only last 50 price points
-        if len(price_history) > 50:
-            price_history = price_history[-50:]
-        
-        # Update in database
-        await db.videos.update_one(
-            {"video_id": video["video_id"]},
-            {"$set": {
-                "share_price": new_price,
-                "price_history": price_history,
-                "last_price_change": price_change,
-                "last_price_change_percent": round(price_change_percent, 2)
-            }}
-        )
-        
-        updated_videos.append({
-            "video_id": video["video_id"],
-            "title": video["title"],
-            "old_price": current_price,
-            "new_price": new_price,
-            "change": round(price_change, 2),
-            "change_percent": round(price_change_percent, 2)
-        })
-    
-    return {"updated": len(updated_videos), "videos": updated_videos}
 
 @api_router.get("/prices/live")
 async def get_live_prices():
@@ -1893,31 +1799,11 @@ async def get_market_overview():
         available = video.get("available_shares", 100)
         video["shares_sold_percent"] = ((total - available) / total) * 100 if total > 0 else 0
         
-        # Calculate early bonus tier
-        sold_pct = video["shares_sold_percent"]
-        if sold_pct < 10:
-            video["early_bonus"] = 2.5
-            video["early_bonus_tier"] = "Diamond"
-        elif sold_pct < 20:
-            video["early_bonus"] = 2.0
-            video["early_bonus_tier"] = "Gold"
-        elif sold_pct < 30:
-            video["early_bonus"] = 1.5
-            video["early_bonus_tier"] = "Silver"
-        else:
-            video["early_bonus"] = None
-            video["early_bonus_tier"] = None
-        
         # Calculate value ratio (views per dollar of share price)
         views = video.get("views", 0)
         price = video.get("share_price", 10)
         video["value_ratio"] = views / price if price > 0 else 0
         
-        # Calculate ROI since initial price ($10)
-        initial_price = 10.0
-        current_price = video.get("share_price", 10)
-        video["roi_percent"] = ((current_price - initial_price) / initial_price) * 100
-    
     # Helper to format video for response
     def format_video(v, extra_fields=None):
         result = {
@@ -1949,20 +1835,13 @@ async def get_market_overview():
     hot_stocks = [format_video(v) for v in by_scarcity[:3]]
     
     # === SECTION 2: INVESTMENT OPPORTUNITIES ===
-    
-    # Early Bonus - videos with bonus still available (< 30% sold)
-    early_bonus_videos = [v for v in videos if v.get("early_bonus") is not None]
-    early_bonus_videos = sorted(early_bonus_videos, key=lambda v: v.get("early_bonus", 0), reverse=True)
-    early_bonus = [format_video(v, {"early_bonus": v["early_bonus"], "early_tier": v["early_bonus_tier"]}) for v in early_bonus_videos[:3]]
-    
+
     # Undervalued - highest views per dollar (value ratio)
     by_value = sorted(videos, key=lambda v: v.get("value_ratio", 0), reverse=True)
     undervalued = [format_video(v, {"value_ratio": v["value_ratio"]}) for v in by_value[:3]]
     
-    # Best ROI - highest price increase since launch
-    by_roi = sorted(videos, key=lambda v: v.get("roi_percent", 0), reverse=True)
-    best_roi = [format_video(v, {"roi_percent": v["roi_percent"]}) for v in by_roi if v.get("roi_percent", 0) > 0][:3]
-    
+    best_roi = []
+
     # New Listings - most recently created
     by_date = sorted(videos, key=lambda v: v.get("created_at", ""), reverse=True)
     new_listings = [format_video(v, {"created_at": v.get("created_at")}) for v in by_date[:3]]
@@ -2010,12 +1889,6 @@ async def get_market_overview():
             }
         },
         "opportunities": {
-            "early_bonus": {
-                "title": "Early Bonus",
-                "qualifier": "Get 1.5-2.5x on profits",
-                "icon": "star",
-                "items": early_bonus
-            },
             "undervalued": {
                 "title": "Undervalued",
                 "qualifier": "High views, low price",
@@ -2093,8 +1966,6 @@ async def get_live_activity(limit: int = 20):
             "amount": abs(txn.get("amount", 0)),
             "price_at_trade": txn.get("price_at_trade", 0),
             "price_after_trade": txn.get("price_after_trade"),
-            "is_early_investor": txn.get("is_early_investment", False),
-            "bonus_earned": txn.get("bonus_earned", 0),
             "timestamp": txn.get("created_at"),
             "type": txn_type
         }
@@ -2301,7 +2172,6 @@ async def claim_comment_reward(comment_id: str, request: Request):
             video_id=comment["video_id"],
             shares_owned=additional_shares,
             purchase_price=0,  # Free!
-            is_early_investor=False
         )
         await db.share_ownerships.insert_one(ownership.model_dump())
     
@@ -2464,9 +2334,6 @@ async def get_investor_metrics():
     unique_investors = len(set(o.get("user_id") for o in ownerships))
     total_shares_held = sum(o.get("shares_owned", 0) for o in ownerships)
     
-    # Early investors
-    early_investors = len([o for o in ownerships if o.get("is_early_investor", False)])
-    
     # === GROWTH INDICATORS ===
     # Transaction volume by day (last 7 days)
     daily_volumes = []
@@ -2507,7 +2374,6 @@ async def get_investor_metrics():
             "total_market_cap": round(total_market_cap, 2),
             "total_wallet_balances": round(total_wallet_balances, 2),
             "unique_investors": unique_investors,
-            "early_investors": early_investors
         },
         "trading": {
             "total_buy_volume": round(total_buy_volume, 2),
@@ -2841,325 +2707,6 @@ async def upload_video(req: CreateVideoRequest, user: User = Depends(get_current
     video_doc.pop("_id", None)
     return {"success": True, "video": video_doc}
 
-# ==================== SEED DATA ENDPOINT ====================
-
-@api_router.post("/seed")
-async def seed_database():
-    """Seed database with initial data"""
-    # Clear all existing data
-    await db.creators.delete_many({})
-    await db.videos.delete_many({})
-    await db.users.delete_many({})
-    await db.share_ownerships.delete_many({})
-    await db.transactions.delete_many({})
-    await db.platform_earnings.delete_many({})
-    await db.comments.delete_many({})
-    await db.watchlist.delete_many({})
-    await db.comment_rewards.delete_many({})
-    
-    # Creators
-    creators_data = [
-        {
-            "creator_id": "creator_emma",
-            "name": "Emma Dance",
-            "category": "Dance",
-            "image": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
-            "stock_symbol": "$EMMA",
-            "subscriber_count": 245000,
-            "total_views": 12500000,
-            "created_at": datetime.now(timezone.utc).isoformat()
-        },
-        {
-            "creator_id": "creator_joe",
-            "name": "Joe Talks",
-            "category": "Podcast",
-            "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
-            "stock_symbol": "$JOE",
-            "subscriber_count": 890000,
-            "total_views": 45000000,
-            "created_at": datetime.now(timezone.utc).isoformat()
-        },
-        {
-            "creator_id": "creator_alex",
-            "name": "Alex Roams",
-            "category": "Travel",
-            "image": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400",
-            "stock_symbol": "$ALEX",
-            "subscriber_count": 567000,
-            "total_views": 23000000,
-            "created_at": datetime.now(timezone.utc).isoformat()
-        },
-        {
-            "creator_id": "creator_sarah",
-            "name": "Sarah Tech",
-            "category": "Tech",
-            "image": "https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400",
-            "stock_symbol": "$TECH",
-            "subscriber_count": 1200000,
-            "total_views": 67000000,
-            "created_at": datetime.now(timezone.utc).isoformat()
-        },
-        {
-            "creator_id": "creator_mike",
-            "name": "Chef Mike",
-            "category": "Food",
-            "image": "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
-            "stock_symbol": "$CHEF",
-            "subscriber_count": 432000,
-            "total_views": 18000000,
-            "created_at": datetime.now(timezone.utc).isoformat()
-        }
-    ]
-    
-    await db.creators.insert_many(creators_data)
-    
-    # Videos
-    videos_data = [
-        # Emma's content
-        {
-            "video_id": "vid_emma_1",
-            "creator_id": "creator_emma",
-            "title": "20-Min Dance Workout for Beginners",
-            "description": "Learn the hottest dance moves with this easy-to-follow tutorial. Perfect for beginners!",
-            "thumbnail": "https://images.unsplash.com/photo-1524594152303-9fd13543fe6e?w=800",
-            "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-            "duration_minutes": 20,
-            "video_type": "full",
-            "category": "Dance",
-            "ticker_symbol": "EMMA_0126D1",
-            "views": 2500000,
-            "likes": 185000,
-            "share_price": 1.0,
-            "available_shares": 650.0,
-            "total_shares": 1000.0,
-            "price_history": [
-                {"date": "2024-01-01", "price": 10.00},
-                {"date": "2024-01-15", "price": 12.00},
-                {"date": "2024-02-01", "price": 14.50},
-                {"date": "2024-02-15", "price": 15.50}
-            ],
-            "last_price_change": 0,
-            "last_price_change_percent": 0,
-            "created_at": datetime.now(timezone.utc).isoformat()
-        },
-        {
-            "video_id": "vid_emma_2",
-            "creator_id": "creator_emma",
-            "title": "Quick Dance Challenge #viral",
-            "description": "Can you keep up? 60 seconds of pure energy!",
-            "thumbnail": "https://images.unsplash.com/photo-1508700929628-666bc8bd84ea?w=800",
-            "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-            "duration_minutes": 12,
-            "video_type": "full",
-            "category": "Dance",
-            "ticker_symbol": "EMMA_0126S2",
-            "views": 8500000,
-            "likes": 920000,
-            "share_price": 1.0,
-            "available_shares": 450.0,
-            "total_shares": 1000.0,
-            "price_history": [
-                {"date": "2024-01-01", "price": 10.00},
-                {"date": "2024-01-15", "price": 15.00},
-                {"date": "2024-02-01", "price": 19.00},
-                {"date": "2024-02-15", "price": 22.00}
-            ],
-            "last_price_change": 0,
-            "last_price_change_percent": 0,
-            "created_at": datetime.now(timezone.utc).isoformat()
-        },
-        # Joe's content
-        {
-            "video_id": "vid_joe_1",
-            "creator_id": "creator_joe",
-            "title": "Deep Talk with Sadhguru - Life, Consciousness & Beyond",
-            "description": "An incredible 30-minute conversation with Sadhguru about the nature of existence.",
-            "thumbnail": "https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=800",
-            "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-            "duration_minutes": 30,
-            "video_type": "full",
-            "category": "Podcast",
-            "ticker_symbol": "JOE_0126P1",
-            "views": 15000000,
-            "likes": 1200000,
-            "share_price": 1.0,
-            "available_shares": 300.0,
-            "total_shares": 1000.0,
-            "price_history": [
-                {"date": "2024-01-01", "price": 10.00},
-                {"date": "2024-01-15", "price": 20.00},
-                {"date": "2024-02-01", "price": 35.00},
-                {"date": "2024-02-15", "price": 45.00}
-            ],
-            "last_price_change": 0,
-            "last_price_change_percent": 0,
-            "created_at": datetime.now(timezone.utc).isoformat()
-        },
-        # Alex's content
-        {
-            "video_id": "vid_alex_1",
-            "creator_id": "creator_alex",
-            "title": "Hidden Gems of Bali - 15 Min Travel Guide",
-            "description": "Discover secret spots in Bali that most tourists never see!",
-            "thumbnail": "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=800",
-            "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-            "duration_minutes": 15,
-            "video_type": "full",
-            "category": "Travel",
-            "ticker_symbol": "ALEX_0126T1",
-            "views": 3200000,
-            "likes": 245000,
-            "share_price": 1.0,
-            "available_shares": 700.0,
-            "total_shares": 1000.0,
-            "price_history": [
-                {"date": "2024-01-01", "price": 10.00},
-                {"date": "2024-01-15", "price": 13.00},
-                {"date": "2024-02-01", "price": 16.00},
-                {"date": "2024-02-15", "price": 18.75}
-            ],
-            "last_price_change": 0,
-            "last_price_change_percent": 0,
-            "created_at": datetime.now(timezone.utc).isoformat()
-        },
-        {
-            "video_id": "vid_alex_2",
-            "creator_id": "creator_alex",
-            "title": "Sunrise at Machu Picchu",
-            "description": "Breathtaking glimpse of dawn at the ancient wonder",
-            "thumbnail": "https://images.unsplash.com/photo-1526392060635-9d6019884377?w=800",
-            "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-            "duration_minutes": 15,
-            "video_type": "full",
-            "category": "Travel",
-            "ticker_symbol": "ALEX_0126V2",
-            "views": 5600000,
-            "likes": 480000,
-            "share_price": 1.0,
-            "available_shares": 550.0,
-            "total_shares": 1000.0,
-            "price_history": [
-                {"date": "2024-01-01", "price": 10.00},
-                {"date": "2024-01-15", "price": 16.00},
-                {"date": "2024-02-01", "price": 21.00},
-                {"date": "2024-02-15", "price": 25.00}
-            ],
-            "last_price_change": 0,
-            "last_price_change_percent": 0,
-            "created_at": datetime.now(timezone.utc).isoformat()
-        },
-        # Sarah's content
-        {
-            "video_id": "vid_sarah_1",
-            "creator_id": "creator_sarah",
-            "title": "iPhone 16 Pro Max - Honest Review After 30 Days",
-            "description": "The truth about Apple's latest flagship. Is it worth the upgrade?",
-            "thumbnail": "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800",
-            "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-            "duration_minutes": 25,
-            "video_type": "full",
-            "category": "Tech",
-            "ticker_symbol": "TECH_0126R1",
-            "views": 8900000,
-            "likes": 670000,
-            "share_price": 1.0,
-            "available_shares": 400.0,
-            "total_shares": 1000.0,
-            "price_history": [
-                {"date": "2024-01-01", "price": 10.00},
-                {"date": "2024-01-15", "price": 18.00},
-                {"date": "2024-02-01", "price": 26.00},
-                {"date": "2024-02-15", "price": 32.50}
-            ],
-            "last_price_change": 0,
-            "last_price_change_percent": 0,
-            "created_at": datetime.now(timezone.utc).isoformat()
-        },
-        {
-            "video_id": "vid_sarah_2",
-            "creator_id": "creator_sarah",
-            "title": "This AI Tool Changed Everything",
-            "description": "A deep look at the AI tool everyone's talking about",
-            "thumbnail": "https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800",
-            "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-            "duration_minutes": 20,
-            "video_type": "full",
-            "category": "Tech",
-            "ticker_symbol": "TECH_0126S2",
-            "views": 12000000,
-            "likes": 890000,
-            "share_price": 1.0,
-            "available_shares": 250.0,
-            "total_shares": 1000.0,
-            "price_history": [
-                {"date": "2024-01-01", "price": 10.00},
-                {"date": "2024-01-15", "price": 20.00},
-                {"date": "2024-02-01", "price": 30.00},
-                {"date": "2024-02-15", "price": 38.00}
-            ],
-            "last_price_change": 0,
-            "last_price_change_percent": 0,
-            "created_at": datetime.now(timezone.utc).isoformat()
-        },
-        # Chef Mike's content
-        {
-            "video_id": "vid_mike_1",
-            "creator_id": "creator_mike",
-            "title": "Perfect Pasta Carbonara - Restaurant Quality at Home",
-            "description": "Master the authentic Italian carbonara with this detailed tutorial",
-            "thumbnail": "https://images.unsplash.com/photo-1612874742237-6526221588e3?w=800",
-            "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-            "duration_minutes": 18,
-            "video_type": "full",
-            "category": "Food",
-            "ticker_symbol": "CHEF_0126F1",
-            "views": 4500000,
-            "likes": 380000,
-            "share_price": 1.0,
-            "available_shares": 600.0,
-            "total_shares": 1000.0,
-            "price_history": [
-                {"date": "2024-01-01", "price": 10.00},
-                {"date": "2024-01-15", "price": 14.00},
-                {"date": "2024-02-01", "price": 18.00},
-                {"date": "2024-02-15", "price": 21.25}
-            ],
-            "last_price_change": 0,
-            "last_price_change_percent": 0,
-            "created_at": datetime.now(timezone.utc).isoformat()
-        },
-        {
-            "video_id": "vid_mike_2",
-            "creator_id": "creator_mike",
-            "title": "The Best Guacamole Recipe",
-            "description": "The fastest and best guac you'll ever make!",
-            "thumbnail": "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=800",
-            "video_url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
-            "duration_minutes": 14,
-            "video_type": "full",
-            "category": "Food",
-            "ticker_symbol": "CHEF_0126S2",
-            "views": 7200000,
-            "likes": 620000,
-            "share_price": 1.0,
-            "available_shares": 500.0,
-            "total_shares": 1000.0,
-            "price_history": [
-                {"date": "2024-01-01", "price": 10.00},
-                {"date": "2024-01-15", "price": 17.00},
-                {"date": "2024-02-01", "price": 23.00},
-                {"date": "2024-02-15", "price": 28.50}
-            ],
-            "last_price_change": 0,
-            "last_price_change_percent": 0,
-            "created_at": datetime.now(timezone.utc).isoformat()
-        }
-    ]
-    
-    await db.videos.insert_many(videos_data)
-    
-    return {"message": "Database seeded successfully", "creators": len(creators_data), "videos": len(videos_data)}
-
 # ==================== VIDEO ANALYTICS FOR CREATORS ====================
 
 @api_router.get("/analytics/overview")
@@ -3490,8 +3037,6 @@ async def get_admin_transactions(request: Request, limit: int = 50):
             "amount": txn.get("amount"),
             "shares": txn.get("shares"),
             "platform_fee": txn.get("platform_fee"),
-            "early_bonus_applied": txn.get("early_bonus_applied"),
-            "bonus_earned": txn.get("bonus_earned"),
             "created_at": txn.get("created_at")
         })
     

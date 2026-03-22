@@ -9,7 +9,7 @@ import {
   TrendingUp, TrendingDown, DollarSign, Briefcase,
   ArrowUpRight, ArrowDownRight, ChevronUp, ChevronDown
 } from "lucide-react";
-import { XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell, CartesianGrid, Legend } from "recharts";
+import { XAxis, YAxis, Tooltip, ResponsiveContainer, AreaChart, Area, PieChart, Pie, Cell, CartesianGrid } from "recharts";
 import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
 
 export default function Portfolio() {
@@ -45,16 +45,15 @@ export default function Portfolio() {
     fetchPortfolioHistory();
   }, []);
 
-  // Auto-refresh polling (every 10 seconds for portfolio - shows real-time value)
+  // Auto-refresh polling
   // TODO: Replace with WebSocket for real-time updates
   useDataSync(
     useCallback(async () => {
       await Promise.all([fetchPortfolio(), fetchPortfolioHistory()]);
     }, [fetchPortfolio, fetchPortfolioHistory]),
-    POLL_INTERVALS.FAST, // 5 seconds for portfolio
+    POLL_INTERVALS.FAST,
     !loading
   );
-
 
 
   const formatCurrency = (value) => {
@@ -67,7 +66,6 @@ export default function Portfolio() {
 
   const COLORS = ['hsl(24, 95%, 53%)', 'hsl(173, 58%, 39%)', 'hsl(197, 37%, 24%)', 'hsl(43, 74%, 66%)', 'hsl(27, 87%, 67%)'];
 
-  // Custom tooltip for the chart
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
@@ -120,26 +118,6 @@ export default function Portfolio() {
               </div>
             </div>
             
-            {/* Mini chart */}
-            <div className="h-24">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={portfolioHistory?.history || []}>
-                  <defs>
-                    <linearGradient id="portfolioGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(24, 95%, 53%)" stopOpacity={0.4}/>
-                      <stop offset="95%" stopColor="hsl(24, 95%, 53%)" stopOpacity={0}/>
-                    </linearGradient>
-                  </defs>
-                  <Area 
-                    type="monotone" 
-                    dataKey="invested" 
-                    stroke="hsl(24, 95%, 53%)" 
-                    strokeWidth={2}
-                    fill="url(#portfolioGradient)" 
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </div>
           </CardContent>
         </Card>
 
@@ -179,7 +157,7 @@ export default function Portfolio() {
 
       {/* Revenue vs Investment Chart */}
       {portfolioHistory?.history?.length > 1 && (
-        <Card className="border-border/50 mb-8" data-testid="portfolio-chart">
+        <Card className="border-border/50 mb-6" data-testid="portfolio-chart">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
@@ -194,21 +172,9 @@ export default function Portfolio() {
               {portfolioHistory?.summary && (
                 <div className="flex gap-6 text-right">
                   <div>
-                    <p className="text-xs text-muted-foreground">Total Invested</p>
-                    <p className="font-heading font-bold text-primary">
-                      {formatCurrency(portfolioHistory.summary.total_invested)}
-                    </p>
-                  </div>
-                  <div>
                     <p className="text-xs text-muted-foreground">Current Value</p>
                     <p className="font-heading font-bold text-secondary">
                       {formatCurrency(portfolioHistory.summary.current_value)}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-muted-foreground">Unrealized Gains</p>
-                    <p className={`font-heading font-bold ${portfolioHistory.summary.unrealized_gains >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
-                      {portfolioHistory.summary.unrealized_gains >= 0 ? '+' : ''}{formatCurrency(portfolioHistory.summary.unrealized_gains)}
                     </p>
                   </div>
                 </div>
@@ -220,45 +186,32 @@ export default function Portfolio() {
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={portfolioHistory.history}>
                   <defs>
-                    <linearGradient id="investedGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="hsl(24, 95%, 53%)" stopOpacity={0.3}/>
-                      <stop offset="95%" stopColor="hsl(24, 95%, 53%)" stopOpacity={0.05}/>
-                    </linearGradient>
                     <linearGradient id="valueGradient" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="hsl(173, 58%, 39%)" stopOpacity={0.3}/>
                       <stop offset="95%" stopColor="hsl(173, 58%, 39%)" stopOpacity={0.05}/>
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} />
-                  <XAxis 
-                    dataKey="date" 
-                    stroke="hsl(var(--muted-foreground))" 
+                  <XAxis
+                    dataKey="date"
+                    stroke="hsl(var(--muted-foreground))"
                     fontSize={12}
                     tickLine={false}
                     axisLine={false}
                   />
-                  <YAxis 
-                    stroke="hsl(var(--muted-foreground))" 
+                  <YAxis
+                    stroke="hsl(var(--muted-foreground))"
                     fontSize={12}
                     tickLine={false}
                     axisLine={false}
                     tickFormatter={(value) => `$${value}`}
                   />
                   <Tooltip content={<CustomTooltip />} />
-                  <Legend />
-                  <Area 
-                    type="monotone" 
-                    dataKey="invested" 
-                    name="Invested"
-                    stroke="hsl(24, 95%, 53%)" 
-                    strokeWidth={2}
-                    fill="url(#investedGradient)"
-                  />
-                  <Area 
-                    type="monotone" 
-                    dataKey="value" 
+                  <Area
+                    type="monotone"
+                    dataKey="value"
                     name="Current Value"
-                    stroke="hsl(173, 58%, 39%)" 
+                    stroke="hsl(173, 58%, 39%)"
                     strokeWidth={2}
                     fill="url(#valueGradient)"
                   />

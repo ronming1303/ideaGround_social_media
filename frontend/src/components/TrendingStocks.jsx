@@ -33,18 +33,6 @@ export default function TrendingStocks({ onRefresh }) {
     }
   };
 
-  const simulatePrices = async () => {
-    setRefreshing(true);
-    try {
-      await axios.post(`${API}/simulate-prices`, {}, { withCredentials: true });
-      await fetchTrending();
-      if (onRefresh) onRefresh();
-    } catch (error) {
-      console.error("Error simulating prices:", error);
-    } finally {
-      setRefreshing(false);
-    }
-  };
 
   const formatNumber = (num) => {
     if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
@@ -112,17 +100,6 @@ export default function TrendingStocks({ onRefresh }) {
             <Activity className="w-5 h-5 text-primary" />
             Market Activity
           </CardTitle>
-          <Button 
-            data-testid="simulate-prices-btn"
-            variant="outline" 
-            size="sm"
-            onClick={simulatePrices}
-            disabled={refreshing}
-            className="rounded-full"
-          >
-            <RefreshCw className={cn("w-4 h-4 mr-1", refreshing && "animate-spin")} />
-            {refreshing ? "Updating..." : "Simulate"}
-          </Button>
         </div>
       </CardHeader>
       <CardContent>
