@@ -158,7 +158,6 @@ export default function CreatorStudio() {
       setVideoDescription("");
       setVideoThumbnail("");
       setVideoCategory("");
-      setSharePrice("");
       fetchCreatorData();
     } catch (error) {
       toast.error(error.response?.data?.detail || "Failed to publish video");
