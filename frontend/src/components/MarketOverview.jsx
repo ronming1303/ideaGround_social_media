@@ -5,9 +5,9 @@ import { API } from "../App";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
-import { 
-  TrendingUp, TrendingDown, Flame, Star, Gem, Trophy, 
-  Sparkles, Zap, RefreshCw, Activity, ChevronDown, ChevronUp, 
+import {
+  TrendingUp, TrendingDown, Flame, Star, Gem, Trophy,
+  Sparkles, Zap, Activity, ChevronDown,
   Eye, Maximize2, Minimize2
 } from "lucide-react";
 import { cn } from "../lib/utils";
@@ -37,7 +37,6 @@ const colorMap = {
 export default function MarketOverview({ onRefresh }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
   const [expandedPanels, setExpandedPanels] = useState({});
   const [allExpanded, setAllExpanded] = useState(false);
 
@@ -179,6 +178,7 @@ export default function MarketOverview({ onRefresh }) {
 
   // Simple collapsible category section
   const CategorySection = ({ panelKey, category, categoryData }) => {
+    if (!categoryData) return null;
     const Icon = iconMap[categoryData.icon] || Activity;
     const color = colorMap[categoryData.icon] || "text-gray-500";
     const isExpanded = expandedPanels[panelKey];
@@ -214,6 +214,11 @@ export default function MarketOverview({ onRefresh }) {
                 {categoryData.items.map((item, idx) => (
                   <StockItem key={item.video_id || idx} item={item} category={category} />
                 ))}
+              </div>
+            ) : (category === "top_gainers" || category === "top_losers" || category === "best_roi") ? (
+              <div className="flex flex-col items-center justify-center py-6 gap-1">
+                <p className="text-sm font-medium text-muted-foreground">Coming Soon</p>
+                <p className="text-xs text-muted-foreground/60">Data will appear here</p>
               </div>
             ) : (
               <p className="text-sm text-muted-foreground text-center py-4">No stocks in this category</p>
@@ -282,17 +287,17 @@ export default function MarketOverview({ onRefresh }) {
             <CategorySection 
               panelKey="top_gainers" 
               category="top_gainers" 
-              categoryData={data.price_movement.top_gainers} 
+              categoryData={data.price_movement?.top_gainers}
             />
             <CategorySection 
               panelKey="top_losers" 
               category="top_losers" 
-              categoryData={data.price_movement.top_losers} 
+              categoryData={data.price_movement?.top_losers}
             />
             <CategorySection 
               panelKey="hot_stocks" 
               category="hot_stocks" 
-              categoryData={data.price_movement.hot_stocks} 
+              categoryData={data.price_movement?.hot_stocks}
             />
           </div>
         </div>
@@ -310,22 +315,22 @@ export default function MarketOverview({ onRefresh }) {
             <CategorySection
               panelKey="undervalued"
               category="undervalued"
-              categoryData={data.opportunities.undervalued}
+              categoryData={data.opportunities?.undervalued}
             />
             <CategorySection 
               panelKey="best_roi" 
               category="best_roi" 
-              categoryData={data.opportunities.best_roi} 
+              categoryData={data.opportunities?.best_roi}
             />
             <CategorySection 
               panelKey="new_listings" 
               category="new_listings" 
-              categoryData={data.opportunities.new_listings} 
+              categoryData={data.opportunities?.new_listings}
             />
             <CategorySection 
               panelKey="most_traded" 
               category="most_traded" 
-              categoryData={data.opportunities.most_traded} 
+              categoryData={data.opportunities?.most_traded}
             />
           </div>
         </div>

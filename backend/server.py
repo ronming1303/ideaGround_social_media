@@ -1762,11 +1762,6 @@ async def get_market_overview():
         price = video.get("share_price", 10)
         video["value_ratio"] = views / price if price > 0 else 0
         
-        # Calculate ROI since initial price ($10)
-        initial_price = 10.0
-        current_price = video.get("share_price", 10)
-        video["roi_percent"] = ((current_price - initial_price) / initial_price) * 100
-    
     # Helper to format video for response
     def format_video(v, extra_fields=None):
         result = {
@@ -1803,10 +1798,8 @@ async def get_market_overview():
     by_value = sorted(videos, key=lambda v: v.get("value_ratio", 0), reverse=True)
     undervalued = [format_video(v, {"value_ratio": v["value_ratio"]}) for v in by_value[:3]]
     
-    # Best ROI - highest price increase since launch
-    by_roi = sorted(videos, key=lambda v: v.get("roi_percent", 0), reverse=True)
-    best_roi = [format_video(v, {"roi_percent": v["roi_percent"]}) for v in by_roi if v.get("roi_percent", 0) > 0][:3]
-    
+    best_roi = []
+
     # New Listings - most recently created
     by_date = sorted(videos, key=lambda v: v.get("created_at", ""), reverse=True)
     new_listings = [format_video(v, {"created_at": v.get("created_at")}) for v in by_date[:3]]
