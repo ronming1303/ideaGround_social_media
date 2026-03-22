@@ -1069,6 +1069,9 @@ async def subscribe_creator(creator_id: str, user: User = Depends(get_current_us
 SHARE_PRICE_MIN = 1
 SHARE_PRICE_MAX = 1
 
+# Maximum fraction of a video's total shares any single user may own (e.g. 0.1 = 10%)
+MAX_OWNERSHIP_FRACTION = 0.1
+
 
 def calculate_price_impact(shares_traded: float, available_shares: float, total_shares: float, is_buy: bool) -> float:
     """Simplified: no price impact from trades."""
@@ -1091,6 +1094,20 @@ async def buy_shares(req: BuyShareRequest, user: User = Depends(get_current_user
     if req.shares > video["available_shares"]:
         raise HTTPException(status_code=400, detail="Not enough shares available")
 
+    # Enforce per-user ownership cap
+    total_shares = video.get("total_shares", 1000)
+    max_allowed = total_shares * MAX_OWNERSHIP_FRACTION
+    existing_ownership = await db.share_ownerships.find_one(
+        {"user_id": user.user_id, "video_id": req.video_id}
+    )
+    already_owned = existing_ownership["shares_owned"] if existing_ownership else 0
+    if already_owned + req.shares > max_allowed:
+        remaining = max(max_allowed - already_owned, 0)
+        raise HTTPException(
+            status_code=400,
+            detail=f"Exceeds ownership limit: you may only own up to {int(MAX_OWNERSHIP_FRACTION * 100)}% of a video's shares ({int(max_allowed)} shares). You already own {int(already_owned)}, can buy {int(remaining)} more."
+        )
+
     share_price = video.get("share_price", SHARE_PRICE_MIN)
     total_cost = req.shares * share_price
 
@@ -1111,13 +1128,8 @@ async def buy_shares(req: BuyShareRequest, user: User = Depends(get_current_user
         {"$inc": {"available_shares": -req.shares}}
     )
 
-    # Check existing ownership
-    existing = await db.share_ownerships.find_one(
-        {"user_id": user.user_id, "video_id": req.video_id}
-    )
-
-    if existing:
-        new_shares = existing["shares_owned"] + req.shares
+    if existing_ownership:
+        new_shares = existing_ownership["shares_owned"] + req.shares
         await db.share_ownerships.update_one(
             {"user_id": user.user_id, "video_id": req.video_id},
             {"$set": {"shares_owned": new_shares, "purchase_price": share_price}}
