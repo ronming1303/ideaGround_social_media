@@ -9,7 +9,7 @@ import { Slider } from "../components/ui/slider";
 import { Badge } from "../components/ui/badge";
 import {
   Heart, MessageSquare, ShoppingCart, X,
-  PieChart, Volume2, VolumeX
+  PieChart, Volume2, VolumeX, Play, Pause
 } from "lucide-react";
 import { XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 import VideoComments from "../components/VideoComments";
@@ -174,6 +174,8 @@ export default function Shorts() {
   const [buying, setBuying] = useState(false);
   const [muted, setMuted] = useState(true);
   const [paused, setPaused] = useState(false);
+  const [showIcon, setShowIcon] = useState(null); // videoId of the video showing icon
+  const iconTimerRef = useRef(null);
 
   const itemRefs = useRef({});
   const videoRefs = useRef({});
@@ -329,6 +331,10 @@ export default function Shorts() {
                         if (!el) return;
                         if (el.paused) { el.play().catch(() => {}); setPaused(false); }
                         else { el.pause(); setPaused(true); }
+                        // Show TikTok-style icon briefly
+                        setShowIcon(short.video_id);
+                        clearTimeout(iconTimerRef.current);
+                        iconTimerRef.current = setTimeout(() => setShowIcon(null), 600);
                       }}
                       ref={el => {
                         if (el) {
@@ -360,6 +366,15 @@ export default function Shorts() {
 
                   {/* Gradient */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-black/20 pointer-events-none" />
+
+                  {/* TikTok-style pause/play icon */}
+                  {showIcon === short.video_id && (
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                      <div className="w-16 h-16 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center animate-ping-once">
+                        {paused ? <Pause className="w-8 h-8 text-white" /> : <Play className="w-8 h-8 text-white" />}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Right-side action buttons */}
                   <div className="absolute right-4 bottom-36 flex flex-col gap-5 items-center z-20">
