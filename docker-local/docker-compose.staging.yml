@@ -1,0 +1,81 @@
+services:
+  mongodb-staging:
+    image: mongo:7.0
+    container_name: ideaground-mongodb-staging
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_DATABASE: ideaground
+      MONGO_SEED_DATA: ${MONGO_SEED_DATA:-true}
+    volumes:
+      - mongodb_staging_data:/data/db
+      - ./seed-data:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "127.0.0.1:27018:27017"
+    networks:
+      - ideaground-staging-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  backend-staging:
+    build:
+      context: ..
+      dockerfile: docker-local/Dockerfile.backend
+    container_name: ideaground-backend-staging
+    restart: unless-stopped
+    env_file:
+      - .env.staging
+    environment:
+      - MONGO_URL=mongodb://mongodb-staging:27017
+      - DB_NAME=ideaground
+      - LOCAL_AUTH_ENABLED=false
+      - GOOGLE_REDIRECT_URI=https://staging.ideaground.net/api/auth/google/callback
+      - FRONTEND_URL=https://staging.ideaground.net
+      - CORS_ORIGINS=https://staging.ideaground.net
+    volumes:
+      - video_staging_data:/data/videos
+    ports:
+      - "127.0.0.1:8002:8001"
+    depends_on:
+      mongodb-staging:
+        condition: service_healthy
+    networks:
+      - ideaground-staging-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/api/auth/mode"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  frontend-staging:
+    build:
+      context: ..
+      dockerfile: docker-local/Dockerfile.frontend
+      args:
+        REACT_APP_BACKEND_URL: ""
+        REACT_APP_LOCAL_AUTH: "false"
+        REACT_APP_STRIPE_PUBLISHABLE_KEY: "pk_test_51T9BgeIq7nviYilsVk7AReTms9mqS1tly1pwb8xJcEHYeTtunUEDyFsSPo0cJabMaFnBDIeQR10MFQZfWegUuJJi00X4ADzHs4"
+    container_name: ideaground-frontend-staging
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    depends_on:
+      backend-staging:
+        condition: service_healthy
+    networks:
+      - ideaground-staging-network
+
+volumes:
+  mongodb_staging_data:
+    name: ideaground_mongodb_staging_data
+  video_staging_data:
+    name: ideaground_video_staging_data
+
+networks:
+  ideaground-staging-network:
+    name: ideaground-staging-network
+    driver: bridge
