@@ -39,6 +39,8 @@ export default function CreatorStudio() {
   const [videoCategory, setVideoCategory] = useState("");
   const [videoType, setVideoType] = useState("full");
   const [videoDuration, setVideoDuration] = useState(null);
+  const [r2VideoKey, setR2VideoKey] = useState(null);
+  const [r2ThumbKey, setR2ThumbKey] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [uploadingFile, setUploadingFile] = useState(false);
 
@@ -110,15 +112,11 @@ export default function CreatorStudio() {
         },
       });
       setVideoFilePath(response.data.video_file_path);
-      if (response.data.thumbnail_path) {
-        setVideoThumbnail(response.data.thumbnail_path);
-      }
-      if (response.data.suggested_video_type) {
-        setVideoType(response.data.suggested_video_type);
-      }
-      if (response.data.duration != null) {
-        setVideoDuration(response.data.duration);
-      }
+      if (response.data.r2_video_key) setR2VideoKey(response.data.r2_video_key);
+      if (response.data.r2_thumb_key) setR2ThumbKey(response.data.r2_thumb_key);
+      if (response.data.thumbnail_path) setVideoThumbnail(response.data.thumbnail_path);
+      if (response.data.suggested_video_type) setVideoType(response.data.suggested_video_type);
+      if (response.data.duration != null) setVideoDuration(response.data.duration);
       toast.success("Video uploaded!");
     } catch (error) {
       toast.error(error.response?.data?.detail || "File upload failed");
@@ -144,6 +142,8 @@ export default function CreatorStudio() {
           thumbnail: videoThumbnail || undefined,
           thumbnail_path: videoThumbnail?.startsWith("/data/") ? videoThumbnail : undefined,
           video_file_path: videoFilePath,
+          r2_video_key: r2VideoKey || undefined,
+          r2_thumb_key: r2ThumbKey || undefined,
           video_type: videoType,
           category: videoCategory
         },
@@ -158,6 +158,8 @@ export default function CreatorStudio() {
       setVideoDescription("");
       setVideoThumbnail("");
       setVideoCategory("");
+      setR2VideoKey(null);
+      setR2ThumbKey(null);
       fetchCreatorData();
     } catch (error) {
       toast.error(error.response?.data?.detail || "Failed to publish video");
