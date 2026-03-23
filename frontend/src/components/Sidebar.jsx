@@ -119,6 +119,9 @@ export default function Sidebar({ className }) {
           {process.env.REACT_APP_ENV === 'staging' && (
             <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-yellow-400/20 text-yellow-500 border border-yellow-500/30">DEV</span>
           )}
+          {process.env.REACT_APP_ENV === 'development' && (
+            <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-blue-400/20 text-blue-500 border border-blue-500/30">LOCAL</span>
+          )}
         </Link>
       </div>
 
