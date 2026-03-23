@@ -61,6 +61,8 @@ services:
         REACT_APP_STRIPE_PUBLISHABLE_KEY: "pk_test_51T9BgeIq7nviYilsVk7AReTms9mqS1tly1pwb8xJcEHYeTtunUEDyFsSPo0cJabMaFnBDIeQR10MFQZfWegUuJJi00X4ADzHs4"
     container_name: ideaground-frontend-staging
     restart: unless-stopped
+    volumes:
+      - ./nginx.staging.conf:/etc/nginx/conf.d/default.conf:ro
     ports:
       - "8081:80"
     depends_on:
