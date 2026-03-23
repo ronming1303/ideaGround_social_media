@@ -210,6 +210,8 @@ class CreateVideoRequest(BaseModel):
     thumbnail_path: Optional[str] = None
     video_url: Optional[str] = None
     video_file_path: Optional[str] = None
+    r2_video_key: Optional[str] = None
+    r2_thumb_key: Optional[str] = None
     duration_minutes: Optional[int] = None
     video_type: str = "full"
     category: str
@@ -2512,6 +2514,46 @@ async def become_creator(req: BecomeCreatorRequest, user: User = Depends(get_cur
 VIDEO_UPLOAD_DIR = Path("/data/videos")
 ALLOWED_VIDEO_TYPES = {"video/mp4", "video/quicktime", "video/webm"}
 
+# R2 / S3-compatible storage
+import boto3
+from botocore.exceptions import ClientError
+
+R2_ACCESS_KEY_ID = os.getenv("R2_ACCESS_KEY_ID")
+R2_SECRET_ACCESS_KEY = os.getenv("R2_SECRET_ACCESS_KEY")
+R2_ENDPOINT_URL = os.getenv("R2_ENDPOINT_URL")
+R2_BUCKET_NAME = os.getenv("R2_BUCKET_NAME", "ideaground-videos")
+
+def get_r2_client():
+    return boto3.client(
+        "s3",
+        endpoint_url=R2_ENDPOINT_URL,
+        aws_access_key_id=R2_ACCESS_KEY_ID,
+        aws_secret_access_key=R2_SECRET_ACCESS_KEY,
+        region_name="auto"
+    )
+
+def r2_enabled() -> bool:
+    return bool(R2_ACCESS_KEY_ID and R2_SECRET_ACCESS_KEY and R2_ENDPOINT_URL)
+
+def upload_to_r2(local_path: Path, key: str, content_type: str = "application/octet-stream"):
+    """Upload a file to R2."""
+    client = get_r2_client()
+    client.upload_file(
+        str(local_path),
+        R2_BUCKET_NAME,
+        key,
+        ExtraArgs={"ContentType": content_type}
+    )
+
+def get_r2_presigned_url(key: str, expires_in: int = 3600) -> str:
+    """Generate a presigned URL for reading an R2 object (default 1 hour)."""
+    client = get_r2_client()
+    return client.generate_presigned_url(
+        "get_object",
+        Params={"Bucket": R2_BUCKET_NAME, "Key": key},
+        ExpiresIn=expires_in
+    )
+
 @api_router.post("/videos/upload-file")
 async def upload_video_file(file: UploadFile = File(...), user: User = Depends(get_current_user)):
     """Upload a video file and return the file path for use in create video"""
@@ -2574,32 +2616,70 @@ async def upload_video_file(file: UploadFile = File(...), user: User = Depends(g
     except Exception:
         pass
 
+    # Upload video to R2 if configured, otherwise keep local path
+    r2_video_key = None
+    r2_thumb_key = None
+    if r2_enabled():
+        try:
+            video_content_type = {"mp4": "video/mp4", "mov": "video/quicktime", "webm": "video/webm"}.get(ext, "video/mp4")
+            r2_video_key = f"videos/{file_id}.{ext}"
+            upload_to_r2(dest, r2_video_key, video_content_type)
+            dest.unlink(missing_ok=True)  # remove local copy after R2 upload
+            if thumb_path and thumb_path.exists():
+                r2_thumb_key = f"thumbnails/{file_id}_thumb.jpg"
+                upload_to_r2(thumb_path, r2_thumb_key, "image/jpeg")
+                thumb_path.unlink(missing_ok=True)
+        except Exception as e:
+            logging.error(f"R2 upload failed: {e}")
+            r2_video_key = None
+            r2_thumb_key = None
+
     return {
-        "video_file_path": str(dest),
+        "video_file_path": r2_video_key if r2_video_key else str(dest),
+        "r2_video_key": r2_video_key,
+        "r2_thumb_key": r2_thumb_key,
         "file_id": file_id,
-        "thumbnail_path": str(thumb_path) if thumb_path and thumb_path.exists() else None,
+        "thumbnail_path": r2_thumb_key if r2_thumb_key else (str(thumb_path) if thumb_path and thumb_path.exists() else None),
         "suggested_video_type": suggested_video_type,
         "duration": detected_duration
     }
 
 @api_router.get("/videos/{video_id}/thumbnail")
 async def get_video_thumbnail(video_id: str):
-    """Serve the auto-generated video thumbnail"""
-    video = await db.videos.find_one({"video_id": video_id}, {"_id": 0, "thumbnail_path": 1})
-    if not video or not video.get("thumbnail_path"):
+    """Serve the video thumbnail — redirect to R2 presigned URL or serve local file"""
+    video = await db.videos.find_one({"video_id": video_id}, {"_id": 0, "thumbnail_path": 1, "r2_thumb_key": 1})
+    if not video:
         raise HTTPException(status_code=404, detail="Thumbnail not found")
-    path = Path(video["thumbnail_path"])
+
+    # R2 path
+    r2_key = video.get("r2_thumb_key")
+    if r2_key and r2_enabled():
+        from fastapi.responses import RedirectResponse
+        url = get_r2_presigned_url(r2_key, expires_in=3600)
+        return RedirectResponse(url=url)
+
+    # Local fallback
+    path = Path(video.get("thumbnail_path", ""))
     if not path.exists():
         raise HTTPException(status_code=404, detail="Thumbnail not found on disk")
     return FileResponse(path, media_type="image/jpeg")
 
 @api_router.get("/videos/{video_id}/stream")
 async def stream_video(video_id: str, request: Request):
-    """Stream a locally stored video file with Range request support"""
-    video = await db.videos.find_one({"video_id": video_id}, {"_id": 0, "video_file_path": 1})
-    if not video or not video.get("video_file_path"):
-        raise HTTPException(status_code=404, detail="Video file not found")
-    path = Path(video["video_file_path"])
+    """Stream video — redirect to R2 presigned URL or stream local file"""
+    video = await db.videos.find_one({"video_id": video_id}, {"_id": 0, "video_file_path": 1, "r2_video_key": 1})
+    if not video:
+        raise HTTPException(status_code=404, detail="Video not found")
+
+    # R2 path: redirect to presigned URL, browser/player handles streaming directly
+    r2_key = video.get("r2_video_key")
+    if r2_key and r2_enabled():
+        from fastapi.responses import RedirectResponse
+        url = get_r2_presigned_url(r2_key, expires_in=3600)
+        return RedirectResponse(url=url)
+
+    # Local fallback
+    path = Path(video.get("video_file_path", ""))
     if not path.exists():
         raise HTTPException(status_code=404, detail="Video file not found on disk")
 
@@ -2647,10 +2727,7 @@ async def stream_video(video_id: str, request: Request):
     return StreamingResponse(
         iter_full(),
         media_type=media_type,
-        headers={
-            "Accept-Ranges": "bytes",
-            "Content-Length": str(file_size),
-        },
+        headers={"Accept-Ranges": "bytes", "Content-Length": str(file_size)},
     )
 
 
@@ -2673,9 +2750,11 @@ async def upload_video(req: CreateVideoRequest, user: User = Depends(get_current
         "title": req.title,
         "description": req.description,
         "thumbnail_path": req.thumbnail_path,
-        "thumbnail": f"/api/videos/{video_id}/thumbnail" if req.thumbnail_path else (req.thumbnail or "https://placehold.co/640x360/1a1a1a/ffffff?text=Video"),
+        "r2_thumb_key": req.r2_thumb_key,
+        "thumbnail": f"/api/videos/{video_id}/thumbnail" if (req.thumbnail_path or req.r2_thumb_key) else (req.thumbnail or "https://placehold.co/640x360/1a1a1a/ffffff?text=Video"),
         "video_url": req.video_url,
         "video_file_path": req.video_file_path,
+        "r2_video_key": req.r2_video_key,
         "duration_minutes": req.duration_minutes,
         "video_type": req.video_type,
         "category": req.category,
