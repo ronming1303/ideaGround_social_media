@@ -173,6 +173,7 @@ export default function Shorts() {
   const [sharesToBuy, setSharesToBuy] = useState(1);
   const [buying, setBuying] = useState(false);
   const [muted, setMuted] = useState(true);
+  const [paused, setPaused] = useState(false);
 
   const itemRefs = useRef({});
   const videoRefs = useRef({});
@@ -321,14 +322,20 @@ export default function Shorts() {
                   {short.video_file_path ? (
                     <video
                       src={`${API}/videos/${short.video_id}/stream`}
-                      className="absolute inset-0 w-full h-full object-cover"
+                      className="absolute inset-0 w-full h-full object-cover cursor-pointer"
                       loop playsInline autoPlay={isActive} muted poster={short.thumbnail}
+                      onClick={() => {
+                        const el = videoRefs.current[short.video_id];
+                        if (!el) return;
+                        if (el.paused) { el.play().catch(() => {}); setPaused(false); }
+                        else { el.pause(); setPaused(true); }
+                      }}
                       ref={el => {
                         if (el) {
                           videoRefs.current[short.video_id] = el;
                           el.muted = muted;
-                          if (isActive) el.play().catch(() => {});
-                          else { el.pause(); el.currentTime = 0; }
+                          if (isActive && !paused) el.play().catch(() => {});
+                          else if (!isActive) { el.pause(); el.currentTime = 0; }
                         }
                       }}
                     />
