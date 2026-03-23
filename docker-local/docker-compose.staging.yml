@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
     environment:
       MONGO_INITDB_DATABASE: ideaground
-      MONGO_SEED_DATA: ${MONGO_SEED_DATA:-true}
+      MONGO_SEED_DATA: ${MONGO_SEED_DATA:-false}
     volumes:
       - mongodb_staging_data:/data/db
       - ./seed-data:/docker-entrypoint-initdb.d:ro
@@ -59,6 +59,7 @@ services:
         REACT_APP_BACKEND_URL: ""
         REACT_APP_LOCAL_AUTH: "false"
         REACT_APP_STRIPE_PUBLISHABLE_KEY: "pk_test_51T9BgeIq7nviYilsVk7AReTms9mqS1tly1pwb8xJcEHYeTtunUEDyFsSPo0cJabMaFnBDIeQR10MFQZfWegUuJJi00X4ADzHs4"
+        REACT_APP_ENV: "staging"
     container_name: ideaground-frontend-staging
     restart: unless-stopped
     volumes:

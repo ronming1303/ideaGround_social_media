@@ -116,6 +116,9 @@ export default function Sidebar({ className }) {
       <div className="sticky top-0 z-10 p-6 border-b border-border bg-card/95 backdrop-blur-sm">
         <Link to="/dashboard" className="flex items-center gap-3 group">
           <span className="font-heading font-bold text-xl gradient-text">ideaGround</span>
+          {process.env.REACT_APP_ENV === 'staging' && (
+            <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-yellow-400/20 text-yellow-500 border border-yellow-500/30">DEV</span>
+          )}
         </Link>
       </div>
 
