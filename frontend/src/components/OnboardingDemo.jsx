@@ -285,9 +285,9 @@ export default function OnboardingDemo({ open, onOpenChange, onGetStarted }) {
           />
         </div>
         
-        <div className="grid md:grid-cols-2 md:min-h-[520px]">
+        <div className="grid md:grid-cols-2 md:h-[600px]">
           {/* Left side - Visual */}
-          <div className="bg-gradient-to-br from-orange-500 via-orange-500 to-orange-600 p-6 md:p-8 flex items-center justify-center relative overflow-hidden min-h-[200px] md:min-h-0">
+          <div className="bg-gradient-to-br from-orange-500 via-orange-500 to-orange-600 p-6 md:p-8 flex items-center justify-center relative overflow-hidden h-[320px] md:h-full">
             {/* Background pattern */}
             <div className="absolute inset-0 opacity-10">
               <div className="absolute inset-0" style={{
@@ -302,7 +302,7 @@ export default function OnboardingDemo({ open, onOpenChange, onGetStarted }) {
           </div>
           
           {/* Right side - Content */}
-          <div className="p-6 md:p-8 flex flex-col justify-between bg-white">
+          <div className="p-6 md:p-8 flex flex-col justify-between bg-white md:h-[600px] overflow-y-auto">
             <div>
               {/* Icon & Step */}
               <div className="flex items-center gap-3 mb-6">
