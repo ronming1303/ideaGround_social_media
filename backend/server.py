@@ -2522,6 +2522,7 @@ R2_ACCESS_KEY_ID = os.getenv("R2_ACCESS_KEY_ID")
 R2_SECRET_ACCESS_KEY = os.getenv("R2_SECRET_ACCESS_KEY")
 R2_ENDPOINT_URL = os.getenv("R2_ENDPOINT_URL")
 R2_BUCKET_NAME = os.getenv("R2_BUCKET_NAME", "ideaground-videos")
+R2_KEY_PREFIX = os.getenv("R2_KEY_PREFIX", "").strip("/")  # e.g. "local" for local env
 
 def get_r2_client():
     return boto3.client(
@@ -2622,11 +2623,12 @@ async def upload_video_file(file: UploadFile = File(...), user: User = Depends(g
     if r2_enabled():
         try:
             video_content_type = {"mp4": "video/mp4", "mov": "video/quicktime", "webm": "video/webm"}.get(ext, "video/mp4")
-            r2_video_key = f"videos/{file_id}.{ext}"
+            prefix = f"{R2_KEY_PREFIX}/" if R2_KEY_PREFIX else ""
+            r2_video_key = f"{prefix}videos/{file_id}.{ext}"
             upload_to_r2(dest, r2_video_key, video_content_type)
             dest.unlink(missing_ok=True)  # remove local copy after R2 upload
             if thumb_path and thumb_path.exists():
-                r2_thumb_key = f"thumbnails/{file_id}_thumb.jpg"
+                r2_thumb_key = f"{prefix}thumbnails/{file_id}_thumb.jpg"
                 upload_to_r2(thumb_path, r2_thumb_key, "image/jpeg")
                 thumb_path.unlink(missing_ok=True)
         except Exception as e:

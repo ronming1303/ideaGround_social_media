@@ -1,18 +1,18 @@
 services:
-  mongodb:
+  mongodb-staging:
     image: mongo:7.0
-    container_name: ideaground-mongodb
+    container_name: ideaground-mongodb-staging
     restart: unless-stopped
     environment:
       MONGO_INITDB_DATABASE: ideaground
       MONGO_SEED_DATA: ${MONGO_SEED_DATA:-false}
     volumes:
-      - mongodb_data:/data/db
+      - mongodb_staging_data:/data/db
       - ./seed-data:/docker-entrypoint-initdb.d:ro
     ports:
-      - "127.0.0.1:27017:27017"
+      - "127.0.0.1:27018:27017"
     networks:
-      - ideaground-network
+      - ideaground-staging-network
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
@@ -20,30 +20,30 @@ services:
       retries: 5
       start_period: 10s
 
-  backend:
+  backend-staging:
     build:
       context: ..
       dockerfile: docker-local/Dockerfile.backend
-    container_name: ideaground-backend
+    container_name: ideaground-backend-staging
     restart: unless-stopped
     env_file:
-      - .env.prod
+      - .env.staging
     environment:
-      - MONGO_URL=mongodb://mongodb:27017
+      - MONGO_URL=mongodb://mongodb-staging:27017
       - DB_NAME=ideaground
       - LOCAL_AUTH_ENABLED=false
-      - GOOGLE_REDIRECT_URI=https://ideaground.net/api/auth/google/callback
-      - FRONTEND_URL=https://ideaground.net
-      - CORS_ORIGINS=https://ideaground.net,http://localhost:3000,http://localhost:8080
+      - GOOGLE_REDIRECT_URI=https://staging.ideaground.net/api/auth/google/callback
+      - FRONTEND_URL=https://staging.ideaground.net
+      - CORS_ORIGINS=https://staging.ideaground.net
     volumes:
-      - video_data:/data/videos
+      - video_staging_data:/data/videos
     ports:
-      - "127.0.0.1:8001:8001"
+      - "127.0.0.1:8002:8001"
     depends_on:
-      mongodb:
+      mongodb-staging:
         condition: service_healthy
     networks:
-      - ideaground-network
+      - ideaground-staging-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8001/api/auth/mode"]
       interval: 15s
@@ -51,7 +51,7 @@ services:
       retries: 5
       start_period: 30s
 
-  frontend:
+  frontend-staging:
     build:
       context: ..
       dockerfile: docker-local/Dockerfile.frontend
@@ -59,23 +59,26 @@ services:
         REACT_APP_BACKEND_URL: ""
         REACT_APP_LOCAL_AUTH: "false"
         REACT_APP_STRIPE_PUBLISHABLE_KEY: "pk_test_51T9BgeIq7nviYilsVk7AReTms9mqS1tly1pwb8xJcEHYeTtunUEDyFsSPo0cJabMaFnBDIeQR10MFQZfWegUuJJi00X4ADzHs4"
-    container_name: ideaground-frontend
+        REACT_APP_ENV: "staging"
+    container_name: ideaground-frontend-staging
     restart: unless-stopped
+    volumes:
+      - ./nginx.staging.conf:/etc/nginx/conf.d/default.conf:ro
     ports:
-      - "8080:80"
+      - "8081:80"
     depends_on:
-      backend:
+      backend-staging:
         condition: service_healthy
     networks:
-      - ideaground-network
+      - ideaground-staging-network
 
 volumes:
-  mongodb_data:
-    name: ideaground_mongodb_data
-  video_data:
-    name: ideaground_video_data
+  mongodb_staging_data:
+    name: ideaground_mongodb_staging_data
+  video_staging_data:
+    name: ideaground_video_staging_data
 
 networks:
-  ideaground-network:
-    name: ideaground-network
+  ideaground-staging-network:
+    name: ideaground-staging-network
     driver: bridge
