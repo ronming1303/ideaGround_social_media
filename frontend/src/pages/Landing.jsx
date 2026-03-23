@@ -47,6 +47,9 @@ export default function Landing() {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-2">
               <span className="font-heading font-bold text-xl gradient-text">ideaGround</span>
+              {process.env.REACT_APP_ENV === 'staging' && (
+                <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-yellow-400/20 text-yellow-500 border border-yellow-500/30">DEV</span>
+              )}
             </div>
             <div className="flex items-center gap-4">
               <Link 
