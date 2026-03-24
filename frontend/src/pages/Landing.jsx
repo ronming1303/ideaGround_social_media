@@ -1,14 +1,55 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "../App";
 import { Button } from "../components/ui/button";
 import { Play, TrendingUp, Users, DollarSign, ArrowRight, Sparkles, BarChart3 } from "lucide-react";
 import OnboardingDemo from "../components/OnboardingDemo";
 
+const solutions = [
+  {
+    num: "01",
+    slug: "inequality",
+    title: "Inequality",
+    color: "bg-[#dde0f7]",
+    summary: "On most social media platforms, various forms of inequality persist, affecting different groups within the community.",
+  },
+  {
+    num: "02",
+    slug: "intellectual-property",
+    title: "Intellectual Property",
+    color: "bg-[#f0f0f0]",
+    summary: "In this digital age, user’s words, ideas, and creations are their intellectual properties. However, these valuable assets are increasingly under threat.",
+  },
+  {
+    num: "03",
+    slug: "censorship",
+    title: "Censorship",
+    color: "bg-[#fde8d8]",
+    summary: "Social media faces significant censorship and state control, especially in authoritarian regimes.",
+  },
+  {
+    num: "04",
+    slug: "privacy",
+    title: "Privacy",
+    color: "bg-[#d8f5e8]",
+    summary: "One of the most significant issues with social media is the erosion of user privacy. It raises serious concerns about privacy and surveillance.",
+  },
+];
+
 export default function Landing() {
   const { login, user } = useAuth();
   const [isHovering, setIsHovering] = useState(false);
   const [showDemo, setShowDemo] = useState(false);
+  const [searchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "home");
+  const [contactForm, setContactForm] = useState({ firstName: "", lastName: "", email: "", phone: "", message: "" });
+  const [contactSent, setContactSent] = useState(false);
+
+  const handleContact = (e) => {
+    e.preventDefault();
+    window.location.href = `mailto:info@ideaground.net?subject=Contact from ${contactForm.firstName} ${contactForm.lastName}&body=${encodeURIComponent(contactForm.message)}%0A%0APhone: ${contactForm.phone}%0AEmail: ${contactForm.email}`;
+    setContactSent(true);
+  };
 
   const features = [
     {
@@ -45,14 +86,31 @@ export default function Landing() {
       <nav className="glass fixed top-0 left-0 right-0 z-50 border-b border-black/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-2">
-              <span className="font-heading font-bold text-xl gradient-text">ideaGround</span>
-              {process.env.REACT_APP_ENV === 'staging' && (
-                <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-yellow-400/20 text-yellow-500 border border-yellow-500/30">DEV</span>
-              )}
-              {process.env.REACT_APP_ENV === 'development' && (
-                <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-blue-400/20 text-blue-500 border border-blue-500/30">LOCAL</span>
-              )}
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-2">
+                <span className="font-heading font-bold text-xl gradient-text">ideaGround</span>
+                {process.env.REACT_APP_ENV === 'staging' && (
+                  <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-yellow-400/20 text-yellow-500 border border-yellow-500/30">DEV</span>
+                )}
+                {process.env.REACT_APP_ENV === 'development' && (
+                  <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-blue-400/20 text-blue-500 border border-blue-500/30">LOCAL</span>
+                )}
+              </div>
+              <div className="hidden sm:flex items-center gap-1">
+                {["home", "about", "solutions", "resources", "contact"].map(tab => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`px-4 py-1.5 rounded-full text-sm font-medium capitalize transition-all ${
+                      activeTab === tab
+                        ? "bg-primary text-white shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
             </div>
             <div className="flex items-center gap-4">
               {user && (
@@ -75,6 +133,248 @@ export default function Landing() {
           </div>
         </div>
       </nav>
+
+      {/* Solutions Tab */}
+      {activeTab === "solutions" && (
+        <section className="pt-32 pb-20 px-4">
+          <div className="max-w-4xl mx-auto">
+            <h1 className="font-heading text-4xl md:text-5xl font-bold tracking-tight text-center mb-10">
+              Read our solutions for every sector
+            </h1>
+            <div className="text-base text-foreground space-y-4 mb-12 leading-relaxed">
+              <p>
+                Social media makes significant changes to our life, but it{" "}
+                <span className="text-primary font-medium">brings problems</span>{" "}
+                that have become increasingly evident in recent years.
+              </p>
+              <p>
+                The solution is designing a novel mechanism to achieve desirable{" "}
+                <span className="text-primary font-medium">social and economic outcomes</span>{" "}
+                given the constraints of users'{" "}
+                <span className="text-primary font-medium">self-interest</span>.
+              </p>
+              <p>
+                The solution is{" "}
+                <span className="text-primary font-medium">ideaGround Social Media Economics</span>
+                . It applies principles from economic game theory, computer science, management, and finance.
+              </p>
+              <p>Read our solutions to these problems.</p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {solutions.map((s) => (
+                <div key={s.num} className={`${s.color} rounded-2xl p-8 flex flex-col gap-4`}>
+                  <span className="text-3xl font-bold text-foreground/40">{s.num}</span>
+                  <h3 className="font-heading text-2xl font-bold">{s.title}</h3>
+                  <p className="text-sm text-foreground/70 leading-relaxed">{s.summary}</p>
+                  <Link
+                    to={`/solutions/${s.slug}`}
+                    className="self-start flex items-center gap-2 bg-white rounded-full px-5 py-2 text-sm font-medium shadow-sm hover:shadow-md transition-all"
+                  >
+                    Our Solution
+                    <span className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center text-xs">→</span>
+                  </Link>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-16 text-center">
+              <Button
+                onClick={login}
+                className="bg-primary text-white hover:bg-primary/90 rounded-full px-8 py-6 text-lg font-medium shadow-lg shadow-orange-500/20"
+              >
+                Get Started Free
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* About Tab */}
+      {activeTab === "about" && (
+        <div className="pt-24 pb-20">
+
+          {/* Hero */}
+          <div className="px-4 py-16 max-w-3xl mx-auto text-center">
+            <p className="text-xs font-bold tracking-widest text-muted-foreground mb-6">ABOUT US</p>
+            <h1 className="font-heading text-4xl md:text-5xl font-bold mb-8 leading-tight">
+              Building social media that's fair,<br className="hidden md:block" /> transparent, and yours.
+            </h1>
+            <div className="space-y-4 text-base text-muted-foreground leading-relaxed max-w-2xl mx-auto text-left">
+              <p>The ideaGround is building a new kind of social media — fair, transparent, and owned by users.</p>
+              <p>We believe value should be earned and shared, not extracted. Powered by social media economics, we reward contribution, protect privacy, and return ownership to the community.</p>
+              <p>The ideaGround is not just a platform — it's a movement to take back the internet.</p>
+              <p className="font-semibold text-foreground">Join us and take back your digital voice.</p>
+            </div>
+          </div>
+
+          {/* Mission & Vision */}
+          <div className="py-16 px-4">
+            <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-12">
+              {[
+                { label: "Mission", text: "Build a fair, transparent and autonomous social media—where value is earned and shared, not exploited." },
+                { label: "Vision",  text: "Revolutionize social media monetization through financial incentives, privacy, and decentralized ownership." },
+              ].map(item => (
+                <div key={item.label} className="text-center">
+                  <h2 className="font-heading text-4xl font-bold mb-4">{item.label}</h2>
+                  <p className="text-base text-muted-foreground leading-relaxed">{item.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* SME Cards */}
+          <div className="px-4 py-16 max-w-4xl mx-auto">
+            <p className="text-xs font-bold tracking-widest text-muted-foreground text-center mb-10">WHAT WE DELIVER</p>
+            <div className="grid md:grid-cols-2 gap-4">
+              {[
+                { num: "01", title: "We Incentivize Everyone",    desc: "Fair and transparent profit-sharing system for social media users.",                                                                                          color: "bg-[#dde0f7]" },
+                { num: "02", title: "We Empower Participants",    desc: "Create a collaborative and self-sustaining ecosystem that puts control back in the hands of the community.",                                                  color: "bg-[#f0f0f0]" },
+                { num: "03", title: "We Introduce Smart Pricing", desc: "Financial Engineering models applied effectively to price digital content. A completely new approach to social media monetization.",                          color: "bg-[#fde8d8]" },
+                { num: "04", title: "We Offer Sandbox Options",   desc: "A highly customizable and personalized social media experience. Users can use ideaGround to build any form of social media.",                               color: "bg-[#d8f5e8]" },
+              ].map(card => (
+                <div key={card.num} className={`${card.color} rounded-2xl p-8 flex flex-col gap-4`}>
+                  <span className="text-3xl font-bold text-foreground/40">{card.num}</span>
+                  <h3 className="font-heading text-2xl font-bold">{card.title}</h3>
+                  <p className="text-sm text-foreground/70 leading-relaxed">{card.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+        </div>
+      )}
+
+      {/* Contact Tab */}
+      {activeTab === "contact" && (
+        <section className="pt-32 pb-20 px-4">
+          <div className="max-w-3xl mx-auto">
+            <p className="text-xs font-bold tracking-widest text-foreground mb-4">READY TO GET STARTED?</p>
+            <h1 className="font-heading text-4xl md:text-5xl font-bold tracking-tight mb-12 leading-tight">
+              Discover a new era of social media.<br />
+              Reach out to start your journey today.
+            </h1>
+
+            {contactSent ? (
+              <div className="text-center py-16">
+                <p className="text-2xl font-bold mb-2">Message sent!</p>
+                <p className="text-muted-foreground">We'll get back to you at {contactForm.email}.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleContact} className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label className="text-sm font-medium mb-1.5 block">First name <span className="text-destructive">*</span></label>
+                    <input
+                      required
+                      value={contactForm.firstName}
+                      onChange={e => setContactForm(f => ({ ...f, firstName: e.target.value }))}
+                      className="w-full rounded-full border border-border px-5 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-1.5 block">Last name <span className="text-destructive">*</span></label>
+                    <input
+                      required
+                      value={contactForm.lastName}
+                      onChange={e => setContactForm(f => ({ ...f, lastName: e.target.value }))}
+                      className="w-full rounded-full border border-border px-5 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label className="text-sm font-medium mb-1.5 block">Email <span className="text-destructive">*</span></label>
+                    <input
+                      required type="email"
+                      value={contactForm.email}
+                      onChange={e => setContactForm(f => ({ ...f, email: e.target.value }))}
+                      className="w-full rounded-full border border-border px-5 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-1.5 block">Phone <span className="text-destructive">*</span></label>
+                    <input
+                      required type="tel"
+                      value={contactForm.phone}
+                      onChange={e => setContactForm(f => ({ ...f, phone: e.target.value }))}
+                      className="w-full rounded-full border border-border px-5 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1.5 block">Message <span className="text-destructive">*</span></label>
+                  <textarea
+                    required rows={5}
+                    placeholder="Write your message here or contact us by info@ideaground.net!"
+                    value={contactForm.message}
+                    onChange={e => setContactForm(f => ({ ...f, message: e.target.value }))}
+                    className="w-full rounded-3xl border border-border px-5 py-4 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="bg-foreground text-background rounded-full px-10 py-4 text-sm font-medium hover:opacity-80 transition-opacity"
+                >
+                  Send
+                </button>
+              </form>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* Resources Tab */}
+      {activeTab === "resources" && (
+        <section className="pt-32 pb-20 px-4">
+          <div className="max-w-3xl mx-auto">
+            <h1 className="font-heading text-4xl md:text-5xl font-bold tracking-tight text-center mb-8">
+              IdeaGround Social Media Economics
+            </h1>
+
+            <p className="text-sm font-bold tracking-widest text-center text-muted-foreground mb-6">
+              ABSTRACT
+            </p>
+
+            <p className="text-base leading-relaxed mb-6">
+              Social media has innovated the world, yet it harbors inherent flaws such as
+              inequality, misinformation, and privacy concerns. We introduce a novel economic
+              incentives model called "ideaGround Social Media Economics (SME)" aimed at
+              addressing the issue of inequality in social media. Our decentralized social media
+              application, built upon the ideaGround-SME framework, serves to alleviate the
+              shortcomings of existing social media platforms, positioning itself as the
+              next-generation platform on Web 3.0.
+            </p>
+
+            <p className="text-primary font-medium mb-10">
+              Keywords: Social Media, Financial Incentives, Blockchain, Web 3.0, Decentralization, Privacy
+            </p>
+
+            <div className="flex flex-col items-center gap-4">
+              <a
+                href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4900702"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-64 text-center bg-foreground text-background rounded-full px-8 py-4 text-sm font-medium hover:opacity-80 transition-opacity"
+              >
+                Read Our White Paper
+              </a>
+              <a
+                href="https://88b92f64-9b73-427f-9836-d3ea3e5bdf52.filesusr.com/ugd/733898_4131197b01064dc5b0e9523185cd9b41.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-64 text-center bg-foreground text-background rounded-full px-8 py-4 text-sm font-medium hover:opacity-80 transition-opacity"
+              >
+                Read Our Pitch Deck
+              </a>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Home Tab */}
+      {activeTab === "home" && <>
 
       {/* Hero */}
       <section className="pt-32 pb-20 px-4">
@@ -227,7 +527,15 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Footer */}
+      {/* Onboarding Demo Modal */}
+      <OnboardingDemo
+        open={showDemo}
+        onOpenChange={setShowDemo}
+        onGetStarted={login}
+      />
+      </>}
+
+      {/* Footer — shared across all tabs */}
       <footer className="py-12 px-4 border-t border-border">
         <div className="max-w-7xl mx-auto text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
@@ -238,13 +546,6 @@ export default function Landing() {
           </p>
         </div>
       </footer>
-
-      {/* Onboarding Demo Modal */}
-      <OnboardingDemo 
-        open={showDemo} 
-        onOpenChange={setShowDemo}
-        onGetStarted={login}
-      />
     </div>
   );
 }
