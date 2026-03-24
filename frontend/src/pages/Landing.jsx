@@ -97,7 +97,7 @@ export default function Landing() {
                 )}
               </div>
               <div className="hidden sm:flex items-center gap-1">
-                {["home", "solutions", "resources", "contact"].map(tab => (
+                {["home", "about", "solutions", "resources", "contact"].map(tab => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
@@ -189,6 +189,61 @@ export default function Landing() {
             </div>
           </div>
         </section>
+      )}
+
+      {/* About Tab */}
+      {activeTab === "about" && (
+        <div className="pt-24 pb-20">
+
+          {/* Hero */}
+          <div className="px-4 py-16 max-w-3xl mx-auto text-center">
+            <p className="text-xs font-bold tracking-widest text-muted-foreground mb-6">ABOUT US</p>
+            <h1 className="font-heading text-4xl md:text-5xl font-bold mb-8 leading-tight">
+              Building social media that's fair,<br className="hidden md:block" /> transparent, and yours.
+            </h1>
+            <div className="space-y-4 text-base text-muted-foreground leading-relaxed max-w-2xl mx-auto text-left">
+              <p>The ideaGround is building a new kind of social media — fair, transparent, and owned by users.</p>
+              <p>We believe value should be earned and shared, not extracted. Powered by social media economics, we reward contribution, protect privacy, and return ownership to the community.</p>
+              <p>The ideaGround is not just a platform — it's a movement to take back the internet.</p>
+              <p className="font-semibold text-foreground">Join us and take back your digital voice.</p>
+            </div>
+          </div>
+
+          {/* Mission & Vision */}
+          <div className="py-16 px-4">
+            <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-12">
+              {[
+                { label: "Mission", text: "Build a fair, transparent and autonomous social media—where value is earned and shared, not exploited." },
+                { label: "Vision",  text: "Revolutionize social media monetization through financial incentives, privacy, and decentralized ownership." },
+              ].map(item => (
+                <div key={item.label} className="text-center">
+                  <h2 className="font-heading text-4xl font-bold mb-4">{item.label}</h2>
+                  <p className="text-base text-muted-foreground leading-relaxed">{item.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* SME Cards */}
+          <div className="px-4 py-16 max-w-4xl mx-auto">
+            <p className="text-xs font-bold tracking-widest text-muted-foreground text-center mb-10">WHAT WE DELIVER</p>
+            <div className="grid md:grid-cols-2 gap-4">
+              {[
+                { num: "01", title: "We Incentivize Everyone",    desc: "Fair and transparent profit-sharing system for social media users.",                                                                                          color: "bg-[#dde0f7]" },
+                { num: "02", title: "We Empower Participants",    desc: "Create a collaborative and self-sustaining ecosystem that puts control back in the hands of the community.",                                                  color: "bg-[#f0f0f0]" },
+                { num: "03", title: "We Introduce Smart Pricing", desc: "Financial Engineering models applied effectively to price digital content. A completely new approach to social media monetization.",                          color: "bg-[#fde8d8]" },
+                { num: "04", title: "We Offer Sandbox Options",   desc: "A highly customizable and personalized social media experience. Users can use ideaGround to build any form of social media.",                               color: "bg-[#d8f5e8]" },
+              ].map(card => (
+                <div key={card.num} className={`${card.color} rounded-2xl p-8 flex flex-col gap-4`}>
+                  <span className="text-3xl font-bold text-foreground/40">{card.num}</span>
+                  <h3 className="font-heading text-2xl font-bold">{card.title}</h3>
+                  <p className="text-sm text-foreground/70 leading-relaxed">{card.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+        </div>
       )}
 
       {/* Contact Tab */}
