@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "../App";
 import { Button } from "../components/ui/button";
-import { Play, TrendingUp, Users, DollarSign, ArrowRight, Sparkles, BarChart3 } from "lucide-react";
+import { Play, TrendingUp, Users, DollarSign, ArrowRight, Sparkles, BarChart3, Menu, X } from "lucide-react";
 import OnboardingDemo from "../components/OnboardingDemo";
 
 const solutions = [
@@ -42,6 +42,7 @@ export default function Landing() {
   const [showDemo, setShowDemo] = useState(false);
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "home");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [contactForm, setContactForm] = useState({ firstName: "", lastName: "", email: "", phone: "", message: "" });
   const [contactSent, setContactSent] = useState(false);
 
@@ -113,6 +114,14 @@ export default function Landing() {
               </div>
             </div>
             <div className="flex items-center gap-4">
+              {/* Hamburger button - mobile only */}
+              <button
+                className="sm:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-black/5 transition-colors"
+                onClick={() => setMobileMenuOpen(o => !o)}
+                aria-label="Toggle menu"
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
               {user && (
                 <Link
                   to="/investors"
@@ -132,6 +141,24 @@ export default function Landing() {
             </div>
           </div>
         </div>
+        {/* Mobile dropdown menu */}
+        {mobileMenuOpen && (
+          <div className="sm:hidden border-t border-black/5 bg-white/95 backdrop-blur-md px-4 py-3 flex flex-col gap-1">
+            {["home", "about", "solutions", "resources", "contact"].map(tab => (
+              <button
+                key={tab}
+                onClick={() => { setActiveTab(tab); setMobileMenuOpen(false); }}
+                className={`w-full text-left px-4 py-2.5 rounded-xl text-sm font-medium capitalize transition-all ${
+                  activeTab === tab
+                    ? "bg-primary text-white shadow-sm"
+                    : "text-muted-foreground hover:text-foreground hover:bg-black/5"
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+        )}
       </nav>
 
       {/* Solutions Tab */}
