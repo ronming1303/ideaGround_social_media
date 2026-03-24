@@ -18,6 +18,7 @@ import Watchlist from "./pages/Watchlist";
 import Admin from "./pages/Admin";
 import WhyIdeaGround from "./pages/WhyIdeaGround";
 import InvestorDashboard from "./pages/InvestorDashboard";
+import SolutionDetail from "./pages/SolutionDetail";
 
 // Components
 import Sidebar from "./components/Sidebar";
@@ -153,6 +154,7 @@ function AppRouter() {
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
+      <Route path="/solutions/:slug" element={<SolutionDetail />} />
       <Route path="/dashboard" element={
         <ProtectedRoute>
           <AppLayout><Dashboard /></AppLayout>

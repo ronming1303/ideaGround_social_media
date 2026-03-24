@@ -1,14 +1,47 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "../App";
 import { Button } from "../components/ui/button";
 import { Play, TrendingUp, Users, DollarSign, ArrowRight, Sparkles, BarChart3 } from "lucide-react";
 import OnboardingDemo from "../components/OnboardingDemo";
 
+const solutions = [
+  {
+    num: "01",
+    slug: "inequality",
+    title: "Inequality",
+    color: "bg-[#dde0f7]",
+    summary: "On most social media platforms, various forms of inequality persist, affecting different groups within the community.",
+  },
+  {
+    num: "02",
+    slug: "intellectual-property",
+    title: "Intellectual Property",
+    color: "bg-[#f0f0f0]",
+    summary: "In this digital age, user’s words, ideas, and creations are their intellectual properties. However, these valuable assets are increasingly under threat.",
+  },
+  {
+    num: "03",
+    slug: "censorship",
+    title: "Censorship",
+    color: "bg-[#fde8d8]",
+    summary: "Social media faces significant censorship and state control, especially in authoritarian regimes.",
+  },
+  {
+    num: "04",
+    slug: "privacy",
+    title: "Privacy",
+    color: "bg-[#d8f5e8]",
+    summary: "One of the most significant issues with social media is the erosion of user privacy. It raises serious concerns about privacy and surveillance.",
+  },
+];
+
 export default function Landing() {
   const { login, user } = useAuth();
   const [isHovering, setIsHovering] = useState(false);
   const [showDemo, setShowDemo] = useState(false);
+  const [searchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "home");
 
   const features = [
     {
@@ -45,14 +78,31 @@ export default function Landing() {
       <nav className="glass fixed top-0 left-0 right-0 z-50 border-b border-black/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-2">
-              <span className="font-heading font-bold text-xl gradient-text">ideaGround</span>
-              {process.env.REACT_APP_ENV === 'staging' && (
-                <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-yellow-400/20 text-yellow-500 border border-yellow-500/30">DEV</span>
-              )}
-              {process.env.REACT_APP_ENV === 'development' && (
-                <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-blue-400/20 text-blue-500 border border-blue-500/30">LOCAL</span>
-              )}
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-2">
+                <span className="font-heading font-bold text-xl gradient-text">ideaGround</span>
+                {process.env.REACT_APP_ENV === 'staging' && (
+                  <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-yellow-400/20 text-yellow-500 border border-yellow-500/30">DEV</span>
+                )}
+                {process.env.REACT_APP_ENV === 'development' && (
+                  <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-blue-400/20 text-blue-500 border border-blue-500/30">LOCAL</span>
+                )}
+              </div>
+              <div className="hidden sm:flex items-center gap-1">
+                {["home", "solutions"].map(tab => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`px-4 py-1.5 rounded-full text-sm font-medium capitalize transition-all ${
+                      activeTab === tab
+                        ? "bg-primary text-white shadow-sm"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {tab}
+                  </button>
+                ))}
+              </div>
             </div>
             <div className="flex items-center gap-4">
               {user && (
@@ -75,6 +125,66 @@ export default function Landing() {
           </div>
         </div>
       </nav>
+
+      {/* Solutions Tab */}
+      {activeTab === "solutions" && (
+        <section className="pt-32 pb-20 px-4">
+          <div className="max-w-4xl mx-auto">
+            <h1 className="font-heading text-4xl md:text-5xl font-bold tracking-tight text-center mb-10">
+              Read our solutions for every sector
+            </h1>
+            <div className="text-base text-foreground space-y-4 mb-12 leading-relaxed">
+              <p>
+                Social media makes significant changes to our life, but it{" "}
+                <span className="text-primary font-medium">brings problems</span>{" "}
+                that have become increasingly evident in recent years.
+              </p>
+              <p>
+                The solution is designing a novel mechanism to achieve desirable{" "}
+                <span className="text-primary font-medium">social and economic outcomes</span>{" "}
+                given the constraints of users'{" "}
+                <span className="text-primary font-medium">self-interest</span>.
+              </p>
+              <p>
+                The solution is{" "}
+                <span className="text-primary font-medium">ideaGround Social Media Economics</span>
+                . It applies principles from economic game theory, computer science, management, and finance.
+              </p>
+              <p>Read our solutions to these problems.</p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-6">
+              {solutions.map((s) => (
+                <div key={s.num} className={`${s.color} rounded-2xl p-8 flex flex-col gap-4`}>
+                  <span className="text-3xl font-bold text-foreground/40">{s.num}</span>
+                  <h3 className="font-heading text-2xl font-bold">{s.title}</h3>
+                  <p className="text-sm text-foreground/70 leading-relaxed">{s.summary}</p>
+                  <Link
+                    to={`/solutions/${s.slug}`}
+                    className="self-start flex items-center gap-2 bg-white rounded-full px-5 py-2 text-sm font-medium shadow-sm hover:shadow-md transition-all"
+                  >
+                    Our Solution
+                    <span className="w-6 h-6 rounded-full bg-foreground text-background flex items-center justify-center text-xs">→</span>
+                  </Link>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-16 text-center">
+              <Button
+                onClick={login}
+                className="bg-primary text-white hover:bg-primary/90 rounded-full px-8 py-6 text-lg font-medium shadow-lg shadow-orange-500/20"
+              >
+                Get Started Free
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Home Tab */}
+      {activeTab === "home" && <>
 
       {/* Hero */}
       <section className="pt-32 pb-20 px-4">
@@ -240,11 +350,12 @@ export default function Landing() {
       </footer>
 
       {/* Onboarding Demo Modal */}
-      <OnboardingDemo 
-        open={showDemo} 
+      <OnboardingDemo
+        open={showDemo}
         onOpenChange={setShowDemo}
         onGetStarted={login}
       />
+      </>}
     </div>
   );
 }
