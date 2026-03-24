@@ -42,6 +42,14 @@ export default function Landing() {
   const [showDemo, setShowDemo] = useState(false);
   const [searchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "home");
+  const [contactForm, setContactForm] = useState({ firstName: "", lastName: "", email: "", phone: "", message: "" });
+  const [contactSent, setContactSent] = useState(false);
+
+  const handleContact = (e) => {
+    e.preventDefault();
+    window.location.href = `mailto:info@ideaground.net?subject=Contact from ${contactForm.firstName} ${contactForm.lastName}&body=${encodeURIComponent(contactForm.message)}%0A%0APhone: ${contactForm.phone}%0AEmail: ${contactForm.email}`;
+    setContactSent(true);
+  };
 
   const features = [
     {
@@ -89,7 +97,7 @@ export default function Landing() {
                 )}
               </div>
               <div className="hidden sm:flex items-center gap-1">
-                {["home", "solutions"].map(tab => (
+                {["home", "solutions", "resources", "contact"].map(tab => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
@@ -178,6 +186,133 @@ export default function Landing() {
                 Get Started Free
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Contact Tab */}
+      {activeTab === "contact" && (
+        <section className="pt-32 pb-20 px-4">
+          <div className="max-w-3xl mx-auto">
+            <p className="text-xs font-bold tracking-widest text-foreground mb-4">READY TO GET STARTED?</p>
+            <h1 className="font-heading text-4xl md:text-5xl font-bold tracking-tight mb-12 leading-tight">
+              Discover a new era of social media.<br />
+              Reach out to start your journey today.
+            </h1>
+
+            {contactSent ? (
+              <div className="text-center py-16">
+                <p className="text-2xl font-bold mb-2">Message sent!</p>
+                <p className="text-muted-foreground">We'll get back to you at {contactForm.email}.</p>
+              </div>
+            ) : (
+              <form onSubmit={handleContact} className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label className="text-sm font-medium mb-1.5 block">First name <span className="text-destructive">*</span></label>
+                    <input
+                      required
+                      value={contactForm.firstName}
+                      onChange={e => setContactForm(f => ({ ...f, firstName: e.target.value }))}
+                      className="w-full rounded-full border border-border px-5 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-1.5 block">Last name <span className="text-destructive">*</span></label>
+                    <input
+                      required
+                      value={contactForm.lastName}
+                      onChange={e => setContactForm(f => ({ ...f, lastName: e.target.value }))}
+                      className="w-full rounded-full border border-border px-5 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div>
+                    <label className="text-sm font-medium mb-1.5 block">Email <span className="text-destructive">*</span></label>
+                    <input
+                      required type="email"
+                      value={contactForm.email}
+                      onChange={e => setContactForm(f => ({ ...f, email: e.target.value }))}
+                      className="w-full rounded-full border border-border px-5 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium mb-1.5 block">Phone <span className="text-destructive">*</span></label>
+                    <input
+                      required type="tel"
+                      value={contactForm.phone}
+                      onChange={e => setContactForm(f => ({ ...f, phone: e.target.value }))}
+                      className="w-full rounded-full border border-border px-5 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1.5 block">Message <span className="text-destructive">*</span></label>
+                  <textarea
+                    required rows={5}
+                    placeholder="Write your message here or contact us by info@ideaground.net!"
+                    value={contactForm.message}
+                    onChange={e => setContactForm(f => ({ ...f, message: e.target.value }))}
+                    className="w-full rounded-3xl border border-border px-5 py-4 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="bg-foreground text-background rounded-full px-10 py-4 text-sm font-medium hover:opacity-80 transition-opacity"
+                >
+                  Send
+                </button>
+              </form>
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* Resources Tab */}
+      {activeTab === "resources" && (
+        <section className="pt-32 pb-20 px-4">
+          <div className="max-w-3xl mx-auto">
+            <h1 className="font-heading text-4xl md:text-5xl font-bold tracking-tight text-center mb-8">
+              IdeaGround Social Media Economics
+            </h1>
+
+            <p className="text-sm font-bold tracking-widest text-center text-muted-foreground mb-6">
+              ABSTRACT
+            </p>
+
+            <p className="text-base leading-relaxed mb-6">
+              Social media has innovated the world, yet it harbors inherent flaws such as
+              inequality, misinformation, and privacy concerns. We introduce a novel economic
+              incentives model called "ideaGround Social Media Economics (SME)" aimed at
+              addressing the issue of inequality in social media. Our decentralized social media
+              application, built upon the ideaGround-SME framework, serves to alleviate the
+              shortcomings of existing social media platforms, positioning itself as the
+              next-generation platform on Web 3.0.
+            </p>
+
+            <p className="text-primary font-medium mb-10">
+              Keywords: Social Media, Financial Incentives, Blockchain, Web 3.0, Decentralization, Privacy
+            </p>
+
+            <div className="flex flex-col items-center gap-4">
+              <a
+                href="https://papers.ssrn.com/sol3/papers.cfm?abstract_id=4900702"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-64 text-center bg-foreground text-background rounded-full px-8 py-4 text-sm font-medium hover:opacity-80 transition-opacity"
+              >
+                Read Our White Paper
+              </a>
+              <a
+                href="https://88b92f64-9b73-427f-9836-d3ea3e5bdf52.filesusr.com/ugd/733898_4131197b01064dc5b0e9523185cd9b41.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-64 text-center bg-foreground text-background rounded-full px-8 py-4 text-sm font-medium hover:opacity-80 transition-opacity"
+              >
+                Read Our Pitch Deck
+              </a>
             </div>
           </div>
         </section>
@@ -337,7 +472,15 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* Footer */}
+      {/* Onboarding Demo Modal */}
+      <OnboardingDemo
+        open={showDemo}
+        onOpenChange={setShowDemo}
+        onGetStarted={login}
+      />
+      </>}
+
+      {/* Footer — shared across all tabs */}
       <footer className="py-12 px-4 border-t border-border">
         <div className="max-w-7xl mx-auto text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
@@ -348,14 +491,6 @@ export default function Landing() {
           </p>
         </div>
       </footer>
-
-      {/* Onboarding Demo Modal */}
-      <OnboardingDemo
-        open={showDemo}
-        onOpenChange={setShowDemo}
-        onGetStarted={login}
-      />
-      </>}
     </div>
   );
 }

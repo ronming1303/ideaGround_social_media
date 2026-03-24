@@ -321,6 +321,17 @@ export default function SolutionDetail() {
           </div>
         </div>
       </main>
+
+      <footer className="py-12 px-4 border-t border-border">
+        <div className="max-w-7xl mx-auto text-center">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <span className="font-heading font-bold text-xl">ideaGround</span>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            © 2026 ideaGround. Democratizing video ownership.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 }
