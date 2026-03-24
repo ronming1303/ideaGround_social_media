@@ -200,11 +200,11 @@ function AppRouter() {
       } />
       <Route path="/shorts/:videoId" element={
         <ProtectedRoute>
-          <AppLayout><Shorts /></AppLayout>
+          <Shorts />
         </ProtectedRoute>
       } />
       <Route path="/admin" element={<Admin />} />
-      <Route path="/investors" element={<InvestorDashboard />} />
+      <Route path="/investors" element={<ProtectedRoute><InvestorDashboard /></ProtectedRoute>} />
       <Route path="/why" element={
         <ProtectedRoute allowedEmails={["kshitiz.dadhich2015@gmail.com", "rumingliu1303@gmail.com"]}>
           <AppLayout><WhyIdeaGround /></AppLayout>

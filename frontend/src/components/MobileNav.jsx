@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { Home, Compass, Briefcase, Wallet, Eye, LogOut, Video } from "lucide-react";
+import { Home, Compass, Briefcase, Wallet, Eye, LogOut, Video, HelpCircle } from "lucide-react";
 import { cn } from "../lib/utils";
 import { useAuth } from "../App";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
@@ -13,13 +13,17 @@ const baseNavItems = [
   { path: "/wallet", label: "Wallet", icon: Wallet },
 ];
 
+const whyAllowedEmails = ["kshitiz.dadhich2015@gmail.com", "rumingliu1303@gmail.com"];
+
 export default function MobileNav({ className }) {
   const location = useLocation();
   const { user, logout, isCreator } = useAuth();
 
-  const navItems = isCreator
-    ? [...baseNavItems, { path: "/studio", label: "Studio", icon: Video }]
-    : baseNavItems;
+  const navItems = [
+    ...baseNavItems,
+    ...(isCreator ? [{ path: "/studio", label: "Studio", icon: Video }] : []),
+    ...(whyAllowedEmails.includes(user?.email) ? [{ path: "/why", label: "Why", icon: HelpCircle }] : []),
+  ];
 
   return (
     <nav className={cn(

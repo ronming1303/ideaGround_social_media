@@ -6,7 +6,7 @@ import { Play, TrendingUp, Users, DollarSign, ArrowRight, Sparkles, BarChart3 } 
 import OnboardingDemo from "../components/OnboardingDemo";
 
 export default function Landing() {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const [isHovering, setIsHovering] = useState(false);
   const [showDemo, setShowDemo] = useState(false);
 
@@ -55,13 +55,15 @@ export default function Landing() {
               )}
             </div>
             <div className="flex items-center gap-4">
-              <Link 
-                to="/investors"
-                className="hidden sm:flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-              >
-                <BarChart3 className="w-4 h-4" />
-                Investor Metrics
-              </Link>
+              {user && (
+                <Link
+                  to="/investors"
+                  className="hidden sm:flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+                >
+                  <BarChart3 className="w-4 h-4" />
+                  Investor Metrics
+                </Link>
+              )}
               <Button 
                 data-testid="login-btn-nav"
                 onClick={login}
