@@ -386,15 +386,6 @@ export default function OnboardingDemo({ open, onOpenChange, onGetStarted }) {
                 )}
               </div>
               
-              {/* Skip */}
-              {currentSlide < slides.length - 1 && (
-                <button
-                  onClick={() => onOpenChange(false)}
-                  className="w-full text-center text-sm text-gray-400 hover:text-orange-500 mt-4 transition-colors"
-                >
-                  Skip tutorial
-                </button>
-              )}
             </div>
           </div>
         </div>
