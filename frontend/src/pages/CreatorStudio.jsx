@@ -23,9 +23,7 @@ export default function CreatorStudio() {
   
   // Become creator form
   const [becomeCreatorOpen, setBecomeCreatorOpen] = useState(false);
-  const [creatorName, setCreatorName] = useState("");
   const [creatorCategory, setCreatorCategory] = useState("");
-  const [creatorImage, setCreatorImage] = useState("");
   const [becomingCreator, setBecomingCreator] = useState(false);
   
   // Upload video form
@@ -66,8 +64,8 @@ export default function CreatorStudio() {
   };
 
   const handleBecomeCreator = async () => {
-    if (!creatorName.trim() || !creatorCategory) {
-      toast.error("Please fill in all required fields");
+    if (!creatorCategory) {
+      toast.error("Please select a category");
       return;
     }
 
@@ -75,14 +73,10 @@ export default function CreatorStudio() {
     try {
       const response = await axios.post(
         `${API}/creators/become`,
-        {
-          name: creatorName,
-          category: creatorCategory,
-          image: creatorImage || user?.picture || ""
-        },
+        { category: creatorCategory },
         { withCredentials: true }
       );
-      toast.success(`Welcome, ${response.data.creator.name}! Your stock symbol is ${response.data.creator.stock_symbol}`);
+      toast.success(`Welcome, ${response.data.creator.name}! Your stock symbol is $${response.data.creator.stock_symbol}`);
       setBecomeCreatorOpen(false);
       setCreatorData({
         is_creator: true,
@@ -209,25 +203,18 @@ export default function CreatorStudio() {
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
-                <DialogTitle className="font-heading">Create Your Profile</DialogTitle>
+                <DialogTitle className="font-heading">Become a Creator</DialogTitle>
               </DialogHeader>
               <div className="space-y-4 py-4">
+                <p className="text-sm text-muted-foreground">
+                  Your name ({user?.name}) and profile picture will be used for your creator profile.
+                  You can update them anytime in your Profile settings.
+                </p>
                 <div>
-                  <Label htmlFor="creator-name">Creator Name *</Label>
-                  <Input
-                    id="creator-name"
-                    data-testid="creator-name-input"
-                    value={creatorName}
-                    onChange={(e) => setCreatorName(e.target.value)}
-                    placeholder="e.g., Alex Gaming"
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="creator-category">Category *</Label>
+                  <Label htmlFor="creator-category">Content Category *</Label>
                   <Select value={creatorCategory} onValueChange={setCreatorCategory}>
                     <SelectTrigger data-testid="creator-category-select" className="mt-1">
-                      <SelectValue placeholder="Select a category" />
+                      <SelectValue placeholder="Select your content category" />
                     </SelectTrigger>
                     <SelectContent>
                       {categories.map((cat) => (
@@ -236,18 +223,7 @@ export default function CreatorStudio() {
                     </SelectContent>
                   </Select>
                 </div>
-                <div>
-                  <Label htmlFor="creator-image">Profile Image URL (optional)</Label>
-                  <Input
-                    id="creator-image"
-                    data-testid="creator-image-input"
-                    value={creatorImage}
-                    onChange={(e) => setCreatorImage(e.target.value)}
-                    placeholder="https://..."
-                    className="mt-1"
-                  />
-                </div>
-                <Button 
+                <Button
                   data-testid="confirm-become-creator-btn"
                   onClick={handleBecomeCreator}
                   disabled={becomingCreator}

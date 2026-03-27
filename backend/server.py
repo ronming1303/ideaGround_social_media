@@ -218,9 +218,7 @@ class CreateVideoRequest(BaseModel):
     share_price: Optional[float] = None
 
 class BecomeCreatorRequest(BaseModel):
-    name: str
     category: str
-    image: str
 
 # ==================== COMMENT REWARDS SYSTEM ====================
 
@@ -376,6 +374,15 @@ async def get_optional_user(request: Request) -> Optional[User]:
         return await get_current_user(request)
     except HTTPException:
         return None
+
+def process_creator_image(creator: dict) -> dict:
+    """Generate fresh presigned URL for creator avatar if stored in R2"""
+    if creator and creator.get("avatar_r2_key") and r2_enabled():
+        try:
+            creator["image"] = get_r2_presigned_url(creator["avatar_r2_key"], expires_in=3600)
+        except Exception:
+            pass
+    return creator
 
 # ==================== AUTH ENDPOINTS ====================
 
@@ -603,6 +610,12 @@ async def update_me(data: UpdateProfileRequest, user: User = Depends(get_current
     if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")
     await db.users.update_one({"user_id": user.user_id}, {"$set": updates})
+    # Sync name to creator profile if user is a creator
+    if "name" in updates:
+        await db.creators.update_one(
+            {"user_id": user.user_id},
+            {"$set": {"name": updates["name"]}}
+        )
     updated = await db.users.find_one({"user_id": user.user_id}, {"_id": 0})
     if updated.get("avatar_r2_key") and r2_enabled():
         try:
@@ -634,6 +647,11 @@ async def upload_avatar(file: UploadFile = File(...), user: User = Depends(get_c
                 {"user_id": user.user_id},
                 {"$set": {"avatar_r2_key": r2_key}}
             )
+            # Sync to creator profile if user is a creator
+            await db.creators.update_one(
+                {"user_id": user.user_id},
+                {"$set": {"image": picture_url, "avatar_r2_key": r2_key}}
+            )
         else:
             AVATAR_DIR = Path("uploads/avatars")
             AVATAR_DIR.mkdir(parents=True, exist_ok=True)
@@ -644,6 +662,11 @@ async def upload_avatar(file: UploadFile = File(...), user: User = Depends(get_c
             await db.users.update_one(
                 {"user_id": user.user_id},
                 {"$set": {"picture": picture_url}}
+            )
+            # Sync to creator profile if user is a creator
+            await db.creators.update_one(
+                {"user_id": user.user_id},
+                {"$set": {"image": picture_url}}
             )
     finally:
         tmp_path.unlink(missing_ok=True)
@@ -863,14 +886,14 @@ async def get_videos(video_type: Optional[str] = None, limit: int = 20):
     # Batch fetch creators to avoid N+1 queries
     creator_ids = list(set(v["creator_id"] for v in videos if "creator_id" in v))
     creators = await db.creators.find({"creator_id": {"$in": creator_ids}}, {"_id": 0}).to_list(len(creator_ids))
-    creator_map = {c["creator_id"]: c for c in creators}
-    
+    creator_map = {c["creator_id"]: process_creator_image(c) for c in creators}
+
     # Enrich with creator data
     for video in videos:
         creator = creator_map.get(video.get("creator_id"))
         if creator:
             video["creator"] = creator
-    
+
     return videos
 
 @api_router.get("/videos/my")
@@ -879,9 +902,9 @@ async def get_my_videos(user: User = Depends(get_current_user)):
     creator = await db.creators.find_one({"user_id": user.user_id}, {"_id": 0})
     if not creator:
         return {"is_creator": False, "videos": []}
-    
+
     videos = await db.videos.find({"creator_id": creator["creator_id"]}, {"_id": 0}).to_list(100)
-    return {"is_creator": True, "creator": creator, "videos": videos}
+    return {"is_creator": True, "creator": process_creator_image(creator), "videos": videos}
 
 @api_router.get("/videos/{video_id}")
 async def get_video(video_id: str, request: Request):
@@ -896,7 +919,7 @@ async def get_video(video_id: str, request: Request):
     
     # Get creator data
     creator = await db.creators.find_one({"creator_id": video["creator_id"]}, {"_id": 0})
-    video["creator"] = creator
+    video["creator"] = process_creator_image(creator)
     
     # Calculate shares sold percentage for early investor display
     shares_sold = video["total_shares"] - video["available_shares"]
@@ -1063,6 +1086,8 @@ async def like_video(video_id: str, user: User = Depends(get_current_user)):
 async def get_creators():
     """Get all creators"""
     creators = await db.creators.find({}, {"_id": 0}).to_list(100)
+    for creator in creators:
+        process_creator_image(creator)
     return creators
 
 @api_router.get("/creators/me")
@@ -1071,7 +1096,9 @@ async def get_my_creator_profile(user: User = Depends(get_current_user)):
     creator = await db.creators.find_one({"user_id": user.user_id}, {"_id": 0})
     if not creator:
         return {"is_creator": False, "creator": None}
-    
+
+    process_creator_image(creator)
+
     # Get creator's videos
     videos = await db.videos.find({"creator_id": creator["creator_id"]}, {"_id": 0}).to_list(50)
     creator["videos"] = videos
@@ -1085,7 +1112,9 @@ async def get_creator(creator_id: str, request: Request):
     creator = await db.creators.find_one({"creator_id": creator_id}, {"_id": 0})
     if not creator:
         raise HTTPException(status_code=404, detail="Creator not found")
-    
+
+    process_creator_image(creator)
+
     videos = await db.videos.find({"creator_id": creator_id}, {"_id": 0}).to_list(50)
     creator["videos"] = videos
     creator["total_views"] = sum(v.get("views", 0) for v in videos)
@@ -1376,7 +1405,7 @@ async def get_portfolio(user: User = Depends(get_current_user)):
 
             portfolio_items.append({
                 "video": video,
-                "creator": creator,
+                "creator": process_creator_image(creator),
                 "shares_owned": ownership["shares_owned"],
                 "purchase_price": vp,
                 "current_price": vp,
@@ -1571,7 +1600,7 @@ async def get_watchlist(user: User = Depends(get_current_user)):
             enriched_items.append({
                 "watchlist_id": item["watchlist_id"],
                 "video": video,
-                "creator": creator,
+                "creator": process_creator_image(creator),
                 "price_when_added": price_when_added,
                 "current_price": current_price,
                 "price_change": price_change,
@@ -1779,11 +1808,11 @@ async def get_recommendations(request: Request):
 async def get_live_prices():
     """Get current prices for all videos with change indicators"""
     videos = await db.videos.find({}, {"_id": 0}).to_list(100)
-    
+
     # Batch fetch creators to avoid N+1 queries
     creator_ids = list(set(v["creator_id"] for v in videos if "creator_id" in v))
     creators = await db.creators.find({"creator_id": {"$in": creator_ids}}, {"_id": 0}).to_list(len(creator_ids))
-    creator_map = {c["creator_id"]: c for c in creators}
+    creator_map = {c["creator_id"]: process_creator_image(c) for c in creators}
     
     prices = []
     for video in videos:
@@ -1809,11 +1838,11 @@ async def get_live_prices():
 async def get_trending_stocks():
     """Get trending video stocks - top gainers, losers, and most active"""
     videos = await db.videos.find({}, {"_id": 0}).to_list(100)
-    
+
     # Batch fetch creators to avoid N+1 queries
     creator_ids = list(set(v["creator_id"] for v in videos if "creator_id" in v))
     creators = await db.creators.find({"creator_id": {"$in": creator_ids}}, {"_id": 0}).to_list(len(creator_ids))
-    creator_map = {c["creator_id"]: c for c in creators}
+    creator_map = {c["creator_id"]: process_creator_image(c) for c in creators}
     
     # Enrich with creator data
     for video in videos:
@@ -2544,38 +2573,55 @@ async def get_market_ticker():
 
 @api_router.post("/creators/become")
 async def become_creator(req: BecomeCreatorRequest, user: User = Depends(get_current_user)):
-    """Allow a user to become a creator"""
+    """Allow a user to become a creator - uses user's existing name and picture"""
     # Check if user is already a creator
     existing = await db.creators.find_one({"user_id": user.user_id}, {"_id": 0})
     if existing:
         return {"success": True, "creator": existing, "message": "Already a creator"}
-    
-    # Generate stock symbol from name
-    name_parts = req.name.upper().split()
-    stock_symbol = f"{name_parts[0][:4]}" if name_parts else "USER"
 
-    # Check for symbol collision
-    existing_symbol = await db.creators.find_one({"stock_symbol": stock_symbol})
-    if existing_symbol:
-        stock_symbol = f"{name_parts[0][:3]}{random.randint(1, 99)}"
-    
+    # Use user's name and picture directly
+    creator_name = user.name
+    creator_image = user.picture or "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400"
+
+    # Generate unique stock symbol from user's name
+    name_parts = creator_name.upper().split()
+    base_symbol = f"{name_parts[0][:4]}" if name_parts else "USER"
+    stock_symbol = base_symbol
+
+    # Keep trying until we find a unique symbol
+    attempts = 0
+    while await db.creators.find_one({"stock_symbol": stock_symbol}):
+        attempts += 1
+        stock_symbol = f"{base_symbol[:3]}{random.randint(1, 999)}"
+        if attempts > 50:
+            # Fallback to UUID-based symbol if too many collisions
+            stock_symbol = f"{base_symbol[:2]}{uuid.uuid4().hex[:4].upper()}"
+            break
+
+    # Get user's avatar_r2_key if exists for syncing
+    user_doc = await db.users.find_one({"user_id": user.user_id}, {"avatar_r2_key": 1})
+
     creator_doc = {
         "creator_id": f"creator_{uuid.uuid4().hex[:12]}",
         "user_id": user.user_id,
-        "name": req.name,
+        "name": creator_name,
         "category": req.category,
-        "image": req.image or user.picture or "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400",
+        "image": creator_image,
         "stock_symbol": stock_symbol,
         "subscriber_count": 0,
         "total_views": 0,
         "created_at": datetime.now(timezone.utc).isoformat()
     }
-    
+
+    # Sync avatar_r2_key if user has one
+    if user_doc and user_doc.get("avatar_r2_key"):
+        creator_doc["avatar_r2_key"] = user_doc["avatar_r2_key"]
+
     await db.creators.insert_one(creator_doc)
-    
+
     # Return without _id
     creator_doc.pop("_id", None)
-    
+
     return {"success": True, "creator": creator_doc}
 
 VIDEO_UPLOAD_DIR = Path("/data/videos")
@@ -2863,7 +2909,9 @@ async def get_creator_analytics_overview(user: User = Depends(get_current_user))
     creator = await db.creators.find_one({"user_id": user.user_id}, {"_id": 0})
     if not creator:
         return {"is_creator": False, "analytics": None}
-    
+
+    process_creator_image(creator)
+
     videos = await db.videos.find({"creator_id": creator["creator_id"]}, {"_id": 0}).to_list(100)
     
     # Calculate totals
@@ -2915,7 +2963,9 @@ async def get_video_analytics(user: User = Depends(get_current_user)):
     creator = await db.creators.find_one({"user_id": user.user_id}, {"_id": 0})
     if not creator:
         return {"is_creator": False, "videos": []}
-    
+
+    process_creator_image(creator)
+
     videos = await db.videos.find({"creator_id": creator["creator_id"]}, {"_id": 0}).to_list(100)
     
     video_analytics = []
