@@ -1,8 +1,6 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
-import { Plyr } from "plyr-react";
-import "plyr-react/plyr.css";
 import { API, useAuth } from "../App";
 import { toast } from "sonner";
 import { Card, CardContent } from "../components/ui/card";
@@ -202,41 +200,14 @@ export default function VideoPlayer() {
       <div className="grid lg:grid-cols-3 gap-8">
         {/* Video player */}
         <div className="lg:col-span-2 order-1">
-          <div className="aspect-video rounded-2xl overflow-hidden bg-black plyr-container">
+          <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black">
             {video.video_file_path ? (
-              <Plyr
-                source={{
-                  type: "video",
-                  poster: video.thumbnail,
-                  sources: [
-                    {
-                      src: `${API}/videos/${videoId}/stream`,
-                      type: "video/mp4",
-                    },
-                  ],
-                }}
-                options={{
-                  controls: [
-                    "play-large",
-                    "play",
-                    "progress",
-                    "current-time",
-                    "duration",
-                    "mute",
-                    "volume",
-                    "settings",
-                    "pip",
-                    "fullscreen",
-                  ],
-                  settings: ["quality", "speed"],
-                  speed: {
-                    selected: 1,
-                    options: [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2],
-                  },
-                  keyboard: { focused: true, global: true },
-                  tooltips: { controls: true, seek: true },
-                  seekTime: 10,
-                }}
+              <video
+                key={videoId}
+                src={`${API}/videos/${videoId}/stream`}
+                poster={video.thumbnail}
+                controls
+                className="w-full h-full object-contain"
               />
             ) : (
               <iframe

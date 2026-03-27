@@ -251,10 +251,14 @@ export default function Shorts() {
     try {
       const r = await axios.post(`${API}/shares/buy`, { video_id: currentVideoId, shares: sharesToBuy }, { withCredentials: true });
       toast.success(`Bought ${sharesToBuy} shares for $${r.data.total_cost.toFixed(2)}`);
-      setBuySheetOpen(false);
+      setSharesToBuy(1); // Reset slider but keep panel open
       if (user) setUser({ ...user, wallet_balance: r.data.new_wallet_balance });
-      setVideoDetails(prev => { const n = { ...prev }; delete n[currentVideoId]; return n; });
-      fetchVideoDetails(currentVideoId);
+      // Refresh data without clearing (to avoid Loading flash)
+      const [vr, vol] = await Promise.all([
+        axios.get(`${API}/videos/${currentVideoId}`, { withCredentials: true }),
+        axios.get(`${API}/videos/${currentVideoId}/volume`, { withCredentials: true }).catch(() => ({ data: { volume_history: [] } })),
+      ]);
+      setVideoDetails(prev => ({ ...prev, [currentVideoId]: { ...vr.data, volumeHistory: vol.data.volume_history || [] } }));
     } catch (e) {
       toast.error(e.response?.data?.detail || "Failed to buy shares");
     } finally { setBuying(false); }
