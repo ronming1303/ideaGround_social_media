@@ -1,5 +1,5 @@
-import { Link, useLocation } from "react-router-dom";
-import { Home, Compass, Briefcase, Wallet, Eye, LogOut, Video, HelpCircle } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Home, Compass, Briefcase, Wallet, Eye, LogOut, Video, HelpCircle, User } from "lucide-react";
 import { cn } from "../lib/utils";
 import { useAuth } from "../App";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
@@ -17,6 +17,7 @@ const whyAllowedEmails = ["kshitiz.dadhich2015@gmail.com", "rumingliu1303@gmail.
 
 export default function MobileNav({ className }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const { user, logout, isCreator } = useAuth();
 
   const navItems = [
@@ -70,6 +71,11 @@ export default function MobileNav({ className }) {
               <p className="text-sm font-medium truncate">{user?.name}</p>
               <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
             </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => navigate("/profile")}>
+              <User className="w-4 h-4 mr-2" />
+              Profile
+            </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={logout} className="text-destructive focus:text-destructive">
               <LogOut className="w-4 h-4 mr-2" />

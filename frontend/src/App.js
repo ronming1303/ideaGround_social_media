@@ -19,6 +19,7 @@ import Admin from "./pages/Admin";
 import WhyIdeaGround from "./pages/WhyIdeaGround";
 import InvestorDashboard from "./pages/InvestorDashboard";
 import SolutionDetail from "./pages/SolutionDetail";
+import UserProfile from "./pages/UserProfile";
 
 // Components
 import Sidebar from "./components/Sidebar";
@@ -203,6 +204,11 @@ function AppRouter() {
       <Route path="/shorts/:videoId" element={
         <ProtectedRoute>
           <Shorts />
+        </ProtectedRoute>
+      } />
+      <Route path="/profile" element={
+        <ProtectedRoute>
+          <AppLayout><UserProfile /></AppLayout>
         </ProtectedRoute>
       } />
       <Route path="/admin" element={<Admin />} />

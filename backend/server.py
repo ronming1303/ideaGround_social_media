@@ -361,7 +361,13 @@ async def get_current_user(request: Request) -> User:
     user_doc = await db.users.find_one({"user_id": session_doc["user_id"]}, {"_id": 0})
     if not user_doc:
         raise HTTPException(status_code=401, detail="User not found")
-    
+
+    if user_doc.get("avatar_r2_key") and r2_enabled():
+        try:
+            user_doc["picture"] = get_r2_presigned_url(user_doc["avatar_r2_key"], expires_in=3600)
+        except Exception:
+            pass
+
     return User(**user_doc)
 
 async def get_optional_user(request: Request) -> Optional[User]:
@@ -581,6 +587,67 @@ async def create_session(request: Request, response: Response):
 async def get_me(user: User = Depends(get_current_user)):
     """Get current user data"""
     return user.model_dump()
+
+class UpdateProfileRequest(BaseModel):
+    name: Optional[str] = None
+
+@api_router.patch("/auth/me")
+async def update_me(data: UpdateProfileRequest, user: User = Depends(get_current_user)):
+    """Update current user's profile fields"""
+    updates = {}
+    if data.name is not None:
+        name = data.name.strip()
+        if not name:
+            raise HTTPException(status_code=400, detail="Name cannot be empty")
+        updates["name"] = name
+    if not updates:
+        raise HTTPException(status_code=400, detail="No fields to update")
+    await db.users.update_one({"user_id": user.user_id}, {"$set": updates})
+    updated = await db.users.find_one({"user_id": user.user_id}, {"_id": 0})
+    if updated.get("avatar_r2_key") and r2_enabled():
+        try:
+            updated["picture"] = get_r2_presigned_url(updated["avatar_r2_key"], expires_in=3600)
+        except Exception:
+            pass
+    return User(**updated).model_dump()
+
+@api_router.post("/auth/me/avatar")
+async def upload_avatar(file: UploadFile = File(...), user: User = Depends(get_current_user)):
+    """Upload avatar image to R2 and update user profile"""
+    ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/gif", "image/webp"}
+    if file.content_type not in ALLOWED_IMAGE_TYPES:
+        raise HTTPException(status_code=400, detail="Only JPEG, PNG, GIF, and WebP images are supported")
+    ext = file.filename.rsplit(".", 1)[-1].lower() if "." in file.filename else "jpg"
+    file_id = uuid.uuid4().hex[:12]
+    import tempfile
+    with tempfile.NamedTemporaryFile(delete=False, suffix=f".{ext}") as tmp:
+        content = await file.read()
+        tmp.write(content)
+        tmp_path = Path(tmp.name)
+    try:
+        if r2_enabled():
+            prefix = f"{R2_KEY_PREFIX}/" if R2_KEY_PREFIX else ""
+            r2_key = f"{prefix}avatars/{user.user_id}/{file_id}.{ext}"
+            upload_to_r2(tmp_path, r2_key, file.content_type)
+            picture_url = get_r2_presigned_url(r2_key, expires_in=3600)
+            await db.users.update_one(
+                {"user_id": user.user_id},
+                {"$set": {"avatar_r2_key": r2_key}}
+            )
+        else:
+            AVATAR_DIR = Path("uploads/avatars")
+            AVATAR_DIR.mkdir(parents=True, exist_ok=True)
+            dest = AVATAR_DIR / f"{user.user_id}_{file_id}.{ext}"
+            import shutil
+            shutil.copy(str(tmp_path), str(dest))
+            picture_url = f"/uploads/avatars/{dest.name}"
+            await db.users.update_one(
+                {"user_id": user.user_id},
+                {"$set": {"picture": picture_url}}
+            )
+    finally:
+        tmp_path.unlink(missing_ok=True)
+    return {"picture": picture_url}
 
 @api_router.post("/auth/logout")
 async def logout(request: Request, response: Response):
