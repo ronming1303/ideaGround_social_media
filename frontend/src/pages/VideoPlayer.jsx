@@ -153,10 +153,12 @@ export default function VideoPlayer() {
       );
       
       toast.success(`Successfully bought ${sharesToBuy} shares for $${response.data.total_cost.toFixed(2)}`);
-      
+
       setBuyDialogOpen(false);
+      setSharesToBuy(1); // Reset to default
       fetchVideo();
       fetchTopEarners();
+      fetchVolumeHistory(); // Update volume chart
       if (user) setUser({ ...user, wallet_balance: response.data.new_wallet_balance });
     } catch (error) {
       toast.error(error.response?.data?.detail || "Failed to buy shares");
