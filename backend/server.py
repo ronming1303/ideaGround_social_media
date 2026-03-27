@@ -2433,16 +2433,22 @@ async def get_investor_metrics():
     total_shares_held = sum(o.get("shares_owned", 0) for o in ownerships)
     
     # === GROWTH INDICATORS ===
-    # Transaction volume by day (last 7 days)
+    # Transaction volume by day (last 7 days including today)
     daily_volumes = []
     for i in range(7):
-        day_start = (now - timedelta(days=i+1)).replace(hour=0, minute=0, second=0).isoformat()
-        day_end = (now - timedelta(days=i)).replace(hour=0, minute=0, second=0).isoformat()
+        if i == 0:
+            # Today: from midnight to now
+            day_start = now.replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
+            day_end = now.isoformat()
+        else:
+            # Previous days: full day
+            day_start = (now - timedelta(days=i)).replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
+            day_end = (now - timedelta(days=i-1)).replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
         day_txns = [t for t in all_transactions if day_start <= t.get("created_at", "") < day_end]
         day_volume = sum(abs(t.get("amount", 0)) for t in day_txns if t.get("transaction_type") == "buy_share")
-        day_label = (now - timedelta(days=i+1)).strftime("%b %d")
+        day_label = (now - timedelta(days=i)).strftime("%b %d")
         daily_volumes.append({"date": day_label, "volume": round(day_volume, 2), "transactions": len(day_txns)})
-    
+
     daily_volumes.reverse()  # Oldest first
     
     # === TOP TRADERS ===
