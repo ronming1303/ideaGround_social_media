@@ -384,6 +384,15 @@ def process_creator_image(creator: dict) -> dict:
             pass
     return creator
 
+def process_user_picture(user_doc: dict) -> dict:
+    """Generate fresh presigned URL for user avatar if stored in R2"""
+    if user_doc and user_doc.get("avatar_r2_key") and r2_enabled():
+        try:
+            user_doc["picture"] = get_r2_presigned_url(user_doc["avatar_r2_key"], expires_in=3600)
+        except Exception:
+            pass
+    return user_doc
+
 # ==================== AUTH ENDPOINTS ====================
 
 @api_router.get("/auth/google")
@@ -1023,7 +1032,7 @@ async def get_video_top_earners(video_id: str, limit: int = 5):
     earners = []
     for ownership in ownerships:
         # Get user info from batch
-        user_doc = user_map.get(ownership["user_id"])
+        user_doc = process_user_picture(user_map.get(ownership["user_id"]))
         if not user_doc:
             continue
         
