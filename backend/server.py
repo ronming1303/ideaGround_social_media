@@ -1199,10 +1199,10 @@ async def get_subscriptions(user: User = Depends(get_current_user)):
 
     creators = await db.creators.find(
         {"creator_id": {"$in": user.subscriptions}},
-        {"_id": 0, "creator_id": 1, "name": 1, "image": 1, "category": 1}
+        {"_id": 0, "creator_id": 1, "name": 1, "image": 1, "category": 1, "avatar_r2_key": 1}
     ).to_list(len(user.subscriptions))
 
-    return {"subscriptions": creators}
+    return {"subscriptions": [process_creator_image(c) for c in creators]}
 
 
 @api_router.post("/creators/{creator_id}/subscribe")
@@ -2173,12 +2173,26 @@ async def get_video_comments(video_id: str, request: Request):
         {"video_id": video_id},
         {"_id": 0}
     ).to_list(100)
-    
+
+    # Batch fetch users to get up-to-date name and picture
+    user_ids = list(set(c["user_id"] for c in comments if c.get("user_id")))
+    if user_ids:
+        users = await db.users.find(
+            {"user_id": {"$in": user_ids}},
+            {"_id": 0, "user_id": 1, "name": 1, "picture": 1, "avatar_r2_key": 1}
+        ).to_list(len(user_ids))
+        user_map = {u["user_id"]: process_user_picture(u) for u in users}
+    else:
+        user_map = {}
+
     # Sort by net votes (upvotes - downvotes), then by date
     comments.sort(key=lambda c: (c.get("upvotes", 0) - c.get("downvotes", 0), c.get("created_at", "")), reverse=True)
-    
+
     # Add user's vote status and can_claim info
     for comment in comments:
+        u = user_map.get(comment.get("user_id"), {})
+        comment["user_name"] = u.get("name", comment.get("user_name", "Anonymous"))
+        comment["user_picture"] = u.get("picture", comment.get("user_picture"))
         comment["user_voted"] = user_id in comment.get("voters", []) if user_id else False
         comment["net_votes"] = comment.get("upvotes", 0) - comment.get("downvotes", 0)
         comment["is_own_comment"] = comment.get("user_id") == user_id
@@ -2215,7 +2229,8 @@ async def create_comment(req: CommentRequest, request: Request):
     if len(content) > 500:
         raise HTTPException(status_code=400, detail="Comment too long (max 500 characters)")
     
-    # Create comment
+    # Create comment (user_name/user_picture stored for legacy fallback only;
+    # read endpoint always overrides from users collection)
     comment = Comment(
         video_id=req.video_id,
         user_id=user.user_id,
