@@ -89,14 +89,9 @@ export default function InvestorDashboard() {
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
           <div>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center">
-                <Building2 className="w-6 h-6 text-white" />
-              </div>
-              <div>
+            <div className="mb-2">
                 <h1 className="font-heading text-3xl font-bold">Platform Metrics</h1>
                 <p className="text-muted-foreground">Investor Dashboard</p>
-              </div>
             </div>
           </div>
           <div className="flex items-center gap-3">

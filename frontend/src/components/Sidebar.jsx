@@ -9,9 +9,9 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from "../components/ui/dropdown-menu";
-import { 
+import {
   Home, Compass, Briefcase, Wallet, LogOut,
-  Settings, User, ChevronDown, Video, Eye, PieChart, BarChart3, HelpCircle
+  Settings, User, ChevronDown, Video, Eye, PieChart, BarChart3, HelpCircle, Bell
 } from "lucide-react";
 import { cn } from "../lib/utils";
 import { useState, useEffect } from "react";
@@ -24,9 +24,9 @@ const navItems = [
   { path: "/explore", label: "Explore", icon: Compass },
   { path: "/portfolio", label: "Portfolio", icon: Briefcase },
   { path: "/watchlist", label: "Watchlist", icon: Eye },
+  { path: "/subscriptions", label: "Subscriptions", icon: Bell },
   { path: "/wallet", label: "Wallet", icon: Wallet },
   { path: "/studio", label: "Creator Studio", icon: Video },
-  { path: "/investors", label: "Investor Metrics", icon: BarChart3 },
 ];
 
 // Mini donut chart component for portfolio allocation
@@ -102,9 +102,10 @@ export default function Sidebar({ className }) {
           });
         }
       } catch (err) {
-        // Silent fail - portfolio data is optional
+        // Silent fail
       }
     };
+
     if (user) fetchPortfolio();
   }, [user]);
 
@@ -128,8 +129,11 @@ export default function Sidebar({ className }) {
 
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-        {[...navItems, ...( ["kshitiz.dadhich2015@gmail.com","rumingliu1303@gmail.com"].includes(user?.email)
-          ? [{ path: "/why", label: "Why ideaGround", icon: HelpCircle }]
+        {[...navItems, ...(["kshitiz.dadhich2015@gmail.com","rumingliu1303@gmail.com"].includes(user?.email)
+          ? [
+              { path: "/investors", label: "Investor Metrics", icon: BarChart3 },
+              { path: "/why", label: "Why ideaGround", icon: HelpCircle },
+            ]
           : [])].map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;

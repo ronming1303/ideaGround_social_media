@@ -20,6 +20,7 @@ import WhyIdeaGround from "./pages/WhyIdeaGround";
 import InvestorDashboard from "./pages/InvestorDashboard";
 import SolutionDetail from "./pages/SolutionDetail";
 import UserProfile from "./pages/UserProfile";
+import Subscriptions from "./pages/Subscriptions";
 
 // Components
 import Sidebar from "./components/Sidebar";
@@ -211,8 +212,13 @@ function AppRouter() {
           <AppLayout><UserProfile /></AppLayout>
         </ProtectedRoute>
       } />
+      <Route path="/subscriptions" element={
+        <ProtectedRoute>
+          <AppLayout><Subscriptions /></AppLayout>
+        </ProtectedRoute>
+      } />
       <Route path="/admin" element={<Admin />} />
-      <Route path="/investors" element={<ProtectedRoute><InvestorDashboard /></ProtectedRoute>} />
+      <Route path="/investors" element={<ProtectedRoute allowedEmails={["kshitiz.dadhich2015@gmail.com","rumingliu1303@gmail.com"]}><InvestorDashboard /></ProtectedRoute>} />
       <Route path="/why" element={
         <ProtectedRoute allowedEmails={["kshitiz.dadhich2015@gmail.com", "rumingliu1303@gmail.com"]}>
           <AppLayout><WhyIdeaGround /></AppLayout>

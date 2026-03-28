@@ -12,7 +12,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import {
   Heart, Share2, Bell, TrendingUp,
   Eye, ArrowLeft, ShoppingCart,
-  Award, Users, PieChart, EyeOff
+  Award, Users, PieChart, EyeOff,
+  ArrowUpRight, ArrowDownRight, Activity
 } from "lucide-react";
 import { XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
@@ -33,14 +34,23 @@ export default function VideoPlayer() {
 
   const [topEarners, setTopEarners] = useState(null);
   const [volumeHistory, setVolumeHistory] = useState([]);
+  const [videoActivity, setVideoActivity] = useState([]);
 
-  const fetchVideo = useCallback(async () => {
+  const fetchVideo = useCallback(async (isInitial = false) => {
     try {
       const response = await axios.get(`${API}/videos/${videoId}`, { withCredentials: true });
-      setVideo(response.data);
+      setVideo(prev => ({
+        ...response.data,
+        // Preserve locally managed creator fields during polling to avoid race conditions
+        creator: prev && !isInitial ? {
+          ...response.data.creator,
+          subscriber_count: prev.creator?.subscriber_count ?? response.data.creator?.subscriber_count,
+        } : response.data.creator,
+      }));
       setLiked(response.data.user_liked || false);
       setLikesCount(response.data.likes);
-      setSubscribed(response.data.creator?.is_subscribed || false);
+      // Only set subscribed on initial load; managed locally after that
+      if (isInitial) setSubscribed(response.data.creator?.is_subscribed || false);
       setWatching(response.data.user_watching || false);
     } catch (error) {
       console.error("Error fetching video:", error);
@@ -68,20 +78,30 @@ export default function VideoPlayer() {
     }
   }, [videoId]);
 
+  const fetchVideoActivity = useCallback(async () => {
+    try {
+      const response = await axios.get(`${API}/videos/${videoId}/activity`, { withCredentials: true });
+      setVideoActivity(response.data.activities || []);
+    } catch (error) {
+      console.log("Video activity not available");
+    }
+  }, [videoId]);
+
   // Initial fetch
   useEffect(() => {
     setLoading(true);
-    fetchVideo();
+    fetchVideo(true);
     fetchTopEarners();
     fetchVolumeHistory();
+    fetchVideoActivity();
   }, [videoId]);
 
   // Auto-refresh polling (every 10 seconds for video page - more critical)
   // TODO: Replace with WebSocket for real-time updates
   useDataSync(
     useCallback(async () => {
-      await Promise.all([fetchVideo(), fetchTopEarners()]);
-    }, [fetchVideo, fetchTopEarners]),
+      await Promise.all([fetchVideo(), fetchTopEarners(), fetchVideoActivity()]);
+    }, [fetchVideo, fetchTopEarners, fetchVideoActivity]),
     POLL_INTERVALS.FAST, // 5 seconds for video page
     !loading // Only poll after initial load
   );
@@ -101,12 +121,17 @@ export default function VideoPlayer() {
     if (!video?.creator) return;
     try {
       const response = await axios.post(
-        `${API}/creators/${video.creator.creator_id}/subscribe`, 
-        {}, 
+        `${API}/creators/${video.creator.creator_id}/subscribe`,
+        {},
         { withCredentials: true }
       );
       setSubscribed(response.data.subscribed);
+      setVideo(v => ({
+        ...v,
+        creator: { ...v.creator, subscriber_count: response.data.subscriber_count }
+      }));
       toast.success(response.data.subscribed ? "Subscribed!" : "Unsubscribed");
+      window.dispatchEvent(new CustomEvent('subscriptions-changed'));
     } catch (error) {
       toast.error("Failed to subscribe");
     }
@@ -151,10 +176,13 @@ export default function VideoPlayer() {
       );
       
       toast.success(`Successfully bought ${sharesToBuy} shares for $${response.data.total_cost.toFixed(2)}`);
-      
+
       setBuyDialogOpen(false);
+      setSharesToBuy(1); // Reset to default
       fetchVideo();
       fetchTopEarners();
+      fetchVolumeHistory(); // Update volume chart
+      fetchVideoActivity();
       if (user) setUser({ ...user, wallet_balance: response.data.new_wallet_balance });
     } catch (error) {
       toast.error(error.response?.data?.detail || "Failed to buy shares");
@@ -195,16 +223,17 @@ export default function VideoPlayer() {
         Back to feed
       </Link>
 
-      <div className="grid lg:grid-cols-3 gap-8">
-        {/* Video player */}
-        <div className="lg:col-span-2 order-1">
-          <div className="aspect-video rounded-2xl overflow-hidden bg-black">
+      <div className="grid lg:grid-cols-3 gap-8 items-start">
+        {/* Left column: video + info + comments */}
+        <div className="lg:col-span-2 space-y-6">
+          <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black">
             {video.video_file_path ? (
               <video
+                key={videoId}
                 src={`${API}/videos/${videoId}/stream`}
-                controls
-                className="w-full h-full"
                 poster={video.thumbnail}
+                controls
+                className="w-full h-full object-contain"
               />
             ) : (
               <iframe
@@ -216,13 +245,8 @@ export default function VideoPlayer() {
               />
             )}
           </div>
-        </div>
 
-        {/* Stock Trading Card - spans both rows on desktop, appears 2nd on mobile */}
-        {/* (trading card section rendered below) */}
-
-        {/* Video info */}
-        <div className="lg:col-span-2 space-y-6 order-3">
+          {/* Video info */}
           <div>
             <div className="flex items-start justify-between gap-4 mb-4">
               <div>
@@ -269,7 +293,20 @@ export default function VideoPlayer() {
                   </>
                 )}
               </Button>
-              <Button data-testid="share-btn" variant="outline" className="rounded-full">
+              <Button
+                data-testid="share-btn"
+                variant="outline"
+                className="rounded-full"
+                onClick={() => {
+                  const url = window.location.href;
+                  if (navigator.share) {
+                    navigator.share({ title: video.title, url });
+                  } else {
+                    navigator.clipboard.writeText(url);
+                    toast.success("Link copied to clipboard");
+                  }
+                }}
+              >
                 <Share2 className="w-4 h-4 mr-2" />
                 Share
               </Button>
@@ -318,8 +355,8 @@ export default function VideoPlayer() {
           </div>
         </div>
 
-        {/* Stock Trading Card - Clean & Simple */}
-        <div className="space-y-6 order-2 lg:row-span-2">
+        {/* Sidebar */}
+        <div className="space-y-6">
           <Card className="border-border/50 overflow-hidden shadow-lg" data-testid="trading-card">
             {/* Ticker Header */}
             <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-4 text-white">
@@ -569,6 +606,68 @@ export default function VideoPlayer() {
                     </p>
                   </div>
                 )}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Historical Trades */}
+          {videoActivity.length > 0 && (
+            <Card className="border-border/50">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center">
+                    <Activity className="w-4 h-4 text-white" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium">Recent Trades</h4>
+                    <p className="text-xs text-muted-foreground">{videoActivity.length} transaction{videoActivity.length !== 1 ? 's' : ''}</p>
+                  </div>
+                </div>
+                <div className="space-y-2 max-h-[280px] overflow-y-auto">
+                  {videoActivity.map((activity, index) => {
+                    const actionColor = activity.action === "bought"
+                      ? "text-emerald-500"
+                      : activity.action === "sold"
+                        ? "text-red-500"
+                        : "text-orange-500";
+                    const getTimeAgo = (timestamp) => {
+                      if (!timestamp) return "just now";
+                      const seconds = Math.floor((new Date() - new Date(timestamp)) / 1000);
+                      if (seconds < 10) return "just now";
+                      if (seconds < 60) return `${seconds}s ago`;
+                      if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+                      if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+                      return `${Math.floor(seconds / 86400)}d ago`;
+                    };
+                    return (
+                      <div key={activity.id || index} className="flex items-center justify-between gap-3 px-2 py-2 rounded-lg hover:bg-muted/50 transition-colors">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5 flex-wrap">
+                            <span className="text-sm font-medium truncate">{activity.user_name}</span>
+                            <span className={`text-xs font-semibold ${actionColor}`}>{activity.action}</span>
+                            <Badge variant="outline" className="font-mono text-xs px-1.5 py-0">{activity.shares}</Badge>
+                            <span className="text-xs text-muted-foreground">shares</span>
+                          </div>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <div className="font-mono text-sm font-semibold">${activity.amount?.toFixed(2)}</div>
+                          <div className="text-xs text-muted-foreground">{getTimeAgo(activity.timestamp)}</div>
+                          {activity.price_after_trade && activity.price_at_trade && (
+                            <div className={`text-[10px] flex items-center justify-end gap-0.5 ${
+                              activity.price_after_trade > activity.price_at_trade ? 'text-emerald-500' : 'text-red-500'
+                            }`}>
+                              {activity.price_after_trade > activity.price_at_trade
+                                ? <ArrowUpRight className="w-3 h-3" />
+                                : <ArrowDownRight className="w-3 h-3" />
+                              }
+                              {((activity.price_after_trade - activity.price_at_trade) / activity.price_at_trade * 100).toFixed(1)}%
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </CardContent>
             </Card>
           )}
