@@ -36,13 +36,21 @@ export default function VideoPlayer() {
   const [volumeHistory, setVolumeHistory] = useState([]);
   const [videoActivity, setVideoActivity] = useState([]);
 
-  const fetchVideo = useCallback(async () => {
+  const fetchVideo = useCallback(async (isInitial = false) => {
     try {
       const response = await axios.get(`${API}/videos/${videoId}`, { withCredentials: true });
-      setVideo(response.data);
+      setVideo(prev => ({
+        ...response.data,
+        // Preserve locally managed creator fields during polling to avoid race conditions
+        creator: prev && !isInitial ? {
+          ...response.data.creator,
+          subscriber_count: prev.creator?.subscriber_count ?? response.data.creator?.subscriber_count,
+        } : response.data.creator,
+      }));
       setLiked(response.data.user_liked || false);
       setLikesCount(response.data.likes);
-      setSubscribed(response.data.creator?.is_subscribed || false);
+      // Only set subscribed on initial load; managed locally after that
+      if (isInitial) setSubscribed(response.data.creator?.is_subscribed || false);
       setWatching(response.data.user_watching || false);
     } catch (error) {
       console.error("Error fetching video:", error);
@@ -82,7 +90,7 @@ export default function VideoPlayer() {
   // Initial fetch
   useEffect(() => {
     setLoading(true);
-    fetchVideo();
+    fetchVideo(true);
     fetchTopEarners();
     fetchVolumeHistory();
     fetchVideoActivity();
@@ -113,12 +121,17 @@ export default function VideoPlayer() {
     if (!video?.creator) return;
     try {
       const response = await axios.post(
-        `${API}/creators/${video.creator.creator_id}/subscribe`, 
-        {}, 
+        `${API}/creators/${video.creator.creator_id}/subscribe`,
+        {},
         { withCredentials: true }
       );
       setSubscribed(response.data.subscribed);
+      setVideo(v => ({
+        ...v,
+        creator: { ...v.creator, subscriber_count: response.data.subscriber_count }
+      }));
       toast.success(response.data.subscribed ? "Subscribed!" : "Unsubscribed");
+      window.dispatchEvent(new CustomEvent('subscriptions-changed'));
     } catch (error) {
       toast.error("Failed to subscribe");
     }

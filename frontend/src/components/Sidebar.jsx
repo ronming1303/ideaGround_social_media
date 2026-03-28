@@ -9,9 +9,9 @@ import {
   DropdownMenuSeparator, 
   DropdownMenuTrigger 
 } from "../components/ui/dropdown-menu";
-import { 
+import {
   Home, Compass, Briefcase, Wallet, LogOut,
-  Settings, User, ChevronDown, Video, Eye, PieChart, BarChart3, HelpCircle
+  Settings, User, ChevronDown, Video, Eye, PieChart, BarChart3, HelpCircle, Bell
 } from "lucide-react";
 import { cn } from "../lib/utils";
 import { useState, useEffect } from "react";
@@ -24,6 +24,7 @@ const navItems = [
   { path: "/explore", label: "Explore", icon: Compass },
   { path: "/portfolio", label: "Portfolio", icon: Briefcase },
   { path: "/watchlist", label: "Watchlist", icon: Eye },
+  { path: "/subscriptions", label: "Subscriptions", icon: Bell },
   { path: "/wallet", label: "Wallet", icon: Wallet },
   { path: "/studio", label: "Creator Studio", icon: Video },
   { path: "/investors", label: "Investor Metrics", icon: BarChart3 },
@@ -102,9 +103,10 @@ export default function Sidebar({ className }) {
           });
         }
       } catch (err) {
-        // Silent fail - portfolio data is optional
+        // Silent fail
       }
     };
+
     if (user) fetchPortfolio();
   }, [user]);
 

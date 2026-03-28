@@ -44,14 +44,9 @@ export default function CreatorProfile() {
         { withCredentials: true }
       );
       setSubscribed(response.data.subscribed);
+      setCreator(c => ({ ...c, subscriber_count: response.data.subscriber_count }));
       toast.success(response.data.subscribed ? "Subscribed!" : "Unsubscribed");
-      // Update subscriber count locally
-      if (creator) {
-        setCreator({
-          ...creator,
-          subscriber_count: (creator.subscriber_count || 0) + (response.data.subscribed ? 1 : -1)
-        });
-      }
+      window.dispatchEvent(new CustomEvent('subscriptions-changed'));
     } catch (error) {
       toast.error("Failed to subscribe");
     }

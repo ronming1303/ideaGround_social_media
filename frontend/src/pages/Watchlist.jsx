@@ -116,17 +116,8 @@ export default function Watchlist() {
     <div className="page-enter p-6 lg:p-8 max-w-7xl mx-auto min-h-screen orange-gradient-subtle" data-testid="watchlist-page">
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500/20 to-amber-500/20 flex items-center justify-center orange-glow">
-            <Eye className="w-6 h-6 text-primary" />
-          </div>
-          <div>
-            <h1 className="text-3xl font-heading font-bold gradient-text">My Watchlist</h1>
-            <p className="text-muted-foreground">
-              Track and analyze videos before investing
-            </p>
-          </div>
-        </div>
+        <h1 className="text-3xl font-heading font-bold gradient-text">My Watchlist</h1>
+        <p className="text-muted-foreground">Track and analyze videos before investing</p>
       </div>
 
       {watchlist?.items?.length > 0 ? (

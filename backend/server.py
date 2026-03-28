@@ -937,6 +937,7 @@ async def get_video(video_id: str, request: Request):
     # Check if user liked this video
     user = await get_optional_user(request)
     if user:
+        video["creator"]["is_subscribed"] = video["creator_id"] in user.subscriptions
         like = await db.video_likes.find_one({"user_id": user.user_id, "video_id": video_id})
         video["user_liked"] = like is not None
         
@@ -956,6 +957,7 @@ async def get_video(video_id: str, request: Request):
         video["user_watching"] = watchlist_item is not None
         video["watch_price_when_added"] = watchlist_item.get("price_when_added") if watchlist_item else None
     else:
+        video["creator"]["is_subscribed"] = False
         video["user_liked"] = False
         video["user_shares"] = 0
         video["user_watching"] = False
@@ -1180,6 +1182,20 @@ async def get_creator(creator_id: str, request: Request):
     
     return creator
 
+@api_router.get("/subscriptions")
+async def get_subscriptions(user: User = Depends(get_current_user)):
+    """Get all creators the current user is subscribed to"""
+    if not user.subscriptions:
+        return {"subscriptions": []}
+
+    creators = await db.creators.find(
+        {"creator_id": {"$in": user.subscriptions}},
+        {"_id": 0, "creator_id": 1, "name": 1, "image": 1, "category": 1}
+    ).to_list(len(user.subscriptions))
+
+    return {"subscriptions": creators}
+
+
 @api_router.post("/creators/{creator_id}/subscribe")
 async def subscribe_creator(creator_id: str, user: User = Depends(get_current_user)):
     """Subscribe or unsubscribe from a creator"""
@@ -1188,21 +1204,21 @@ async def subscribe_creator(creator_id: str, user: User = Depends(get_current_us
         raise HTTPException(status_code=404, detail="Creator not found")
     
     if creator_id in user.subscriptions:
-        # Unsubscribe
         await db.users.update_one(
             {"user_id": user.user_id},
             {"$pull": {"subscriptions": creator_id}}
         )
-        await db.creators.update_one({"creator_id": creator_id}, {"$inc": {"subscriber_count": -1}})
-        return {"subscribed": False}
+        subscribed = False
     else:
-        # Subscribe
         await db.users.update_one(
             {"user_id": user.user_id},
             {"$push": {"subscriptions": creator_id}}
         )
-        await db.creators.update_one({"creator_id": creator_id}, {"$inc": {"subscriber_count": 1}})
-        return {"subscribed": True}
+        subscribed = True
+
+    subscriber_count = await db.users.count_documents({"subscriptions": creator_id})
+    await db.creators.update_one({"creator_id": creator_id}, {"$set": {"subscriber_count": subscriber_count}})
+    return {"subscribed": subscribed, "subscriber_count": subscriber_count}
 
 # ==================== SHARE/STOCK ENDPOINTS ====================
 
