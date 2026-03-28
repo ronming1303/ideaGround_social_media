@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "../App";
 import { Button } from "../components/ui/button";
-import { Play, TrendingUp, Users, DollarSign, ArrowRight, Sparkles, BarChart3, Menu, X } from "lucide-react";
+import { Play, TrendingUp, Users, DollarSign, ArrowRight, Sparkles, Menu, X } from "lucide-react";
 import OnboardingDemo from "../components/OnboardingDemo";
 
 const solutions = [
@@ -37,7 +37,7 @@ const solutions = [
 ];
 
 export default function Landing() {
-  const { login, user } = useAuth();
+  const { login } = useAuth();
   const [isHovering, setIsHovering] = useState(false);
   const [showDemo, setShowDemo] = useState(false);
   const [searchParams] = useSearchParams();
@@ -122,15 +122,6 @@ export default function Landing() {
               >
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
-              {user && (
-                <Link
-                  to="/investors"
-                  className="hidden sm:flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-                >
-                  <BarChart3 className="w-4 h-4" />
-                  Investor Metrics
-                </Link>
-              )}
               <Button 
                 data-testid="login-btn-nav"
                 onClick={login}
