@@ -27,7 +27,6 @@ const navItems = [
   { path: "/subscriptions", label: "Subscriptions", icon: Bell },
   { path: "/wallet", label: "Wallet", icon: Wallet },
   { path: "/studio", label: "Creator Studio", icon: Video },
-  { path: "/investors", label: "Investor Metrics", icon: BarChart3 },
 ];
 
 // Mini donut chart component for portfolio allocation
@@ -130,8 +129,11 @@ export default function Sidebar({ className }) {
 
       {/* Navigation */}
       <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-        {[...navItems, ...( ["kshitiz.dadhich2015@gmail.com","rumingliu1303@gmail.com"].includes(user?.email)
-          ? [{ path: "/why", label: "Why ideaGround", icon: HelpCircle }]
+        {[...navItems, ...(["kshitiz.dadhich2015@gmail.com","rumingliu1303@gmail.com"].includes(user?.email)
+          ? [
+              { path: "/investors", label: "Investor Metrics", icon: BarChart3 },
+              { path: "/why", label: "Why ideaGround", icon: HelpCircle },
+            ]
           : [])].map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
