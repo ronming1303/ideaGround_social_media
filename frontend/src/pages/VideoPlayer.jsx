@@ -10,7 +10,7 @@ import { Input } from "../components/ui/input";
 import { Slider } from "../components/ui/slider";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
 import {
-  Heart, Share2, Bell, TrendingUp,
+  Heart, Bell, TrendingUp,
   Eye, ArrowLeft, ShoppingCart,
   Award, Users, PieChart, EyeOff,
   ArrowUpRight, ArrowDownRight, Activity
@@ -18,6 +18,7 @@ import {
 import { XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
 import VideoComments from "../components/VideoComments";
+import ShareDialog from "../components/ShareDialog";
 
 export default function VideoPlayer() {
   const { videoId } = useParams();
@@ -293,23 +294,11 @@ export default function VideoPlayer() {
                   </>
                 )}
               </Button>
-              <Button
-                data-testid="share-btn"
-                variant="outline"
-                className="rounded-full"
-                onClick={() => {
-                  const url = window.location.href;
-                  if (navigator.share) {
-                    navigator.share({ title: video.title, url });
-                  } else {
-                    navigator.clipboard.writeText(url);
-                    toast.success("Link copied to clipboard");
-                  }
-                }}
-              >
-                <Share2 className="w-4 h-4 mr-2" />
-                Share
-              </Button>
+              <ShareDialog
+                url={window.location.href}
+                title={video.title}
+                description={video.description || `Check out "${video.title}" on IdeaGround!`}
+              />
             </div>
 
             {/* Creator info + Description */}
