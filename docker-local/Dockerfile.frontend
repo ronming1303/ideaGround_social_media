@@ -19,14 +19,13 @@ ENV DISABLE_ESLINT_PLUGIN=true
 ENV ESLINT_NO_DEV_ERRORS=true
 ENV GENERATE_SOURCEMAP=false
 
-# Copy package files first
-COPY frontend/package.json ./
+# Copy package files first (lock file ensures layer cache is invalidated only when deps change)
+COPY frontend/package.json frontend/package-lock.json ./
 
-# Install dependencies with npm (more reliable than yarn in Docker)
-RUN npm install --legacy-peer-deps --no-audit --no-fund --loglevel=error
-
-# Fix ajv version conflict with react-scripts
-RUN npm install ajv@^8 --legacy-peer-deps --no-audit --no-fund --loglevel=error
+# Install dependencies, using BuildKit cache to persist npm download cache across builds
+RUN --mount=type=cache,target=/root/.npm \
+    npm install --legacy-peer-deps --no-audit --no-fund --loglevel=error && \
+    npm install ajv@^8 --legacy-peer-deps --no-audit --no-fund --loglevel=error
 
 # Copy all source files
 COPY frontend/ ./

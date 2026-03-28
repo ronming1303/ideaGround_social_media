@@ -1054,6 +1054,48 @@ async def get_video_top_earners(video_id: str, limit: int = 5):
         "top_earners": earners[:limit]
     }
 
+@api_router.get("/videos/{video_id}/activity")
+async def get_video_activity(video_id: str, limit: int = 20):
+    """
+    Get recent trade activity for a specific video.
+    """
+    transactions = await db.transactions.find(
+        {
+            "video_id": video_id,
+            "transaction_type": {"$in": ["buy_share", "sell_share", "redemption"]}
+        },
+        {"_id": 0}
+    ).sort("created_at", -1).limit(limit).to_list(limit)
+
+    if not transactions:
+        return {"activities": []}
+
+    user_ids = list(set(t.get("user_id") for t in transactions))
+    users = await db.users.find({"user_id": {"$in": user_ids}}, {"_id": 0, "user_id": 1, "name": 1}).to_list(len(user_ids))
+    user_map = {u["user_id"]: u for u in users}
+
+    activities = []
+    for txn in transactions:
+        user = user_map.get(txn.get("user_id"), {})
+        full_name = user.get("name", "Anonymous")
+        name_parts = full_name.split()
+        display_name = f"{name_parts[0]} {name_parts[-1][0]}." if len(name_parts) > 1 else name_parts[0]
+
+        txn_type = txn.get("transaction_type")
+        activities.append({
+            "id": txn.get("transaction_id"),
+            "user_name": display_name,
+            "action": "bought" if txn_type == "buy_share" else ("sold" if txn_type == "sell_share" else "redeemed"),
+            "shares": txn.get("shares", 0),
+            "amount": abs(txn.get("amount", 0)),
+            "price_at_trade": txn.get("price_at_trade", 0),
+            "price_after_trade": txn.get("price_after_trade"),
+            "timestamp": txn.get("created_at"),
+        })
+
+    return {"activities": activities}
+
+
 @api_router.post("/videos/{video_id}/like")
 async def like_video(video_id: str, user: User = Depends(get_current_user)):
     """Like or unlike a video"""
