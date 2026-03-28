@@ -2059,6 +2059,7 @@ async def get_live_activity(limit: int = 20):
             "user_name": display_name,
             "action": "bought" if txn_type == "buy_share" else ("sold" if txn_type == "sell_share" else "redeemed"),
             "shares": txn.get("shares", 0),
+            "video_id": txn.get("video_id"),
             "video_title": video.get("title", "Unknown")[:30],
             "ticker": video.get("ticker_symbol", "???"),
             "amount": abs(txn.get("amount", 0)),

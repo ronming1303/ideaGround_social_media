@@ -1,10 +1,11 @@
 import { useState, useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import { API } from "../App";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
-import { 
-  TrendingUp, TrendingDown, Zap, Users, DollarSign, 
+import {
+  TrendingUp, TrendingDown, Zap, Users, DollarSign,
   ArrowUpRight, ArrowDownRight, Activity
 } from "lucide-react";
 import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
@@ -120,9 +121,10 @@ export default function LiveActivityFeed() {
           ) : (
             <div className="divide-y divide-border/50">
               {activities.map((activity, index) => (
-                <div 
+                <Link
                   key={activity.id || index}
-                  className={`px-4 py-3 hover:bg-muted/30 transition-colors ${index === 0 ? 'bg-muted/20' : ''}`}
+                  to={`/video/${activity.video_id}`}
+                  className={`block px-4 py-3 hover:bg-muted/30 transition-colors ${index === 0 ? 'bg-muted/20' : ''}`}
                   data-testid={`activity-item-${index}`}
                 >
                   <div className="flex items-center justify-between gap-3">
@@ -146,7 +148,7 @@ export default function LiveActivityFeed() {
                         </span>
                       </div>
                     </div>
-                    
+
                     <div className="text-right shrink-0">
                       <div className="font-mono text-sm font-semibold">
                         ${activity.amount?.toFixed(2)}
@@ -156,8 +158,8 @@ export default function LiveActivityFeed() {
                       </div>
                       {activity.price_after_trade && activity.price_at_trade && (
                         <div className={`text-[10px] flex items-center justify-end gap-0.5 ${
-                          activity.price_after_trade > activity.price_at_trade 
-                            ? 'text-emerald-500' 
+                          activity.price_after_trade > activity.price_at_trade
+                            ? 'text-emerald-500'
                             : 'text-red-500'
                         }`}>
                           {activity.price_after_trade > activity.price_at_trade ? (
@@ -170,7 +172,7 @@ export default function LiveActivityFeed() {
                       )}
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}

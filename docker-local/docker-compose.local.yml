@@ -59,7 +59,7 @@ services:
       args:
         REACT_APP_BACKEND_URL: ""
         REACT_APP_LOCAL_AUTH: "true"
-        REACT_APP_STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY}
+        REACT_APP_STRIPE_PUBLISHABLE_KEY: "pk_test_51T9BgeIq7nviYilsVk7AReTms9mqS1tly1pwb8xJcEHYeTtunUEDyFsSPo0cJabMaFnBDIeQR10MFQZfWegUuJJi00X4ADzHs4"
         REACT_APP_ENV: "development"
     container_name: ideaground-frontend-local
     restart: unless-stopped
