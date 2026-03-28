@@ -213,10 +213,10 @@ export default function Landing() {
             </h1>
             <div className="space-y-4 text-base text-muted-foreground leading-relaxed max-w-2xl mx-auto text-left">
               <p>We are a next-generation video-sharing platform that transforms social media content into tradable assets.
-Powered by our proprietary Social Media Economics protocol, we address the core flaws of social media—unfair revenue distribution, lack of IP ownership, and opaque pricing.
-Our platform enables creators and users to earn through content creation, sharing, and engagement.
-Content is securitized and transparently priced, allowing for fractional ownership and future dividends.
-We offer low-risk social media content investment opportunities alongside gamified user experiences to drive engagement.</p>
+              Powered by our proprietary Social Media Economics protocol, we address the core flaws of social media—unfair revenue distribution, lack of IP ownership, and opaque pricing.</p>
+              <p>Our platform enables creators and users to earn through content creation, sharing, and engagement.
+              Content is securitized and transparently priced, allowing for fractional ownership and future dividends.
+              We offer low-risk social media content investment opportunities alongside gamified user experiences to drive engagement.</p>
               <p>IdeaGround is not just a platform — it's a movement to take back the internet.</p>
             </div>
           </div>
