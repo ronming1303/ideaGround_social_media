@@ -8,9 +8,10 @@ import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Input } from "../components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { 
+import {
   Search, Play, Eye, Heart, Clock, TrendingUp, TrendingDown, Users, Sparkles,
-  Mic, Music, Palette, GraduationCap, MoreHorizontal, Utensils, Plane, Cpu, RefreshCw
+  Mic, Music, Palette, GraduationCap, MoreHorizontal, Utensils, Plane, Cpu, RefreshCw,
+  Gamepad2, Dumbbell, Laugh, Smile, DollarSign, Trophy, Sparkle, Newspaper, PawPrint
 } from "lucide-react";
 import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
 
@@ -27,10 +28,21 @@ export default function Explore() {
     { id: "all", label: "All", icon: Sparkles },
     { id: "Podcast", label: "Podcast", icon: Mic },
     { id: "Dance", label: "Music & Dance", icon: Music },
+    { id: "Music", label: "Music", icon: Music },
     { id: "Tech", label: "Tech & Tutorial", icon: Cpu },
     { id: "Food", label: "Food & Lifestyle", icon: Utensils },
     { id: "Travel", label: "Travel & Vlog", icon: Plane },
     { id: "Art", label: "Art & Decor", icon: Palette },
+    { id: "Gaming", label: "Gaming", icon: Gamepad2 },
+    { id: "Education", label: "Education", icon: GraduationCap },
+    { id: "Fitness", label: "Fitness", icon: Dumbbell },
+    { id: "Comedy", label: "Comedy", icon: Laugh },
+    { id: "Lifestyle", label: "Lifestyle", icon: Smile },
+    { id: "Finance", label: "Finance", icon: DollarSign },
+    { id: "Sports", label: "Sports", icon: Trophy },
+    { id: "Beauty & Fashion", label: "Beauty & Fashion", icon: Sparkle },
+    { id: "News & Politics", label: "News & Politics", icon: Newspaper },
+    { id: "Animals & Pets", label: "Animals & Pets", icon: PawPrint },
     { id: "Other", label: "Others", icon: MoreHorizontal },
   ];
 

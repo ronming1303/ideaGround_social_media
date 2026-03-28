@@ -43,8 +43,9 @@ export default function CreatorStudio() {
   const [uploadingFile, setUploadingFile] = useState(false);
 
   const categories = [
-    "Dance", "Podcast", "Travel", "Tech", "Food", "Gaming", 
-    "Music", "Education", "Fitness", "Comedy", "Lifestyle", "Other"
+    "Dance", "Podcast", "Travel", "Tech", "Food", "Gaming",
+    "Music", "Education", "Fitness", "Comedy", "Lifestyle",
+    "Finance", "Sports", "Beauty & Fashion", "News & Politics", "Animals & Pets", "Other"
   ];
 
 
