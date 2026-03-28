@@ -210,9 +210,9 @@ export default function VideoPlayer() {
         Back to feed
       </Link>
 
-      <div className="grid lg:grid-cols-3 gap-8">
-        {/* Video player */}
-        <div className="lg:col-span-2 order-1">
+      <div className="grid lg:grid-cols-3 gap-8 items-start">
+        {/* Left column: video + info + comments */}
+        <div className="lg:col-span-2 space-y-6">
           <div className="relative w-full aspect-video rounded-2xl overflow-hidden bg-black">
             {video.video_file_path ? (
               <video
@@ -232,13 +232,8 @@ export default function VideoPlayer() {
               />
             )}
           </div>
-        </div>
 
-        {/* Stock Trading Card - spans both rows on desktop, appears 2nd on mobile */}
-        {/* (trading card section rendered below) */}
-
-        {/* Video info */}
-        <div className="lg:col-span-2 space-y-6 order-3">
+          {/* Video info */}
           <div>
             <div className="flex items-start justify-between gap-4 mb-4">
               <div>
@@ -285,7 +280,20 @@ export default function VideoPlayer() {
                   </>
                 )}
               </Button>
-              <Button data-testid="share-btn" variant="outline" className="rounded-full">
+              <Button
+                data-testid="share-btn"
+                variant="outline"
+                className="rounded-full"
+                onClick={() => {
+                  const url = window.location.href;
+                  if (navigator.share) {
+                    navigator.share({ title: video.title, url });
+                  } else {
+                    navigator.clipboard.writeText(url);
+                    toast.success("Link copied to clipboard");
+                  }
+                }}
+              >
                 <Share2 className="w-4 h-4 mr-2" />
                 Share
               </Button>
@@ -334,8 +342,8 @@ export default function VideoPlayer() {
           </div>
         </div>
 
-        {/* Stock Trading Card - Clean & Simple */}
-        <div className="space-y-6 order-2 lg:row-span-2">
+        {/* Sidebar */}
+        <div className="space-y-6">
           <Card className="border-border/50 overflow-hidden shadow-lg" data-testid="trading-card">
             {/* Ticker Header */}
             <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-4 text-white">
