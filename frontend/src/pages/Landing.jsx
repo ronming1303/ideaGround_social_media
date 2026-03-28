@@ -170,20 +170,13 @@ export default function Landing() {
             </h1>
             <div className="text-base text-foreground space-y-4 mb-12 leading-relaxed">
               <p>
-                Social media makes significant changes to our life, but it{" "}
-                <span className="text-primary font-medium">brings problems</span>{" "}
-                that have become increasingly evident in recent years.
+                Social media makes significant changes to our life, but it brings problems that have become increasingly evident in recent years.
               </p>
               <p>
-                The solution is designing a novel mechanism to achieve desirable{" "}
-                <span className="text-primary font-medium">social and economic outcomes</span>{" "}
-                given the constraints of users'{" "}
-                <span className="text-primary font-medium">self-interest</span>.
+                The solution is designing a novel mechanism to achieve desirable social and economic outcomes given the constraints of users' self-interest.
               </p>
               <p>
-                The solution is{" "}
-                <span className="text-primary font-medium">ideaGround Social Media Economics</span>
-                . It applies principles from economic game theory, computer science, management, and finance.
+                The solution is ideaGround Social Media Economics. It applies principles from economic game theory, computer science, management, and finance.
               </p>
               <p>Read our solutions to these problems.</p>
             </div>
@@ -220,19 +213,20 @@ export default function Landing() {
 
       {/* About Tab */}
       {activeTab === "about" && (
-        <div className="pt-24 pb-20">
+        <section className="pt-32 pb-20 px-4">
 
           {/* Hero */}
-          <div className="px-4 py-16 max-w-3xl mx-auto text-center">
-            <p className="text-xs font-bold tracking-widest text-muted-foreground mb-6">ABOUT US</p>
+          <div className="max-w-3xl mx-auto text-center mb-16">
             <h1 className="font-heading text-4xl md:text-5xl font-bold mb-8 leading-tight">
               Building social media that's fair,<br className="hidden md:block" /> transparent, and yours.
             </h1>
             <div className="space-y-4 text-base text-muted-foreground leading-relaxed max-w-2xl mx-auto text-left">
-              <p>The ideaGround is building a new kind of social media — fair, transparent, and owned by users.</p>
-              <p>We believe value should be earned and shared, not extracted. Powered by social media economics, we reward contribution, protect privacy, and return ownership to the community.</p>
-              <p>The ideaGround is not just a platform — it's a movement to take back the internet.</p>
-              <p className="font-semibold text-foreground">Join us and take back your digital voice.</p>
+              <p>We are a next-generation video-sharing platform that transforms social media content into tradable assets.
+Powered by our proprietary Social Media Economics protocol, we address the core flaws of social media—unfair revenue distribution, lack of IP ownership, and opaque pricing.
+Our platform enables creators and users to earn through content creation, sharing, and engagement.
+Content is securitized and transparently priced, allowing for fractional ownership and future dividends.
+We offer low-risk social media content investment opportunities alongside gamified user experiences to drive engagement.</p>
+              <p>IdeaGround is not just a platform — it's a movement to take back the internet.</p>
             </div>
           </div>
 
@@ -244,7 +238,7 @@ export default function Landing() {
                 { label: "Vision",  text: "Revolutionize social media monetization through financial incentives, privacy, and decentralized ownership." },
               ].map(item => (
                 <div key={item.label} className="text-center">
-                  <h2 className="font-heading text-4xl font-bold mb-4">{item.label}</h2>
+                  <h2 className="font-heading text-3xl font-bold mb-4">{item.label}</h2>
                   <p className="text-base text-muted-foreground leading-relaxed">{item.text}</p>
                 </div>
               ))}
@@ -270,7 +264,7 @@ export default function Landing() {
             </div>
           </div>
 
-        </div>
+        </section>
       )}
 
       {/* Contact Tab */}
@@ -374,7 +368,7 @@ export default function Landing() {
               next-generation platform on Web 3.0.
             </p>
 
-            <p className="text-primary font-medium mb-10">
+            <p className="text-muted-foreground text-sm mb-10">
               Keywords: Social Media, Financial Incentives, Blockchain, Web 3.0, Decentralization, Privacy
             </p>
 
