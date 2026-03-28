@@ -454,40 +454,6 @@ export default function WhyIdeaGround() {
           </CardContent>
         </Card>
       </div>
-
-      {/* CTA Section */}
-      <div className="px-8 lg:px-12 max-w-7xl mx-auto pb-20">
-        <Card className="border-0 bg-gradient-to-br from-orange-500 to-orange-600 overflow-hidden">
-          <CardContent className="p-12 text-center relative">
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute inset-0" style={{
-                backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-              }}></div>
-            </div>
-            <div className="relative">
-              <h2 className="font-heading text-3xl md:text-4xl font-bold text-white mb-4">
-                Ready to invest in content you love?
-              </h2>
-              <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">
-                Join the revolution. Be an early investor, support creators, and earn your fair share.
-              </p>
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link to="/explore">
-                  <Button size="lg" className="bg-white text-orange-600 hover:bg-white/90 rounded-full px-8 py-6 text-lg font-semibold shadow-lg">
-                    Start Exploring
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </Button>
-                </Link>
-                <Link to="/dashboard">
-                  <Button size="lg" variant="outline" className="border-white/30 text-white hover:bg-white/10 rounded-full px-8 py-6 text-lg">
-                    View Dashboard
-                  </Button>
-                </Link>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
     </div>
   );
 }

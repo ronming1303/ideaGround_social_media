@@ -116,7 +116,7 @@ export default function Watchlist() {
     <div className="page-enter p-6 lg:p-8 max-w-7xl mx-auto min-h-screen orange-gradient-subtle" data-testid="watchlist-page">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-heading font-bold gradient-text">My Watchlist</h1>
+        <h1 className="text-3xl font-heading font-bold gradient-text">Watchlist</h1>
         <p className="text-muted-foreground">Track and analyze videos before investing</p>
       </div>
 

@@ -9,10 +9,11 @@ import { Slider } from "../components/ui/slider";
 import { Badge } from "../components/ui/badge";
 import {
   Heart, MessageSquare, ShoppingCart, X,
-  PieChart, Volume2, VolumeX, Play, Pause
+  PieChart, Volume2, VolumeX, Play, Pause, Share2
 } from "lucide-react";
 import { XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 import VideoComments from "../components/VideoComments";
+import ShareDialog from "../components/ShareDialog";
 
 // Shared panel content (used in both desktop sidebar and mobile sheets)
 function CommentsPanel({ videoId, onClose }) {
@@ -398,6 +399,19 @@ export default function Shorts() {
                       </div>
                       <span className="text-white text-xs font-medium drop-shadow">Comments</span>
                     </button>
+
+                    <ShareDialog
+                      url={`${window.location.origin}/shorts/${short.video_id}`}
+                      title={short.title}
+                      description={`Check out "${short.title}" on IdeaGround!`}
+                    >
+                      <div className="flex flex-col items-center gap-1">
+                        <div className="w-12 h-12 rounded-full bg-black/30 backdrop-blur-sm flex items-center justify-center text-white transition-transform active:scale-90">
+                          <Share2 className="w-6 h-6" />
+                        </div>
+                        <span className="text-white text-xs font-medium drop-shadow">Share</span>
+                      </div>
+                    </ShareDialog>
 
                     <button
                       onClick={() => { setBuySheetOpen(true); setCommentSheetOpen(false); fetchVideoDetails(short.video_id); setSharesToBuy(1); }}
