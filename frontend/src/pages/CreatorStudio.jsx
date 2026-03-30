@@ -4,6 +4,7 @@ import axios from "axios";
 import { API, useAuth } from "../App";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
@@ -487,52 +488,61 @@ export default function CreatorStudio() {
         </Card>
       </div>
 
-      {/* Broadcasts */}
-      <Card className="border-border/50 mb-6">
-        <CardHeader>
-          <CardTitle className="font-heading flex items-center gap-2">
-            <Megaphone className="w-5 h-5 text-primary" />
-            Broadcasts
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex gap-3">
-            <Textarea
-              value={broadcastContent}
-              onChange={(e) => setBroadcastContent(e.target.value)}
-              placeholder="Send a message to your subscribers..."
-              rows={2}
-              maxLength={1000}
-              className="flex-1 resize-none"
-            />
-            <Button
-              onClick={handleBroadcast}
-              disabled={broadcasting || !broadcastContent.trim()}
-              className="bg-primary text-white hover:bg-primary/90 rounded-xl px-4 self-end"
-            >
-              <Send className="w-4 h-4" />
-            </Button>
-          </div>
-          <p className="text-xs text-muted-foreground text-right">{broadcastContent.length}/1000</p>
-          {broadcasts.length > 0 ? (
-            <div className="space-y-3 mt-2">
-              {broadcasts.map((b) => (
-                <div key={b.broadcast_id} className="p-4 rounded-xl bg-muted/40 border border-border/50">
-                  <p className="text-sm whitespace-pre-wrap">{b.content}</p>
-                  <p className="text-xs text-muted-foreground mt-2">
-                    {new Date(b.created_at).toLocaleString()}
-                  </p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground text-center py-4">No broadcasts yet</p>
-          )}
-        </CardContent>
-      </Card>
+      <Tabs defaultValue="videos">
+        <TabsList className="bg-muted/50 mb-6">
+          <TabsTrigger value="videos" className="rounded-full">
+            <Video className="w-3.5 h-3.5 mr-1.5" />
+            Videos ({videos.length})
+          </TabsTrigger>
+          <TabsTrigger value="broadcasts" className="rounded-full">
+            <Megaphone className="w-3.5 h-3.5 mr-1.5" />
+            Broadcasts ({broadcasts.length})
+          </TabsTrigger>
+        </TabsList>
 
-      {/* Videos */}
-      <Card className="border-border/50">
+        {/* Broadcasts Tab */}
+        <TabsContent value="broadcasts">
+          <Card className="border-border/50">
+            <CardContent className="pt-6 space-y-4">
+              <div className="flex gap-3">
+                <Textarea
+                  value={broadcastContent}
+                  onChange={(e) => setBroadcastContent(e.target.value)}
+                  placeholder="Send a message to your subscribers..."
+                  rows={3}
+                  maxLength={1000}
+                  className="flex-1 resize-none"
+                />
+                <Button
+                  onClick={handleBroadcast}
+                  disabled={broadcasting || !broadcastContent.trim()}
+                  className="bg-primary text-white hover:bg-primary/90 rounded-xl px-4 self-end"
+                >
+                  <Send className="w-4 h-4" />
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground text-right">{broadcastContent.length}/1000</p>
+              {broadcasts.length > 0 ? (
+                <div className="space-y-3 mt-2">
+                  {broadcasts.map((b) => (
+                    <div key={b.broadcast_id} className="p-4 rounded-xl bg-muted/40 border border-border/50">
+                      <p className="text-sm whitespace-pre-wrap">{b.content}</p>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        {new Date(b.created_at).toLocaleString()}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground text-center py-8">No broadcasts yet. Send your first message to subscribers!</p>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Videos Tab */}
+        <TabsContent value="videos">
+        <Card className="border-border/50">
         <CardHeader>
           <CardTitle className="font-heading">Your Videos</CardTitle>
         </CardHeader>
@@ -595,6 +605,8 @@ export default function CreatorStudio() {
           )}
         </CardContent>
       </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
