@@ -220,6 +220,9 @@ class CreateVideoRequest(BaseModel):
 class BecomeCreatorRequest(BaseModel):
     category: str
 
+class BroadcastRequest(BaseModel):
+    content: str
+
 # ==================== COMMENT REWARDS SYSTEM ====================
 
 class Comment(BaseModel):
@@ -947,6 +950,8 @@ async def get_video(video_id: str, request: Request):
     user = await get_optional_user(request)
     if user:
         video["creator"]["is_subscribed"] = video["creator_id"] in user.subscriptions
+        own_creator = await db.creators.find_one({"creator_id": video["creator_id"], "user_id": user.user_id})
+        video["is_own_content"] = own_creator is not None
         like = await db.video_likes.find_one({"user_id": user.user_id, "video_id": video_id})
         video["user_liked"] = like is not None
         
@@ -967,6 +972,7 @@ async def get_video(video_id: str, request: Request):
         video["watch_price_when_added"] = watchlist_item.get("price_when_added") if watchlist_item else None
     else:
         video["creator"]["is_subscribed"] = False
+        video["is_own_content"] = False
         video["user_liked"] = False
         video["user_shares"] = 0
         video["user_watching"] = False
@@ -1159,6 +1165,103 @@ async def get_my_creator_profile(user: User = Depends(get_current_user)):
 
     return {"is_creator": True, "creator": creator}
 
+# ==================== BROADCASTS ====================
+
+@api_router.post("/creators/me/broadcasts")
+async def create_broadcast(req: BroadcastRequest, user: User = Depends(get_current_user)):
+    """Creator publishes a broadcast message"""
+    creator = await db.creators.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not creator:
+        raise HTTPException(status_code=403, detail="You are not a creator")
+
+    content = req.content.strip()
+    if not content:
+        raise HTTPException(status_code=400, detail="Content cannot be empty")
+    if len(content) > 1000:
+        raise HTTPException(status_code=400, detail="Content too long (max 1000 characters)")
+
+    broadcast = {
+        "broadcast_id": f"bc_{uuid.uuid4().hex[:12]}",
+        "creator_id": creator["creator_id"],
+        "content": content,
+        "created_at": datetime.now(timezone.utc),
+        "likes": 0,
+    }
+    await db.broadcasts.insert_one(broadcast)
+    broadcast.pop("_id", None)
+    return broadcast
+
+@api_router.get("/creators/{creator_id}/broadcasts")
+async def get_creator_broadcasts(creator_id: str):
+    """Get broadcasts for a specific creator"""
+    broadcasts = await db.broadcasts.find(
+        {"creator_id": creator_id},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(50)
+    return broadcasts
+
+@api_router.get("/feed/broadcasts")
+async def get_feed_broadcasts(user: User = Depends(get_current_user)):
+    """Get broadcasts from all creators the user subscribes to"""
+    if not user.subscriptions:
+        return []
+    broadcasts = await db.broadcasts.find(
+        {"creator_id": {"$in": user.subscriptions}},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(100)
+
+    # Attach creator info
+    creator_ids = list(set(b["creator_id"] for b in broadcasts))
+    creators = await db.creators.find(
+        {"creator_id": {"$in": creator_ids}},
+        {"_id": 0, "creator_id": 1, "name": 1, "image": 1, "stock_symbol": 1}
+    ).to_list(len(creator_ids))
+    creator_map = {c["creator_id"]: c for c in creators}
+    for b in broadcasts:
+        b["creator"] = creator_map.get(b["creator_id"], {})
+    return broadcasts
+
+# ==================== SUBSCRIPTION UNREAD COUNTS ====================
+
+@api_router.get("/subscriptions/unread")
+async def get_subscription_unread(user: User = Depends(get_current_user)):
+    """Return unread video + broadcast counts per subscribed creator since last seen"""
+    if not user.subscriptions:
+        return {}
+
+    # Fetch last_seen_at per creator for this user
+    seen_docs = await db.user_creator_seen.find(
+        {"user_id": user.user_id, "creator_id": {"$in": user.subscriptions}},
+        {"_id": 0, "creator_id": 1, "last_seen_at": 1}
+    ).to_list(len(user.subscriptions))
+    seen_map = {d["creator_id"]: d["last_seen_at"] for d in seen_docs}
+
+    result = {}
+    for creator_id in user.subscriptions:
+        last_seen = seen_map.get(creator_id)
+        query = {"creator_id": creator_id}
+        if last_seen:
+            query["created_at"] = {"$gt": last_seen}
+
+        new_videos = await db.videos.count_documents(query)
+        new_broadcasts = await db.broadcasts.count_documents(query)
+        total = new_videos + new_broadcasts
+        if total > 0:
+            result[creator_id] = {"videos": new_videos, "broadcasts": new_broadcasts, "total": total}
+
+    return result
+
+@api_router.post("/subscriptions/seen/{creator_id}")
+async def mark_creator_seen(creator_id: str, user: User = Depends(get_current_user)):
+    """Mark all content from a creator as seen (update last_seen_at to now)"""
+    now = datetime.now(timezone.utc)
+    await db.user_creator_seen.update_one(
+        {"user_id": user.user_id, "creator_id": creator_id},
+        {"$set": {"last_seen_at": now}},
+        upsert=True
+    )
+    return {"ok": True}
+
 @api_router.get("/creators/{creator_id}")
 async def get_creator(creator_id: str, request: Request):
     """Get creator profile with videos"""
@@ -1199,10 +1302,31 @@ async def get_subscriptions(user: User = Depends(get_current_user)):
 
     creators = await db.creators.find(
         {"creator_id": {"$in": user.subscriptions}},
-        {"_id": 0, "creator_id": 1, "name": 1, "image": 1, "category": 1, "avatar_r2_key": 1}
+        {"_id": 0, "creator_id": 1, "name": 1, "image": 1, "category": 1, "avatar_r2_key": 1, "subscriber_count": 1, "stock_symbol": 1}
     ).to_list(len(user.subscriptions))
 
-    return {"subscriptions": [process_creator_image(c) for c in creators]}
+    # Attach video count and total revenue per creator
+    creator_ids = [c["creator_id"] for c in creators]
+    videos = await db.videos.find(
+        {"creator_id": {"$in": creator_ids}},
+        {"_id": 0, "creator_id": 1, "share_price": 1, "total_shares": 1, "available_shares": 1}
+    ).to_list(1000)
+
+    from collections import defaultdict
+    video_map = defaultdict(list)
+    for v in videos:
+        video_map[v["creator_id"]].append(v)
+
+    for c in creators:
+        c_videos = video_map[c["creator_id"]]
+        c["video_count"] = len(c_videos)
+        c["total_revenue"] = sum(
+            (v.get("total_shares", 0) - v.get("available_shares", 0)) * v.get("share_price", 0)
+            for v in c_videos
+        )
+        process_creator_image(c)
+
+    return {"subscriptions": creators}
 
 
 @api_router.post("/creators/{creator_id}/subscribe")
@@ -1253,7 +1377,12 @@ async def buy_shares(req: BuyShareRequest, user: User = Depends(get_current_user
     video = await db.videos.find_one({"video_id": req.video_id}, {"_id": 0})
     if not video:
         raise HTTPException(status_code=404, detail="Video not found")
-    
+
+    # Prevent creators from buying shares of their own content
+    own_creator = await db.creators.find_one({"creator_id": video["creator_id"], "user_id": user.user_id})
+    if own_creator:
+        raise HTTPException(status_code=403, detail="You cannot buy shares of your own content")
+
     if req.shares <= 0:
         raise HTTPException(status_code=400, detail="Invalid share amount")
     
