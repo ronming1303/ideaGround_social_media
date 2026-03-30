@@ -30,7 +30,7 @@ function CommentsPanel({ videoId, onClose }) {
   );
 }
 
-function InvestmentPanel({ details, sharesToBuy, setSharesToBuy, onBuy, buying, walletBalance, onClose }) {
+function InvestmentPanel({ details, sharesToBuy, setSharesToBuy, onBuy, buying, walletBalance, onClose, isOwnContent }) {
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between px-4 py-3 border-b border-border flex-shrink-0">
@@ -105,7 +105,11 @@ function InvestmentPanel({ details, sharesToBuy, setSharesToBuy, onBuy, buying, 
               </div>
             </div>
 
-            {(() => {
+            {isOwnContent ? (
+              <div className="p-4 rounded-xl bg-muted/50 text-center text-sm text-muted-foreground">
+                This is your content — you cannot buy shares of your own work.
+              </div>
+            ) : (() => {
               const maxPerUser = Math.floor((details.total_shares || 1000) * 0.1);
               const canBuyMore = Math.max(0, maxPerUser - (details.user_shares || 0));
               const sliderMax = Math.min(details.available_shares || 0, canBuyMore);
@@ -495,6 +499,7 @@ export default function Shorts() {
               buying={buying}
               walletBalance={user?.wallet_balance}
               onClose={closePanel}
+              isOwnContent={currentDetails?.is_own_content}
             />
           )}
         </div>

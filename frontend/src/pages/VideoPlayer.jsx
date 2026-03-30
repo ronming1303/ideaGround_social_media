@@ -411,9 +411,14 @@ export default function VideoPlayer() {
               </div>
 
               {/* BUY BUTTON */}
+              {video.is_own_content ? (
+                <div className="w-full rounded-xl py-4 px-4 bg-muted/50 text-center text-sm text-muted-foreground">
+                  This is your content — you cannot buy shares of your own work.
+                </div>
+              ) : (
               <Dialog open={buyDialogOpen} onOpenChange={setBuyDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button 
+                  <Button
                     data-testid="buy-shares-btn"
                     className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl py-6 text-lg font-bold shadow-lg shadow-orange-500/25 transition-all hover:scale-[1.01]"
                     disabled={video.available_shares <= 0}
@@ -512,6 +517,7 @@ export default function VideoPlayer() {
                   </div>
                 </DialogContent>
               </Dialog>
+              )}
 
             </CardContent>
           </Card>

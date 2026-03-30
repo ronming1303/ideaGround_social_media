@@ -947,6 +947,8 @@ async def get_video(video_id: str, request: Request):
     user = await get_optional_user(request)
     if user:
         video["creator"]["is_subscribed"] = video["creator_id"] in user.subscriptions
+        own_creator = await db.creators.find_one({"creator_id": video["creator_id"], "user_id": user.user_id})
+        video["is_own_content"] = own_creator is not None
         like = await db.video_likes.find_one({"user_id": user.user_id, "video_id": video_id})
         video["user_liked"] = like is not None
         
@@ -967,6 +969,7 @@ async def get_video(video_id: str, request: Request):
         video["watch_price_when_added"] = watchlist_item.get("price_when_added") if watchlist_item else None
     else:
         video["creator"]["is_subscribed"] = False
+        video["is_own_content"] = False
         video["user_liked"] = False
         video["user_shares"] = 0
         video["user_watching"] = False
@@ -1253,7 +1256,12 @@ async def buy_shares(req: BuyShareRequest, user: User = Depends(get_current_user
     video = await db.videos.find_one({"video_id": req.video_id}, {"_id": 0})
     if not video:
         raise HTTPException(status_code=404, detail="Video not found")
-    
+
+    # Prevent creators from buying shares of their own content
+    own_creator = await db.creators.find_one({"creator_id": video["creator_id"], "user_id": user.user_id})
+    if own_creator:
+        raise HTTPException(status_code=403, detail="You cannot buy shares of your own content")
+
     if req.shares <= 0:
         raise HTTPException(status_code=400, detail="Invalid share amount")
     
