@@ -295,7 +295,7 @@ export default function Landing() {
 
           {/* SME Cards */}
           <div className="px-4 py-16 max-w-4xl mx-auto">
-            <p className="text-xs font-bold tracking-widest text-muted-foreground text-center mb-10">WHAT WE DELIVER</p>
+            <p className="text-sm font-bold tracking-widest text-muted-foreground text-center mb-10">WHAT WE DELIVER</p>
             <div className="grid md:grid-cols-2 gap-4">
               {[
                 { num: "01", title: "We Incentivize Everyone",    desc: "Fair and transparent profit-sharing system for social media users.",                                                                                          color: "bg-[#dde0f7]" },
@@ -655,8 +655,26 @@ export default function Landing() {
         <section id="securitize" className="py-20 px-4 bg-muted/30 scroll-mt-16">
           <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
 
-            {/* Visual — LEFT */}
-            <div className="flex flex-col items-center gap-3 w-full max-w-sm mx-auto lg:mx-0">
+            {/* Text — LEFT */}
+            <div className="space-y-6">
+              <p className="text-sm font-bold tracking-widest text-muted-foreground">CONTENT SECURITIZATION</p>
+              <h2 className="font-heading text-4xl font-bold leading-tight">Your content is your asset</h2>
+              <p className="text-lg text-muted-foreground leading-relaxed">Securitize your content and turn it into equity. Sell a portion of shares to raise funding from your audience — before a single ad dollar is earned.</p>
+              <div className="space-y-3">
+                {[
+                  "Your content is securitized the moment you publish",
+                  "Choose how many shares to sell — keep the rest",
+                  "Sold shares become direct funding from your investors",
+                ].map((p, i) => (
+                  <div key={i} className="flex items-center gap-3 text-sm text-muted-foreground">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />{p}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Visual — RIGHT */}
+            <div className="flex flex-col items-center gap-3 w-full max-w-sm mx-auto lg:mx-0 lg:ml-auto">
               {/* Before */}
               <div className="w-full bg-card rounded-2xl border border-border/50 overflow-hidden shadow-md opacity-75">
                 <div className="relative">
@@ -717,24 +735,6 @@ export default function Landing() {
                 </div>
               </div>
             </div>
-
-            {/* Text — RIGHT */}
-            <div className="space-y-6">
-              <p className="text-xs font-bold tracking-widest text-muted-foreground">CONTENT SECURITIZATION</p>
-              <h2 className="font-heading text-4xl font-bold leading-tight">Your content is your asset</h2>
-              <p className="text-lg text-muted-foreground leading-relaxed">Securitize your content and turn it into equity. Sell a portion of shares to raise funding from your audience — before a single ad dollar is earned.</p>
-              <div className="space-y-3">
-                {[
-                  "Your content is securitized the moment you publish",
-                  "Choose how many shares to sell — keep the rest",
-                  "Sold shares become direct funding from your investors",
-                ].map((p, i) => (
-                  <div key={i} className="flex items-center gap-3 text-sm text-muted-foreground">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />{p}
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
         </section>
 
@@ -744,7 +744,7 @@ export default function Landing() {
 
             {/* Text — LEFT */}
             <div className="space-y-6">
-              <p className="text-xs font-bold tracking-widest text-muted-foreground">SHARE TRADING</p>
+              <p className="text-sm font-bold tracking-widest text-muted-foreground">SHARE TRADING</p>
               <h2 className="font-heading text-4xl font-bold leading-tight">Invest in creators like stocks</h2>
               <p className="text-lg text-muted-foreground leading-relaxed">Buy and sell content shares on an open market. Back the creators you believe in — and become a partner in their growth.</p>
               <div className="space-y-3">
@@ -819,8 +819,26 @@ export default function Landing() {
         <section className="py-20 px-4 bg-muted/30">
           <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
 
-            {/* Visual — LEFT */}
-            <div className="max-w-lg w-full mx-auto lg:mx-0 bg-card rounded-3xl border border-border/50 shadow-xl shadow-black/5 overflow-hidden">
+            {/* Text — LEFT */}
+            <div className="space-y-6">
+              <p className="text-sm font-bold tracking-widest text-muted-foreground">REVENUE DISTRIBUTION</p>
+              <h2 className="font-heading text-4xl font-bold leading-tight">Everyone wins when content succeeds</h2>
+              <p className="text-lg text-muted-foreground leading-relaxed">Creators and shareholders split revenue together — fairly, transparently, and automatically. When the content grows, the whole community grows with it.</p>
+              <div className="space-y-3">
+                {[
+                  "Creators and investors share in every dollar earned",
+                  "Your share of revenue is proportional to your contribution",
+                  "The more a piece of content earns, the more every shareholder earns",
+                ].map((p, i) => (
+                  <div key={i} className="flex items-center gap-3 text-sm text-muted-foreground">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />{p}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Visual — RIGHT */}
+            <div className="max-w-lg w-full mx-auto lg:mx-0 lg:ml-auto bg-card rounded-3xl border border-border/50 shadow-xl shadow-black/5 overflow-hidden">
 
               {/* Video header */}
               <div className="flex items-center gap-4 p-5 border-b border-border/50 bg-gradient-to-r from-orange-500 to-orange-400">
@@ -915,23 +933,6 @@ export default function Landing() {
               </div>
             </div>
 
-            {/* Text — RIGHT */}
-            <div className="space-y-6">
-              <p className="text-xs font-bold tracking-widest text-muted-foreground">REVENUE DISTRIBUTION</p>
-              <h2 className="font-heading text-4xl font-bold leading-tight">Everyone wins when content succeeds</h2>
-              <p className="text-lg text-muted-foreground leading-relaxed">Creators and shareholders split revenue together — fairly, transparently, and automatically. When the content grows, the whole community grows with it.</p>
-              <div className="space-y-3">
-                {[
-                  "Creators and investors share in every dollar earned",
-                  "Your share of revenue is proportional to your contribution",
-                  "The more a creator of content earns, the more every shareholder earns",
-                ].map((p, i) => (
-                  <div key={i} className="flex items-center gap-3 text-sm text-muted-foreground">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />{p}
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
         </section>
 
