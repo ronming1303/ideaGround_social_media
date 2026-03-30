@@ -1221,6 +1221,47 @@ async def get_feed_broadcasts(user: User = Depends(get_current_user)):
         b["creator"] = creator_map.get(b["creator_id"], {})
     return broadcasts
 
+# ==================== SUBSCRIPTION UNREAD COUNTS ====================
+
+@api_router.get("/subscriptions/unread")
+async def get_subscription_unread(user: User = Depends(get_current_user)):
+    """Return unread video + broadcast counts per subscribed creator since last seen"""
+    if not user.subscriptions:
+        return {}
+
+    # Fetch last_seen_at per creator for this user
+    seen_docs = await db.user_creator_seen.find(
+        {"user_id": user.user_id, "creator_id": {"$in": user.subscriptions}},
+        {"_id": 0, "creator_id": 1, "last_seen_at": 1}
+    ).to_list(len(user.subscriptions))
+    seen_map = {d["creator_id"]: d["last_seen_at"] for d in seen_docs}
+
+    result = {}
+    for creator_id in user.subscriptions:
+        last_seen = seen_map.get(creator_id)
+        query = {"creator_id": creator_id}
+        if last_seen:
+            query["created_at"] = {"$gt": last_seen}
+
+        new_videos = await db.videos.count_documents(query)
+        new_broadcasts = await db.broadcasts.count_documents(query)
+        total = new_videos + new_broadcasts
+        if total > 0:
+            result[creator_id] = {"videos": new_videos, "broadcasts": new_broadcasts, "total": total}
+
+    return result
+
+@api_router.post("/subscriptions/seen/{creator_id}")
+async def mark_creator_seen(creator_id: str, user: User = Depends(get_current_user)):
+    """Mark all content from a creator as seen (update last_seen_at to now)"""
+    now = datetime.now(timezone.utc)
+    await db.user_creator_seen.update_one(
+        {"user_id": user.user_id, "creator_id": creator_id},
+        {"$set": {"last_seen_at": now}},
+        upsert=True
+    )
+    return {"ok": True}
+
 @api_router.get("/creators/{creator_id}")
 async def get_creator(creator_id: str, request: Request):
     """Get creator profile with videos"""

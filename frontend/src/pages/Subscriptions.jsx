@@ -1,20 +1,25 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { API } from "../App";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
-import { Bell, ArrowUpRight, ChevronRight } from "lucide-react";
+import { Bell, ArrowUpRight, ChevronRight, Video, Megaphone } from "lucide-react";
 
 export default function Subscriptions() {
   const [subscriptions, setSubscriptions] = useState([]);
+  const [unread, setUnread] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetch = async () => {
       try {
-        const response = await axios.get(`${API}/subscriptions`, { withCredentials: true });
-        setSubscriptions(response.data.subscriptions || []);
+        const [subRes, unreadRes] = await Promise.all([
+          axios.get(`${API}/subscriptions`, { withCredentials: true }),
+          axios.get(`${API}/subscriptions/unread`, { withCredentials: true }),
+        ]);
+        setSubscriptions(subRes.data.subscriptions || []);
+        setUnread(unreadRes.data || {});
       } catch (err) {
         console.error(err);
       } finally {
@@ -23,6 +28,20 @@ export default function Subscriptions() {
     };
     fetch();
   }, []);
+
+  const handleCreatorClick = useCallback(async (creatorId) => {
+    if (!unread[creatorId]) return;
+    try {
+      await axios.post(`${API}/subscriptions/seen/${creatorId}`, {}, { withCredentials: true });
+      setUnread(prev => {
+        const next = { ...prev };
+        delete next[creatorId];
+        return next;
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }, [unread]);
 
   if (loading) {
     return (
@@ -65,32 +84,60 @@ export default function Subscriptions() {
         <Card className="border-border/50">
           <CardContent className="p-0">
             <div className="divide-y divide-border">
-              {subscriptions.map((creator) => (
-                <Link
-                  key={creator.creator_id}
-                  to={`/creator/${creator.creator_id}`}
-                  className="flex items-center gap-4 p-4 hover:bg-muted/50 transition-colors"
-                >
-                  {creator.image ? (
-                    <img
-                      src={creator.image}
-                      alt={creator.name}
-                      className="w-12 h-12 rounded-full object-cover flex-shrink-0"
-                    />
-                  ) : (
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500/20 to-amber-500/20 flex items-center justify-center flex-shrink-0">
-                      <span className="font-bold text-primary text-lg">{creator.name?.charAt(0)}</span>
+              {subscriptions.map((creator) => {
+                const counts = unread[creator.creator_id];
+                return (
+                  <Link
+                    key={creator.creator_id}
+                    to={`/creator/${creator.creator_id}`}
+                    onClick={() => handleCreatorClick(creator.creator_id)}
+                    className="flex items-center gap-4 p-4 hover:bg-muted/50 transition-colors"
+                  >
+                    <div className="relative flex-shrink-0">
+                      {creator.image ? (
+                        <img
+                          src={creator.image}
+                          alt={creator.name}
+                          className="w-12 h-12 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-500/20 to-amber-500/20 flex items-center justify-center">
+                          <span className="font-bold text-primary text-lg">{creator.name?.charAt(0)}</span>
+                        </div>
+                      )}
+                      {counts && (
+                        <span className="absolute -top-1 -right-1 w-5 h-5 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                          {counts.total > 9 ? "9+" : counts.total}
+                        </span>
+                      )}
                     </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium truncate">{creator.name}</p>
-                    {creator.category && (
-                      <p className="text-sm text-muted-foreground truncate">{creator.category}</p>
-                    )}
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                </Link>
-              ))}
+                    <div className="flex-1 min-w-0">
+                      <p className={`font-medium truncate ${counts ? "text-foreground" : ""}`}>{creator.name}</p>
+                      {counts ? (
+                        <div className="flex items-center gap-3 text-xs text-primary mt-0.5">
+                          {counts.videos > 0 && (
+                            <span className="flex items-center gap-1">
+                              <Video className="w-3 h-3" />
+                              {counts.videos} new video{counts.videos > 1 ? "s" : ""}
+                            </span>
+                          )}
+                          {counts.broadcasts > 0 && (
+                            <span className="flex items-center gap-1">
+                              <Megaphone className="w-3 h-3" />
+                              {counts.broadcasts} new broadcast{counts.broadcasts > 1 ? "s" : ""}
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        creator.category && (
+                          <p className="text-sm text-muted-foreground truncate">{creator.category}</p>
+                        )
+                      )}
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                  </Link>
+                );
+              })}
             </div>
           </CardContent>
         </Card>
