@@ -220,6 +220,9 @@ class CreateVideoRequest(BaseModel):
 class BecomeCreatorRequest(BaseModel):
     category: str
 
+class BroadcastRequest(BaseModel):
+    content: str
+
 # ==================== COMMENT REWARDS SYSTEM ====================
 
 class Comment(BaseModel):
@@ -1161,6 +1164,62 @@ async def get_my_creator_profile(user: User = Depends(get_current_user)):
     creator["total_views"] = sum(v.get("views", 0) for v in videos)
 
     return {"is_creator": True, "creator": creator}
+
+# ==================== BROADCASTS ====================
+
+@api_router.post("/creators/me/broadcasts")
+async def create_broadcast(req: BroadcastRequest, user: User = Depends(get_current_user)):
+    """Creator publishes a broadcast message"""
+    creator = await db.creators.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not creator:
+        raise HTTPException(status_code=403, detail="You are not a creator")
+
+    content = req.content.strip()
+    if not content:
+        raise HTTPException(status_code=400, detail="Content cannot be empty")
+    if len(content) > 1000:
+        raise HTTPException(status_code=400, detail="Content too long (max 1000 characters)")
+
+    broadcast = {
+        "broadcast_id": f"bc_{uuid.uuid4().hex[:12]}",
+        "creator_id": creator["creator_id"],
+        "content": content,
+        "created_at": datetime.now(timezone.utc),
+        "likes": 0,
+    }
+    await db.broadcasts.insert_one(broadcast)
+    broadcast.pop("_id", None)
+    return broadcast
+
+@api_router.get("/creators/{creator_id}/broadcasts")
+async def get_creator_broadcasts(creator_id: str):
+    """Get broadcasts for a specific creator"""
+    broadcasts = await db.broadcasts.find(
+        {"creator_id": creator_id},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(50)
+    return broadcasts
+
+@api_router.get("/feed/broadcasts")
+async def get_feed_broadcasts(user: User = Depends(get_current_user)):
+    """Get broadcasts from all creators the user subscribes to"""
+    if not user.subscriptions:
+        return []
+    broadcasts = await db.broadcasts.find(
+        {"creator_id": {"$in": user.subscriptions}},
+        {"_id": 0}
+    ).sort("created_at", -1).to_list(100)
+
+    # Attach creator info
+    creator_ids = list(set(b["creator_id"] for b in broadcasts))
+    creators = await db.creators.find(
+        {"creator_id": {"$in": creator_ids}},
+        {"_id": 0, "creator_id": 1, "name": 1, "image": 1, "stock_symbol": 1}
+    ).to_list(len(creator_ids))
+    creator_map = {c["creator_id"]: c for c in creators}
+    for b in broadcasts:
+        b["creator"] = creator_map.get(b["creator_id"], {})
+    return broadcasts
 
 @api_router.get("/creators/{creator_id}")
 async def get_creator(creator_id: str, request: Request):

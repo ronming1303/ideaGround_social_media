@@ -7,8 +7,8 @@ import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { 
-  ArrowLeft, Bell, Play, Eye, Heart, Users, Video, DollarSign
+import {
+  ArrowLeft, Bell, Play, Eye, Heart, Users, Video, DollarSign, Megaphone
 } from "lucide-react";
 
 export default function CreatorProfile() {
@@ -18,6 +18,7 @@ export default function CreatorProfile() {
   const [loading, setLoading] = useState(true);
   const [subscribed, setSubscribed] = useState(false);
   const [activeTab, setActiveTab] = useState("all");
+  const [broadcasts, setBroadcasts] = useState([]);
 
   useEffect(() => {
     fetchCreator();
@@ -25,9 +26,13 @@ export default function CreatorProfile() {
 
   const fetchCreator = async () => {
     try {
-      const response = await axios.get(`${API}/creators/${creatorId}`, { withCredentials: true });
-      setCreator(response.data);
-      setSubscribed(response.data.is_subscribed || false);
+      const [creatorRes, broadcastRes] = await Promise.all([
+        axios.get(`${API}/creators/${creatorId}`, { withCredentials: true }),
+        axios.get(`${API}/creators/${creatorId}/broadcasts`, { withCredentials: true }),
+      ]);
+      setCreator(creatorRes.data);
+      setSubscribed(creatorRes.data.is_subscribed || false);
+      setBroadcasts(broadcastRes.data);
     } catch (error) {
       console.error("Error fetching creator:", error);
       toast.error("Failed to load creator profile");
@@ -143,15 +148,39 @@ export default function CreatorProfile() {
         </div>
       </div>
 
-      {/* Videos */}
+      {/* Content Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="bg-muted/50 mb-6">
           <TabsTrigger value="all" data-testid="creator-tab-all" className="rounded-full">
             All Videos ({creator.videos?.length || 0})
           </TabsTrigger>
+          <TabsTrigger value="broadcasts" className="rounded-full">
+            <Megaphone className="w-3.5 h-3.5 mr-1.5" />
+            Broadcasts ({broadcasts.length})
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value={activeTab} className="mt-0">
+        <TabsContent value="broadcasts" className="mt-0">
+          {broadcasts.length > 0 ? (
+            <div className="space-y-3 max-w-2xl">
+              {broadcasts.map((b) => (
+                <div key={b.broadcast_id} className="p-4 rounded-xl bg-card border border-border/50">
+                  <p className="text-sm whitespace-pre-wrap">{b.content}</p>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {new Date(b.created_at).toLocaleString()}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <Megaphone className="w-12 h-12 mx-auto text-muted-foreground/50 mb-4" />
+              <p className="text-muted-foreground">No broadcasts yet</p>
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="all" className="mt-0">
           {filteredVideos?.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredVideos.map((video) => (

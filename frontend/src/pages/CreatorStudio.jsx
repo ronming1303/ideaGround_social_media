@@ -11,9 +11,9 @@ import { Badge } from "../components/ui/badge";
 import { Label } from "../components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
-import { 
+import {
   Video, Upload, Plus, Eye, Heart, DollarSign,
-  Users, Play, Sparkles, BarChart3
+  Users, Play, Sparkles, BarChart3, Megaphone, Send
 } from "lucide-react";
 
 export default function CreatorStudio() {
@@ -26,6 +26,11 @@ export default function CreatorStudio() {
   const [creatorCategory, setCreatorCategory] = useState("");
   const [becomingCreator, setBecomingCreator] = useState(false);
   
+  // Broadcast
+  const [broadcastContent, setBroadcastContent] = useState("");
+  const [broadcasting, setBroadcasting] = useState(false);
+  const [broadcasts, setBroadcasts] = useState([]);
+
   // Upload video form
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
   const [videoFile, setVideoFile] = useState(null);
@@ -57,10 +62,29 @@ export default function CreatorStudio() {
     try {
       const response = await axios.get(`${API}/creators/me`, { withCredentials: true });
       setCreatorData(response.data);
+      if (response.data.is_creator) {
+        const bc = await axios.get(`${API}/creators/${response.data.creator.creator_id}/broadcasts`, { withCredentials: true });
+        setBroadcasts(bc.data);
+      }
     } catch (error) {
       console.error("Error fetching creator data:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleBroadcast = async () => {
+    if (!broadcastContent.trim()) return;
+    setBroadcasting(true);
+    try {
+      const response = await axios.post(`${API}/creators/me/broadcasts`, { content: broadcastContent }, { withCredentials: true });
+      setBroadcasts(prev => [response.data, ...prev]);
+      setBroadcastContent("");
+      toast.success("Broadcast sent!");
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Failed to send broadcast");
+    } finally {
+      setBroadcasting(false);
     }
   };
 
@@ -462,6 +486,50 @@ export default function CreatorStudio() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Broadcasts */}
+      <Card className="border-border/50 mb-6">
+        <CardHeader>
+          <CardTitle className="font-heading flex items-center gap-2">
+            <Megaphone className="w-5 h-5 text-primary" />
+            Broadcasts
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex gap-3">
+            <Textarea
+              value={broadcastContent}
+              onChange={(e) => setBroadcastContent(e.target.value)}
+              placeholder="Send a message to your subscribers..."
+              rows={2}
+              maxLength={1000}
+              className="flex-1 resize-none"
+            />
+            <Button
+              onClick={handleBroadcast}
+              disabled={broadcasting || !broadcastContent.trim()}
+              className="bg-primary text-white hover:bg-primary/90 rounded-xl px-4 self-end"
+            >
+              <Send className="w-4 h-4" />
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground text-right">{broadcastContent.length}/1000</p>
+          {broadcasts.length > 0 ? (
+            <div className="space-y-3 mt-2">
+              {broadcasts.map((b) => (
+                <div key={b.broadcast_id} className="p-4 rounded-xl bg-muted/40 border border-border/50">
+                  <p className="text-sm whitespace-pre-wrap">{b.content}</p>
+                  <p className="text-xs text-muted-foreground mt-2">
+                    {new Date(b.created_at).toLocaleString()}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground text-center py-4">No broadcasts yet</p>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Videos */}
       <Card className="border-border/50">
