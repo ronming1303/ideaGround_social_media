@@ -4,7 +4,7 @@ import axios from "axios";
 import { API } from "../App";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
-import { Bell, ArrowUpRight, ChevronRight, Video, Megaphone } from "lucide-react";
+import { Bell, ArrowUpRight, ChevronRight, Video, Megaphone, Users, DollarSign } from "lucide-react";
 
 export default function Subscriptions() {
   const [subscriptions, setSubscriptions] = useState([]);
@@ -113,8 +113,22 @@ export default function Subscriptions() {
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className={`font-medium truncate ${counts ? "text-foreground" : ""}`}>{creator.name}</p>
-                      {counts ? (
-                        <div className="flex items-center gap-3 text-xs text-primary mt-0.5">
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5 flex-wrap">
+                        <span className="flex items-center gap-1">
+                          <Users className="w-3 h-3" />
+                          {creator.subscriber_count?.toLocaleString() ?? 0}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Video className="w-3 h-3" />
+                          {creator.video_count ?? 0} videos
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <DollarSign className="w-3 h-3" />
+                          ${creator.total_revenue?.toFixed(0) ?? "0"}
+                        </span>
+                      </div>
+                      {counts && (
+                        <div className="flex items-center gap-3 text-xs text-primary mt-1">
                           {counts.videos > 0 && (
                             <span className="flex items-center gap-1">
                               <Video className="w-3 h-3" />
@@ -128,10 +142,6 @@ export default function Subscriptions() {
                             </span>
                           )}
                         </div>
-                      ) : (
-                        creator.category && (
-                          <p className="text-sm text-muted-foreground truncate">{creator.category}</p>
-                        )
                       )}
                     </div>
                     <ChevronRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />

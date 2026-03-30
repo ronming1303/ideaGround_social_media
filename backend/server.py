@@ -1302,10 +1302,31 @@ async def get_subscriptions(user: User = Depends(get_current_user)):
 
     creators = await db.creators.find(
         {"creator_id": {"$in": user.subscriptions}},
-        {"_id": 0, "creator_id": 1, "name": 1, "image": 1, "category": 1, "avatar_r2_key": 1}
+        {"_id": 0, "creator_id": 1, "name": 1, "image": 1, "category": 1, "avatar_r2_key": 1, "subscriber_count": 1, "stock_symbol": 1}
     ).to_list(len(user.subscriptions))
 
-    return {"subscriptions": [process_creator_image(c) for c in creators]}
+    # Attach video count and total revenue per creator
+    creator_ids = [c["creator_id"] for c in creators]
+    videos = await db.videos.find(
+        {"creator_id": {"$in": creator_ids}},
+        {"_id": 0, "creator_id": 1, "share_price": 1, "total_shares": 1, "available_shares": 1}
+    ).to_list(1000)
+
+    from collections import defaultdict
+    video_map = defaultdict(list)
+    for v in videos:
+        video_map[v["creator_id"]].append(v)
+
+    for c in creators:
+        c_videos = video_map[c["creator_id"]]
+        c["video_count"] = len(c_videos)
+        c["total_revenue"] = sum(
+            (v.get("total_shares", 0) - v.get("available_shares", 0)) * v.get("share_price", 0)
+            for v in c_videos
+        )
+        process_creator_image(c)
+
+    return {"subscriptions": creators}
 
 
 @api_router.post("/creators/{creator_id}/subscribe")
