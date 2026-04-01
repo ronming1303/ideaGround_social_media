@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "../App";
 import { Button } from "../components/ui/button";
-import { Play, TrendingUp, TrendingDown, Users, DollarSign, ArrowRight, Sparkles, Menu, X, BarChart2, Flame, Zap, Activity, ArrowUpRight, ArrowDownRight, Eye, CheckCircle2 } from "lucide-react";
+import { Play, TrendingUp, TrendingDown, Users, DollarSign, ArrowRight, Sparkles, Menu, X, BarChart2, Flame, Zap, Activity, ArrowUpRight, ArrowDownRight, Eye, CheckCircle2, RotateCcw } from "lucide-react";
 import OnboardingDemo from "../components/OnboardingDemo";
 
 const solutions = [
@@ -46,6 +46,32 @@ export default function Landing() {
   const [demoMarketTab, setDemoMarketTab] = useState("gainers");
   const [contactForm, setContactForm] = useState({ firstName: "", lastName: "", email: "", phone: "", message: "" });
   const [contactSent, setContactSent] = useState(false);
+  const [heroCardStep, setHeroCardStep] = useState("buy");
+  const [cursorPos, setCursorPos] = useState({ x: "50%", y: "32%" });
+  const [cursorClicking, setCursorClicking] = useState(false);
+  const [cursorOnYou, setCursorOnYou] = useState(false);
+  const [loopCount, setLoopCount] = useState(0);
+
+  useEffect(() => {
+    const ts = [];
+    const at = (ms, fn) => ts.push(setTimeout(fn, ms));
+
+    // — Buy state: idle, then glide to button —
+    at(0,    () => { setHeroCardStep("buy"); setCursorPos({ x: "50%", y: "32%" }); setCursorClicking(false); setCursorOnYou(false); });
+    at(2000, () => setCursorPos({ x: "52%", y: "88%" }));   // glide to Buy button
+    at(3300, () => setCursorClicking(true));                  // press
+    at(3550, () => { setCursorClicking(false); setHeroCardStep("celebrate"); setCursorPos({ x: "50%", y: "50%" }); });
+
+    // — Celebrate: progress bar fills (3000ms) —
+    at(6550, () => { setHeroCardStep("earn"); });
+    at(6800, () => { setCursorPos({ x: "35%", y: "75%" }); setCursorOnYou(true); });  // center on "You" row
+
+    // — Earn: long pause, then reset —
+    at(12300, () => setCursorPos({ x: "50%", y: "32%" }));
+    at(13300, () => setLoopCount(c => c + 1));
+
+    return () => ts.forEach(clearTimeout);
+  }, [loopCount]);
 
   const handleContact = (e) => {
     e.preventDefault();
@@ -609,45 +635,234 @@ export default function Landing() {
 
         {/* Hero */}
         <section className="pt-28 pb-20 px-4">
-          <div className="max-w-3xl mx-auto text-center space-y-8">
-            <h1 className="font-heading text-5xl md:text-6xl font-bold tracking-tight leading-tight">
-              Your content.<br />
-              <span className="gradient-text">Your shares.</span><br />
-              Your earnings.
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-              The first social media platform built on Social Media Economics. Every content is a securitized asset — transparently priced, traded by           
-  shareholders, and designed to reward everyone who creates, invests, and engages.
-            </p>
-            <div className="flex flex-col items-start max-w-lg mx-auto space-y-3">
-              {[
-                "Upload your content and securitize it into tradable shares",
-                "Investors buy in early — share price rises with views and engagement",
-                "Revenue flows to every shareholder, proportional to their ownership",
-              ].map((point, i) => (
-                <div key={i} className="flex items-center gap-3 text-sm text-muted-foreground">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
-                  {point}
+          <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+
+            {/* Left: Text */}
+            <div className="space-y-8 text-center lg:text-left">
+              <h1 className="font-heading text-5xl md:text-6xl font-bold tracking-tight leading-tight">
+                Your content.<br />
+                <span className="gradient-text">Your shares.</span><br />
+                Your earnings.
+              </h1>
+              <p className="text-lg text-muted-foreground max-w-xl mx-auto lg:mx-0">
+                The first social media platform built on Social Media Economics. Every content is a securitized asset — transparently priced, traded by shareholders, and designed to reward everyone who creates, invests, and engages.
+              </p>
+              <div className="flex flex-col items-start max-w-lg mx-auto lg:mx-0 space-y-3">
+                {[
+                  "Upload your content and securitize it into tradable shares",
+                  "Investors buy in early — share price rises with views and engagement",
+                  "Revenue flows to every shareholder, proportional to their ownership",
+                ].map((point, i) => (
+                  <div key={i} className="flex items-center gap-3 text-sm text-muted-foreground">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-500 shrink-0" />
+                    {point}
+                  </div>
+                ))}
+              </div>
+              <div className="flex flex-wrap justify-center lg:justify-start gap-4">
+                <Button
+                  onClick={login}
+                  className="bg-primary text-white hover:bg-primary/90 rounded-full px-8 py-6 text-lg font-medium shadow-lg shadow-orange-500/20"
+                >
+                  Get Started Free
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => document.getElementById("securitize").scrollIntoView({ behavior: "smooth" })}
+                  className="rounded-full px-8 py-6 text-lg font-medium border-2 hover:bg-orange-50 hover:border-orange-300 transition-colors"
+                >
+                  Learn More
+                  <ArrowRight className="w-5 h-5 ml-2 text-orange-500" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Right: Interactive Card */}
+            <div className="relative w-full max-w-sm mx-auto lg:mx-0 lg:ml-auto pointer-events-none">
+              <div className="relative bg-card rounded-3xl shadow-2xl shadow-black/10 border border-border/50 overflow-hidden">
+
+                {/* Cursor */}
+                <div
+                  className="absolute z-50 pointer-events-none"
+                  style={{ left: cursorPos.x, top: cursorPos.y, transition: "left 1100ms ease-in-out, top 1100ms ease-in-out" }}
+                >
+                  <div className={`relative w-4 h-5 transition-transform duration-150 ${cursorClicking ? "scale-75" : "scale-100"}`}>
+                    <svg viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M1 1L1 14L4.5 10.5L6.5 16L8.5 15L6.5 9.5L11 9.5L1 1Z" fill="white" stroke="#1a1a1a" strokeWidth="1.2" strokeLinejoin="round"/>
+                    </svg>
+                    {cursorClicking && (
+                      <span className="absolute -inset-2 rounded-full bg-primary/30 animate-ping" />
+                    )}
+                  </div>
                 </div>
-              ))}
+
+                {/* Buy State */}
+                <div className={`transition-all duration-500 ease-in-out ${heroCardStep === "buy" ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3 absolute inset-x-0 top-0 pointer-events-none"}`}>
+                  <div>
+                    <div className="relative">
+                      <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600" alt="10-min Morning Yoga Flow" className="w-full h-36 object-cover" style={{ objectPosition: "center 35%" }} />
+                      <div className="absolute inset-0 bg-black/25 flex items-center justify-center">
+                        <div className="w-11 h-11 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center">
+                          <Play className="w-5 h-5 text-white fill-white ml-0.5" />
+                        </div>
+                      </div>
+                      <div className="absolute bottom-2 left-3">
+                        <span className="font-mono font-bold text-white text-sm bg-black/50 backdrop-blur-sm px-2 py-0.5 rounded-md">$YOGA</span>
+                      </div>
+                    </div>
+                    <div className="bg-gradient-to-r from-orange-500 to-orange-400 px-5 py-4 text-white">
+                      <div className="flex items-end gap-3">
+                        <span className="font-heading font-bold text-4xl">$1.25</span>
+                        <span className="text-emerald-200 text-sm pb-1 flex items-center gap-1">
+                          <TrendingUp className="w-4 h-4" /> +25.0% today
+                        </span>
+                      </div>
+                      <p className="text-white/70 text-xs mt-1">10-min Morning Yoga Flow · @Lily Chen</p>
+                    </div>
+                    <div className="px-6 pt-4 pb-2">
+                      <div className="flex items-end gap-1 h-12">
+                        {[30, 45, 35, 60, 50, 75, 55, 80, 70, 90, 85, 100].map((h, i) => (
+                          <div key={i} className={`flex-1 rounded-sm ${i >= 9 ? "bg-primary" : "bg-muted"}`} style={{ height: `${h}%` }} />
+                        ))}
+                      </div>
+                    </div>
+                    <div className="px-6 pb-4">
+                      <div className="bg-muted/50 rounded-xl p-3 text-center">
+                        <p className="text-xs text-muted-foreground">Available Shares</p>
+                        <p className="font-mono font-semibold">23 / 100</p>
+                      </div>
+                    </div>
+                    <div className="px-6 pb-6">
+                      <button
+                        onClick={() => setHeroCardStep("celebrate")}
+                        className="w-full bg-primary text-white rounded-2xl py-4 font-semibold text-sm hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
+                      >
+                        Buy 5 Shares — $6.25
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Celebrate State */}
+                <div className={`transition-all duration-500 ease-in-out ${heroCardStep === "celebrate" ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3 absolute inset-x-0 top-0 pointer-events-none"}`}>
+                  <div className="flex flex-col items-center justify-center text-center px-8 py-10 space-y-5 min-h-[430px]">
+                    <div className="text-6xl leading-none">🎉</div>
+                    <div>
+                      <p className="font-heading font-bold text-xl mt-3">Purchase Confirmed!</p>
+                      <p className="text-muted-foreground text-sm mt-1">You now own <span className="font-semibold text-foreground">5 shares</span> of <span className="font-mono font-bold text-primary">$YOGA</span></p>
+                    </div>
+                    <div className="w-full bg-muted/50 rounded-2xl p-4 flex justify-between items-center">
+                      <div className="text-left">
+                        <p className="text-xs text-muted-foreground">Invested</p>
+                        <p className="font-mono font-bold text-lg">$6.25</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs text-muted-foreground">Shares</p>
+                        <p className="font-mono font-bold text-lg text-primary">5 / 100</p>
+                      </div>
+                    </div>
+                    <div className="w-full flex items-center justify-center gap-2">
+                      {[["👁", "Views"], ["💰", "Revenue"], ["📈", "Your share"]].map(([icon, label], i, arr) => (
+                        <>
+                          <div key={label} className="flex flex-col items-center gap-1 bg-muted/50 rounded-xl px-4 py-3">
+                            <span className="text-xl">{icon}</span>
+                            <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">{label}</span>
+                          </div>
+                          {i < arr.length - 1 && <span key={i} className="text-muted-foreground/40 font-light text-lg">→</span>}
+                        </>
+                      ))}
+                    </div>
+                    <div className="w-full space-y-2">
+                      <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-primary rounded-full transition-all ease-linear"
+                          style={{
+                            width: heroCardStep === "celebrate" ? "100%" : "0%",
+                            transitionDuration: heroCardStep === "celebrate" ? "3000ms" : "0ms",
+                          }}
+                        />
+                      </div>
+                      <p className="text-xs text-muted-foreground">Loading today's earnings...</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Earn State */}
+                <div className={`transition-all duration-500 ease-in-out ${heroCardStep === "earn" ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-3 absolute inset-x-0 top-0 pointer-events-none"}`}>
+                  <div>
+                    <div className="flex items-center gap-4 p-5 border-b border-border/50 bg-gradient-to-r from-orange-500 to-orange-400">
+                      <div className="relative shrink-0">
+                        <img
+                          src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=200"
+                          alt="10-min Morning Yoga Flow"
+                          className="w-20 h-14 rounded-xl object-cover"
+                          style={{ objectPosition: "center 20%" }}
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <Play className="w-4 h-4 text-white fill-white drop-shadow" />
+                        </div>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium truncate text-white text-sm">10-min Morning Yoga Flow</p>
+                        <p className="text-xs text-white/70 whitespace-nowrap">@Lily Chen · 890K views</p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <p className="text-xs text-white/70">Today's Revenue</p>
+                        <p className="font-heading font-bold text-xl text-white">$245.00</p>
+                      </div>
+                    </div>
+                    <div className="px-5 pt-4 pb-3">
+                      <p className="text-xs font-semibold text-muted-foreground mb-2">DISTRIBUTION</p>
+                      <div className="flex h-3 rounded-full overflow-hidden gap-0.5">
+                        <div className="bg-orange-400" style={{ width: "75%" }} />
+                        <div className="bg-blue-400" style={{ width: "25%" }} />
+                      </div>
+                      <div className="flex items-center gap-6 mt-2 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-orange-400 inline-block" />Creator 75%</span>
+                        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-blue-400 inline-block" />Investors 25%</span>
+                      </div>
+                    </div>
+                    <div className="px-5 pb-4">
+                      <p className="text-xs font-semibold text-muted-foreground mb-2">PAYOUTS TODAY</p>
+                      <div className="space-y-1">
+                        {[
+                          { name: "@Lily Chen", label: "Creator",  pct: 75, payout: 183.75, isCreator: true },
+                          { name: "Alex W.",    label: "5 shares", pct: 8,  payout: 20.42 },
+                          { name: "You",        label: "5 shares", pct: 8,  payout: 20.42, isYou: true },
+                          { name: "Jordan L.",  label: "3 shares", pct: 5,  payout: 12.25 },
+                        ].map((row, i) => (
+                          <div
+                            key={i}
+                            className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-300 ${row.isYou ? (cursorOnYou ? "bg-primary/15 border border-primary/50 shadow-sm shadow-primary/20" : "bg-primary/5 border border-primary/20") : "hover:bg-muted/40"}`}
+                          >
+                            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${row.isCreator ? "bg-orange-100 text-orange-600" : row.isYou ? "bg-primary text-white" : "bg-blue-100 text-blue-600"}`}>
+                              {row.isCreator ? "C" : row.name[0]}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <span className={`text-xs font-medium ${row.isYou ? "text-primary" : ""}`}>{row.name}</span>
+                              <span className="text-xs text-muted-foreground ml-1.5">{row.label}</span>
+                            </div>
+                            <div className="w-14 h-1.5 bg-muted rounded-full overflow-hidden shrink-0">
+                              <div className={`h-full rounded-full ${row.isCreator ? "bg-orange-400" : row.isYou ? "bg-primary" : "bg-blue-400"}`} style={{ width: `${row.pct}%` }} />
+                            </div>
+                            <span className={`font-mono text-xs font-semibold w-12 text-right shrink-0 ${row.isYou ? "text-primary" : "text-emerald-600"}`}>+${row.payout.toFixed(2)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="px-5 py-3 bg-muted/30 border-t border-border/50 text-center">
+                      <p className="text-xs text-muted-foreground">Powered by Social Media Economics protocol</p>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <div className="absolute -z-10 top-10 -right-10 w-40 h-40 bg-primary/20 rounded-full blur-3xl" />
+              <div className="absolute -z-10 bottom-10 -left-10 w-32 h-32 bg-secondary/20 rounded-full blur-3xl" />
             </div>
-            <div className="flex flex-wrap justify-center gap-4">
-              <Button
-                onClick={login}
-                className="bg-primary text-white hover:bg-primary/90 rounded-full px-8 py-6 text-lg font-medium shadow-lg shadow-orange-500/20"
-              >
-                Get Started Free
-                <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => document.getElementById("securitize").scrollIntoView({ behavior: "smooth" })}
-                className="rounded-full px-8 py-6 text-lg font-medium border-2 hover:bg-orange-50 hover:border-orange-300 transition-colors"
-              >
-                Learn More
-                <ArrowRight className="w-5 h-5 ml-2 text-orange-500" />
-              </Button>
-            </div>
+
           </div>
         </section>
 
