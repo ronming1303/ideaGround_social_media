@@ -44,6 +44,8 @@ export default function Explore() {
     { id: "Tech", label: "Tech", icon: Cpu },
     { id: "Travel", label: "Travel", icon: Plane },
     { id: "Other", label: "Other", icon: MoreHorizontal },
+    { id: "Best of the Week", label: "Best of the Week", icon: Trophy },
+    { id: "Best of the Month", label: "Best of the Month", icon: Trophy },
   ];
 
   const fetchData = useCallback(async () => {

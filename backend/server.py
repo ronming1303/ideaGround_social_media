@@ -926,10 +926,6 @@ async def get_video(video_id: str, request: Request):
     if not video:
         raise HTTPException(status_code=404, detail="Video not found")
     
-    # Increment view count
-    await db.videos.update_one({"video_id": video_id}, {"$inc": {"views": 1}})
-    video["views"] += 1
-    
     # Get creator data
     creator = await db.creators.find_one({"creator_id": video["creator_id"]}, {"_id": 0})
     video["creator"] = process_creator_image(creator)
@@ -980,6 +976,14 @@ async def get_video(video_id: str, request: Request):
         video["watch_price_when_added"] = None
     
     return video
+
+@api_router.post("/videos/{video_id}/view")
+async def record_view(video_id: str):
+    """Record a single view for a video"""
+    result = await db.videos.update_one({"video_id": video_id}, {"$inc": {"views": 1}})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Video not found")
+    return {"success": True}
 
 @api_router.get("/videos/{video_id}/volume")
 async def get_video_volume(video_id: str):

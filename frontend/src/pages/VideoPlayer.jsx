@@ -95,6 +95,8 @@ export default function VideoPlayer() {
     fetchTopEarners();
     fetchVolumeHistory();
     fetchVideoActivity();
+    // Record view once on mount
+    axios.post(`${API}/videos/${videoId}/view`).catch(() => {});
   }, [videoId]);
 
   // Auto-refresh polling (every 10 seconds for video page - more critical)

@@ -52,14 +52,10 @@ export default function CreatorStudio() {
   const [uploading, setUploading] = useState(false);
   const [uploadingFile, setUploadingFile] = useState(false);
 
-  const categories = [
+  const videoCategories = [
     "Art", "Beauty & Fashion", "Comedy", "Dance", "Education", "Finance",
     "Fitness", "Food", "Gaming", "Lifestyle", "Music", "News & Politics",
-    "Animals & Pets", "Podcast", "Sports", "Tech", "Travel", "Other"
-  ];
-
-  const videoCategories = [
-    ...categories,
+    "Animals & Pets", "Podcast", "Sports", "Tech", "Travel", "Other",
     "Best of the Week", "Best of the Month"
   ];
 
@@ -448,7 +444,7 @@ export default function CreatorStudio() {
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                     <SelectContent>
-                      {categories.map((cat) => (
+                      {videoCategories.map((cat) => (
                         <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                       ))}
                     </SelectContent>
