@@ -644,6 +644,9 @@ export default function CreatorStudio() {
                         ${video.share_price?.toFixed(2)}
                       </span>
                     </div>
+                    {video.created_at && (
+                      <p className="text-xs text-muted-foreground mt-1">{new Date(video.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</p>
+                    )}
                   </div>
                 </Link>
                 </div>
