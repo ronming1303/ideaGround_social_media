@@ -154,7 +154,7 @@ export default function Dashboard() {
       />
       <div className="flex-1 min-w-0">
         <h4 className="font-medium truncate">{creator.name}</h4>
-        <p className="text-sm text-muted-foreground">{creator.category}</p>
+        {creator.category && <p className="text-sm text-muted-foreground">{creator.category}</p>}
       </div>
       <div className="text-right">
         <p className="font-mono font-semibold text-secondary">${creator.stock_symbol}</p>

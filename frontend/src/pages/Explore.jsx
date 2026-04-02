@@ -44,6 +44,8 @@ export default function Explore() {
     { id: "Tech", label: "Tech", icon: Cpu },
     { id: "Travel", label: "Travel", icon: Plane },
     { id: "Other", label: "Other", icon: MoreHorizontal },
+    { id: "Best of the Week", label: "Best of the Week", icon: Trophy },
+    { id: "Best of the Month", label: "Best of the Month", icon: Trophy },
   ];
 
   const fetchData = useCallback(async () => {
@@ -90,7 +92,7 @@ export default function Explore() {
 
   const filteredCreators = creators.filter(creator =>
     creator.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    creator.category.toLowerCase().includes(searchQuery.toLowerCase())
+    (creator.category || "").toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (loading) {
@@ -272,7 +274,7 @@ export default function Explore() {
                         />
                         <div className="flex-1 min-w-0">
                           <h3 className="font-heading font-semibold mb-1 truncate">{creator.name}</h3>
-                          <p className="text-sm text-muted-foreground">{creator.category}</p>
+                          {creator.category && <p className="text-sm text-muted-foreground">{creator.category}</p>}
                           <div className="flex items-center gap-4 mt-2 text-xs">
                             <span className="flex items-center gap-1">
                               <Users className="w-3 h-3" />

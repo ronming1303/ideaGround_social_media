@@ -230,7 +230,12 @@ export default function Shorts() {
     return () => observer.disconnect();
   }, [shorts]);
 
-  useEffect(() => { if (currentVideoId) fetchVideoDetails(currentVideoId); }, [currentVideoId]);
+  useEffect(() => {
+    if (currentVideoId) {
+      fetchVideoDetails(currentVideoId);
+      axios.post(`${API}/videos/${currentVideoId}/view`).catch(() => {});
+    }
+  }, [currentVideoId]);
   useEffect(() => {
     // Sync muted state to <video> elements
     Object.values(videoRefs.current).forEach(el => { if (el) el.muted = muted; });

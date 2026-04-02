@@ -14,7 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
 import {
   Video, Upload, Plus, Eye, Heart, DollarSign,
-  Users, Play, Sparkles, BarChart3, Megaphone, Send
+  Users, Play, Sparkles, BarChart3, Megaphone, Send, Pencil, Check, X
 } from "lucide-react";
 
 export default function CreatorStudio() {
@@ -22,11 +22,20 @@ export default function CreatorStudio() {
   const [creatorData, setCreatorData] = useState(null);
   const [loading, setLoading] = useState(true);
   
+  const [application, setApplication] = useState(undefined);
+  const [appBio, setAppBio] = useState("");
+  const [appReason, setAppReason] = useState("");
+  const [submittingApp, setSubmittingApp] = useState(false);
+
   // Become creator form
   const [becomeCreatorOpen, setBecomeCreatorOpen] = useState(false);
-  const [creatorCategory, setCreatorCategory] = useState("");
   const [becomingCreator, setBecomingCreator] = useState(false);
   
+  // Bio
+  const [bioText, setBioText] = useState("");
+  const [editingBio, setEditingBio] = useState(false);
+  const [savingBio, setSavingBio] = useState(false);
+
   // Broadcast
   const [broadcastContent, setBroadcastContent] = useState("");
   const [broadcasting, setBroadcasting] = useState(false);
@@ -34,6 +43,7 @@ export default function CreatorStudio() {
 
   // Upload video form
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false);
+  const [uploadQuota, setUploadQuota] = useState(null);
   const [videoFile, setVideoFile] = useState(null);
   const [videoFilePath, setVideoFilePath] = useState("");
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -48,10 +58,11 @@ export default function CreatorStudio() {
   const [uploading, setUploading] = useState(false);
   const [uploadingFile, setUploadingFile] = useState(false);
 
-  const categories = [
+  const videoCategories = [
     "Art", "Beauty & Fashion", "Comedy", "Dance", "Education", "Finance",
     "Fitness", "Food", "Gaming", "Lifestyle", "Music", "News & Politics",
-    "Animals & Pets", "Podcast", "Sports", "Tech", "Travel", "Other"
+    "Animals & Pets", "Podcast", "Sports", "Tech", "Travel", "Other",
+    "Best of the Week", "Best of the Month"
   ];
 
 
@@ -61,16 +72,71 @@ export default function CreatorStudio() {
 
   const fetchCreatorData = async () => {
     try {
-      const response = await axios.get(`${API}/creators/me`, { withCredentials: true });
-      setCreatorData(response.data);
-      if (response.data.is_creator) {
-        const bc = await axios.get(`${API}/creators/${response.data.creator.creator_id}/broadcasts`, { withCredentials: true });
+      const [creatorRes, appRes] = await Promise.all([
+        axios.get(`${API}/creators/me`, { withCredentials: true }),
+        axios.get(`${API}/creators/me/application`, { withCredentials: true }).catch(() => ({ data: { application: null } })),
+      ]);
+      setCreatorData(creatorRes.data);
+      setApplication(appRes.data.application);
+      if (creatorRes.data.is_creator) {
+        setBioText(creatorRes.data.creator.bio || "");
+        const bc = await axios.get(`${API}/creators/${creatorRes.data.creator.creator_id}/broadcasts`, { withCredentials: true });
         setBroadcasts(bc.data);
       }
     } catch (error) {
       console.error("Error fetching creator data:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSubmitApplication = async () => {
+    if (!appBio.trim() || !appReason.trim()) {
+      toast.error("Please fill in both fields");
+      return;
+    }
+    setSubmittingApp(true);
+    try {
+      const res = await axios.post(
+        `${API}/creators/apply`,
+        { bio: appBio, reason: appReason },
+        { withCredentials: true }
+      );
+      setApplication(res.data.application);
+      toast.success("Application submitted! We'll review it soon.");
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Failed to submit application");
+    } finally {
+      setSubmittingApp(false);
+    }
+  };
+
+  const handleOpenUploadDialog = async () => {
+    try {
+      const res = await axios.get(`${API}/creators/me/upload-quota`, { withCredentials: true });
+      setUploadQuota(res.data);
+      if (!res.data.can_upload) {
+        const resetDate = new Date(res.data.resets_at).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+        toast.error(`Weekly upload limit reached. Quota resets on ${resetDate}.`);
+        return;
+      }
+    } catch {
+      // If quota check fails, let them try anyway
+    }
+    setUploadDialogOpen(true);
+  };
+
+  const handleSaveBio = async () => {
+    setSavingBio(true);
+    try {
+      await axios.patch(`${API}/creators/me/bio`, { bio: bioText }, { withCredentials: true });
+      setCreatorData(prev => ({ ...prev, creator: { ...prev.creator, bio: bioText } }));
+      setEditingBio(false);
+      toast.success("Bio updated!");
+    } catch (error) {
+      toast.error("Failed to update bio");
+    } finally {
+      setSavingBio(false);
     }
   };
 
@@ -90,16 +156,11 @@ export default function CreatorStudio() {
   };
 
   const handleBecomeCreator = async () => {
-    if (!creatorCategory) {
-      toast.error("Please select a category");
-      return;
-    }
-
     setBecomingCreator(true);
     try {
       const response = await axios.post(
         `${API}/creators/become`,
-        { category: creatorCategory },
+        {},
         { withCredentials: true }
       );
       toast.success(`Welcome, ${response.data.creator.name}! Your stock symbol is $${response.data.creator.stock_symbol}`);
@@ -217,49 +278,22 @@ export default function CreatorStudio() {
             Get your own stock symbol and watch your value grow!
           </p>
           
-          <Dialog open={becomeCreatorOpen} onOpenChange={setBecomeCreatorOpen}>
-            <DialogTrigger asChild>
-              <Button 
-                data-testid="become-creator-btn"
-                className="bg-primary text-white hover:bg-primary/90 rounded-full px-8 py-6 text-lg"
-              >
-                <Plus className="w-5 h-5 mr-2" />
-                Start Creating
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle className="font-heading">Become a Creator</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4 py-4">
-                <p className="text-sm text-muted-foreground">
-                  Your name ({user?.name}) and profile picture will be used for your creator profile.
-                  You can update them anytime in your Profile settings.
-                </p>
-                <div>
-                  <Label htmlFor="creator-category">Content Category *</Label>
-                  <Select value={creatorCategory} onValueChange={setCreatorCategory}>
-                    <SelectTrigger data-testid="creator-category-select" className="mt-1">
-                      <SelectValue placeholder="Select your content category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((cat) => (
-                        <SelectItem key={cat} value={cat}>{cat}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Button
-                  data-testid="confirm-become-creator-btn"
-                  onClick={handleBecomeCreator}
-                  disabled={becomingCreator}
-                  className="w-full bg-primary text-white hover:bg-primary/90 rounded-full"
-                >
-                  {becomingCreator ? "Creating..." : "Become a Creator"}
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <a
+            href="https://docs.google.com/forms/d/e/1FAIpQLSfFOYaR0PU8ghHe0CCKU0FbW2qow3zyqcTdygS0hVn1Kud3PQ/viewform?usp=publish-editor"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Button
+              data-testid="become-creator-btn"
+              className="bg-primary text-white hover:bg-primary/90 rounded-full px-8 py-6 text-lg"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Apply to Become a Creator
+            </Button>
+          </a>
+          <p className="text-sm text-muted-foreground mt-4">
+            Applications are reviewed within 3–5 business days.
+          </p>
         </div>
       </div>
     );
@@ -283,7 +317,34 @@ export default function CreatorStudio() {
               <h1 className="font-heading text-2xl font-bold">{creator.name}</h1>
               <Badge variant="outline" className="font-mono">${creator.stock_symbol}</Badge>
             </div>
-            <p className="text-muted-foreground">{creator.category} Creator</p>
+            <div className="mt-1">
+              {editingBio ? (
+                <div className="flex items-start gap-2">
+                  <Textarea
+                    value={bioText}
+                    onChange={(e) => setBioText(e.target.value)}
+                    placeholder="Write something about yourself..."
+                    className="text-sm resize-none h-16"
+                    maxLength={200}
+                  />
+                  <div className="flex flex-col gap-1">
+                    <Button size="icon" variant="ghost" className="h-7 w-7" onClick={handleSaveBio} disabled={savingBio}>
+                      <Check className="w-4 h-4 text-green-500" />
+                    </Button>
+                    <Button size="icon" variant="ghost" className="h-7 w-7" onClick={() => { setEditingBio(false); setBioText(creator.bio || ""); }}>
+                      <X className="w-4 h-4 text-muted-foreground" />
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <button onClick={() => setEditingBio(true)} className="flex items-center gap-1 group text-left">
+                  <p className="text-sm text-muted-foreground">
+                    {creator.bio || <span className="italic">Add a bio...</span>}
+                  </p>
+                  <Pencil className="w-3 h-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+                </button>
+              )}
+            </div>
           </div>
         </div>
         
@@ -300,15 +361,14 @@ export default function CreatorStudio() {
           </Link>
           
           <Dialog open={uploadDialogOpen} onOpenChange={setUploadDialogOpen}>
-            <DialogTrigger asChild>
-              <Button 
-                data-testid="upload-video-btn"
-                className="bg-primary text-white hover:bg-primary/90 rounded-full"
-              >
-                <Upload className="w-4 h-4 mr-2" />
-                Upload Video
-              </Button>
-            </DialogTrigger>
+            <Button
+              data-testid="upload-video-btn"
+              className="bg-primary text-white hover:bg-primary/90 rounded-full"
+              onClick={handleOpenUploadDialog}
+            >
+              <Upload className="w-4 h-4 mr-2" />
+              Upload Video
+            </Button>
             <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle className="font-heading">Upload New Video</DialogTitle>
@@ -415,7 +475,7 @@ export default function CreatorStudio() {
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
                     <SelectContent>
-                      {categories.map((cat) => (
+                      {videoCategories.map((cat) => (
                         <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                       ))}
                     </SelectContent>

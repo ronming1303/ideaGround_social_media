@@ -109,7 +109,8 @@ class Creator(BaseModel):
     model_config = ConfigDict(extra="ignore")
     creator_id: str
     name: str
-    category: str
+    category: Optional[str] = None
+    bio: Optional[str] = None
     image: str
     stock_symbol: str
     subscriber_count: int = 0
@@ -218,7 +219,11 @@ class CreateVideoRequest(BaseModel):
     share_price: Optional[float] = None
 
 class BecomeCreatorRequest(BaseModel):
-    category: str
+    category: Optional[str] = None
+
+class CreatorApplicationRequest(BaseModel):
+    bio: str
+    reason: str
 
 class BroadcastRequest(BaseModel):
     content: str
@@ -925,10 +930,6 @@ async def get_video(video_id: str, request: Request):
     if not video:
         raise HTTPException(status_code=404, detail="Video not found")
     
-    # Increment view count
-    await db.videos.update_one({"video_id": video_id}, {"$inc": {"views": 1}})
-    video["views"] += 1
-    
     # Get creator data
     creator = await db.creators.find_one({"creator_id": video["creator_id"]}, {"_id": 0})
     video["creator"] = process_creator_image(creator)
@@ -979,6 +980,14 @@ async def get_video(video_id: str, request: Request):
         video["watch_price_when_added"] = None
     
     return video
+
+@api_router.post("/videos/{video_id}/view")
+async def record_view(video_id: str):
+    """Record a single view for a video"""
+    result = await db.videos.update_one({"video_id": video_id}, {"$inc": {"views": 1}})
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Video not found")
+    return {"success": True}
 
 @api_router.get("/videos/{video_id}/volume")
 async def get_video_volume(video_id: str):
@@ -2789,13 +2798,159 @@ async def get_market_ticker():
 
 # ==================== CREATOR & VIDEO UPLOAD ====================
 
+@api_router.post("/creators/apply")
+async def apply_to_become_creator(req: CreatorApplicationRequest, user: User = Depends(get_current_user)):
+    existing_creator = await db.creators.find_one({"user_id": user.user_id}, {"_id": 0})
+    if existing_creator:
+        raise HTTPException(status_code=400, detail="You are already a creator")
+
+    pending = await db.creator_applications.find_one(
+        {"user_id": user.user_id, "status": "pending"}, {"_id": 0}
+    )
+    if pending:
+        raise HTTPException(status_code=400, detail="You already have a pending application")
+
+    application_doc = {
+        "application_id": f"app_{uuid.uuid4().hex[:12]}",
+        "user_id": user.user_id,
+        "name": user.name,
+        "picture": user.picture,
+        "bio": req.bio.strip(),
+        "reason": req.reason.strip(),
+        "status": "pending",
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    await db.creator_applications.insert_one(application_doc)
+    application_doc.pop("_id", None)
+    return {"success": True, "application": application_doc}
+
+
+@api_router.get("/creators/me/application")
+async def get_my_application(user: User = Depends(get_current_user)):
+    application = await db.creator_applications.find_one(
+        {"user_id": user.user_id},
+        {"_id": 0},
+        sort=[("created_at", -1)],
+    )
+    return {"application": application}
+
+
+@api_router.get("/admin/creator-applications")
+async def get_creator_applications(request: Request, status: Optional[str] = None):
+    await verify_admin(request)
+    query = {}
+    if status:
+        query["status"] = status
+    applications = await db.creator_applications.find(query, {"_id": 0}).sort("created_at", -1).to_list(200)
+    return {"applications": applications, "count": len(applications)}
+
+
+@api_router.post("/admin/creator-applications/{application_id}/approve")
+async def approve_creator_application(application_id: str, request: Request):
+    await verify_admin(request)
+
+    application = await db.creator_applications.find_one({"application_id": application_id}, {"_id": 0})
+    if not application:
+        raise HTTPException(status_code=404, detail="Application not found")
+    if application["status"] != "pending":
+        raise HTTPException(status_code=400, detail="Application is not pending")
+
+    user_id = application["user_id"]
+
+    existing_creator = await db.creators.find_one({"user_id": user_id}, {"_id": 0})
+    if existing_creator:
+        await db.creator_applications.update_one(
+            {"application_id": application_id},
+            {"$set": {"status": "approved", "reviewed_at": datetime.now(timezone.utc).isoformat()}}
+        )
+        return {"success": True, "creator": existing_creator}
+
+    user_doc = await db.users.find_one({"user_id": user_id}, {"_id": 0})
+    if not user_doc:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    creator_name = user_doc["name"]
+    creator_image = user_doc.get("picture") or "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400"
+
+    name_parts = creator_name.upper().split()
+    base_symbol = f"{name_parts[0][:4]}" if name_parts else "USER"
+    stock_symbol = base_symbol
+
+    attempts = 0
+    while await db.creators.find_one({"stock_symbol": stock_symbol}):
+        attempts += 1
+        stock_symbol = f"{base_symbol[:3]}{random.randint(1, 999)}"
+        if attempts > 50:
+            stock_symbol = f"{base_symbol[:2]}{uuid.uuid4().hex[:4].upper()}"
+            break
+
+    creator_doc = {
+        "creator_id": f"creator_{uuid.uuid4().hex[:12]}",
+        "user_id": user_id,
+        "name": creator_name,
+        "category": None,
+        "bio": application.get("bio", ""),
+        "image": creator_image,
+        "stock_symbol": stock_symbol,
+        "subscriber_count": 0,
+        "total_views": 0,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+
+    if user_doc.get("avatar_r2_key"):
+        creator_doc["avatar_r2_key"] = user_doc["avatar_r2_key"]
+
+    await db.creators.insert_one(creator_doc)
+    creator_doc.pop("_id", None)
+
+    await db.creator_applications.update_one(
+        {"application_id": application_id},
+        {"$set": {"status": "approved", "reviewed_at": datetime.now(timezone.utc).isoformat()}}
+    )
+
+    return {"success": True, "creator": creator_doc}
+
+
+class RejectApplicationRequest(BaseModel):
+    note: str = ""
+
+
+@api_router.post("/admin/creator-applications/{application_id}/reject")
+async def reject_creator_application(application_id: str, body: RejectApplicationRequest, request: Request):
+    await verify_admin(request)
+
+    application = await db.creator_applications.find_one({"application_id": application_id}, {"_id": 0})
+    if not application:
+        raise HTTPException(status_code=404, detail="Application not found")
+    if application["status"] != "pending":
+        raise HTTPException(status_code=400, detail="Application is not pending")
+
+    await db.creator_applications.update_one(
+        {"application_id": application_id},
+        {"$set": {
+            "status": "rejected",
+            "review_note": body.note,
+            "reviewed_at": datetime.now(timezone.utc).isoformat(),
+        }}
+    )
+    return {"success": True}
+
+
 @api_router.post("/creators/become")
 async def become_creator(req: BecomeCreatorRequest, user: User = Depends(get_current_user)):
-    """Allow a user to become a creator - uses user's existing name and picture"""
-    # Check if user is already a creator
+    """Allow a user to become a creator - requires an approved application"""
     existing = await db.creators.find_one({"user_id": user.user_id}, {"_id": 0})
     if existing:
         return {"success": True, "creator": existing, "message": "Already a creator"}
+
+    approved_application = await db.creator_applications.find_one(
+        {"user_id": user.user_id, "status": "approved"}, {"_id": 0}
+    )
+    if not approved_application:
+        raise HTTPException(
+            status_code=403,
+            detail="You need an approved creator application to become a creator"
+        )
 
     # Use user's name and picture directly
     creator_name = user.name
@@ -2841,6 +2996,18 @@ async def become_creator(req: BecomeCreatorRequest, user: User = Depends(get_cur
     creator_doc.pop("_id", None)
 
     return {"success": True, "creator": creator_doc}
+
+@api_router.patch("/creators/me/bio")
+async def update_creator_bio(payload: dict, user: User = Depends(get_current_user)):
+    """Update the bio of the current creator"""
+    bio = payload.get("bio", "").strip()
+    result = await db.creators.update_one(
+        {"user_id": user.user_id},
+        {"$set": {"bio": bio}}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Creator profile not found")
+    return {"success": True, "bio": bio}
 
 VIDEO_UPLOAD_DIR = Path("/data/videos")
 ALLOWED_VIDEO_TYPES = {"video/mp4", "video/quicktime", "video/webm"}
@@ -3064,6 +3231,33 @@ async def stream_video(video_id: str, request: Request):
     )
 
 
+def get_week_start() -> datetime:
+    """Get the most recent Monday 00:00:00 UTC"""
+    now = datetime.now(timezone.utc)
+    days_since_monday = now.weekday()  # Monday=0
+    return (now - timedelta(days=days_since_monday)).replace(hour=0, minute=0, second=0, microsecond=0)
+
+WEEKLY_UPLOAD_LIMIT = 1
+
+@api_router.get("/creators/me/upload-quota")
+async def get_upload_quota(user: User = Depends(get_current_user)):
+    """Return this week's upload usage for the current creator"""
+    creator = await db.creators.find_one({"user_id": user.user_id}, {"_id": 0})
+    if not creator:
+        raise HTTPException(status_code=403, detail="Not a creator")
+    week_start = get_week_start()
+    count = await db.videos.count_documents({
+        "creator_id": creator["creator_id"],
+        "created_at": {"$gte": week_start.isoformat()}
+    })
+    next_monday = week_start + timedelta(days=7)
+    return {
+        "used": count,
+        "limit": WEEKLY_UPLOAD_LIMIT,
+        "can_upload": count < WEEKLY_UPLOAD_LIMIT,
+        "resets_at": next_monday.isoformat()
+    }
+
 @api_router.post("/videos/upload")
 async def upload_video(req: CreateVideoRequest, user: User = Depends(get_current_user)):
     """Upload a new video (creator only)"""
@@ -3071,6 +3265,16 @@ async def upload_video(req: CreateVideoRequest, user: User = Depends(get_current
     creator = await db.creators.find_one({"user_id": user.user_id}, {"_id": 0})
     if not creator:
         raise HTTPException(status_code=403, detail="You must be a creator to upload videos. Please register as a creator first.")
+
+    # Check weekly upload quota
+    week_start = get_week_start()
+    uploads_this_week = await db.videos.count_documents({
+        "creator_id": creator["creator_id"],
+        "created_at": {"$gte": week_start.isoformat()}
+    })
+    if uploads_this_week >= WEEKLY_UPLOAD_LIMIT:
+        next_monday = (week_start + timedelta(days=7)).strftime("%B %d")
+        raise HTTPException(status_code=429, detail=f"Weekly upload limit reached ({WEEKLY_UPLOAD_LIMIT} video/week). Quota resets on {next_monday}.")
     
     video_id = f"vid_{uuid.uuid4().hex[:12]}"
     
