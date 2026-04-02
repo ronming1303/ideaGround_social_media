@@ -130,6 +130,9 @@ export default function Dashboard() {
             <Heart className="w-3.5 h-3.5" />
             {formatViews(video.likes)}
           </span>
+          {video.created_at && (
+            <span>{new Date(video.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+          )}
           {video.video_type === 'short' && (
             <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4">
               <Sparkles className="w-2.5 h-2.5 mr-0.5" />
