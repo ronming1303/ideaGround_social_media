@@ -239,6 +239,9 @@ export default function Explore() {
                         <Heart className="w-3.5 h-3.5" />
                         {formatNumber(video.likes)}
                       </span>
+                      {video.created_at && (
+                        <span>{new Date(video.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                      )}
                     </div>
                   </div>
                 </Link>

@@ -265,6 +265,9 @@ export default function VideoPlayer() {
                 <Eye className="w-4 h-4" />
                 {formatViews(video.views)} views
               </span>
+              {video.created_at && (
+                <span>{new Date(video.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+              )}
             </div>
 
             {/* Actions */}

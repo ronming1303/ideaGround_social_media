@@ -450,6 +450,7 @@ export default function Shorts() {
                     </Badge>
                     <h3 className="text-white font-bold text-base line-clamp-2 mb-1 drop-shadow-lg">{short.title}</h3>
                     {short.creator && <p className="text-white/80 text-sm drop-shadow">@{short.creator.name}</p>}
+                    {short.created_at && <p className="text-white/60 text-xs drop-shadow mt-0.5">{new Date(short.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</p>}
                   </div>
                 </div>
               </div>
