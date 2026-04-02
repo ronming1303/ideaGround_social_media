@@ -109,7 +109,8 @@ class Creator(BaseModel):
     model_config = ConfigDict(extra="ignore")
     creator_id: str
     name: str
-    category: str
+    category: Optional[str] = None
+    bio: Optional[str] = None
     image: str
     stock_symbol: str
     subscriber_count: int = 0
@@ -218,7 +219,7 @@ class CreateVideoRequest(BaseModel):
     share_price: Optional[float] = None
 
 class BecomeCreatorRequest(BaseModel):
-    category: str
+    category: Optional[str] = None
 
 class BroadcastRequest(BaseModel):
     content: str
@@ -2841,6 +2842,18 @@ async def become_creator(req: BecomeCreatorRequest, user: User = Depends(get_cur
     creator_doc.pop("_id", None)
 
     return {"success": True, "creator": creator_doc}
+
+@api_router.patch("/creators/me/bio")
+async def update_creator_bio(payload: dict, user: User = Depends(get_current_user)):
+    """Update the bio of the current creator"""
+    bio = payload.get("bio", "").strip()
+    result = await db.creators.update_one(
+        {"user_id": user.user_id},
+        {"$set": {"bio": bio}}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Creator profile not found")
+    return {"success": True, "bio": bio}
 
 VIDEO_UPLOAD_DIR = Path("/data/videos")
 ALLOWED_VIDEO_TYPES = {"video/mp4", "video/quicktime", "video/webm"}

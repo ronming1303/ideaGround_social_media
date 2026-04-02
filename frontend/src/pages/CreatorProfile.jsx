@@ -92,60 +92,47 @@ export default function CreatorProfile() {
       </Link>
 
       {/* Creator header */}
-      <div className="relative mb-8">
-        {/* Banner */}
-        <div className="h-48 rounded-2xl bg-gradient-to-r from-primary/30 via-secondary/20 to-primary/30"></div>
-
-        {/* Profile info */}
-        <div className="relative px-6 -mt-16">
-          <div className="flex flex-col md:flex-row md:items-end gap-6">
-            <img 
-              src={creator.image} 
-              alt={creator.name}
-              className="w-32 h-32 rounded-2xl object-cover border-4 border-background shadow-lg"
-            />
-            <div className="flex-1">
-              <h1 className="font-heading text-3xl font-bold mb-2">{creator.name}</h1>
-              <p className="text-muted-foreground mb-4">{creator.category} Creator</p>
-
-              {/* Stats */}
-              <div className="flex flex-wrap items-center gap-6 text-sm">
-                <div className="flex items-center gap-2">
-                  <Users className="w-4 h-4 text-muted-foreground" />
-                  <span className="font-semibold">{formatNumber(creator.subscriber_count)}</span>
-                  <span className="text-muted-foreground">subscribers</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Eye className="w-4 h-4 text-muted-foreground" />
-                  <span className="font-semibold">{formatNumber(creator.total_views)}</span>
-                  <span className="text-muted-foreground">total views</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Video className="w-4 h-4 text-muted-foreground" />
-                  <span className="font-semibold">{creator.videos?.length || 0}</span>
-                  <span className="text-muted-foreground">videos</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <DollarSign className="w-4 h-4 text-muted-foreground" />
-                  <span className="font-semibold text-emerald-600">${formatNumber(creator.total_revenue || 0)}</span>
-                  <Badge variant="outline" className="font-mono px-3">
-                  ${creator.stock_symbol}
-                  </Badge>
-                </div>
-              </div>
+      <div className="mb-8 rounded-2xl bg-gradient-to-r from-primary/30 via-secondary/20 to-primary/30 p-6 flex flex-col md:flex-row md:items-center gap-6">
+        <img
+          src={creator.image}
+          alt={creator.name}
+          className="w-24 h-24 rounded-2xl object-cover shadow-lg flex-shrink-0"
+        />
+        <div className="flex-1">
+          <h1 className="font-heading text-3xl font-bold mb-1">{creator.name}</h1>
+          {creator.bio && <p className="text-muted-foreground mb-3">{creator.bio}</p>}
+          <div className="flex flex-wrap items-center gap-6 text-sm">
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-muted-foreground" />
+              <span className="font-semibold">{formatNumber(creator.subscriber_count)}</span>
+              <span className="text-muted-foreground">subscribers</span>
             </div>
-
-            <Button 
-              data-testid="creator-subscribe-btn"
-              onClick={handleSubscribe}
-              variant={subscribed ? "outline" : "default"}
-              className={`rounded-full px-8 ${!subscribed ? 'bg-primary text-white' : ''}`}
-            >
-              <Bell className={`w-4 h-4 mr-2 ${subscribed ? 'fill-current' : ''}`} />
-              {subscribed ? 'Subscribed' : 'Subscribe'}
-            </Button>
+            <div className="flex items-center gap-2">
+              <Eye className="w-4 h-4 text-muted-foreground" />
+              <span className="font-semibold">{formatNumber(creator.total_views)}</span>
+              <span className="text-muted-foreground">total views</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Video className="w-4 h-4 text-muted-foreground" />
+              <span className="font-semibold">{creator.videos?.length || 0}</span>
+              <span className="text-muted-foreground">videos</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <DollarSign className="w-4 h-4 text-muted-foreground" />
+              <span className="font-semibold text-emerald-600">${formatNumber(creator.total_revenue || 0)}</span>
+              <Badge variant="outline" className="font-mono px-3">${creator.stock_symbol}</Badge>
+            </div>
           </div>
         </div>
+        <Button
+          data-testid="creator-subscribe-btn"
+          onClick={handleSubscribe}
+          variant={subscribed ? "outline" : "default"}
+          className={`rounded-full px-8 flex-shrink-0 ${!subscribed ? 'bg-primary text-white' : ''}`}
+        >
+          <Bell className={`w-4 h-4 mr-2 ${subscribed ? 'fill-current' : ''}`} />
+          {subscribed ? 'Subscribed' : 'Subscribe'}
+        </Button>
       </div>
 
       {/* Content Tabs */}

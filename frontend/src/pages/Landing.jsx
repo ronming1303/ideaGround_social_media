@@ -547,7 +547,7 @@ export default function Landing() {
                         />
                         <div>
                           <p className="font-medium">{creator.name}</p>
-                          <p className="text-sm text-muted-foreground">{creator.category}</p>
+                          {creator.category && <p className="text-sm text-muted-foreground">{creator.category}</p>}
                         </div>
                       </div>
                       <span className="text-secondary font-mono font-medium">{creator.gains}</span>
