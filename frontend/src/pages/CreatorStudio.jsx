@@ -474,7 +474,7 @@ export default function CreatorStudio() {
                     <SelectTrigger data-testid="video-category-select" className="mt-1">
                       <SelectValue placeholder="Select a category" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="max-h-[220px] overflow-y-auto">
                       {videoCategories.map((cat) => (
                         <SelectItem key={cat} value={cat}>{cat}</SelectItem>
                       ))}
