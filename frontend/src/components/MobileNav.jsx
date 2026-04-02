@@ -18,11 +18,11 @@ const whyAllowedEmails = ["kshitiz.dadhich2015@gmail.com", "rumingliu1303@gmail.
 export default function MobileNav({ className }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout, isCreator } = useAuth();
+  const { user, logout } = useAuth();
 
   const navItems = [
     ...baseNavItems,
-    ...(isCreator ? [{ path: "/studio", label: "Studio", icon: Video }] : []),
+    { path: "/studio", label: "Studio", icon: Video },
     ...(whyAllowedEmails.includes(user?.email) ? [{ path: "/why", label: "Why", icon: HelpCircle }] : []),
   ];
 
