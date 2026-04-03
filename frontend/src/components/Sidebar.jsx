@@ -11,7 +11,7 @@ import {
 } from "../components/ui/dropdown-menu";
 import {
   Home, Compass, Briefcase, Wallet, LogOut,
-  Settings, User, ChevronDown, Video, Eye, PieChart, BarChart3, HelpCircle, Bell
+  Settings, User, ChevronDown, Video, Eye, PieChart, BarChart3, HelpCircle, Bell, Mail
 } from "lucide-react";
 import { cn } from "../lib/utils";
 import { useState, useEffect } from "react";
@@ -27,6 +27,7 @@ const navItems = [
   { path: "/subscriptions", label: "Subscriptions", icon: Bell },
   { path: "/wallet", label: "Wallet", icon: Wallet },
   { path: "/studio", label: "Creator Studio", icon: Video },
+  { path: "/contact", label: "Contact Us", icon: Mail },
 ];
 
 // Mini donut chart component for portfolio allocation

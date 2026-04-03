@@ -21,6 +21,7 @@ import InvestorDashboard from "./pages/InvestorDashboard";
 import SolutionDetail from "./pages/SolutionDetail";
 import UserProfile from "./pages/UserProfile";
 import Subscriptions from "./pages/Subscriptions";
+import Contact from "./pages/Contact";
 
 // Components
 import Sidebar from "./components/Sidebar";
@@ -217,7 +218,8 @@ function AppRouter() {
           <AppLayout><Subscriptions /></AppLayout>
         </ProtectedRoute>
       } />
-      <Route path="/admin" element={<Admin />} />
+      <Route path="/contact" element={<ProtectedRoute><AppLayout><Contact /></AppLayout></ProtectedRoute>} />
+      <Route path="/admin" element={<ProtectedRoute allowedEmails={["kshitiz.dadhich2015@gmail.com","rumingliu1303@gmail.com"]}><Admin /></ProtectedRoute>} />
       <Route path="/investors" element={<ProtectedRoute allowedEmails={["kshitiz.dadhich2015@gmail.com","rumingliu1303@gmail.com"]}><InvestorDashboard /></ProtectedRoute>} />
       <Route path="/why" element={
         <ProtectedRoute allowedEmails={["kshitiz.dadhich2015@gmail.com", "rumingliu1303@gmail.com"]}>

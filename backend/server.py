@@ -42,20 +42,9 @@ GOOGLE_REDIRECT_URI = os.environ.get('GOOGLE_REDIRECT_URI', 'http://localhost:80
 FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:8080')
 
 # Restricted Access - Only these emails can access the app (Cloud mode only)
-ALLOWED_EMAILS = [
-    "kshitiz.dadhich2015@gmail.com",
-    "rumingliu1303@gmail.com",
-    "ruming.liu@ideaground.net",
-    "junyuehan@gmail.com",
-    "glf9871@gmail.com",
-    "dadhich.suneha@gmail.com",
-]
+ALLOWED_EMAILS = [e.strip() for e in os.environ.get("ALLOWED_EMAILS", "").split(",") if e.strip()]
 
-# Admin emails - These users get admin privileges
-ADMIN_EMAILS = [
-    "kshitiz.dadhich2015@gmail.com",
-    "admin@ideaground.local"  # Local admin
-]
+# Admin emails - loaded from env (see ADMIN_EMAILS in .env)
 
 # Default local users for Docker deployment
 DEFAULT_LOCAL_USERS = [
@@ -2936,6 +2925,72 @@ async def reject_creator_application(application_id: str, body: RejectApplicatio
     return {"success": True}
 
 
+class AdminCreateCreatorRequest(BaseModel):
+    email: str
+    stock_symbol: str
+
+
+@api_router.get("/admin/creators")
+async def admin_list_creators(request: Request):
+    await verify_admin(request)
+    creators = await db.creators.find({}, {"_id": 0}).to_list(1000)
+    user_ids = [c["user_id"] for c in creators if c.get("user_id")]
+    users = await db.users.find({"user_id": {"$in": user_ids}}, {"_id": 0, "user_id": 1, "email": 1}).to_list(1000)
+    email_map = {u["user_id"]: u.get("email", "") for u in users}
+    result = []
+    for c in creators:
+        result.append({
+            "creator_id": c["creator_id"],
+            "name": c["name"],
+            "stock_symbol": c["stock_symbol"],
+            "email": email_map.get(c.get("user_id"), ""),
+            "created_at": c.get("created_at"),
+        })
+    result.sort(key=lambda x: x["email"].lower())
+    return {"creators": result, "count": len(result)}
+
+
+@api_router.post("/admin/creators")
+async def admin_create_creator(body: AdminCreateCreatorRequest, request: Request):
+    await verify_admin(request)
+
+    email = body.email.strip().lower()
+    stock_symbol = body.stock_symbol.strip().upper()
+
+    user_doc = await db.users.find_one({"email": {"$regex": f"^{email}$", "$options": "i"}}, {"_id": 0})
+    if not user_doc:
+        raise HTTPException(status_code=404, detail=f"No user found with email: {email}")
+
+    user_id = user_doc["user_id"]
+
+    existing_creator = await db.creators.find_one({"user_id": user_id}, {"_id": 0})
+    if existing_creator:
+        raise HTTPException(status_code=400, detail="This user is already a creator")
+
+    ticker_taken = await db.creators.find_one({"stock_symbol": stock_symbol}, {"_id": 0})
+    if ticker_taken:
+        raise HTTPException(status_code=400, detail=f"Ticker ${stock_symbol} is already taken")
+
+    creator_doc = {
+        "creator_id": f"creator_{uuid.uuid4().hex[:12]}",
+        "user_id": user_id,
+        "name": user_doc["name"],
+        "category": None,
+        "bio": "",
+        "image": user_doc.get("picture") or "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=400",
+        "stock_symbol": stock_symbol,
+        "subscriber_count": 0,
+        "total_views": 0,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+    }
+    if user_doc.get("avatar_r2_key"):
+        creator_doc["avatar_r2_key"] = user_doc["avatar_r2_key"]
+
+    await db.creators.insert_one(creator_doc)
+    creator_doc.pop("_id", None)
+    return {"success": True, "creator": creator_doc}
+
+
 @api_router.post("/creators/become")
 async def become_creator(req: BecomeCreatorRequest, user: User = Depends(get_current_user)):
     """Allow a user to become a creator - requires an approved application"""
@@ -3482,12 +3537,15 @@ async def root():
 
 # ==================== ADMIN ENDPOINTS ====================
 
-ADMIN_SECRET = "ideaground_admin_2026"  # Simple admin auth - in production use proper auth
+ADMIN_EMAILS = set(e.strip() for e in os.environ.get("ADMIN_EMAILS", "").split(",") if e.strip())
 
 async def verify_admin(request: Request):
-    """Verify admin access via header or query param"""
-    admin_key = request.headers.get("X-Admin-Key") or request.query_params.get("admin_key")
-    if admin_key != ADMIN_SECRET:
+    """Verify admin access by checking the logged-in user's email against the whitelist"""
+    try:
+        user = await get_current_user(request)
+    except Exception:
+        raise HTTPException(status_code=403, detail="Admin access required")
+    if user.email not in ADMIN_EMAILS:
         raise HTTPException(status_code=403, detail="Admin access required")
     return True
 
