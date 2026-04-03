@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
-import { Play, TrendingUp, TrendingDown, Eye, Heart, Sparkles, ArrowUpRight, Briefcase } from "lucide-react";
+import { Play, TrendingUp, Eye, Heart, Sparkles, ArrowUpRight } from "lucide-react";
 import TrendingTicker from "../components/TrendingTicker";
 import MarketOverview from "../components/MarketOverview";
 import LiveActivityFeed from "../components/LiveActivityFeed";
@@ -182,86 +182,6 @@ export default function Dashboard() {
       {/* Trending Ticker */}
       <TrendingTicker />
       
-      {/* Portfolio Performance Banner */}
-      {portfolioPerformance?.has_portfolio && (
-        <div className="px-6 lg:px-8 max-w-7xl mx-auto mt-4">
-          <Link to="/portfolio" data-testid="portfolio-performance-banner">
-            <div className={`relative overflow-hidden rounded-2xl p-4 md:p-6 transition-all hover:scale-[1.01] ${
-              portfolioPerformance.gain_percent >= 0 
-                ? 'bg-gradient-to-r from-emerald-500/10 via-teal-500/10 to-emerald-500/5 border border-emerald-500/20' 
-                : 'bg-gradient-to-r from-red-500/10 via-orange-500/10 to-red-500/5 border border-red-500/20'
-            }`}>
-              {/* Background pattern */}
-              <div className="absolute inset-0 opacity-5">
-                <div className="absolute inset-0" style={{
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                }} />
-              </div>
-              
-              <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex items-center gap-4">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                    portfolioPerformance.gain_percent >= 0 
-                      ? 'bg-emerald-500/20' 
-                      : 'bg-red-500/20'
-                  }`}>
-                    <Briefcase className={`w-6 h-6 ${
-                      portfolioPerformance.gain_percent >= 0 ? 'text-emerald-600' : 'text-red-600'
-                    }`} />
-                  </div>
-                  <div>
-                    <p className="text-sm text-muted-foreground mb-1">Your Portfolio is</p>
-                    <div className="flex items-center gap-2">
-                      {portfolioPerformance.gain_percent >= 0 ? (
-                        <TrendingUp className="w-5 h-5 text-emerald-600" />
-                      ) : (
-                        <TrendingDown className="w-5 h-5 text-red-600" />
-                      )}
-                      <span className={`text-2xl md:text-3xl font-heading font-bold ${
-                        portfolioPerformance.gain_percent >= 0 ? 'text-emerald-600' : 'text-red-600'
-                      }`}>
-                        {portfolioPerformance.gain_percent >= 0 ? '+' : ''}{portfolioPerformance.gain_percent.toFixed(1)}%
-                      </span>
-                      <span className={`text-lg font-medium ${
-                        portfolioPerformance.gain_percent >= 0 ? 'text-emerald-600/70' : 'text-red-600/70'
-                      }`}>
-                        {portfolioPerformance.gain_percent >= 0 ? 'UP' : 'DOWN'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="flex items-center gap-6 md:gap-8">
-                  <div className="text-right">
-                    <p className="text-xs text-muted-foreground">Total Value</p>
-                    <p className="text-lg font-heading font-bold">${portfolioPerformance.total_value.toFixed(2)}</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xs text-muted-foreground">Gain/Loss</p>
-                    <p className={`text-lg font-heading font-bold ${
-                      portfolioPerformance.total_gain >= 0 ? 'text-emerald-600' : 'text-red-600'
-                    }`}>
-                      {portfolioPerformance.total_gain >= 0 ? '+' : ''}${portfolioPerformance.total_gain.toFixed(2)}
-                    </p>
-                  </div>
-                  {portfolioPerformance.total_potential_bonus > 0 && (
-                    <div className="text-right">
-                      <p className="text-xs text-muted-foreground">Early Bonus</p>
-                      <p className="text-lg font-heading font-bold text-amber-600">
-                        +${portfolioPerformance.total_potential_bonus.toFixed(2)}
-                      </p>
-                    </div>
-                  )}
-                  <div className="hidden md:flex items-center gap-2 text-muted-foreground">
-                    <span className="text-sm">View Details</span>
-                    <ArrowUpRight className="w-4 h-4" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </Link>
-        </div>
-      )}
       
       <div className="p-6 lg:p-8 max-w-7xl mx-auto">
       {/* Welcome header */}
