@@ -11,7 +11,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
 import {
   Search, Play, Eye, Heart, Clock, TrendingUp, TrendingDown, Users, Sparkles,
   Mic, Music, Palette, GraduationCap, MoreHorizontal, Utensils, Plane, Cpu, RefreshCw,
-  Gamepad2, Dumbbell, Laugh, Smile, DollarSign, Trophy, Sparkle, Newspaper, PawPrint
+  Gamepad2, Dumbbell, Laugh, Smile, DollarSign, Trophy, Sparkle, Newspaper, PawPrint,
+  ChevronDown, ChevronUp
 } from "lucide-react";
 import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
 
@@ -22,10 +23,13 @@ export default function Explore() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("videos");
   const [selectedGenre, setSelectedGenre] = useState("all");
+  const [genreExpanded, setGenreExpanded] = useState(false);
 
   // Genre categories like stock market sectors
   const genres = [
     { id: "all", label: "All", icon: Sparkles },
+    { id: "Best of the Week", label: "Best of the Week", icon: Trophy },
+    { id: "Best of the Month", label: "Best of the Month", icon: Trophy },
     { id: "Art", label: "Art", icon: Palette },
     { id: "Beauty & Fashion", label: "Beauty & Fashion", icon: Sparkle },
     { id: "Comedy", label: "Comedy", icon: Laugh },
@@ -44,8 +48,6 @@ export default function Explore() {
     { id: "Tech", label: "Tech", icon: Cpu },
     { id: "Travel", label: "Travel", icon: Plane },
     { id: "Other", label: "Other", icon: MoreHorizontal },
-    { id: "Best of the Week", label: "Best of the Week", icon: Trophy },
-    { id: "Best of the Month", label: "Best of the Month", icon: Trophy },
   ];
 
   const fetchData = useCallback(async () => {
@@ -129,40 +131,53 @@ export default function Explore() {
 
       {/* Genre Filter - Like Stock Sectors */}
       <div className="mb-8">
-        <div className="flex items-center gap-2 mb-3">
+        <button
+          onClick={() => setGenreExpanded(e => !e)}
+          className="flex items-center gap-2 mb-3 w-full text-left"
+        >
           <Palette className="w-4 h-4 text-primary" />
           <span className="text-sm font-medium text-muted-foreground">Browse by Sector</span>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {genres.map((genre) => {
-            const Icon = genre.icon;
-            const isActive = selectedGenre === genre.id;
-            const count = genre.id === "all" 
-              ? videos.length 
-              : videos.filter(v => v.category === genre.id).length;
-            
-            return (
-              <button
-                key={genre.id}
-                data-testid={`genre-${genre.id}`}
-                onClick={() => setSelectedGenre(genre.id)}
-                className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                  isActive 
-                    ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/25' 
-                    : 'bg-white border border-border hover:border-orange-300 hover:bg-orange-50 text-gray-700'
-                }`}
-              >
-                <Icon className="w-4 h-4" />
-                {genre.label}
-                <span className={`text-xs px-1.5 py-0.5 rounded-full ${
-                  isActive ? 'bg-white/20' : 'bg-gray-100'
-                }`}>
-                  {count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+          {selectedGenre !== "all" && (
+            <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
+              {genres.find(g => g.id === selectedGenre)?.label}
+            </span>
+          )}
+          <span className="ml-auto text-muted-foreground">
+            {genreExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </span>
+        </button>
+        {genreExpanded && (
+          <div className="flex flex-wrap gap-2">
+            {genres.map((genre) => {
+              const Icon = genre.icon;
+              const isActive = selectedGenre === genre.id;
+              const count = genre.id === "all"
+                ? videos.length
+                : videos.filter(v => v.category === genre.id).length;
+
+              return (
+                <button
+                  key={genre.id}
+                  data-testid={`genre-${genre.id}`}
+                  onClick={() => { setSelectedGenre(genre.id); setGenreExpanded(false); }}
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                    isActive
+                      ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/25'
+                      : 'bg-white border border-border hover:border-orange-300 hover:bg-orange-50 text-gray-700'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  {genre.label}
+                  <span className={`text-xs px-1.5 py-0.5 rounded-full ${
+                    isActive ? 'bg-white/20' : 'bg-gray-100'
+                  }`}>
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Tabs */}

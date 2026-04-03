@@ -59,10 +59,10 @@ export default function CreatorStudio() {
   const [uploadingFile, setUploadingFile] = useState(false);
 
   const videoCategories = [
+    "Best of the Week", "Best of the Month",
     "Art", "Beauty & Fashion", "Comedy", "Dance", "Education", "Finance",
     "Fitness", "Food", "Gaming", "Lifestyle", "Music", "News & Politics",
     "Animals & Pets", "Podcast", "Sports", "Tech", "Travel", "Other",
-    "Best of the Week", "Best of the Month"
   ];
 
 
@@ -610,46 +610,48 @@ export default function CreatorStudio() {
           {videos.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               {videos.map((video) => (
-                <div key={video.video_id} className="group relative overflow-hidden rounded-xl bg-muted/50 hover:bg-muted transition-colors">
                 <Link
+                  key={video.video_id}
                   to={`/video/${video.video_id}`}
                   data-testid={`my-video-${video.video_id}`}
+                  className="group overflow-hidden rounded-xl bg-card border border-border/50 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
                 >
-                  <div className="aspect-video relative">
-                    <img 
-                      src={video.thumbnail} 
+                  <div className="relative aspect-video overflow-hidden">
+                    <img
+                      src={video.thumbnail}
                       alt={video.title}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <Play className="w-12 h-12 text-white" />
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20">
+                      <div className="w-14 h-14 rounded-full bg-black/70 flex items-center justify-center">
+                        <Play className="w-6 h-6 text-white fill-white ml-0.5" />
+                      </div>
                     </div>
-
-                    <Badge className="absolute top-2 left-2 bg-secondary text-white border-0 font-mono text-xs">
-                      {video.ticker_symbol}
-                    </Badge>
                   </div>
                   <div className="p-3">
-                    <h4 className="font-medium truncate">{video.title}</h4>
-                    <div className="flex items-center justify-between mt-2 text-sm text-muted-foreground">
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <h3 className="font-medium text-sm line-clamp-2 leading-snug flex-1">
+                        {video.title}
+                      </h3>
+                      <div className="flex-shrink-0 px-2 py-1 rounded-md text-xs font-mono font-bold bg-emerald-500/10 text-emerald-600">
+                        ${video.share_price?.toFixed(2)}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground">
                       <span className="flex items-center gap-1">
-                        <Eye className="w-3 h-3" />
-                        {formatNumber(video.views)}
+                        <Eye className="w-3.5 h-3.5" />
+                        {formatNumber(video.views)} views
                       </span>
                       <span className="flex items-center gap-1">
-                        <Heart className="w-3 h-3" />
+                        <Heart className="w-3.5 h-3.5" />
                         {formatNumber(video.likes)}
                       </span>
-                      <span className="font-mono text-secondary">
-                        ${video.share_price?.toFixed(2)}
-                      </span>
+                      {video.created_at && (
+                        <span>{new Date(video.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+                      )}
                     </div>
-                    {video.created_at && (
-                      <p className="text-xs text-muted-foreground mt-1">{new Date(video.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</p>
-                    )}
                   </div>
                 </Link>
-                </div>
               ))}
             </div>
           ) : (
