@@ -217,7 +217,7 @@ function AppRouter() {
           <AppLayout><Subscriptions /></AppLayout>
         </ProtectedRoute>
       } />
-      <Route path="/admin" element={<Admin />} />
+      <Route path="/admin" element={<ProtectedRoute allowedEmails={["kshitiz.dadhich2015@gmail.com","rumingliu1303@gmail.com"]}><Admin /></ProtectedRoute>} />
       <Route path="/investors" element={<ProtectedRoute allowedEmails={["kshitiz.dadhich2015@gmail.com","rumingliu1303@gmail.com"]}><InvestorDashboard /></ProtectedRoute>} />
       <Route path="/why" element={
         <ProtectedRoute allowedEmails={["kshitiz.dadhich2015@gmail.com", "rumingliu1303@gmail.com"]}>

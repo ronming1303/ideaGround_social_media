@@ -7,18 +7,13 @@ import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Input } from "../components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { 
-  Users, Video, DollarSign, TrendingUp, Shield, 
-  Activity, Wallet, ArrowUpRight, ArrowDownRight,
-  Clock, CheckCircle, AlertCircle, Lock
+import {
+  Users, Video, DollarSign, TrendingUp, Shield,
+  Activity, CheckCircle, UserPlus
 } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, CartesianGrid, Legend } from "recharts";
 
-const ADMIN_KEY = "ideaground_admin_2026";
-
 export default function Admin() {
-  const [authenticated, setAuthenticated] = useState(false);
-  const [adminKey, setAdminKey] = useState("");
   const [stats, setStats] = useState(null);
   const [earnings, setEarnings] = useState(null);
   const [transactions, setTransactions] = useState(null);
@@ -26,47 +21,59 @@ export default function Admin() {
   const [cashflow, setCashflow] = useState(null);
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
-
-  const handleLogin = () => {
-    if (adminKey === ADMIN_KEY) {
-      setAuthenticated(true);
-      localStorage.setItem("admin_key", adminKey);
-      fetchAllData();
-    } else {
-      toast.error("Invalid admin key");
-    }
-  };
+  const [creatorEmail, setCreatorEmail] = useState("");
+  const [creatorTicker, setCreatorTicker] = useState("");
+  const [creatorAdding, setCreatorAdding] = useState(false);
+  const [creatorList, setCreatorList] = useState(null);
 
   useEffect(() => {
-    const savedKey = localStorage.getItem("admin_key");
-    if (savedKey === ADMIN_KEY) {
-      setAuthenticated(true);
-      setAdminKey(savedKey);
-      fetchAllData();
-    }
+    fetchAllData();
   }, []);
 
   const fetchAllData = async () => {
     setLoading(true);
     try {
-      const headers = { "X-Admin-Key": ADMIN_KEY };
-      const [statsRes, earningsRes, txnsRes, usersRes, cashflowRes] = await Promise.all([
-        axios.get(`${API}/admin/stats`, { headers }),
-        axios.get(`${API}/admin/earnings`, { headers }),
-        axios.get(`${API}/admin/transactions?limit=50`, { headers }),
-        axios.get(`${API}/admin/users`, { headers }),
-        axios.get(`${API}/admin/cashflow`, { headers })
+      const [statsRes, earningsRes, txnsRes, usersRes, cashflowRes, creatorsRes] = await Promise.all([
+        axios.get(`${API}/admin/stats`, { withCredentials: true }),
+        axios.get(`${API}/admin/earnings`, { withCredentials: true }),
+        axios.get(`${API}/admin/transactions?limit=50`, { withCredentials: true }),
+        axios.get(`${API}/admin/users`, { withCredentials: true }),
+        axios.get(`${API}/admin/cashflow`, { withCredentials: true }),
+        axios.get(`${API}/admin/creators`, { withCredentials: true }),
       ]);
       setStats(statsRes.data);
       setEarnings(earningsRes.data);
       setTransactions(txnsRes.data);
       setUsers(usersRes.data);
       setCashflow(cashflowRes.data);
+      setCreatorList(creatorsRes.data);
     } catch (error) {
       console.error("Error fetching admin data:", error);
       toast.error("Failed to load admin data");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAddCreator = async () => {
+    if (!creatorEmail.trim() || !creatorTicker.trim()) {
+      toast.error("Please fill in both email and ticker");
+      return;
+    }
+    setCreatorAdding(true);
+    try {
+      const res = await axios.post(`${API}/admin/creators`, {
+        email: creatorEmail.trim(),
+        stock_symbol: creatorTicker.trim(),
+      }, { withCredentials: true });
+      toast.success(`Creator @${res.data.creator.name} ($${res.data.creator.stock_symbol}) created!`);
+      setCreatorEmail("");
+      setCreatorTicker("");
+      fetchAllData();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Failed to create creator");
+    } finally {
+      setCreatorAdding(false);
     }
   };
 
@@ -85,38 +92,6 @@ export default function Admin() {
       return dateStr;
     }
   };
-
-  if (!authenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background p-4">
-        <Card className="w-full max-w-md border-border/50">
-          <CardHeader className="text-center">
-            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
-              <Shield className="w-8 h-8 text-primary" />
-            </div>
-            <CardTitle className="font-heading text-2xl">Admin Access</CardTitle>
-            <p className="text-muted-foreground">Enter admin key to continue</p>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                type="password"
-                placeholder="Admin Key"
-                value={adminKey}
-                onChange={(e) => setAdminKey(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && handleLogin()}
-                className="pl-10"
-              />
-            </div>
-            <Button onClick={handleLogin} className="w-full rounded-full">
-              Access Dashboard
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
 
   if (loading && !stats) {
     return (
@@ -145,15 +120,12 @@ export default function Admin() {
               <CheckCircle className="w-3 h-3 mr-1" />
               Connected
             </Badge>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="sm"
-              onClick={() => {
-                localStorage.removeItem("admin_key");
-                setAuthenticated(false);
-              }}
+              onClick={fetchAllData}
             >
-              Logout
+              Refresh
             </Button>
           </div>
         </div>
@@ -240,6 +212,7 @@ export default function Admin() {
             <TabsTrigger value="earnings">Platform Earnings</TabsTrigger>
             <TabsTrigger value="transactions">Transactions</TabsTrigger>
             <TabsTrigger value="users">Users</TabsTrigger>
+            <TabsTrigger value="creators">Creators</TabsTrigger>
           </TabsList>
 
           {/* Overview Tab */}
@@ -515,6 +488,82 @@ export default function Admin() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+          {/* Creators Tab */}
+          <TabsContent value="creators">
+            <div className="grid md:grid-cols-2 gap-6 items-start">
+            <Card className="border-border/50">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <UserPlus className="w-5 h-5 text-primary" />
+                  Add Creator
+                </CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  The user must already have an account. Their name and avatar will be pulled from their profile.
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium mb-1 block">User Email</label>
+                  <Input
+                    placeholder="user@example.com"
+                    value={creatorEmail}
+                    onChange={(e) => setCreatorEmail(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1 block">Ticker Symbol</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground font-mono">$</span>
+                    <Input
+                      placeholder="RUMING"
+                      value={creatorTicker}
+                      onChange={(e) => setCreatorTicker(e.target.value.toUpperCase())}
+                      className="pl-7 font-mono uppercase"
+                      maxLength={8}
+                    />
+                  </div>
+                </div>
+                <Button
+                  onClick={handleAddCreator}
+                  disabled={creatorAdding}
+                  className="w-full rounded-full bg-primary text-white hover:bg-primary/90"
+                >
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  {creatorAdding ? "Adding..." : "Add Creator"}
+                </Button>
+              </CardContent>
+            </Card>
+
+              {/* Registered Creators List */}
+              <Card className="border-border/50">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <Users className="w-5 h-5 text-primary" />
+                      Registered Creators
+                    </CardTitle>
+                    <Badge variant="secondary">{creatorList?.count || 0} total</Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    {(!creatorList?.creators || creatorList.creators.length === 0) && (
+                      <p className="text-sm text-muted-foreground text-center py-4">No creators yet.</p>
+                    )}
+                    {creatorList?.creators?.map((c) => (
+                      <div key={c.creator_id} className="flex items-center justify-between py-2 border-b border-border/50 last:border-0">
+                        <div>
+                          <p className="text-sm font-medium">{c.email || <span className="text-muted-foreground italic">no email</span>}</p>
+                          <p className="text-xs text-muted-foreground">{c.name}</p>
+                        </div>
+                        <Badge variant="outline" className="font-mono">${c.stock_symbol}</Badge>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </TabsContent>
         </Tabs>
       </div>
