@@ -199,7 +199,7 @@ export default function Sidebar({ className }) {
 
       {/* User section */}
       <div className="p-4 border-t border-border bg-gradient-to-t from-accent/50 to-transparent">
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <Button 
               data-testid="user-menu-btn"
