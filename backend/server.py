@@ -281,20 +281,17 @@ def calculate_comment_reward(net_votes: int) -> float:
 
 # Category type codes for video ticker symbols
 CATEGORY_CODES = {
-    "dance": "D",
-    "podcast": "P", 
-    "travel": "T",
-    "tech": "R",      # R for Review/Tech
-    "food": "F",
+    "best of week": "B",
+    "entertainment": "E",
+    "education": "D",     # D for eDucation
+    "tech": "T",
     "gaming": "G",
-    "music": "M",
-    "education": "E",
-    "fitness": "X",   # X for eXercise
-    "comedy": "C",
     "lifestyle": "L",
-    "vlog": "V",
+    "food": "F",
+    "sports & fitness": "S",
+    "news": "N",
     "other": "O",
-    "short": "S",     # For shorts without category
+    "short": "X",         # For shorts without category
 }
 
 def generate_video_ticker(creator_symbol: str, video_type: str, category: str, created_at: datetime, sequence: int) -> str:

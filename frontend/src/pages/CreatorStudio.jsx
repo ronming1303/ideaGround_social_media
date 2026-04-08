@@ -59,10 +59,8 @@ export default function CreatorStudio() {
   const [uploadingFile, setUploadingFile] = useState(false);
 
   const videoCategories = [
-    "Best of the Week", "Best of the Month",
-    "Art", "Beauty & Fashion", "Comedy", "Dance", "Education", "Finance",
-    "Fitness", "Food", "Gaming", "Lifestyle", "Music", "News & Politics",
-    "Animals & Pets", "Podcast", "Sports", "Tech", "Travel", "Other",
+    "Best of Week", "Entertainment", "Education", "Tech", "Gaming",
+    "Lifestyle", "Food", "Sports & Fitness", "News", "Other",
   ];
 
 
