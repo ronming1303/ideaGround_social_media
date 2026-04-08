@@ -8,12 +8,7 @@ import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
 import { Input } from "../components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import {
-  Search, Play, Eye, Heart, Clock, TrendingUp, TrendingDown, Users, Sparkles,
-  Music, GraduationCap, MoreHorizontal, Utensils, Cpu, RefreshCw,
-  Gamepad2, Dumbbell, Smile, Trophy, Newspaper,
-  ChevronDown, ChevronUp
-} from "lucide-react";
+import { Search, Play, Eye, Heart, Users } from "lucide-react";
 import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
 
 export default function Explore() {
@@ -23,21 +18,20 @@ export default function Explore() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("videos");
   const [selectedGenre, setSelectedGenre] = useState("all");
-  const [genreExpanded, setGenreExpanded] = useState(false);
 
-  // Genre categories like stock market sectors
+  // Genre categories
   const genres = [
-    { id: "all", label: "All", icon: Sparkles },
-    { id: "Best of Week", label: "Best of Week", icon: Trophy },
-    { id: "Entertainment", label: "Entertainment", icon: Music },
-    { id: "Education", label: "Education", icon: GraduationCap },
-    { id: "Tech", label: "Tech", icon: Cpu },
-    { id: "Gaming", label: "Gaming", icon: Gamepad2 },
-    { id: "Lifestyle", label: "Lifestyle", icon: Smile },
-    { id: "Food", label: "Food", icon: Utensils },
-    { id: "Sports & Fitness", label: "Sports & Fitness", icon: Dumbbell },
-    { id: "News", label: "News", icon: Newspaper },
-    { id: "Other", label: "Other", icon: MoreHorizontal },
+    { id: "all", label: "All" },
+    { id: "Best of Week", label: "Best of Week" },
+    { id: "Entertainment", label: "Entertainment" },
+    { id: "Education", label: "Education" },
+    { id: "Tech", label: "Tech" },
+    { id: "Gaming", label: "Gaming" },
+    { id: "Lifestyle", label: "Lifestyle" },
+    { id: "Food", label: "Food" },
+    { id: "Sports & Fitness", label: "Sports & Fitness" },
+    { id: "News", label: "News" },
+    { id: "Other", label: "Other" },
   ];
 
   const fetchData = useCallback(async () => {
@@ -119,64 +113,53 @@ export default function Explore() {
         />
       </div>
 
-      {/* Genre Filter - Like Stock Sectors */}
-      <div className="mb-8">
-        <button
-          onClick={() => setGenreExpanded(e => !e)}
-          className="flex items-center gap-2 mb-3 w-full text-left"
-        >
-          <Sparkles className="w-4 h-4 text-primary" />
-          <span className="text-sm font-medium text-muted-foreground">Browse by Sector</span>
-          {selectedGenre !== "all" && (
-            <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">
-              {genres.find(g => g.id === selectedGenre)?.label}
-            </span>
-          )}
-          <span className="ml-auto text-muted-foreground">
-            {genreExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-          </span>
-        </button>
-        {genreExpanded && (
-          <div className="flex flex-wrap gap-2">
-            {genres.map((genre) => {
-              const Icon = genre.icon;
-              const isActive = selectedGenre === genre.id;
-              const count = genre.id === "all"
-                ? videos.length
-                : videos.filter(v => v.category === genre.id).length;
+      {/* Genre Filter */}
+      <div className="mb-6">
+        <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-2">
+          {genres.map((genre) => {
+            const isActive = selectedGenre === genre.id;
+            const count = genre.id === "all"
+              ? videos.length
+              : videos.filter(v => v.category === genre.id).length;
 
-              return (
-                <button
-                  key={genre.id}
-                  data-testid={`genre-${genre.id}`}
-                  onClick={() => { setSelectedGenre(genre.id); setGenreExpanded(false); }}
-                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                    isActive
-                      ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg shadow-orange-500/25'
-                      : 'bg-white border border-border hover:border-orange-300 hover:bg-orange-50 text-gray-700'
-                  }`}
-                >
-                  <Icon className="w-4 h-4" />
-                  {genre.label}
-                  <span className={`text-xs px-1.5 py-0.5 rounded-full ${
-                    isActive ? 'bg-white/20' : 'bg-gray-100'
-                  }`}>
-                    {count}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        )}
+            return (
+              <button
+                key={genre.id}
+                data-testid={`genre-${genre.id}`}
+                onClick={() => setSelectedGenre(genre.id)}
+                className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
+                  isActive
+                    ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-md shadow-orange-500/25'
+                    : 'bg-card border border-border hover:border-primary/50 hover:bg-primary/5 text-foreground'
+                }`}
+              >
+                {genre.label}
+                <span className={`text-xs px-1 py-0.5 rounded-full ${
+                  isActive ? 'bg-white/20' : 'bg-muted'
+                }`}>
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="bg-muted/50 mb-8">
-          <TabsTrigger value="videos" data-testid="explore-tab-videos" className="rounded-full">
+        <TabsList className="bg-transparent h-auto p-0 mb-6 gap-6 border-b border-border/50">
+          <TabsTrigger
+            value="videos"
+            data-testid="explore-tab-videos"
+            className="rounded-none bg-transparent px-0 pb-2 text-muted-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary"
+          >
             Videos ({filteredVideos.length})
           </TabsTrigger>
-          <TabsTrigger value="creators" data-testid="explore-tab-creators" className="rounded-full">
+          <TabsTrigger
+            value="creators"
+            data-testid="explore-tab-creators"
+            className="rounded-none bg-transparent px-0 pb-2 text-muted-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary"
+          >
             Creators ({filteredCreators.length})
           </TabsTrigger>
         </TabsList>
