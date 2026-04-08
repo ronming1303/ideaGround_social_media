@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { useAuth, API } from "../App";
+import { useAuth } from "../App";
 import { Card, CardContent } from "../components/ui/card";
-import { CheckCircle, Loader2, ArrowLeft } from "lucide-react";
+import { ArrowLeft, Mail } from "lucide-react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import { useForceLightTheme } from "../hooks/useForceLightTheme";
 import { useTheme } from "../hooks/useTheme";
+
+const CONTACT_EMAIL = "info@ideaground.net,contact@ideaground.net";
 
 export default function Contact() {
   const auth = useAuth();
@@ -15,6 +16,7 @@ export default function Contact() {
   useForceLightTheme(!user);
   // Apply user's theme preference when logged in
   useTheme();
+
   const nameParts = user?.name?.split(" ") || [];
   const [form, setForm] = useState({
     firstName: nameParts[0] || "",
@@ -23,23 +25,21 @@ export default function Contact() {
     phone: "",
     message: "",
   });
-  const [sent, setSent] = useState(false);
-  const [sending, setSending] = useState(false);
-  const [error, setError] = useState("");
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setSending(true);
-    setError("");
 
-    try {
-      await axios.post(`${API}/contact`, form);
-      setSent(true);
-    } catch (err) {
-      setError(err.response?.data?.detail || "Failed to send message. Please try again.");
-    } finally {
-      setSending(false);
-    }
+    const subject = encodeURIComponent(`Contact from ${form.firstName} ${form.lastName}`);
+    const body = encodeURIComponent(
+`Name: ${form.firstName} ${form.lastName}
+Email: ${form.email}
+Phone: ${form.phone || 'Not provided'}
+
+Message:
+${form.message}`
+    );
+
+    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
   };
 
   return (
@@ -59,79 +59,70 @@ export default function Contact() {
 
       <Card className="border-border/50">
         <CardContent className="p-6">
-          {sent ? (
-            <div className="text-center py-12">
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <CheckCircle className="w-8 h-8 text-primary" />
-              </div>
-              <p className="text-2xl font-bold mb-2">Message sent!</p>
-              <p className="text-muted-foreground">We'll get back to you at {form.email}.</p>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                  <label className="text-sm font-medium mb-1.5 block">First name <span className="text-destructive">*</span></label>
-                  <input
-                    required
-                    value={form.firstName}
-                    onChange={e => setForm(f => ({ ...f, firstName: e.target.value }))}
-                    className="w-full rounded-full border border-border px-5 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-1.5 block">Last name <span className="text-destructive">*</span></label>
-                  <input
-                    required
-                    value={form.lastName}
-                    onChange={e => setForm(f => ({ ...f, lastName: e.target.value }))}
-                    className="w-full rounded-full border border-border px-5 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                  <label className="text-sm font-medium mb-1.5 block">Email <span className="text-destructive">*</span></label>
-                  <input
-                    required type="email"
-                    value={form.email}
-                    onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                    className="w-full rounded-full border border-border px-5 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
-                  />
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-1.5 block">Phone</label>
-                  <input
-                    type="tel"
-                    value={form.phone}
-                    onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
-                    className="w-full rounded-full border border-border px-5 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
-                  />
-                </div>
-              </div>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
-                <label className="text-sm font-medium mb-1.5 block">Message <span className="text-destructive">*</span></label>
-                <textarea
-                  required rows={5}
-                  placeholder="Write your message here or contact us at info@ideaground.net"
-                  value={form.message}
-                  onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
-                  className="w-full rounded-3xl border border-border px-5 py-4 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
+                <label className="text-sm font-medium mb-1.5 block">First name <span className="text-destructive">*</span></label>
+                <input
+                  required
+                  value={form.firstName}
+                  onChange={e => setForm(f => ({ ...f, firstName: e.target.value }))}
+                  className="w-full rounded-full border border-border px-5 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
                 />
               </div>
-              {error && (
-                <p className="text-destructive text-sm">{error}</p>
-              )}
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">Last name <span className="text-destructive">*</span></label>
+                <input
+                  required
+                  value={form.lastName}
+                  onChange={e => setForm(f => ({ ...f, lastName: e.target.value }))}
+                  className="w-full rounded-full border border-border px-5 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">Email <span className="text-destructive">*</span></label>
+                <input
+                  required type="email"
+                  value={form.email}
+                  onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
+                  className="w-full rounded-full border border-border px-5 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">Phone</label>
+                <input
+                  type="tel"
+                  value={form.phone}
+                  onChange={e => setForm(f => ({ ...f, phone: e.target.value }))}
+                  className="w-full rounded-full border border-border px-5 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="text-sm font-medium mb-1.5 block">Message <span className="text-destructive">*</span></label>
+              <textarea
+                required rows={5}
+                placeholder="Write your message here..."
+                value={form.message}
+                onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
+                className="w-full rounded-3xl border border-border px-5 py-4 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
+              />
+            </div>
+            <div className="flex items-center gap-4">
               <button
                 type="submit"
-                disabled={sending}
-                className="bg-foreground text-background rounded-full px-10 py-4 text-sm font-medium hover:opacity-80 transition-opacity disabled:opacity-50 flex items-center gap-2"
+                className="bg-foreground text-background rounded-full px-10 py-4 text-sm font-medium hover:opacity-80 transition-opacity flex items-center gap-2"
               >
-                {sending && <Loader2 className="w-4 h-4 animate-spin" />}
-                {sending ? "Sending..." : "Send"}
+                <Mail className="w-4 h-4" />
+                Open Email
               </button>
-            </form>
-          )}
+              <span className="text-sm text-muted-foreground">
+                or email us at <a href={`mailto:${CONTACT_EMAIL}`} className="text-primary hover:underline">info@ideaground.net</a>
+              </span>
+            </div>
+          </form>
         </CardContent>
       </Card>
     </div>

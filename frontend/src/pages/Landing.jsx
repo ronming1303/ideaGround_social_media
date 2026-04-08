@@ -1,9 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { useAuth, API } from "../App";
+import { useAuth } from "../App";
 import { Button } from "../components/ui/button";
-import axios from "axios";
-import { Play, TrendingUp, TrendingDown, Users, DollarSign, ArrowRight, Sparkles, Menu, X, BarChart2, Flame, Zap, Activity, ArrowUpRight, ArrowDownRight, Eye, CheckCircle2, RotateCcw, Loader2 } from "lucide-react";
+import { Play, TrendingUp, TrendingDown, Users, DollarSign, ArrowRight, Sparkles, Menu, X, BarChart2, Flame, Zap, Activity, ArrowUpRight, ArrowDownRight, Eye, CheckCircle2, RotateCcw, Mail } from "lucide-react";
 import OnboardingDemo from "../components/OnboardingDemo";
 import { useForceLightTheme } from "../hooks/useForceLightTheme";
 
@@ -48,9 +47,6 @@ export default function Landing() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [demoMarketTab, setDemoMarketTab] = useState("gainers");
   const [contactForm, setContactForm] = useState({ firstName: "", lastName: "", email: "", phone: "", message: "" });
-  const [contactSent, setContactSent] = useState(false);
-  const [contactSending, setContactSending] = useState(false);
-  const [contactError, setContactError] = useState("");
   const [heroCardStep, setHeroCardStep] = useState("buy");
   const [cursorPos, setCursorPos] = useState({ x: "50%", y: "32%" });
   const [cursorClicking, setCursorClicking] = useState(false);
@@ -78,18 +74,18 @@ export default function Landing() {
     return () => ts.forEach(clearTimeout);
   }, [loopCount]);
 
-  const handleContact = async (e) => {
+  const handleContact = (e) => {
     e.preventDefault();
-    setContactSending(true);
-    setContactError("");
-    try {
-      await axios.post(`${API}/contact`, contactForm);
-      setContactSent(true);
-    } catch (err) {
-      setContactError(err.response?.data?.detail || "Failed to send message. Please try again.");
-    } finally {
-      setContactSending(false);
-    }
+    const subject = encodeURIComponent(`Contact from ${contactForm.firstName} ${contactForm.lastName}`);
+    const body = encodeURIComponent(
+`Name: ${contactForm.firstName} ${contactForm.lastName}
+Email: ${contactForm.email}
+Phone: ${contactForm.phone || 'Not provided'}
+
+Message:
+${contactForm.message}`
+    );
+    window.location.href = `mailto:info@ideaground.net,contact@ideaground.net?subject=${subject}&body=${body}`;
   };
 
   const features = [
@@ -364,76 +360,70 @@ export default function Landing() {
               Reach out to start your journey today.
             </h1>
 
-            {contactSent ? (
-              <div className="text-center py-16">
-                <p className="text-2xl font-bold mb-2">Message sent!</p>
-                <p className="text-muted-foreground">We'll get back to you at {contactForm.email}.</p>
-              </div>
-            ) : (
-              <form onSubmit={handleContact} className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div>
-                    <label className="text-sm font-medium mb-1.5 block">First name <span className="text-destructive">*</span></label>
-                    <input
-                      required
-                      value={contactForm.firstName}
-                      onChange={e => setContactForm(f => ({ ...f, firstName: e.target.value }))}
-                      className="w-full rounded-full border border-border px-5 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-1.5 block">Last name <span className="text-destructive">*</span></label>
-                    <input
-                      required
-                      value={contactForm.lastName}
-                      onChange={e => setContactForm(f => ({ ...f, lastName: e.target.value }))}
-                      className="w-full rounded-full border border-border px-5 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  <div>
-                    <label className="text-sm font-medium mb-1.5 block">Email <span className="text-destructive">*</span></label>
-                    <input
-                      required type="email"
-                      value={contactForm.email}
-                      onChange={e => setContactForm(f => ({ ...f, email: e.target.value }))}
-                      className="w-full rounded-full border border-border px-5 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium mb-1.5 block">Phone <span className="text-destructive">*</span></label>
-                    <input
-                      required type="tel"
-                      value={contactForm.phone}
-                      onChange={e => setContactForm(f => ({ ...f, phone: e.target.value }))}
-                      className="w-full rounded-full border border-border px-5 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
-                    />
-                  </div>
-                </div>
+            <form onSubmit={handleContact} className="space-y-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
-                  <label className="text-sm font-medium mb-1.5 block">Message <span className="text-destructive">*</span></label>
-                  <textarea
-                    required rows={5}
-                    placeholder="Write your message here or contact us by info@ideaground.net!"
-                    value={contactForm.message}
-                    onChange={e => setContactForm(f => ({ ...f, message: e.target.value }))}
-                    className="w-full rounded-3xl border border-border px-5 py-4 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
+                  <label className="text-sm font-medium mb-1.5 block">First name <span className="text-destructive">*</span></label>
+                  <input
+                    required
+                    value={contactForm.firstName}
+                    onChange={e => setContactForm(f => ({ ...f, firstName: e.target.value }))}
+                    className="w-full rounded-full border border-border px-5 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
                   />
                 </div>
-                {contactError && (
-                  <p className="text-destructive text-sm">{contactError}</p>
-                )}
+                <div>
+                  <label className="text-sm font-medium mb-1.5 block">Last name <span className="text-destructive">*</span></label>
+                  <input
+                    required
+                    value={contactForm.lastName}
+                    onChange={e => setContactForm(f => ({ ...f, lastName: e.target.value }))}
+                    className="w-full rounded-full border border-border px-5 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label className="text-sm font-medium mb-1.5 block">Email <span className="text-destructive">*</span></label>
+                  <input
+                    required type="email"
+                    value={contactForm.email}
+                    onChange={e => setContactForm(f => ({ ...f, email: e.target.value }))}
+                    className="w-full rounded-full border border-border px-5 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-1.5 block">Phone</label>
+                  <input
+                    type="tel"
+                    value={contactForm.phone}
+                    onChange={e => setContactForm(f => ({ ...f, phone: e.target.value }))}
+                    className="w-full rounded-full border border-border px-5 py-3 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-1.5 block">Message <span className="text-destructive">*</span></label>
+                <textarea
+                  required rows={5}
+                  placeholder="Write your message here..."
+                  value={contactForm.message}
+                  onChange={e => setContactForm(f => ({ ...f, message: e.target.value }))}
+                  className="w-full rounded-3xl border border-border px-5 py-4 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
+                />
+              </div>
+              <div className="flex items-center gap-4">
                 <button
                   type="submit"
-                  disabled={contactSending}
-                  className="bg-foreground text-background rounded-full px-10 py-4 text-sm font-medium hover:opacity-80 transition-opacity disabled:opacity-50 flex items-center gap-2"
+                  className="bg-foreground text-background rounded-full px-10 py-4 text-sm font-medium hover:opacity-80 transition-opacity flex items-center gap-2"
                 >
-                  {contactSending && <Loader2 className="w-4 h-4 animate-spin" />}
-                  {contactSending ? "Sending..." : "Send"}
+                  <Mail className="w-4 h-4" />
+                  Open Email
                 </button>
-              </form>
-            )}
+                <span className="text-sm text-muted-foreground">
+                  or email us at <a href="mailto:info@ideaground.net,contact@ideaground.net" className="text-primary hover:underline">info@ideaground.net</a>
+                </span>
+              </div>
+            </form>
           </div>
         </section>
       )}

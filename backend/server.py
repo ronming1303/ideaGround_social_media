@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, Depends, UploadFile, File, BackgroundTasks
+from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, Depends, UploadFile, File
 from fastapi.responses import JSONResponse, FileResponse, StreamingResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -43,11 +43,6 @@ FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:8080')
 
 # Restricted Access - Only these emails can access the app (Cloud mode only)
 ALLOWED_EMAILS = [e.strip() for e in os.environ.get("ALLOWED_EMAILS", "").split(",") if e.strip()]
-
-# Email configuration
-RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
-CONTACT_EMAIL = os.environ.get('CONTACT_EMAIL', 'info@ideaground.net')
-EMAIL_FROM = os.environ.get('EMAIL_FROM', 'onboarding@resend.dev')  # Use verified domain in production
 
 # Admin emails - loaded from env (see ADMIN_EMAILS in .env)
 
@@ -3530,65 +3525,6 @@ async def get_single_video_analytics(video_id: str, user: User = Depends(get_cur
             "price_history": price_history
         }
     }
-
-# ==================== CONTACT ENDPOINT ====================
-
-class ContactRequest(BaseModel):
-    firstName: str
-    lastName: str
-    email: str
-    phone: Optional[str] = ""
-    message: str
-
-async def _send_email_resend(recipients: list, subject: str, body: str, reply_to: str):
-    """Send email via Resend API"""
-    try:
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                "https://api.resend.com/emails",
-                headers={
-                    "Authorization": f"Bearer {RESEND_API_KEY}",
-                    "Content-Type": "application/json"
-                },
-                json={
-                    "from": EMAIL_FROM,
-                    "to": recipients,
-                    "subject": subject,
-                    "text": body,
-                    "reply_to": reply_to
-                },
-                timeout=30.0
-            )
-            if response.status_code == 200:
-                logger.info(f"Contact email sent via Resend, reply_to: {reply_to}")
-            else:
-                logger.error(f"Resend API error: {response.status_code} - {response.text}")
-    except Exception as e:
-        logger.error(f"Failed to send contact email: {e}")
-
-@api_router.post("/contact")
-async def send_contact_email(request: ContactRequest, background_tasks: BackgroundTasks):
-    """Send contact form email via Resend API (non-blocking)"""
-    if not RESEND_API_KEY:
-        raise HTTPException(status_code=500, detail="Email service not configured")
-
-    recipients = [e.strip() for e in CONTACT_EMAIL.split(",") if e.strip()]
-    subject = f"Contact from {request.firstName} {request.lastName}"
-    body = f"""
-New contact form submission:
-
-Name: {request.firstName} {request.lastName}
-Email: {request.email}
-Phone: {request.phone or 'Not provided'}
-
-Message:
-{request.message}
-"""
-
-    # Send email in background (non-blocking)
-    background_tasks.add_task(_send_email_resend, recipients, subject, body, request.email)
-
-    return {"success": True, "message": "Email sent successfully"}
 
 # ==================== ROOT ENDPOINT ====================
 
