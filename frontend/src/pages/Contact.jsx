@@ -1,10 +1,13 @@
 import { useState } from "react";
-import { useAuth } from "../App";
+import { useAuth, API } from "../App";
 import { Card, CardContent } from "../components/ui/card";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Loader2, ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
+import axios from "axios";
 
 export default function Contact() {
-  const { user } = useAuth();
+  const auth = useAuth();
+  const user = auth?.user;
   const nameParts = user?.name?.split(" ") || [];
   const [form, setForm] = useState({
     firstName: nameParts[0] || "",
@@ -14,15 +17,33 @@ export default function Contact() {
     message: "",
   });
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    window.location.href = `mailto:info@ideaground.net?subject=Contact from ${form.firstName} ${form.lastName}&body=${encodeURIComponent(form.message)}%0A%0APhone: ${form.phone}%0AEmail: ${form.email}`;
-    setSent(true);
+    setSending(true);
+    setError("");
+
+    try {
+      await axios.post(`${API}/contact`, form);
+      setSent(true);
+    } catch (err) {
+      setError(err.response?.data?.detail || "Failed to send message. Please try again.");
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
-    <div className="p-6 lg:p-8 max-w-3xl mx-auto">
+    <div className="min-h-screen bg-background p-6 lg:p-8 max-w-3xl mx-auto">
+      <Link
+        to={user ? "/dashboard" : "/"}
+        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6"
+      >
+        <ArrowLeft className="w-4 h-4" />
+        Back
+      </Link>
       <p className="text-xs font-bold tracking-widest text-muted-foreground mb-4">READY TO GET STARTED?</p>
       <h1 className="font-heading text-3xl md:text-4xl font-bold tracking-tight mb-8 leading-tight">
         Discover a new era of social media.<br />
@@ -91,11 +112,16 @@ export default function Contact() {
                   className="w-full rounded-3xl border border-border px-5 py-4 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
                 />
               </div>
+              {error && (
+                <p className="text-destructive text-sm">{error}</p>
+              )}
               <button
                 type="submit"
-                className="bg-foreground text-background rounded-full px-10 py-4 text-sm font-medium hover:opacity-80 transition-opacity"
+                disabled={sending}
+                className="bg-foreground text-background rounded-full px-10 py-4 text-sm font-medium hover:opacity-80 transition-opacity disabled:opacity-50 flex items-center gap-2"
               >
-                Send
+                {sending && <Loader2 className="w-4 h-4 animate-spin" />}
+                {sending ? "Sending..." : "Send"}
               </button>
             </form>
           )}
