@@ -17,9 +17,6 @@ import hashlib
 import secrets
 import stripe
 import subprocess
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
@@ -47,10 +44,10 @@ FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:8080')
 # Restricted Access - Only these emails can access the app (Cloud mode only)
 ALLOWED_EMAILS = [e.strip() for e in os.environ.get("ALLOWED_EMAILS", "").split(",") if e.strip()]
 
-# Gmail SMTP configuration for contact form
-GMAIL_USER = os.environ.get('GMAIL_USER', '')
-GMAIL_APP_PASSWORD = os.environ.get('GMAIL_APP_PASSWORD', '')
+# Email configuration
+RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
 CONTACT_EMAIL = os.environ.get('CONTACT_EMAIL', 'info@ideaground.net')
+EMAIL_FROM = os.environ.get('EMAIL_FROM', 'onboarding@resend.dev')  # Use verified domain in production
 
 # Admin emails - loaded from env (see ADMIN_EMAILS in .env)
 
@@ -3543,33 +3540,40 @@ class ContactRequest(BaseModel):
     phone: Optional[str] = ""
     message: str
 
-def _send_email_sync(recipients: list, msg_string: str, sender_email: str):
-    """Synchronous email sending function to run in background"""
+async def _send_email_resend(recipients: list, subject: str, body: str, reply_to: str):
+    """Send email via Resend API"""
     try:
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
-            password = GMAIL_APP_PASSWORD.replace(" ", "")
-            server.login(GMAIL_USER, password)
-            server.sendmail(GMAIL_USER, recipients, msg_string)
-        logger.info(f"Contact email sent from {sender_email}")
-    except smtplib.SMTPAuthenticationError:
-        logger.error("Gmail authentication failed")
+        async with httpx.AsyncClient() as client:
+            response = await client.post(
+                "https://api.resend.com/emails",
+                headers={
+                    "Authorization": f"Bearer {RESEND_API_KEY}",
+                    "Content-Type": "application/json"
+                },
+                json={
+                    "from": EMAIL_FROM,
+                    "to": recipients,
+                    "subject": subject,
+                    "text": body,
+                    "reply_to": reply_to
+                },
+                timeout=30.0
+            )
+            if response.status_code == 200:
+                logger.info(f"Contact email sent via Resend, reply_to: {reply_to}")
+            else:
+                logger.error(f"Resend API error: {response.status_code} - {response.text}")
     except Exception as e:
         logger.error(f"Failed to send contact email: {e}")
 
 @api_router.post("/contact")
 async def send_contact_email(request: ContactRequest, background_tasks: BackgroundTasks):
-    """Send contact form email via Gmail SMTP (non-blocking)"""
-    if not GMAIL_USER or not GMAIL_APP_PASSWORD:
+    """Send contact form email via Resend API (non-blocking)"""
+    if not RESEND_API_KEY:
         raise HTTPException(status_code=500, detail="Email service not configured")
 
-    # Create email message
     recipients = [e.strip() for e in CONTACT_EMAIL.split(",") if e.strip()]
-    msg = MIMEMultipart()
-    msg['From'] = GMAIL_USER
-    msg['To'] = ", ".join(recipients)
-    msg['Reply-To'] = request.email
-    msg['Subject'] = f"Contact from {request.firstName} {request.lastName}"
-
+    subject = f"Contact from {request.firstName} {request.lastName}"
     body = f"""
 New contact form submission:
 
@@ -3580,10 +3584,9 @@ Phone: {request.phone or 'Not provided'}
 Message:
 {request.message}
 """
-    msg.attach(MIMEText(body, 'plain'))
 
     # Send email in background (non-blocking)
-    background_tasks.add_task(_send_email_sync, recipients, msg.as_string(), request.email)
+    background_tasks.add_task(_send_email_resend, recipients, subject, body, request.email)
 
     return {"success": True, "message": "Email sent successfully"}
 
