@@ -35,7 +35,7 @@ html {
         --chart-4: 43 74% 66%;
         --chart-5: 27 87% 67%;
         --radius: 0.75rem;
-        
+
         /* Orange theme extensions */
         --orange-50: 33 100% 96%;
         --orange-100: 34 100% 92%;
@@ -47,6 +47,33 @@ html {
         --orange-700: 17 88% 40%;
         --orange-800: 15 79% 34%;
         --orange-900: 15 75% 28%;
+    }
+
+    .dark {
+        --background: 20 14% 4%;
+        --foreground: 30 25% 98%;
+        --card: 20 14% 8%;
+        --card-foreground: 30 25% 98%;
+        --popover: 20 14% 8%;
+        --popover-foreground: 30 25% 98%;
+        --primary: 24 95% 53%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 173 58% 39%;
+        --secondary-foreground: 0 0% 100%;
+        --muted: 20 14% 15%;
+        --muted-foreground: 30 10% 60%;
+        --accent: 24 50% 15%;
+        --accent-foreground: 24 95% 60%;
+        --destructive: 0 62% 50%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 20 14% 18%;
+        --input: 20 14% 18%;
+        --ring: 24 95% 53%;
+        --chart-1: 24 95% 53%;
+        --chart-2: 173 58% 45%;
+        --chart-3: 197 37% 40%;
+        --chart-4: 43 74% 66%;
+        --chart-5: 27 87% 67%;
     }
 }
 
@@ -170,8 +197,16 @@ code {
     background: linear-gradient(135deg, hsl(24 95% 53% / 0.05) 0%, hsl(33 100% 96%) 50%, hsl(24 95% 53% / 0.03) 100%);
 }
 
+.dark .orange-gradient-bg {
+    background: linear-gradient(135deg, hsl(24 95% 53% / 0.08) 0%, hsl(20 14% 6%) 50%, hsl(24 95% 53% / 0.05) 100%);
+}
+
 .orange-gradient-subtle {
     background: linear-gradient(180deg, hsl(33 100% 97%) 0%, hsl(0 0% 100%) 100%);
+}
+
+.dark .orange-gradient-subtle {
+    background: linear-gradient(180deg, hsl(20 14% 6%) 0%, hsl(20 14% 4%) 100%);
 }
 
 .orange-glow {
@@ -198,10 +233,18 @@ code {
     -webkit-backdrop-filter: blur(12px);
 }
 
+.dark .glass {
+    background: rgba(20, 20, 20, 0.97);
+}
+
 .glass-orange {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 247, 237, 0.85) 100%);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
+}
+
+.dark .glass-orange {
+    background: linear-gradient(135deg, rgba(30, 25, 20, 0.9) 0%, rgba(25, 20, 15, 0.85) 100%);
 }
 
 /* Stock ticker animation */

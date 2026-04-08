@@ -26,6 +26,7 @@ import Contact from "./pages/Contact";
 // Components
 import Sidebar from "./components/Sidebar";
 import MobileNav from "./components/MobileNav";
+import { useTheme } from "./hooks/useTheme";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
@@ -234,6 +235,9 @@ function App() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreator, setIsCreator] = useState(false);
+
+  // Initialize theme on app load
+  useTheme();
 
   useEffect(() => {
     const checkAuth = async () => {
