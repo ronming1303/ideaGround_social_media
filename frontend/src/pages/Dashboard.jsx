@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Card, CardContent } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Badge } from "../components/ui/badge";
-import { Play, TrendingUp, Eye, Heart, Sparkles, ArrowUpRight } from "lucide-react";
+import { Play, TrendingUp, Eye, Heart, Sparkles, ArrowUpRight, Wallet } from "lucide-react";
 import TrendingTicker from "../components/TrendingTicker";
 import MarketOverview from "../components/MarketOverview";
 import LiveActivityFeed from "../components/LiveActivityFeed";
@@ -185,60 +185,51 @@ export default function Dashboard() {
       
       <div className="p-6 lg:p-8 max-w-7xl mx-auto">
       {/* Welcome header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-3xl font-heading font-bold gradient-text">
-            Welcome back, {user?.name?.split(' ')[0] || 'Creator'}
-          </h1>
-          <p className="text-muted-foreground">Discover trending content and grow your portfolio</p>
-        </div>
-        <Link to="/portfolio">
-          <Button data-testid="view-portfolio-btn" className="bg-primary text-white hover:bg-primary/90 rounded-full gap-2">
-            <TrendingUp className="w-4 h-4" />
-            View Portfolio
-            <ArrowUpRight className="w-4 h-4" />
-          </Button>
-        </Link>
+      <div className="mb-6">
+        <h1 className="text-2xl sm:text-3xl font-heading font-bold gradient-text">
+          Welcome back, {user?.name?.split(' ')[0] || 'Creator'}
+        </h1>
+        <p className="text-sm sm:text-base text-muted-foreground">Discover trending content and grow your portfolio</p>
       </div>
 
       {/* Quick stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <Link to="/wallet">
+      <div className="flex gap-2 sm:gap-4 mb-6 sm:mb-8 overflow-x-auto">
+        <Link to="/wallet" className="flex-1 min-w-0">
           <Card className="border-border/50 hover:border-primary/50 hover:shadow-md transition-all cursor-pointer">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center">
-                  <Sparkles className="w-5 h-5 text-accent-foreground" />
-                </div>
+            <CardContent className="p-2 sm:p-4 flex items-center gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-accent flex items-center justify-center flex-shrink-0">
+                <Wallet className="w-4 h-4 sm:w-5 sm:h-5 text-accent-foreground" />
               </div>
-              <p className="text-2xl font-heading font-bold">${user?.wallet_balance?.toFixed(2) || '500.00'}</p>
-              <p className="text-sm text-muted-foreground">Wallet Balance</p>
+              <div className="min-w-0">
+                <p className="text-sm sm:text-lg font-heading font-bold truncate">${user?.wallet_balance?.toFixed(2) || '500.00'}</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">Wallet</p>
+              </div>
             </CardContent>
           </Card>
         </Link>
-        <Link to="/portfolio">
+        <Link to="/portfolio" className="flex-1 min-w-0">
           <Card className="border-border/50 hover:border-primary/50 hover:shadow-md transition-all cursor-pointer">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center">
-                  <TrendingUp className="w-5 h-5 text-secondary" />
-                </div>
+            <CardContent className="p-2 sm:p-4 flex items-center gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
+                <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-secondary" />
               </div>
-              <p className="text-2xl font-heading font-bold">${portfolioPerformance?.total_value?.toFixed(2) ?? '0.00'}</p>
-              <p className="text-sm text-muted-foreground">Portfolio Value</p>
+              <div className="min-w-0">
+                <p className="text-sm sm:text-lg font-heading font-bold truncate">${portfolioPerformance?.total_value?.toFixed(2) ?? '0.00'}</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">Portfolio</p>
+              </div>
             </CardContent>
           </Card>
         </Link>
-        <Link to="/watchlist">
+        <Link to="/watchlist" className="flex-1 min-w-0">
           <Card className="border-border/50 hover:border-primary/50 hover:shadow-md transition-all cursor-pointer">
-            <CardContent className="p-6">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 rounded-xl bg-chart-4/20 flex items-center justify-center">
-                  <Play className="w-5 h-5 text-chart-4" />
-                </div>
+            <CardContent className="p-2 sm:p-4 flex items-center gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-chart-4/20 flex items-center justify-center flex-shrink-0">
+                <Play className="w-4 h-4 sm:w-5 sm:h-5 text-chart-4" />
               </div>
-              <p className="text-2xl font-heading font-bold">{watchlistCount || 0}</p>
-              <p className="text-sm text-muted-foreground">Watch List</p>
+              <div className="min-w-0">
+                <p className="text-sm sm:text-lg font-heading font-bold truncate">{watchlistCount || 0}</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground">Watchlist</p>
+              </div>
             </CardContent>
           </Card>
         </Link>
