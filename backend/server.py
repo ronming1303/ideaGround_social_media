@@ -1,4 +1,4 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, Depends, UploadFile, File
+from fastapi import FastAPI, APIRouter, HTTPException, Request, Response, Depends, UploadFile, File, BackgroundTasks
 from fastapi.responses import JSONResponse, FileResponse, StreamingResponse
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
@@ -3543,23 +3543,34 @@ class ContactRequest(BaseModel):
     phone: Optional[str] = ""
     message: str
 
+def _send_email_sync(recipients: list, msg_string: str, sender_email: str):
+    """Synchronous email sending function to run in background"""
+    try:
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
+            password = GMAIL_APP_PASSWORD.replace(" ", "")
+            server.login(GMAIL_USER, password)
+            server.sendmail(GMAIL_USER, recipients, msg_string)
+        logger.info(f"Contact email sent from {sender_email}")
+    except smtplib.SMTPAuthenticationError:
+        logger.error("Gmail authentication failed")
+    except Exception as e:
+        logger.error(f"Failed to send contact email: {e}")
+
 @api_router.post("/contact")
-async def send_contact_email(request: ContactRequest):
-    """Send contact form email via Gmail SMTP"""
+async def send_contact_email(request: ContactRequest, background_tasks: BackgroundTasks):
+    """Send contact form email via Gmail SMTP (non-blocking)"""
     if not GMAIL_USER or not GMAIL_APP_PASSWORD:
         raise HTTPException(status_code=500, detail="Email service not configured")
 
-    try:
-        # Create email message
-        recipients = [e.strip() for e in CONTACT_EMAIL.split(",") if e.strip()]
-        msg = MIMEMultipart()
-        msg['From'] = GMAIL_USER
-        msg['To'] = ", ".join(recipients)
-        msg['Reply-To'] = request.email
-        msg['Subject'] = f"Contact from {request.firstName} {request.lastName}"
+    # Create email message
+    recipients = [e.strip() for e in CONTACT_EMAIL.split(",") if e.strip()]
+    msg = MIMEMultipart()
+    msg['From'] = GMAIL_USER
+    msg['To'] = ", ".join(recipients)
+    msg['Reply-To'] = request.email
+    msg['Subject'] = f"Contact from {request.firstName} {request.lastName}"
 
-        # Email body
-        body = f"""
+    body = f"""
 New contact form submission:
 
 Name: {request.firstName} {request.lastName}
@@ -3569,24 +3580,12 @@ Phone: {request.phone or 'Not provided'}
 Message:
 {request.message}
 """
-        msg.attach(MIMEText(body, 'plain'))
+    msg.attach(MIMEText(body, 'plain'))
 
-        # Send email via Gmail SMTP
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as server:
-            # Remove spaces from app password (Google generates with spaces)
-            password = GMAIL_APP_PASSWORD.replace(" ", "")
-            server.login(GMAIL_USER, password)
-            server.sendmail(GMAIL_USER, recipients, msg.as_string())
+    # Send email in background (non-blocking)
+    background_tasks.add_task(_send_email_sync, recipients, msg.as_string(), request.email)
 
-        logger.info(f"Contact email sent from {request.email}")
-        return {"success": True, "message": "Email sent successfully"}
-
-    except smtplib.SMTPAuthenticationError:
-        logger.error("Gmail authentication failed")
-        raise HTTPException(status_code=500, detail="Email authentication failed")
-    except Exception as e:
-        logger.error(f"Failed to send contact email: {e}")
-        raise HTTPException(status_code=500, detail="Failed to send email")
+    return {"success": True, "message": "Email sent successfully"}
 
 # ==================== ROOT ENDPOINT ====================
 
