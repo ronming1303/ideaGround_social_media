@@ -5,6 +5,7 @@ import { Button } from "../components/ui/button";
 import axios from "axios";
 import { Play, TrendingUp, TrendingDown, Users, DollarSign, ArrowRight, Sparkles, Menu, X, BarChart2, Flame, Zap, Activity, ArrowUpRight, ArrowDownRight, Eye, CheckCircle2, RotateCcw, Loader2 } from "lucide-react";
 import OnboardingDemo from "../components/OnboardingDemo";
+import { useForceLightTheme } from "../hooks/useForceLightTheme";
 
 const solutions = [
   {
@@ -38,6 +39,7 @@ const solutions = [
 ];
 
 export default function Landing() {
+  useForceLightTheme();
   const { login } = useAuth();
   const [isHovering, setIsHovering] = useState(false);
   const [showDemo, setShowDemo] = useState(false);

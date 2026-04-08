@@ -134,6 +134,9 @@ const ProtectedRoute = ({ children, allowedEmails }) => {
 };
 
 const AppLayout = ({ children }) => {
+  // Apply user's theme preference only in authenticated pages
+  useTheme();
+
   return (
     <div className="min-h-screen bg-background">
       <div className="flex">
@@ -235,9 +238,6 @@ function App() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreator, setIsCreator] = useState(false);
-
-  // Initialize theme on app load
-  useTheme();
 
   useEffect(() => {
     const checkAuth = async () => {

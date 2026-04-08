@@ -4,18 +4,20 @@ import { API } from "../App";
 import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
-import { 
-  TrendingUp, TrendingDown, Users, DollarSign, BarChart3, 
+import {
+  TrendingUp, TrendingDown, Users, DollarSign, BarChart3,
   PieChart, Activity, Briefcase, Sparkles, ArrowUpRight,
   Target, Zap, Building2, ChevronRight, RefreshCw
 } from "lucide-react";
-import { 
-  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, 
+import {
+  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
   PieChart as RechartsPie, Pie, Cell, BarChart, Bar, CartesianGrid, Legend
 } from "recharts";
 import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
+import { useTheme } from "../hooks/useTheme";
 
 export default function InvestorDashboard() {
+  useTheme();
   const [metrics, setMetrics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

@@ -12,8 +12,10 @@ import {
   Activity, CheckCircle, UserPlus
 } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar, CartesianGrid, Legend } from "recharts";
+import { useTheme } from "../hooks/useTheme";
 
 export default function Admin() {
+  useTheme();
   const [stats, setStats] = useState(null);
   const [earnings, setEarnings] = useState(null);
   const [transactions, setTransactions] = useState(null);

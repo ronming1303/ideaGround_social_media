@@ -14,6 +14,7 @@ import {
 import { XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 import VideoComments from "../components/VideoComments";
 import ShareDialog from "../components/ShareDialog";
+import { useTheme } from "../hooks/useTheme";
 
 // Shared panel content (used in both desktop sidebar and mobile sheets)
 function CommentsPanel({ videoId, onClose }) {
@@ -162,6 +163,7 @@ function InvestmentPanel({ details, sharesToBuy, setSharesToBuy, onBuy, buying, 
 }
 
 export default function Shorts() {
+  useTheme();
   const { videoId: initialVideoId } = useParams();
   const navigate = useNavigate();
   const { user, setUser } = useAuth();
