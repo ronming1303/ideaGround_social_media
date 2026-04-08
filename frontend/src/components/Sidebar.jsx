@@ -11,8 +11,9 @@ import {
 } from "../components/ui/dropdown-menu";
 import {
   Home, Compass, Briefcase, Wallet, LogOut,
-  Settings, User, ChevronDown, Video, Eye, PieChart, BarChart3, HelpCircle, Bell, Mail
+  Settings, User, ChevronDown, Video, Eye, PieChart, BarChart3, HelpCircle, Bell, Mail, Moon, Sun
 } from "lucide-react";
+import { useTheme } from "../hooks/useTheme";
 import { cn } from "../lib/utils";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -85,6 +86,7 @@ export default function Sidebar({ className }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [portfolioData, setPortfolioData] = useState(null);
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const fetchPortfolio = async () => {
@@ -159,7 +161,7 @@ export default function Sidebar({ className }) {
 
         {/* Portfolio Allocation Mini Widget */}
         {portfolioData && portfolioData.items.length > 0 && (
-          <div className="mt-6 p-4 rounded-xl bg-gradient-to-br from-accent to-orange-50 border border-primary/10">
+          <div className="mt-6 p-4 rounded-xl bg-gradient-to-br from-accent to-orange-50 dark:from-primary/20 dark:to-primary/5 border border-primary/10">
             <div className="flex items-center gap-2 mb-3">
               <PieChart className="w-4 h-4 text-primary" />
               <span className="text-xs font-semibold text-foreground">Portfolio</span>
@@ -221,6 +223,10 @@ export default function Sidebar({ className }) {
             <DropdownMenuItem onClick={() => navigate("/profile")}>
               <User className="w-4 h-4 mr-2" />
               Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={toggleTheme}>
+              {theme === "dark" ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
+              {theme === "dark" ? "Light Mode" : "Dark Mode"}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem 

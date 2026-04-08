@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { useAuth } from "../App";
+import { useAuth, API } from "../App";
 import { Button } from "../components/ui/button";
-import { Play, TrendingUp, TrendingDown, Users, DollarSign, ArrowRight, Sparkles, Menu, X, BarChart2, Flame, Zap, Activity, ArrowUpRight, ArrowDownRight, Eye, CheckCircle2, RotateCcw } from "lucide-react";
+import axios from "axios";
+import { Play, TrendingUp, TrendingDown, Users, DollarSign, ArrowRight, Sparkles, Menu, X, BarChart2, Flame, Zap, Activity, ArrowUpRight, ArrowDownRight, Eye, CheckCircle2, RotateCcw, Loader2 } from "lucide-react";
 import OnboardingDemo from "../components/OnboardingDemo";
 
 const solutions = [
@@ -46,6 +47,8 @@ export default function Landing() {
   const [demoMarketTab, setDemoMarketTab] = useState("gainers");
   const [contactForm, setContactForm] = useState({ firstName: "", lastName: "", email: "", phone: "", message: "" });
   const [contactSent, setContactSent] = useState(false);
+  const [contactSending, setContactSending] = useState(false);
+  const [contactError, setContactError] = useState("");
   const [heroCardStep, setHeroCardStep] = useState("buy");
   const [cursorPos, setCursorPos] = useState({ x: "50%", y: "32%" });
   const [cursorClicking, setCursorClicking] = useState(false);
@@ -73,10 +76,18 @@ export default function Landing() {
     return () => ts.forEach(clearTimeout);
   }, [loopCount]);
 
-  const handleContact = (e) => {
+  const handleContact = async (e) => {
     e.preventDefault();
-    window.location.href = `mailto:info@ideaground.net?subject=Contact from ${contactForm.firstName} ${contactForm.lastName}&body=${encodeURIComponent(contactForm.message)}%0A%0APhone: ${contactForm.phone}%0AEmail: ${contactForm.email}`;
-    setContactSent(true);
+    setContactSending(true);
+    setContactError("");
+    try {
+      await axios.post(`${API}/contact`, contactForm);
+      setContactSent(true);
+    } catch (err) {
+      setContactError(err.response?.data?.detail || "Failed to send message. Please try again.");
+    } finally {
+      setContactSending(false);
+    }
   };
 
   const features = [
@@ -408,11 +419,16 @@ export default function Landing() {
                     className="w-full rounded-3xl border border-border px-5 py-4 text-sm bg-background focus:outline-none focus:ring-2 focus:ring-primary/30 resize-none"
                   />
                 </div>
+                {contactError && (
+                  <p className="text-destructive text-sm">{contactError}</p>
+                )}
                 <button
                   type="submit"
-                  className="bg-foreground text-background rounded-full px-10 py-4 text-sm font-medium hover:opacity-80 transition-opacity"
+                  disabled={contactSending}
+                  className="bg-foreground text-background rounded-full px-10 py-4 text-sm font-medium hover:opacity-80 transition-opacity disabled:opacity-50 flex items-center gap-2"
                 >
-                  Send
+                  {contactSending && <Loader2 className="w-4 h-4 animate-spin" />}
+                  {contactSending ? "Sending..." : "Send"}
                 </button>
               </form>
             )}

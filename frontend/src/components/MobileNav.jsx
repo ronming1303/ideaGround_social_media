@@ -1,9 +1,10 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Home, Compass, Briefcase, Wallet, Eye, LogOut, Video, HelpCircle, User } from "lucide-react";
+import { Home, Compass, Briefcase, Wallet, Eye, LogOut, Video, HelpCircle, User, Moon, Sun } from "lucide-react";
 import { cn } from "../lib/utils";
 import { useAuth } from "../App";
 import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator } from "./ui/dropdown-menu";
+import { useTheme } from "../hooks/useTheme";
 
 const baseNavItems = [
   { path: "/dashboard", label: "Home", icon: Home },
@@ -19,6 +20,7 @@ export default function MobileNav({ className }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   const navItems = [
     ...baseNavItems,
@@ -75,6 +77,10 @@ export default function MobileNav({ className }) {
             <DropdownMenuItem onClick={() => navigate("/profile")}>
               <User className="w-4 h-4 mr-2" />
               Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={toggleTheme}>
+              {theme === "dark" ? <Sun className="w-4 h-4 mr-2" /> : <Moon className="w-4 h-4 mr-2" />}
+              {theme === "dark" ? "Light Mode" : "Dark Mode"}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={logout} className="text-destructive focus:text-destructive">

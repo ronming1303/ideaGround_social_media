@@ -26,6 +26,7 @@ import Contact from "./pages/Contact";
 // Components
 import Sidebar from "./components/Sidebar";
 import MobileNav from "./components/MobileNav";
+import { useTheme } from "./hooks/useTheme";
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 export const API = `${BACKEND_URL}/api`;
@@ -218,7 +219,7 @@ function AppRouter() {
           <AppLayout><Subscriptions /></AppLayout>
         </ProtectedRoute>
       } />
-      <Route path="/contact" element={<ProtectedRoute><AppLayout><Contact /></AppLayout></ProtectedRoute>} />
+      <Route path="/contact" element={<Contact />} />
       <Route path="/admin" element={<ProtectedRoute allowedEmails={["kshitiz.dadhich2015@gmail.com","rumingliu1303@gmail.com"]}><Admin /></ProtectedRoute>} />
       <Route path="/investors" element={<ProtectedRoute allowedEmails={["kshitiz.dadhich2015@gmail.com","rumingliu1303@gmail.com"]}><InvestorDashboard /></ProtectedRoute>} />
       <Route path="/why" element={
@@ -234,6 +235,9 @@ function App() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreator, setIsCreator] = useState(false);
+
+  // Initialize theme on app load
+  useTheme();
 
   useEffect(() => {
     const checkAuth = async () => {
