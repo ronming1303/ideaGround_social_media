@@ -10,8 +10,8 @@ import { Input } from "../components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import {
   Search, Play, Eye, Heart, Clock, TrendingUp, TrendingDown, Users, Sparkles,
-  Mic, Music, Palette, GraduationCap, MoreHorizontal, Utensils, Plane, Cpu, RefreshCw,
-  Gamepad2, Dumbbell, Laugh, Smile, DollarSign, Trophy, Sparkle, Newspaper, PawPrint,
+  Music, GraduationCap, MoreHorizontal, Utensils, Cpu, RefreshCw,
+  Gamepad2, Dumbbell, Smile, Trophy, Newspaper,
   ChevronDown, ChevronUp
 } from "lucide-react";
 import { useDataSync, POLL_INTERVALS } from "../hooks/useDataSync";
@@ -28,25 +28,15 @@ export default function Explore() {
   // Genre categories like stock market sectors
   const genres = [
     { id: "all", label: "All", icon: Sparkles },
-    { id: "Best of the Week", label: "Best of the Week", icon: Trophy },
-    { id: "Best of the Month", label: "Best of the Month", icon: Trophy },
-    { id: "Art", label: "Art", icon: Palette },
-    { id: "Beauty & Fashion", label: "Beauty & Fashion", icon: Sparkle },
-    { id: "Comedy", label: "Comedy", icon: Laugh },
-    { id: "Dance", label: "Dance", icon: Music },
+    { id: "Best of Week", label: "Best of Week", icon: Trophy },
+    { id: "Entertainment", label: "Entertainment", icon: Music },
     { id: "Education", label: "Education", icon: GraduationCap },
-    { id: "Finance", label: "Finance", icon: DollarSign },
-    { id: "Fitness", label: "Fitness", icon: Dumbbell },
-    { id: "Food", label: "Food", icon: Utensils },
+    { id: "Tech", label: "Tech", icon: Cpu },
     { id: "Gaming", label: "Gaming", icon: Gamepad2 },
     { id: "Lifestyle", label: "Lifestyle", icon: Smile },
-    { id: "Music", label: "Music", icon: Music },
-    { id: "News & Politics", label: "News & Politics", icon: Newspaper },
-    { id: "Animals & Pets", label: "Animals & Pets", icon: PawPrint },
-    { id: "Podcast", label: "Podcast", icon: Mic },
-    { id: "Sports", label: "Sports", icon: Trophy },
-    { id: "Tech", label: "Tech", icon: Cpu },
-    { id: "Travel", label: "Travel", icon: Plane },
+    { id: "Food", label: "Food", icon: Utensils },
+    { id: "Sports & Fitness", label: "Sports & Fitness", icon: Dumbbell },
+    { id: "News", label: "News", icon: Newspaper },
     { id: "Other", label: "Other", icon: MoreHorizontal },
   ];
 
@@ -135,7 +125,7 @@ export default function Explore() {
           onClick={() => setGenreExpanded(e => !e)}
           className="flex items-center gap-2 mb-3 w-full text-left"
         >
-          <Palette className="w-4 h-4 text-primary" />
+          <Sparkles className="w-4 h-4 text-primary" />
           <span className="text-sm font-medium text-muted-foreground">Browse by Sector</span>
           {selectedGenre !== "all" && (
             <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">

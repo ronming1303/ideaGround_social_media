@@ -11,7 +11,7 @@ import {
 } from "../components/ui/dropdown-menu";
 import {
   Home, Compass, Briefcase, Wallet, LogOut,
-  Settings, User, ChevronDown, Video, Eye, PieChart, BarChart3, HelpCircle, Bell, Mail, Moon, Sun
+  User, Video, Eye, PieChart, BarChart3, HelpCircle, Bell, Mail, Moon, Sun
 } from "lucide-react";
 import { useTheme } from "../hooks/useTheme";
 import { cn } from "../lib/utils";
@@ -114,7 +114,7 @@ export default function Sidebar({ className }) {
 
   return (
     <aside className={cn(
-      "fixed left-0 top-0 h-screen w-64 bg-card border-r border-border flex flex-col z-40",
+      "fixed left-0 top-0 h-screen w-64 bg-card shadow-[1px_0_0_0_hsl(var(--border))] flex flex-col z-40",
       className
     )}>
       {/* Sticky Logo Header */}
@@ -199,12 +199,12 @@ export default function Sidebar({ className }) {
 
       {/* User section */}
       <div className="p-4 border-t border-border bg-gradient-to-t from-accent/50 to-transparent">
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
-            <Button 
+            <Button
               data-testid="user-menu-btn"
-              variant="ghost" 
-              className="w-full justify-start gap-3 px-3 py-6 h-auto hover:bg-primary/5 rounded-xl"
+              variant="ghost"
+              className="w-full justify-start items-center gap-3 pl-3 pr-4 py-6 h-auto hover:bg-primary/5 rounded-xl"
             >
               <Avatar className="w-10 h-10 ring-2 ring-primary/20">
                 <AvatarImage src={user?.picture} alt={user?.name} />
@@ -216,8 +216,7 @@ export default function Sidebar({ className }) {
                 <p className="font-medium text-sm truncate">{user?.name || 'User'}</p>
                 <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
               </div>
-              <ChevronDown className="w-4 h-4 text-muted-foreground" />
-            </Button>
+                          </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuItem onClick={() => navigate("/profile")}>

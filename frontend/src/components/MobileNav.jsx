@@ -56,7 +56,7 @@ export default function MobileNav({ className }) {
           );
         })}
 
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <button className="flex flex-col items-center gap-1 px-4 py-2 rounded-xl transition-all text-muted-foreground flex-shrink-0">
               <Avatar className="w-5 h-5">

@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { useAuth } from "../App";
 import { Button } from "../components/ui/button";
 import { ArrowLeft, Feather, Shield, AlertTriangle, Flame } from "lucide-react";
+import { useForceLightTheme } from "../hooks/useForceLightTheme";
 
 const solutionData = {
   inequality: {
@@ -214,6 +215,7 @@ const solutionData = {
 };
 
 export default function SolutionDetail() {
+  useForceLightTheme();
   const { slug } = useParams();
   const { login } = useAuth();
   const solution = solutionData[slug];

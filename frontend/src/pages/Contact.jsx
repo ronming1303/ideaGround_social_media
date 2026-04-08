@@ -4,10 +4,17 @@ import { Card, CardContent } from "../components/ui/card";
 import { CheckCircle, Loader2, ArrowLeft } from "lucide-react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { useForceLightTheme } from "../hooks/useForceLightTheme";
+import { useTheme } from "../hooks/useTheme";
 
 export default function Contact() {
   const auth = useAuth();
   const user = auth?.user;
+
+  // Force light theme only when not logged in
+  useForceLightTheme(!user);
+  // Apply user's theme preference when logged in
+  useTheme();
   const nameParts = user?.name?.split(" ") || [];
   const [form, setForm] = useState({
     firstName: nameParts[0] || "",
