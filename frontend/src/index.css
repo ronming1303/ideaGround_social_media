@@ -105,24 +105,39 @@ code {
     }
 }
 
-/* Custom scrollbar with orange theme */
+/* Custom scrollbar - hidden by default, visible on hover */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: hsl(var(--muted));
-    border-radius: 4px;
+    background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: hsl(var(--primary) / 0.3);
+    background: transparent;
     border-radius: 4px;
+    transition: background 0.2s;
 }
 
-::-webkit-scrollbar-thumb:hover {
+/* Show scrollbar on hover */
+*:hover::-webkit-scrollbar-thumb {
+    background: hsl(var(--primary) / 0.3);
+}
+
+*:hover::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--primary) / 0.5);
+}
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+}
+
+*:hover {
+    scrollbar-color: hsl(var(--primary) / 0.3) transparent;
 }
 
 /* Page transition animations */
