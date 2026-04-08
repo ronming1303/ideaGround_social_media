@@ -250,54 +250,56 @@ export default function CreatorAnalytics() {
         <CardContent>
           <div className="space-y-4">
             {videos.map((video) => (
-              <div 
+              <div
                 key={video.video_id}
                 data-testid={`analytics-video-${video.video_id}`}
-                className="flex items-center gap-4 p-4 rounded-xl bg-muted/50"
+                className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-xl bg-muted/50"
               >
-                <img 
-                  src={video.thumbnail} 
-                  alt={video.title}
-                  className="w-24 h-16 rounded-lg object-cover"
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <Badge variant="outline" className="font-mono text-xs">
+                {/* Mobile: thumbnail + title row */}
+                <div className="flex items-center gap-3">
+                  <img
+                    src={video.thumbnail}
+                    alt={video.title}
+                    className="w-16 h-12 sm:w-24 sm:h-16 rounded-lg object-cover flex-shrink-0"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <Badge variant="outline" className="font-mono text-[10px] sm:text-xs mb-1">
                       {video.ticker_symbol || video.video_id}
                     </Badge>
+                    <h4 className="font-medium text-sm sm:text-base truncate">{video.title}</h4>
                   </div>
-                  <h4 className="font-medium truncate">{video.title}</h4>
+                  <Link to={`/video/${video.video_id}`} className="flex-shrink-0">
+                    <Button variant="ghost" size="sm" className="rounded-full">
+                      <ArrowUpRight className="w-4 h-4" />
+                    </Button>
+                  </Link>
                 </div>
-                <div className="grid grid-cols-4 gap-6 text-center">
+                {/* Stats row */}
+                <div className="grid grid-cols-4 gap-2 sm:gap-6 text-center sm:ml-auto">
                   <div>
-                    <p className="text-xs text-muted-foreground">Views</p>
-                    <p className="font-mono font-semibold">{formatNumber(video.views)}</p>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">Views</p>
+                    <p className="font-mono font-semibold text-xs sm:text-base">{formatNumber(video.views)}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Likes</p>
-                    <p className="font-mono font-semibold">{formatNumber(video.likes)}</p>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">Likes</p>
+                    <p className="font-mono font-semibold text-xs sm:text-base">{formatNumber(video.likes)}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Price</p>
-                    <p className="font-mono font-semibold text-secondary">{formatCurrency(video.share_price)}</p>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">Price</p>
+                    <p className="font-mono font-semibold text-xs sm:text-base text-secondary">{formatCurrency(video.share_price)}</p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">Growth</p>
-                    <p className={`font-mono font-semibold flex items-center justify-center ${video.price_growth_all_time >= 0 ? 'text-secondary' : 'text-destructive'}`}>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">Growth</p>
+                    <p className={`font-mono font-semibold text-xs sm:text-base flex items-center justify-center ${video.price_growth_all_time >= 0 ? 'text-secondary' : 'text-destructive'}`}>
                       {video.price_growth_all_time >= 0 ? (
-                        <TrendingUp className="w-3 h-3 mr-1" />
+                        <TrendingUp className="w-3 h-3 mr-0.5" />
                       ) : (
-                        <TrendingDown className="w-3 h-3 mr-1" />
+                        <TrendingDown className="w-3 h-3 mr-0.5" />
                       )}
                       {video.price_growth_all_time >= 0 ? '+' : ''}{video.price_growth_all_time}%
                     </p>
                   </div>
                 </div>
-                <Link to={`/video/${video.video_id}`}>
-                  <Button variant="ghost" size="sm" className="rounded-full">
-                    <ArrowUpRight className="w-4 h-4" />
-                  </Button>
-                </Link>
               </div>
             ))}
           </div>
