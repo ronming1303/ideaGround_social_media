@@ -103,54 +103,49 @@ export default function Portfolio() {
         <p className="text-muted-foreground">Track your video investments</p>
       </div>
 
-      {/* Main stats */}
-      <div className="grid lg:grid-cols-4 gap-6 mb-8 stagger-children">
-        <Card className="lg:col-span-2 border-border/50 overflow-hidden card-hover-orange">
-          <CardContent className="p-6">
-            <div className="flex items-start justify-between mb-6">
-              <div>
-                <p className="text-sm text-muted-foreground mb-1">Total Portfolio Value</p>
-                <h2 className="font-heading text-4xl font-bold gradient-text">{formatCurrency(totalPortfolioValue)}</h2>
-              </div>
-              <div className={`flex items-center gap-1 px-3 py-1.5 rounded-full font-semibold ${portfolio?.total_gain >= 0 ? 'bg-gradient-to-r from-orange-500/10 to-orange-600/10 text-orange-600' : 'bg-destructive/10 text-destructive'}`}>
-                {portfolio?.total_gain >= 0 ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                <span>{totalGainPercent >= 0 ? '+' : ''}{totalGainPercent.toFixed(1)}%</span>
-              </div>
+      {/* Main stats - compact design */}
+      <div className="flex gap-2 sm:gap-4 mb-6 sm:mb-8 overflow-x-auto">
+        <Card className="flex-1 min-w-0 border-border/50 card-hover-orange">
+          <CardContent className="p-2 sm:p-4 flex items-center gap-2 sm:gap-3">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-orange-500/10 to-orange-600/20 flex items-center justify-center flex-shrink-0">
+              <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
             </div>
-            
+            <div className="min-w-0 flex-1">
+              <p className="text-sm sm:text-lg font-heading font-bold truncate gradient-text">{formatCurrency(totalPortfolioValue)}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Total Value</p>
+            </div>
+            <div className={`hidden sm:flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${portfolio?.total_gain >= 0 ? 'bg-secondary/10 text-secondary' : 'bg-destructive/10 text-destructive'}`}>
+              {portfolio?.total_gain >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
+              <span>{totalGainPercent >= 0 ? '+' : ''}{totalGainPercent.toFixed(1)}%</span>
+            </div>
           </CardContent>
         </Card>
 
-        <Card className="border-border/50 card-hover-orange">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500/10 to-orange-600/20 flex items-center justify-center">
-                <Briefcase className="w-6 h-6 text-primary" />
-              </div>
+        <Card className="flex-1 min-w-0 border-border/50">
+          <CardContent className="p-2 sm:p-4 flex items-center gap-2 sm:gap-3">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
+              <Briefcase className="w-4 h-4 sm:w-5 sm:h-5 text-secondary" />
             </div>
-            <p className="text-sm text-muted-foreground mb-1">Invested Value</p>
-            <p className="font-heading text-2xl font-bold">{formatCurrency(portfolio?.total_value || 0)}</p>
-            <p className={`text-sm flex items-center gap-1 mt-1 ${portfolio?.total_gain >= 0 ? 'text-secondary' : 'text-destructive'}`}>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm sm:text-lg font-heading font-bold truncate">{formatCurrency(portfolio?.total_value || 0)}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Invested</p>
+            </div>
+            <div className={`hidden sm:flex items-center gap-1 text-xs ${portfolio?.total_gain >= 0 ? 'text-secondary' : 'text-destructive'}`}>
               {portfolio?.total_gain >= 0 ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-              {formatCurrency(Math.abs(portfolio?.total_gain || 0))} all time
-            </p>
+              <span>{formatCurrency(Math.abs(portfolio?.total_gain || 0))}</span>
+            </div>
           </CardContent>
         </Card>
 
-        <Card className="border-border/50">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 rounded-xl bg-accent flex items-center justify-center">
-                <DollarSign className="w-6 h-6 text-accent-foreground" />
-              </div>
+        <Card className="flex-1 min-w-0 border-border/50">
+          <CardContent className="p-2 sm:p-4 flex items-center gap-2 sm:gap-3">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-accent flex items-center justify-center flex-shrink-0">
+              <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-accent-foreground" />
             </div>
-            <p className="text-sm text-muted-foreground mb-1">Cash Balance</p>
-            <p className="font-heading text-2xl font-bold">{formatCurrency(portfolio?.wallet_balance || 0)}</p>
-            <Link to="/wallet">
-              <Button variant="link" className="p-0 h-auto text-sm text-primary">
-                Add funds <ArrowUpRight className="w-3 h-3 ml-1" />
-              </Button>
-            </Link>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm sm:text-lg font-heading font-bold truncate">{formatCurrency(portfolio?.wallet_balance || 0)}</p>
+              <p className="text-[10px] sm:text-xs text-muted-foreground">Cash Balance</p>
+            </div>
           </CardContent>
         </Card>
       </div>
