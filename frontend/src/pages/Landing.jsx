@@ -142,9 +142,9 @@ ${contactForm.message}`
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-teal-50 overflow-x-hidden">
       {/* Nav */}
       <nav className="glass fixed top-0 left-0 right-0 z-50 border-b border-black/5 w-full">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2 sm:gap-6">
               <div className="flex items-center gap-2">
                 <span className="font-heading font-bold text-xl gradient-text">ideaGround</span>
                 {process.env.REACT_APP_ENV === 'staging' && (
@@ -192,12 +192,12 @@ ${contactForm.message}`
         </div>
         {/* Mobile dropdown menu */}
         <div
-          className={`sm:hidden border-t border-black/5 bg-white/95 backdrop-blur-md overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out ${
+          className={`sm:hidden absolute left-0 right-0 top-full border-t border-black/5 bg-white/95 backdrop-blur-md overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out ${
             mobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
           }`}
           style={{ willChange: mobileMenuOpen ? 'max-height, opacity' : 'auto' }}
         >
-          <div className="px-4 py-3 flex flex-col gap-1">
+          <div className="px-3 sm:px-4 py-3 flex flex-col gap-1">
             {navTabs.map(tab => (
               <button
                 key={tab.id}
