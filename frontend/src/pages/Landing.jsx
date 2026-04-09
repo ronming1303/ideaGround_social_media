@@ -170,28 +170,31 @@ ${contactForm.message}`
                 ))}
               </div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               {/* Hamburger button - mobile only */}
               <button
-                className="sm:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-black/5 transition-colors"
+                className="sm:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-black/5 transition-colors flex-shrink-0"
                 onClick={() => setMobileMenuOpen(o => !o)}
                 aria-label="Toggle menu"
               >
                 {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
-              <Button 
+              <Button
                 data-testid="login-btn-nav"
                 onClick={login}
-                className="bg-primary text-white hover:bg-primary/90 rounded-full px-6"
+                className="bg-primary text-white hover:bg-primary/90 rounded-full px-4 sm:px-6 text-sm sm:text-base whitespace-nowrap"
               >
-                Sign in with Google
+                <span className="hidden sm:inline">Sign in with Google</span>
+                <span className="sm:hidden">Sign in</span>
               </Button>
             </div>
           </div>
         </div>
         {/* Mobile dropdown menu */}
-        {mobileMenuOpen && (
-          <div className="sm:hidden border-t border-black/5 bg-white/95 backdrop-blur-md px-4 py-3 flex flex-col gap-1">
+        <div className={`sm:hidden border-t border-black/5 bg-white/95 backdrop-blur-md overflow-hidden transition-all duration-300 ease-in-out ${
+          mobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+        }`}>
+          <div className="px-4 py-3 flex flex-col gap-1">
             {navTabs.map(tab => (
               <button
                 key={tab.id}
@@ -206,7 +209,7 @@ ${contactForm.message}`
               </button>
             ))}
           </div>
-        )}
+        </div>
       </nav>
 
       {/* Solutions Tab */}
