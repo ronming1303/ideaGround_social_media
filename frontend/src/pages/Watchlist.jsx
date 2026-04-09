@@ -201,27 +201,24 @@ export default function Watchlist() {
                     </div>
                     
                     <CardContent className="p-4 space-y-4">
-                      {/* Investment Score */}
-                      <div className="text-center p-4 rounded-xl bg-muted/50">
-                        <p className="text-xs text-muted-foreground mb-1">Investment Score</p>
-                        <p className={`text-4xl font-heading font-bold ${getScoreColor(getInvestmentScore(selectedItem))}`}>
-                          {getInvestmentScore(selectedItem)}
-                        </p>
-                        <Badge className={`mt-2 ${
-                          getInvestmentScore(selectedItem) >= 70 ? 'bg-emerald-500' : 
-                          getInvestmentScore(selectedItem) >= 50 ? 'bg-amber-500' : 'bg-red-500'
-                        } text-white`}>
-                          {getScoreLabel(getInvestmentScore(selectedItem))}
-                        </Badge>
-                      </div>
-
                       {/* Key Metrics */}
                       <div className="space-y-3">
                         <h4 className="text-sm font-medium flex items-center gap-2">
                           <BarChart3 className="w-4 h-4 text-orange-500" />
                           Key Metrics
                         </h4>
-                        
+
+                        {/* Investment Score */}
+                        <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
+                          <div className="flex items-center gap-2">
+                            <Zap className="w-4 h-4 text-amber-500" />
+                            <span className="text-sm">Investment Score</span>
+                          </div>
+                          <span className={`font-mono text-sm font-bold ${getScoreColor(getInvestmentScore(selectedItem))}`}>
+                            {getInvestmentScore(selectedItem)}/100
+                          </span>
+                        </div>
+
                         {/* Price Momentum */}
                         <div className="flex items-center justify-between p-3 rounded-lg bg-muted/50">
                           <div className="flex items-center gap-2">
