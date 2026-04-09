@@ -104,47 +104,47 @@ export default function Portfolio() {
       </div>
 
       {/* Main stats - compact design */}
-      <div className="flex gap-2 sm:gap-4 mb-6 sm:mb-8 overflow-x-auto">
-        <Card className="flex-1 min-w-0 border-border/50 card-hover-orange">
-          <CardContent className="p-2 sm:p-4 flex items-center gap-2 sm:gap-3">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-gradient-to-br from-orange-500/10 to-orange-600/20 flex items-center justify-center flex-shrink-0">
-              <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+      <div className="flex flex-col gap-2 sm:gap-3 mb-6 sm:mb-8">
+        <Card className="border-border/50 card-hover-orange">
+          <CardContent className="p-3 sm:p-4 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500/10 to-orange-600/20 flex items-center justify-center flex-shrink-0">
+              <TrendingUp className="w-5 h-5 text-primary" />
             </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-sm sm:text-lg font-heading font-bold truncate gradient-text">{formatCurrency(totalPortfolioValue)}</p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">Total Value</p>
+            <div className="flex-1">
+              <p className="text-lg sm:text-xl font-heading font-bold">{formatCurrency(totalPortfolioValue)}</p>
+              <p className="text-xs text-muted-foreground">Total Value</p>
             </div>
-            <div className={`hidden sm:flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold ${portfolio?.total_gain >= 0 ? 'bg-secondary/10 text-secondary' : 'bg-destructive/10 text-destructive'}`}>
+            <div className={`flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-semibold ${portfolio?.total_gain >= 0 ? 'bg-secondary/10 text-secondary' : 'bg-destructive/10 text-destructive'}`}>
               {portfolio?.total_gain >= 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
               <span>{totalGainPercent >= 0 ? '+' : ''}{totalGainPercent.toFixed(1)}%</span>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="flex-1 min-w-0 border-border/50">
-          <CardContent className="p-2 sm:p-4 flex items-center gap-2 sm:gap-3">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
-              <Briefcase className="w-4 h-4 sm:w-5 sm:h-5 text-secondary" />
+        <Card className="border-border/50">
+          <CardContent className="p-3 sm:p-4 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-secondary/10 flex items-center justify-center flex-shrink-0">
+              <Briefcase className="w-5 h-5 text-secondary" />
             </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-sm sm:text-lg font-heading font-bold truncate">{formatCurrency(portfolio?.total_value || 0)}</p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">Invested</p>
+            <div className="flex-1">
+              <p className="text-lg sm:text-xl font-heading font-bold">{formatCurrency(portfolio?.total_value || 0)}</p>
+              <p className="text-xs text-muted-foreground">Invested</p>
             </div>
-            <div className={`hidden sm:flex items-center gap-1 text-xs ${portfolio?.total_gain >= 0 ? 'text-secondary' : 'text-destructive'}`}>
-              {portfolio?.total_gain >= 0 ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
-              <span>{formatCurrency(Math.abs(portfolio?.total_gain || 0))}</span>
+            <div className={`flex items-center gap-1 text-sm ${portfolio?.total_gain >= 0 ? 'text-secondary' : 'text-destructive'}`}>
+              {portfolio?.total_gain >= 0 ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
+              <span className="font-semibold">{formatCurrency(Math.abs(portfolio?.total_gain || 0))}</span>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="flex-1 min-w-0 border-border/50">
-          <CardContent className="p-2 sm:p-4 flex items-center gap-2 sm:gap-3">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-accent flex items-center justify-center flex-shrink-0">
-              <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-accent-foreground" />
+        <Card className="border-border/50">
+          <CardContent className="p-3 sm:p-4 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-accent flex items-center justify-center flex-shrink-0">
+              <DollarSign className="w-5 h-5 text-accent-foreground" />
             </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-sm sm:text-lg font-heading font-bold truncate">{formatCurrency(portfolio?.wallet_balance || 0)}</p>
-              <p className="text-[10px] sm:text-xs text-muted-foreground">Cash Balance</p>
+            <div className="flex-1">
+              <p className="text-lg sm:text-xl font-heading font-bold">{formatCurrency(portfolio?.wallet_balance || 0)}</p>
+              <p className="text-xs text-muted-foreground">Cash Balance</p>
             </div>
           </CardContent>
         </Card>

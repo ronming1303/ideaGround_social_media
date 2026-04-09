@@ -201,7 +201,7 @@ export default function Dashboard() {
                 <Wallet className="w-4 h-4 sm:w-5 sm:h-5 text-accent-foreground" />
               </div>
               <div className="min-w-0">
-                <p className="text-sm sm:text-lg font-heading font-bold truncate">${user?.wallet_balance?.toFixed(2) || '500.00'}</p>
+                <p className="text-sm sm:text-lg font-heading font-bold truncate">${user?.wallet_balance?.toFixed(0) || '500'}</p>
                 <p className="text-[10px] sm:text-xs text-muted-foreground">Wallet</p>
               </div>
             </CardContent>
@@ -214,7 +214,7 @@ export default function Dashboard() {
                 <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-secondary" />
               </div>
               <div className="min-w-0">
-                <p className="text-sm sm:text-lg font-heading font-bold truncate">${portfolioPerformance?.total_value?.toFixed(2) ?? '0.00'}</p>
+                <p className="text-sm sm:text-lg font-heading font-bold truncate">${portfolioPerformance?.total_value?.toFixed(0) ?? '0'}</p>
                 <p className="text-[10px] sm:text-xs text-muted-foreground">Portfolio</p>
               </div>
             </CardContent>
