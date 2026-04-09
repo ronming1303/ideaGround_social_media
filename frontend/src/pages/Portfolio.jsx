@@ -105,7 +105,7 @@ export default function Portfolio() {
 
       {/* Main stats - compact design */}
       <div className="flex flex-col gap-2 sm:gap-3 mb-6 sm:mb-8">
-        <Card className="border-border/50 card-hover-orange">
+        <Card className="border-border/50">
           <CardContent className="p-3 sm:p-4 flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500/10 to-orange-600/20 flex items-center justify-center flex-shrink-0">
               <TrendingUp className="w-5 h-5 text-primary" />
