@@ -378,32 +378,34 @@ export default function Wallet() {
                 <div
                   key={index}
                   data-testid={`transaction-${txn.transaction_id}`}
-                  className="flex items-center gap-4 p-4 rounded-xl bg-muted/50"
+                  className="p-4 rounded-xl bg-muted/50"
                 >
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                    txn.amount >= 0 ? 'bg-secondary/10 text-secondary' : 'bg-destructive/10 text-destructive'
-                  }`}>
-                    {getTransactionIcon(txn.transaction_type)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <span className="font-medium">{getTransactionLabel(txn.transaction_type)}</span>
-                      {txn.shares && (
-                        <span className="text-sm text-muted-foreground">
-                          ({txn.shares} shares)
-                        </span>
-                      )}
+                  <div className="flex items-start gap-3">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
+                      txn.amount >= 0 ? 'bg-secondary/10 text-secondary' : 'bg-destructive/10 text-destructive'
+                    }`}>
+                      {getTransactionIcon(txn.transaction_type)}
                     </div>
-                    {txn.video && (
-                      <p className="text-sm text-muted-foreground truncate">{txn.video.title}</p>
-                    )}
-                    {txn.transaction_type === 'creator_share_income' && txn.buyer_name && (
-                      <p className="text-sm text-muted-foreground">Bought by {txn.buyer_name}</p>
-                    )}
-                    <p className="text-xs text-muted-foreground">{formatDate(txn.created_at)}</p>
-                  </div>
-                  <div className={`font-heading font-bold ${txn.amount >= 0 ? 'text-secondary' : 'text-destructive'}`}>
-                    {txn.amount >= 0 ? '+' : ''}{formatCurrency(txn.amount)}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-baseline justify-between gap-2 mb-1">
+                        <span className="font-medium">{getTransactionLabel(txn.transaction_type)}</span>
+                        <span className={`font-heading font-bold whitespace-nowrap ${txn.amount >= 0 ? 'text-secondary' : 'text-destructive'}`}>
+                          {txn.amount >= 0 ? '+' : ''}{formatCurrency(txn.amount)}
+                        </span>
+                      </div>
+                      {txn.shares && (
+                        <p className="text-sm text-muted-foreground">
+                          ({txn.shares} shares)
+                        </p>
+                      )}
+                      {txn.video && (
+                        <p className="text-sm text-muted-foreground line-clamp-1">{txn.video.title}</p>
+                      )}
+                      {txn.transaction_type === 'creator_share_income' && txn.buyer_name && (
+                        <p className="text-sm text-muted-foreground">Bought by {txn.buyer_name}</p>
+                      )}
+                      <p className="text-xs text-muted-foreground mt-1">{formatDate(txn.created_at)}</p>
+                    </div>
                   </div>
                 </div>
               ))}
