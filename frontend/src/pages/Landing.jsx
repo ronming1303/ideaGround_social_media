@@ -573,7 +573,7 @@ ${contactForm.message}`
 
               {/* Celebrate State */}
               <div className={`transition-all duration-500 ease-in-out ${heroCardStep === "celebrate" ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3 absolute inset-x-0 top-0 pointer-events-none"}`}>
-                <div className="flex flex-col items-center justify-center text-center px-8 py-10 space-y-5 min-h-[430px]">
+                <div className="flex flex-col items-center justify-center text-center px-4 sm:px-8 py-10 space-y-5 min-h-[430px]">
                   <div className="text-6xl leading-none">&#x1F389;</div>
                   <div>
                     <p className="font-heading font-bold text-xl mt-3">Purchase Confirmed!</p>
@@ -589,15 +589,15 @@ ${contactForm.message}`
                       <p className="font-mono font-bold text-lg text-primary">5 / 1,000</p>
                     </div>
                   </div>
-                  <div className="w-full flex items-center justify-center gap-2">
+                  <div className="w-full flex items-center justify-center gap-1 sm:gap-2">
                     {[["Views", "&#x1F441;"], ["Revenue", "&#x1F4B0;"], ["Your share", "&#x1F4C8;"]].map(([label, icon], i, arr) => (
-                      <div key={label} className="flex items-center gap-2">
-                        <div className="flex flex-col items-center gap-1 bg-muted/50 rounded-xl px-4 py-3">
-                          <span className="text-xl" dangerouslySetInnerHTML={{ __html: icon }} />
-                          <span className="text-xs font-medium text-muted-foreground whitespace-nowrap">{label}</span>
+                      <>
+                        <div key={label} className="flex flex-col items-center gap-1 bg-muted/50 rounded-xl px-2 sm:px-4 py-2 sm:py-3 flex-1">
+                          <span className="text-lg sm:text-xl" dangerouslySetInnerHTML={{ __html: icon }} />
+                          <span className="text-[10px] sm:text-xs font-medium text-muted-foreground whitespace-nowrap">{label}</span>
                         </div>
-                        {i < arr.length - 1 && <span className="text-muted-foreground/40 font-light text-lg">&rarr;</span>}
-                      </div>
+                        {i < arr.length - 1 && <span key={`arrow-${i}`} className="text-muted-foreground/40 font-light text-sm sm:text-lg">&rarr;</span>}
+                      </>
                     ))}
                   </div>
                   <div className="w-full space-y-2">
