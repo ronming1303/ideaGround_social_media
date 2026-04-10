@@ -509,7 +509,7 @@ ${contactForm.message}`
 
           {/* Right: Interactive Animated Card */}
           <div className="relative w-full max-w-sm mx-auto lg:mx-0 lg:ml-auto pointer-events-none mt-4 lg:mt-0" data-testid="demo-steps-card">
-            <div className="relative bg-card rounded-3xl shadow-2xl shadow-black/10 border border-border/50 overflow-hidden min-h-[420px]">
+            <div className="relative bg-card rounded-3xl shadow-2xl shadow-black/10 border border-border/50 overflow-hidden h-[460px]">
 
               {/* Animated Cursor */}
               <div
@@ -573,7 +573,7 @@ ${contactForm.message}`
 
               {/* Celebrate State */}
               <div className={`transition-all duration-500 ease-in-out ${heroCardStep === "celebrate" ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3 absolute inset-x-0 top-0 pointer-events-none"}`}>
-                <div className="flex flex-col items-center justify-center text-center px-4 sm:px-8 py-10 space-y-5 min-h-[430px]">
+                <div className="flex flex-col items-center justify-center text-center px-4 sm:px-8 py-10 space-y-5 h-full">
                   <div className="text-6xl leading-none">&#x1F389;</div>
                   <div>
                     <p className="font-heading font-bold text-xl mt-3">Purchase Confirmed!</p>
@@ -589,16 +589,21 @@ ${contactForm.message}`
                       <p className="font-mono font-bold text-lg text-primary">5 / 1,000</p>
                     </div>
                   </div>
-                  <div className="w-full flex items-center justify-center gap-1 sm:gap-2">
-                    {[["Views", "&#x1F441;"], ["Revenue", "&#x1F4B0;"], ["Your share", "&#x1F4C8;"]].map(([label, icon], i, arr) => (
-                      <>
-                        <div key={label} className="flex flex-col items-center gap-1 bg-muted/50 rounded-xl px-2 sm:px-4 py-2 sm:py-3 flex-1">
-                          <span className="text-lg sm:text-xl" dangerouslySetInnerHTML={{ __html: icon }} />
-                          <span className="text-[10px] sm:text-xs font-medium text-muted-foreground whitespace-nowrap">{label}</span>
-                        </div>
-                        {i < arr.length - 1 && <span key={`arrow-${i}`} className="text-muted-foreground/40 font-light text-sm sm:text-lg">&rarr;</span>}
-                      </>
-                    ))}
+                  <div className="w-full grid grid-cols-[1fr_auto_1fr_auto_1fr] items-stretch justify-items-center gap-1 sm:gap-2">
+                    <div className="flex flex-col items-center justify-center gap-1 bg-muted/50 rounded-xl px-2 sm:px-4 py-2 sm:py-3 w-full min-h-[52px] sm:min-h-[60px]">
+                      <span className="text-lg sm:text-xl leading-none inline-flex items-center justify-center h-5 sm:h-6">&#x1F441;</span>
+                      <span className="text-[10px] sm:text-xs font-medium text-muted-foreground whitespace-nowrap leading-tight">Views</span>
+                    </div>
+                    <span className="text-muted-foreground/40 font-light text-sm sm:text-lg">&rarr;</span>
+                    <div className="flex flex-col items-center justify-center gap-1 bg-muted/50 rounded-xl px-2 sm:px-4 py-2 sm:py-3 w-full min-h-[52px] sm:min-h-[60px]">
+                      <span className="text-lg sm:text-xl leading-none inline-flex items-center justify-center h-5 sm:h-6">&#x1F4B0;</span>
+                      <span className="text-[10px] sm:text-xs font-medium text-muted-foreground whitespace-nowrap leading-tight">Revenue</span>
+                    </div>
+                    <span className="text-muted-foreground/40 font-light text-sm sm:text-lg">&rarr;</span>
+                    <div className="flex flex-col items-center justify-center gap-1 bg-muted/50 rounded-xl px-2 sm:px-4 py-2 sm:py-3 w-full min-h-[52px] sm:min-h-[60px]">
+                      <span className="text-lg sm:text-xl leading-none inline-flex items-center justify-center h-5 sm:h-6">&#x1F4C8;</span>
+                      <span className="text-[10px] sm:text-xs font-medium text-muted-foreground whitespace-nowrap leading-tight">Your share</span>
+                    </div>
                   </div>
                   <div className="w-full space-y-2">
                     <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
@@ -616,8 +621,8 @@ ${contactForm.message}`
               </div>
 
               {/* Earn State */}
-              <div className={`transition-all duration-500 ease-in-out ${heroCardStep === "earn" ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-3 absolute inset-x-0 top-0 pointer-events-none"}`}>
-                <div>
+              <div className={`transition-all duration-500 ease-in-out h-full ${heroCardStep === "earn" ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-3 absolute inset-x-0 top-0 pointer-events-none"}`}>
+                <div className="flex flex-col h-full">
                   <div className="flex items-center gap-4 p-5 border-b border-border/50 bg-gradient-to-r from-orange-500 to-orange-400">
                     <div className="relative shrink-0">
                       <img
@@ -661,7 +666,7 @@ ${contactForm.message}`
                       ].map((row, i) => (
                         <div
                           key={i}
-                          className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-300 ${row.isYou ? (cursorOnYou ? "bg-primary/15 border border-primary/50 shadow-sm shadow-primary/20" : "bg-primary/5 border border-primary/20") : "hover:bg-muted/40"}`}
+                          className={`flex items-center gap-2 px-3 py-2 rounded-xl transition-all duration-300 border ${row.isYou ? (cursorOnYou ? "bg-primary/15 border-primary/50 shadow-sm shadow-primary/20" : "bg-primary/5 border-primary/20") : "hover:bg-muted/40 border-transparent"}`}
                         >
                           <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold shrink-0 ${row.isCreator ? "bg-orange-100 text-orange-600" : row.isYou ? "bg-primary text-white" : "bg-blue-100 text-blue-600"}`}>
                             {row.isCreator ? "C" : row.name[0]}
@@ -678,7 +683,7 @@ ${contactForm.message}`
                       ))}
                     </div>
                   </div>
-                  <div className="px-5 py-3 bg-muted/30 border-t border-border/50 text-center">
+                  <div className="px-5 bg-muted/30 border-t border-border/50 flex-1 flex items-center justify-center">
                     <p className="text-xs text-muted-foreground">Powered by Social Media Economics protocol</p>
                   </div>
                 </div>
